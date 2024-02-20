@@ -273,7 +273,7 @@
                                 <div class="col-sm-12">
                                   <div class="flot-chart-wrapper">
                                     <div id="flotChart" class="flot-chart">
-                                      <canvas class="flot-base"></canvas>
+                                      <canvas class="flot-base" id="grafico"></canvas>
                                     </div>
                                   </div>
                                 </div>
@@ -302,13 +302,13 @@
                             <div class="card-header"><i class="fas fa-table mr-1"></i>Processos</div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="tabela1" width="100%" cellspacing="0">
+                                    <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
                                         <thead>
                                             <tr style="text-align: center;">
-                                                <th>1</th>
-                                                <th>2</th>
-                                                <th>3</th>
-                                                <th>4</th>
+                                                <th>Contrato</th>
+                                                <th>Estado</th>
+                                                <th>Adjudicado</th>
+                                                <th>Faturação</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -318,40 +318,6 @@
                         </div>
                     </div>
                 
-                </div>
-
-                <div class="row">
-                    <div class="card mb-4">
-                        <div class="card-header"><i class="fas fa-table mr-1"></i>Faturação de Processos Em Curso e Terminados no Ano </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="tabela2" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr style="text-align: center;">
-                                            <th>Contrato</th>
-                                            <th>Ano</th>
-                                            <th>Previsto</th>
-                                            <th>Realizado</th>
-                                            <th>%</th>
-                                            <th>Jan</th>
-                                            <th>Fev</th>
-                                            <th>Mar</th>
-                                            <th>Abr</th>
-                                            <th>Mai</th>
-                                            <th>Jun</th>
-                                            <th>Jul</th>
-                                            <th>Ago</th>
-                                            <th>Set</th>
-                                            <th>Out</th>
-                                            <th>Nov</th>
-                                            <th>Dez</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 <!-- InstanceEndEditable -->
 
@@ -376,8 +342,8 @@
     </div>
 </div>
 
-    <!-- Global -->
-    <script src="../../global/js/scripts.js"></script>
+    <!-- Global
+    <script src="../../global/js/scripts.js"></script>-->
     <!-- JQuery -->
     <script src="../../vendors/jquery/jquery-3.7.0.js"></script>
     <!-- Bootstrap -->
