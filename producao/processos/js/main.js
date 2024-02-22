@@ -16,7 +16,7 @@ $(document).ready(
             "serverSide": true,
             "myDataTable": [],
             "ajax":{
-                url:"dados/cadastro.php",
+                url:"dados/main.php",
                 type:"POST",
                 data:{action:'fetch'}
             },
