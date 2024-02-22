@@ -2,62 +2,77 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$processo = "SELECT * FROM processo WHERE proces_contrato <> 'Qualquer Contrato' AND proces_estado_nome = 'Em Curso'";
+if(isset($_POST["action"]))
+{
+	if($_POST["action"] == 'fetch')
+	{
+		$main_query = 'SELECT
+                       proces_contrato AS contrato,
+					   ROUND(SUM(proces_val_adjudicacoes),2) AS val_adjudicacoes,
+                       ROUND(SUM(proces_val_faturacao),2) AS val_faturacao
+                       FROM processo ';
 
-$faturado = "SELECT
-          proces_contrato AS contrato,
-          proces_estado_nome AS estado,
-          YEAR(fact_auto_data) AS ano,
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 1, fact_valor, 0)), 2) AS '1',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 2, fact_valor, 0)), 2) AS '2',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 3, fact_valor, 0)), 2) AS '3',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 4, fact_valor, 0)), 2) AS '4',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 5, fact_valor, 0)), 2) AS '5',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 6, fact_valor, 0)), 2) AS '6',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 7, fact_valor, 0)), 2) AS '7',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 8, fact_valor, 0)), 2) AS '8',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 9, fact_valor, 0)), 2) AS '9',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 10, fact_valor, 0)), 2) AS '10',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 11, fact_valor, 0)), 2) AS '11',
-          ROUND(SUM(IF(MONTH(fact_auto_data) = 12, fact_valor, 0)), 2) AS '12',
-          ROUND(SUM(fact_valor), 2) AS realizado,
-          ROUND(proces_val_adjudicacoes, 2) AS previsto,
+        $search_query = 'WHERE (proces_cod > 0 AND proces_report_valores = 1) AND
+						 proces_estado_nome <> "Qualquer Contrato" AND ';
+        
+        if(isset($_POST["search"]["value"]))
+        {
+			$search_query .= 'proces_contrato LIKE "%'.$_POST["search"]["value"].'%" ';
+		}
 
-          ROUND((SUM(fact_valor) / proces_val_adjudicacoes) * 100, 2) AS taxa_realizacao
+		$group_by_query = ' GROUP BY proces_contrato ';
 
-          FROM processo 
-          INNER JOIN factura ON fact_proces_check = proces_check
+		$order_by_query = '';
 
-          WHERE proces_contrato <> 'Qualquer Contrato'
-          AND (proces_estado_nome = 'Em Curso' OR proces_estado_nome = 'Finalizado' OR proces_estado_nome = 'Encerrada')
-          AND YEAR(proces_data_adjudicacao) >= YEAR(NOW()) -1
-          GROUP BY proces_check, proces_contrato, YEAR(fact_auto_data)
-          ORDER BY proces_contrato, YEAR(fact_auto_data) DESC ";
+		if(isset($_POST["tabela"]))
+        {
+			$order_by_query = ' ORDER BY '.$order_column[$_POST["tabela"]["0"]["column"]].' '.$_POST["tabela"]["0"]["dir"].' ';
+		}
+		else
+		{
+			$order_by_query = ' ORDER BY proces_contrato ASC ';
+		}
 
-//ROUND(SUM(IF(fact_proces_check = fact_proces_check, fact_valor, 0)), 2) AS realizado,
-//ROUND(SUM(IF(p.proces_check = fact_proces_check, p.proces_val_adjudicacoes, 0)), 2) AS previsto,
+		$limit_query = '';
 
-//$previsto = "SELECT 
-//            ROUND(IF(p.proces_check = fact_proces_check, SUM(p.proces_val_adjudicacoes), 0), 2) AS previsto,
-//            ROUND((SUM(fact_valor) / SUM(p.proces_val_adjudicacoes)) * 100, 2) AS taxa_realizacao
-//            FROM processo;"
+		if($_POST["length"] != -1){
+			$limit_query = 'LIMIT ' . $_POST["start"] . ', ' . $_POST["length"];
+		}
 
-$stmt = $myConn->query($faturado);
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$statement = $myConn->prepare($main_query .$search_query .$group_by_query .$order_by_query);
+		$statement->execute();
 
-$stmt2 = $myConn->query($processo);
-$processos = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+		$filtered_rows = $statement->rowCount();
 
-//$stmt = $myConn->query($previsto);
-//$data2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$statement = $myConn->prepare($main_query .$group_by_query .$order_by_query);
+		$statement->execute();
 
-// Set the HTTP Content-Type header to indicate that the response is in JSON format
-header('Content-Type: application/json');
+		$total_rows = $statement->rowCount();
 
-//echo json_encode($data);
-echo json_encode($processos);
+		//$result = $myConn->query($main_query . $search_query . $group_by_query . $order_by_query . $limit_query, PDO::FETCH_ASSOC);
+		$result = $myConn->query($main_query .$search_query .$group_by_query .$order_by_query .$limit_query, PDO::FETCH_ASSOC);
+        $data = array();
 
+		foreach($result as $row)
+		{
+			$sub_array = array();
+            $sub_array[] = $row['contrato'];
+            //$sub_array[] = $row['proces_estado_nome'];
+            $sub_array[] = $row['val_adjudicacoes'];
+            $sub_array[] = $row['val_faturacao'];
 
+			$data[] = $sub_array;
+		}
 
+		$output = array(
+			"draw"			=>	intval($_POST["draw"]),
+			"recordsTotal"	=>	$total_rows,
+			"recordsFiltered" => $filtered_rows,
+			"data"			=>	$data
+		);
 
+		echo json_encode($output);
+	}
+}
 
+?>
