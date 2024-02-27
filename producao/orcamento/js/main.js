@@ -21,8 +21,8 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [1, 2], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                { targets: [0], className: 'dt-body-left' }
+                { targets: [2, 3], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                { targets: [0, 1], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
                 var tabela_valor_x = [];
@@ -31,8 +31,8 @@ $(document).ready(
 
                 for(var count = 0; count < settings.aoData.length; count++){
                 tabela_valor_x.push(settings.aoData[count]._aData[0]);
-                tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[1]));
-                tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[2]));
+                tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[2]));
+                tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[3]));
 
                 }
                 var chart_data1 = {
@@ -59,7 +59,7 @@ $(document).ready(
                 }
                 grafico1 = new Chart(group_chart1,
                 {
-                type: 'line',
+                type: 'bar',
                 data: chart_data1
                 })
             }

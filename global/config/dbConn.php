@@ -25,7 +25,7 @@ if($myConn === false) {
 //}
 
 //PG_CONNECT - Connection to Postgresql
-$pgConn = pg_connect("host=$myHost port=5432 dbname=$pgDatabase user=$user password=$password");
-if(!$pgConn){
-    die('Ocorreu um erro com a conexão pg_connect');
-}
+//$pgConn = pg_connect("host=$myHost port=5432 dbname=$pgDatabase user=$user password=$password");
+//if(!$pgConn){
+//    die('Ocorreu um erro com a conexão pg_connect');
+//}

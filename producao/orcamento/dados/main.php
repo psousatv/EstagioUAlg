@@ -6,33 +6,27 @@ if(isset($_POST["action"]))
 {
 	if($_POST["action"] == 'fetch')
 	{
-		$main_query = 'SELECT proces_check,
-					   proces_estado_nome AS estado,
-					   CONCAT(proces_padm, "_", proces_nome) AS nome,
-					   proces_val_max AS valor_maximo,
-					   proces_orc_ano AS ano,
-					   proces_orc_actividade AS sector_actividade,
-					   proces_orc_rubrica AS tipo_rubrica,
+		$main_query = 'SELECT 
 					   ru.rub_nome AS rubrica,
-					   proced_escolha AS procedimento,
-					   proced_regime AS regime,
-					   proced_contrato AS contrato,
+					   ru.rub_nomenclatura AS nomenclatura,
 					   ROUND(SUM(proces_val_adjudicacoes),2) AS val_adjudicacoes,
-                       ROUND(SUM(proces_val_faturacao),2) AS val_faturacao
-					   IF(LENGTH(proces_data_pub_se) >= 2, "Sim", "Não") AS lista_se
+					   ROUND(SUM(proces_val_faturacao),2) AS val_faturacao
 					   FROM processo
-					   INNER JOIN procedimento ON proced_cod = proces_proced_cod
 					   INNER JOIN rubricas ru ON rub_cod = proces_rub_cod ';
 
-        $search_query = 'proces_orc_ano >= YEAR(NOW())-2 AND
-						 proces_proced_cod <> 100 AND proces_estado_nome <> "Anulado" ';
+						//ROUND(SUM(proces_val_adjudicacoes),2) AS val_adjudicacoes,
+						//ROUND(SUM(proces_val_faturacao),2) AS val_faturacao,
+
+        $search_query = 'WHERE proces_orc_ano >= YEAR(NOW())-2 AND
+						 proces_report_valores > 0 AND
+						 proces_estado_nome <> "Anulado" AND ';
         
         if(isset($_POST["search"]["value"]))
         {
 			$search_query .= 'proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
 
-		$group_by_query = ' GROUP BY proces_orc_rubrica ';
+		$group_by_query = ' GROUP BY rubrica ';
 
 		$order_by_query = '';
 
@@ -42,7 +36,7 @@ if(isset($_POST["action"]))
 		}
 		else
 		{
-			$order_by_query = ' ORDER BY proced_contrato ASC ';
+			$order_by_query = ' ORDER BY proces_orc_rubrica ASC ';
 		}
 
 		$limit_query = '';
@@ -61,15 +55,15 @@ if(isset($_POST["action"]))
 
 		$total_rows = $statement->rowCount();
 
-		//$result = $myConn->query($main_query . $search_query . $group_by_query . $order_by_query . $limit_query, PDO::FETCH_ASSOC);
+		//$result = $myConn->query($main_query . $search_query .$group_by_query . $order_by_query . $limit_query, PDO::FETCH_ASSOC);
 		$result = $myConn->query($main_query .$search_query .$group_by_query .$order_by_query .$limit_query, PDO::FETCH_ASSOC);
         $data = array();
 
 		foreach($result as $row)
 		{
 			$sub_array = array();
+            $sub_array[] = $row['nomenclatura'];
             $sub_array[] = $row['rubrica'];
-            //$sub_array[] = $row['proces_estado_nome'];
             $sub_array[] = $row['val_adjudicacoes'];
             $sub_array[] = $row['val_faturacao'];
 
