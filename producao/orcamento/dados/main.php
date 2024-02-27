@@ -7,26 +7,24 @@ if(isset($_POST["action"]))
 	if($_POST["action"] == 'fetch')
 	{
 		$main_query = 'SELECT 
+					   ru.rub_nomenclatura AS codigo,
 					   ru.rub_nome AS rubrica,
-					   ru.rub_nomenclatura AS nomenclatura,
-					   ROUND(SUM(proces_val_adjudicacoes),2) AS val_adjudicacoes,
-					   ROUND(SUM(proces_val_faturacao),2) AS val_faturacao
-					   FROM processo
-					   INNER JOIN rubricas ru ON rub_cod = proces_rub_cod ';
+					   ru.rub_natureza AS natureza,
+					   ROUND(SUM(pp_valor),2) AS previsto,
+					   ROUND(SUM(pp_executado_valor + pp_executado_valor_mais + pp_executado_valor_menos),2) AS faturado
+					   FROM plano_pagamento
+					   INNER JOIN processo p ON p.proces_check = pp_proces_check
+					   INNER JOIN rubricas ru ON rub_cod = p.proces_rub_cod ';
 
-						//ROUND(SUM(proces_val_adjudicacoes),2) AS val_adjudicacoes,
-						//ROUND(SUM(proces_val_faturacao),2) AS val_faturacao,
-
-        $search_query = 'WHERE proces_orc_ano >= YEAR(NOW())-2 AND
-						 proces_report_valores > 0 AND
+        $search_query = 'WHERE proces_report_valores > 0 AND
 						 proces_estado_nome <> "Anulado" AND ';
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'pp_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
 
-		$group_by_query = ' GROUP BY rubrica ';
+		$group_by_query = ' GROUP BY codigo';
 
 		$order_by_query = '';
 
@@ -36,7 +34,7 @@ if(isset($_POST["action"]))
 		}
 		else
 		{
-			$order_by_query = ' ORDER BY proces_orc_rubrica ASC ';
+			$order_by_query = ' ORDER BY natureza ASC ';
 		}
 
 		$limit_query = '';
@@ -62,10 +60,11 @@ if(isset($_POST["action"]))
 		foreach($result as $row)
 		{
 			$sub_array = array();
-            $sub_array[] = $row['nomenclatura'];
+            $sub_array[] = $row['codigo'];
             $sub_array[] = $row['rubrica'];
-            $sub_array[] = $row['val_adjudicacoes'];
-            $sub_array[] = $row['val_faturacao'];
+            $sub_array[] = $row['previsto'];
+			//$sub_array[] = $row['adjudicado'];
+            $sub_array[] = $row['faturado'];
 
 			$data[] = $sub_array;
 		}

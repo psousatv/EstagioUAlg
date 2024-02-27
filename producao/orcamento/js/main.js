@@ -39,14 +39,14 @@ $(document).ready(
                 labels: tabela_valor_x,
                 datasets:[
                     {
-                    label : 'Adjudicado',
-                    backgroundColor : 'rgba(105, 0, 132, .2)',
+                    label : 'Previsto',
+                    backgroundColor : 'rgba(3, 138, 255, .3)',
                     //color : '#fff',
                     data: tabela_valor_y1
                     },
                     {
                     label : 'Facturação',
-                    backgroundColor : 'rgba(200, 99, 132, .7)',
+                    backgroundColor : 'rgba(0, 181, 204, .5)',
                     //color : '#fff',
                     data: tabela_valor_y2
                     }
