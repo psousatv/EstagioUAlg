@@ -6,6 +6,7 @@ $(document).ready(
         fetch_data();
         var grafico1;
         var grafico2;
+
         function fetch_data()
         {
         var dataTable = $('#tabela').DataTable(
@@ -21,22 +22,48 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [2, 3], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                { targets: [2, 3], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
+                { targets: [4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
                 { targets: [0, 1], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
-                var tabela_valor_x = [];
+                var tipo = [];
+                var natureza = [];
+                var rubrica = [];
+                var tnr = [];
                 var tabela_valor_y1 = [];
                 var tabela_valor_y2 = [];
 
                 for(var count = 0; count < settings.aoData.length; count++){
-                tabela_valor_x.push(settings.aoData[count]._aData[0]);
+                tipo.push(settings.aoData[count]._aData[0]);
+                //natureza.push(settings.aoData[count]._aData[1]);
+                rubrica.push(settings.aoData[count]._aData[2]);
+                //tnr.push([settings.aoData[count]._aData[1], settings.aoData[count]._aData[0], settings.aoData[count]._aData[2]]);
                 tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[2]));
                 tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[3]));
-
+                
                 }
+
+                console.log("Tipo", tipo);
+                //console.log("Natureza", natureza);
+                console.log("Rubrica", rubrica);
+                console.log("TNR", tnr);
+                
+                var sumByPropertyAndFilter = (data, sumProperty, filterProperty, filterValue) => {
+                    return data
+                      .filter(obj => obj[filterProperty] === filterValue)
+                      .reduce((sums, obj) => {
+                        var key = obj[sumProperty];
+                        sums[key] = (sums[key] || 0) + obj.valor_maximo; // Assuming we want to sum the 'age' property
+                        return sums;
+                      }, {});
+                };
+
+
+
+
                 var chart_data1 = {
-                labels: tabela_valor_x,
+                labels: tipo,
                 datasets:[
                     {
                     label : 'Previsto',

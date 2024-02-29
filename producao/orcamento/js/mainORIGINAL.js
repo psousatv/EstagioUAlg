@@ -16,6 +16,7 @@ $.ajax(
         function(data)
         {
             var dataTable = $('#tabela').DataTable({
+                //data:{action:'fetch'},
                 aaData: data, 
                 aoColumns:[
                     { mDataProp: 'sector_actividade'},
@@ -24,10 +25,6 @@ $.ajax(
                     { mDataProp: 'valor_maximo', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'lista_se'},
                     { mDataProp: 'estado'}
-                    //{ mDataProp: 'rubrica'},
-                    //{ mDataProp: 'regime'},
-                    //{ mDataProp: 'contrato'},
-                    //{ mDataProp: 'procedimento'}
                 ]
 
             })           
@@ -55,11 +52,11 @@ $.ajax(
 
 
             // Soma agrupando por Sector de Actividade
-            var SomaPorActividade = sumByProperty(data, 'sector_actividade');
+            //var SomaPorActividade = sumByProperty(data, 'sector_actividade');
             // Soma agrupando por Rubrica
-            var SomaPorRubrica = sumByProperty(data, 'rubrica');
+            //var SomaPorRubrica = sumByProperty(data, 'rubrica');
             // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Gastos
-            var SomaPorRubricaGastos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Gastos');
+            //var SomaPorRubricaGastos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Gastos');
             // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Investimentos
             var SomaPorRubricaInvestimentos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Investimento');
                         
@@ -81,7 +78,7 @@ $.ajax(
             var ctx1 = document.getElementById('grafico1').getContext('2d');
            
             var myChart1 = new Chart(ctx1, {
-                type: 'doughnut', // Alterar como se entender (e.g., 'polarArea', 'doughnut', 'pie')
+                type: 'bar', // Alterar como se entender (e.g., 'polarArea', 'doughnut', 'pie')
                 data: {
                     labels: Object.keys(SomaPorRubricaInvestimentos),
                     datasets: [
