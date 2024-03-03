@@ -56,69 +56,50 @@ $(document).ready(
 
 
                 // ** Cartões
-                <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0">
-                    <div class="card bg-danger">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between px-md-1">
-                        <div class="text-end">
-                            <p class="mb-0 text-white">Protocolos</p>
-                            <h3 class="text-white">1.346.617<span class="h5">,60</span></h3>
-                            <h6 class="text-white">88.675<span class="h6">,36 - 6,59%</span></h6>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-map-signs text-black fa-3x"></i>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
-                const container = document.getElementById('cartao6');
-                apiResult.forEach((result, idx) => {
+                var container = document.getElementById('cartoes'); 
+                dados.forEach((result, idx) => {
                 // Create card element
+                var classeCartao = ''
+                var iconeCartao = ''
+                if (result[4] < 10) {
+                    var classeCartao = 'bg-danger';
+                    var iconeCartao = 'fa-thumbs-down'
+                } else if (result[4] > 10 & result[4]< 35){
+                    var classeCartao = 'bg-warning';
+                    var iconeCartao = 'fa-warning'
+                } else if (result[4] >35 & result[4] < 75){
+                    var classeCartao = 'bg-primary';
+                    var iconeCartao = 'fa-cogs'
+                } else {
+                    var classeCartao = 'bg-success';
+                    var iconeCartao = 'fa-smile'
+                };
+
                 const card = document.createElement('div');
                 card.classList = 'card-body';
-                
-                // Construct card content
-                const content = `
-                    <div class="card">
-                    <div class="card-header" id="heading-${idx}">
-                    <h5 class="mb-0">
-                    </h5>
-                    </div>
-                
-                    <div id="collapse-${idx}" class="collapse show" aria-labelledby="heading-${idx}" data-parent="#accordion">
-                    <div class="card-body">
-                
-                        <h5>${result.title}</h5>
-                        <p>${result.description}</p>
-                        <p>${result.output}</p>
-                        ...
-                    </div>
-                    </div>
-                </div>
-                `;
+
+                var cartoes = ``
                 var cartoes = `
-                <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0">
-                    <div class="card bg-danger">
+                
+                    <div class="card ${classeCartao}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
-                            <p class="mb-0 text-white">Protocolos</p>
-                            <h3 class="text-white">1.346.617<span class="h5">,60</span></h3>
-                            <h6 class="text-white">88.675<span class="h6">,36 - 6,59%</span></h6>
+                            <p class="mb-0 text-white">${result[0]}</p>
+                            <h3 class="text-white">${Number(result[3]).toLocaleString('pt')}€<span class="h6">- ${result[4]}%</span></h3>
+                            <h6 class="text-white">${Number(result[2]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-map-signs text-black fa-3x"></i>
+                            <i class="fas ${iconeCartao} text-white fa-3x"></i>
                         </div>
                         </div>
                     </div>
                     </div>
-                </div>
+                
                 `;
                 
                 // Append newyly created card element to the container
-                container.innerHTML += content;
+                container.innerHTML += cartoes;
                 });
 
 
