@@ -33,7 +33,7 @@ $.ajax(
             var sumByProperty = (data, property) => {
                 return data.reduce((sums, obj) => {
                 const key = obj[property];
-                // Assumindo que ser somar o 'valor_maximo'
+                // Assumindo que se quer somar o 'valor_maximo'
                 sums[key] = (sums[key] || 0) + obj.valor_maximo;
                 return sums;
                 }, {});
