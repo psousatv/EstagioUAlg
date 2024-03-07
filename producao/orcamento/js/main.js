@@ -77,8 +77,7 @@ $(document).ready(
 
                 const card = document.createElement('div');
                 card.classList = 'card-body';
-
-                var cartoes = ``
+                
                 var cartoes = `
                 
                     <div class="card ${classeCartao}">
