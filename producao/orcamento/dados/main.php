@@ -10,7 +10,8 @@ if(isset($_POST["action"]))
 					   ru.rub_nomenclatura AS tipo,
 					   ru.rub_natureza AS natureza,
 					   ru.rub_nome AS rubrica,
-					   ROUND(SUM(pp_valor),2) AS previsto,
+					   ROUND(SUM(pp_valor),2) AS orcamento,
+					   ROUND(SUM(p.proces_val_adjudicacoes),2) AS adjudicacoes,
 					   ROUND(SUM(pp_executado_valor + pp_executado_valor_mais + pp_executado_valor_menos),2) AS faturado
 					   FROM plano_pagamento
 					   INNER JOIN processo p ON p.proces_check = pp_proces_check
@@ -54,6 +55,9 @@ if(isset($_POST["action"]))
 
 		//$result = $myConn->query($main_query . $search_query .$group_by_query . $order_by_query . $limit_query, PDO::FETCH_ASSOC);
 		$result = $myConn->query($main_query .$search_query .$group_by_query .$order_by_query .$limit_query, PDO::FETCH_ASSOC);
+		
+		//$test = $statement->fetchAll(PDO::FETCH_ASSOC);
+
         $data = array();
 
 		foreach($result as $row)
@@ -62,9 +66,10 @@ if(isset($_POST["action"]))
             $sub_array[] = $row['tipo'];
 			//$sub_array[] = $row['natureza'];
             $sub_array[] = $row['rubrica'];
-            $sub_array[] = $row['previsto'];
+			$sub_array[] = $row['orcamento'];
+            $sub_array[] = $row['adjudicacoes'];
 			$sub_array[] = $row['faturado'];
-            $sub_array[] = round((($row['faturado'] / $row['previsto']) ) * 100 , 2) ;
+            $sub_array[] = round((($row['faturado'] / $row['adjudicacoes'] ) ) * 100 , 2) ;
 
 			$data[] = $sub_array;
 		}
@@ -77,6 +82,7 @@ if(isset($_POST["action"]))
 		);
 
 		echo json_encode($output);
+		//echo json_encode($test);
 	}
 }
 
