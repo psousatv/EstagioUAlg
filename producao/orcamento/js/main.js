@@ -90,7 +90,7 @@ $(document).ready(
                     <div class="card-body">
                         <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
-                            <p class="mb-0 text-white">${idx+1} - ${result[0]}</p>
+                            <p class="mb-0 text-white">${result[0]}</p>
                             <!--Faturado-->
                             <h3 class="text-white">${Number(result[4]).toLocaleString('pt')}€<span class="h6">- ${result[5]}%</span></h3>
                             <!--Adjudicado-->
