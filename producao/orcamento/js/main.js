@@ -40,7 +40,7 @@ $(document).ready(
                     tabela_valor_y.push(parseFloat(settings.aoData[count]._aData[2]));
                     tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[3]));
                     tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[4]));
-                }
+                };
     
                 var sumByPropertyAndFilter = (dados, sumProperty, filterProperty, filterValue) => {
                     return dados
