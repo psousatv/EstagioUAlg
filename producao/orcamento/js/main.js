@@ -27,14 +27,16 @@ $(document).ready(
             ],
             "drawCallback": function(settings){
                 var dados = []
-                var rubrica = [];
+                //var rubrica = [];~
+                var natureza = []
                 var tabela_valor_y = [];
                 var tabela_valor_y1 = [];
                 var tabela_valor_y2 = [];
 
                 for(var count = 0; count < settings.aoData.length; count++){
                     dados.push(settings.aoData[count]._aData)
-                    rubrica.push(settings.aoData[count]._aData[0]);
+                    //rubrica.push(settings.aoData[count]._aData[0]);
+                    natureza.push(settings.aoData[count]._aData[0]);
                     tabela_valor_y.push(parseFloat(settings.aoData[count]._aData[2]));
                     tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[3]));
                     tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[4]));
@@ -53,7 +55,8 @@ $(document).ready(
                             
                 console.log("Data", dados);
                 console.log ("dados: ", dados[3][3]);
-                console.log("Rubrica", rubrica);
+                //console.log("Rubrica", rubrica);
+                console.log("Natureza", natureza);
                 console.log("Sum", sumByPropertyAndFilter);
 
 
@@ -109,7 +112,7 @@ $(document).ready(
 
                 // ** Gráficos
                 var chart_data1 = {
-                labels: rubrica,
+                labels: natureza,
                 datasets:[
                     {
                     label : 'Orçamento',

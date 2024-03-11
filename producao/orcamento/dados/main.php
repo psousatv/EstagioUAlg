@@ -11,7 +11,7 @@ if(isset($_POST["action"]))
 					   ru.rub_natureza AS natureza,
 					   ru.rub_nome AS rubrica,
 					   ROUND(SUM(pp_valor),2) AS orcamento,
-					   ROUND(SUM(p.proces_val_adjudicacoes),2) AS adjudicacoes,
+					   p.proces_val_adjudicacoes AS adjudicacoes,
 					   ROUND(SUM(pp_executado_valor + pp_executado_valor_mais + pp_executado_valor_menos),2) AS faturado
 					   FROM plano_pagamento
 					   INNER JOIN processo p ON p.proces_check = pp_proces_check
@@ -63,8 +63,8 @@ if(isset($_POST["action"]))
 		foreach($result as $row)
 		{
 			$sub_array = array();
-            $sub_array[] = $row['tipo'];
-			//$sub_array[] = $row['natureza'];
+            //$sub_array[] = $row['tipo'];
+			$sub_array[] = $row['natureza'];
             $sub_array[] = $row['rubrica'];
 			$sub_array[] = $row['orcamento'];
             $sub_array[] = $row['adjudicacoes'];
