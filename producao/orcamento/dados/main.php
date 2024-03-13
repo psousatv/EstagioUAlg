@@ -6,25 +6,38 @@ if(isset($_POST["action"]))
 {
 	if($_POST["action"] == 'fetch')
 	{
-		$main_query = 'SELECT 
-					   ru.rub_nomenclatura AS tipo,
-					   ru.rub_natureza AS natureza,
-					   ru.rub_nome AS rubrica,
-					   ROUND(SUM(pp_valor),2) AS orcamento,
-					   ROUND(SUM(p.proces_val_adjudicacoes),2) AS adjudicacoes,
-					   ROUND(SUM(pp_executado_valor + pp_executado_valor_mais + pp_executado_valor_menos),2) AS faturado
-					   FROM plano_pagamento
-					   INNER JOIN processo p ON p.proces_check = pp_proces_check
-					   INNER JOIN rubricas ru ON rub_cod = p.proces_rub_cod ';
+		//$main_query = 'SELECT 
+		//			   ru.rub_tipo AS tipo,
+		//			   ru.rub_rubrica AS rubrica,
+		//			   ru.rub_item AS item,
+		//			   ROUND(SUM(o.orcam_valor),2) AS orcamento,
+		//			   ROUND(SUM(o.orcam_valor),2) AS adjudicacoes,
+		//			   ROUND(SUM(o.orcam_valor),2) AS faturado
+		//			   FROM orcamento o
+		//			   INNER JOIN rubricas ru ON rub_item = o.orcam_rubrica_item ';
 
-        $search_query = 'WHERE proces_estado_nome <> "Anulado" AND ';
+		$main_query = 'SELECT
+						o.orcam_ano AS ano, 
+						r.rub_tipo AS tipo,
+						r.rub_rubrica AS rubrica,
+						r.rub_item AS item,
+						o.orcam_valor AS orcamento,
+						(proces_val_adjudicacoes - proces_val_faturacao_menos) AS adjudicado,
+						proces_val_faturacao AS faturado
+						FROM processo 						
+						INNER JOIN rubricas r ON r.rub_cod = proces_rub_cod 
+						INNER JOIN orcamento o ON o.orcam_rub_cod = proces_rub_cod
+						';
+
+        $search_query = ' ';
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'pp_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'WHERE proces_report_valores = 1 AND  
+								o.orcam_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
 
-		$group_by_query = ' GROUP BY rubrica';
+		$group_by_query = ' GROUP BY tipo, rubrica, item ';
 
 		$order_by_query = '';
 
@@ -34,7 +47,7 @@ if(isset($_POST["action"]))
 		}
 		else
 		{
-			$order_by_query = ' ORDER BY natureza ASC ';
+			$order_by_query = ' ORDER BY tipo ASC ';
 		}
 
 		$limit_query = '';
@@ -63,13 +76,13 @@ if(isset($_POST["action"]))
 		foreach($result as $row)
 		{
 			$sub_array = array();
-            $sub_array[] = $row['tipo'];
-			//$sub_array[] = $row['natureza'];
+			$sub_array[] = $row['tipo'];
             $sub_array[] = $row['rubrica'];
+			$sub_array[] = $row['item'];
 			$sub_array[] = $row['orcamento'];
-            $sub_array[] = $row['adjudicacoes'];
+            $sub_array[] = $row['adjudicado'];
+			$sub_array[] = round((($row['adjudicado'] / $row['orcamento'] ) ) * 100 , 2) ;
 			$sub_array[] = $row['faturado'];
-            $sub_array[] = round((($row['faturado'] / $row['adjudicacoes'] ) ) * 100 , 2) ;
 
 			$data[] = $sub_array;
 		}
