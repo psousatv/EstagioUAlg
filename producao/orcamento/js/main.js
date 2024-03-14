@@ -44,22 +44,41 @@ $(document).ready(
                     tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[6]));
                 };
     
+                // Função para somar valores de uma propriedade ('campo') do objecto ('dados')
+                var sumByProperty = (dados, property) => {
+                    return dados.reduce((sums, obj) => {
+                    const key = obj[property];
+                    // Assumindo que se quer somar o 'valor_maximo'
+                    sums[key] = (sums[key] || 0) + obj[3];
+                    return sums;
+                    }, {});
+                };
+                
                 var sumByPropertyAndFilter = (dados, sumProperty, filterProperty, filterValue) => {
                     return dados
                       .filter(obj => obj[filterProperty] === filterValue)
                       .reduce((sums, obj) => {
                         var key = obj[sumProperty];
-                        sums[key] = (sums[key] || 0) + obj.tabela_valor_y2; // Assuming we want to sum the 'age' property
+                        sums[key] = (sums[key] || 0) + obj[3]; // Assuming we want to sum the 'age' property
                         return sums;
                       }, {});
                 };
+
+                // Soma agrupando por Sector de Actividade
+                var somaPorRubrica = sumByProperty(dados[2], dados[3]);
+                // Soma agrupando por Rubrica
+                //var SomaPorRubrica = sumByProperty(data, 'rubrica');
+                // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Gastos
+                //var SomaPorRubricaGastos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Gastos');
+                // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Investimentos
+                //var SomaPorRubricaInvestimentos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Investimento');
 
                             
                 console.log("Data", dados);
                 console.log("Tipo", tipo);
                 console.log("Rubrica", rubrica);
                 console.log("Item", item);
-                console.log("Sum", sumByPropertyAndFilter);
+                console.log("Sum", somaPorRubrica);
 
 
                 // ** Cartões
@@ -114,7 +133,7 @@ $(document).ready(
 
                 // ** Gráficos
                 var chart_data1 = {
-                labels: rubrica,
+                labels: item,
                 datasets:[
                     {
                     label : 'Orçamento',

@@ -11,22 +11,21 @@ if(isset($_POST["action"]))
 		//			   ru.rub_rubrica AS rubrica,
 		//			   ru.rub_item AS item,
 		//			   ROUND(SUM(o.orcam_valor),2) AS orcamento,
-		//			   ROUND(SUM(o.orcam_valor),2) AS adjudicacoes,
-		//			   ROUND(SUM(o.orcam_valor),2) AS faturado
+		//			   ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
+		//				ROUND(SUM(proces_val_faturacao), 2) AS faturado
 		//			   FROM orcamento o
 		//			   INNER JOIN rubricas ru ON rub_item = o.orcam_rubrica_item ';
 
 		$main_query = 'SELECT
-						o.orcam_ano AS ano, 
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
-						o.orcam_valor AS orcamento,
-						(proces_val_adjudicacoes - proces_val_faturacao_menos) AS adjudicado,
-						proces_val_faturacao AS faturado
-						FROM processo 						
-						INNER JOIN rubricas r ON r.rub_cod = proces_rub_cod 
-						INNER JOIN orcamento o ON o.orcam_rub_cod = proces_rub_cod
+						ROUND(SUM(o.orcam_valor),2) AS orcamento,
+						ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
+						ROUND(SUM(proces_val_faturacao), 2) AS faturado
+						FROM orcamento o 						
+						JOIN processo ON proces_rub_cod = o.orcam_rub_cod
+						JOIN rubricas r ON r.rub_cod = proces_rub_cod 
 						';
 
         $search_query = ' ';
@@ -37,7 +36,7 @@ if(isset($_POST["action"]))
 								o.orcam_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
 
-		$group_by_query = ' GROUP BY tipo, rubrica, item ';
+		$group_by_query = ' GROUP BY item ';
 
 		$order_by_query = '';
 
@@ -69,7 +68,7 @@ if(isset($_POST["action"]))
 		//$result = $myConn->query($main_query . $search_query .$group_by_query . $order_by_query . $limit_query, PDO::FETCH_ASSOC);
 		$result = $myConn->query($main_query .$search_query .$group_by_query .$order_by_query .$limit_query, PDO::FETCH_ASSOC);
 		
-		//$test = $statement->fetchAll(PDO::FETCH_ASSOC);
+		//$data = $result->fetchAll(PDO::FETCH_ASSOC);
 
         $data = array();
 
@@ -95,7 +94,6 @@ if(isset($_POST["action"]))
 		);
 
 		echo json_encode($output);
-		//echo json_encode($test);
 	}
 }
 
