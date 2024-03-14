@@ -20,11 +20,13 @@ if(isset($_POST["action"]))
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
-						ROUND(SUM(o.orcam_valor),2) AS orcamento,
+						proces_orc_ano AS ano,
+						ROUND(SUM(proces_val_base), 2) AS orcamento,
 						ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
+						IF(SUM(proces_val_base) = 0 OR (SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) = 0, 0, 
+						ROUND(((SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) / SUM(proces_val_base)) * 100, 2)) AS percent,
 						ROUND(SUM(proces_val_faturacao), 2) AS faturado
-						FROM orcamento o 						
-						JOIN processo ON proces_rub_cod = o.orcam_rub_cod
+						FROM processo
 						JOIN rubricas r ON r.rub_cod = proces_rub_cod 
 						';
 
@@ -32,11 +34,12 @@ if(isset($_POST["action"]))
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'WHERE proces_report_valores = 1 AND  
-								o.orcam_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'WHERE proces_report_valores = 1 AND
+							  (proces_orc_ano = YEAR(NOW()) OR
+							  proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" )';
 		}
-
-		$group_by_query = ' GROUP BY item ';
+ 
+		$group_by_query = ' GROUP BY tipo ';
 
 		$order_by_query = '';
 
@@ -76,11 +79,11 @@ if(isset($_POST["action"]))
 		{
 			$sub_array = array();
 			$sub_array[] = $row['tipo'];
-            $sub_array[] = $row['rubrica'];
-			$sub_array[] = $row['item'];
+            //$sub_array[] = $row['rubrica'];
+			//$sub_array[] = $row['item'];
 			$sub_array[] = $row['orcamento'];
             $sub_array[] = $row['adjudicado'];
-			$sub_array[] = round((($row['adjudicado'] / $row['orcamento'] ) ) * 100 , 2) ;
+			$sub_array[] = $row['percent'];;
 			$sub_array[] = $row['faturado'];
 
 			$data[] = $sub_array;

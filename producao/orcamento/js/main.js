@@ -21,9 +21,9 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [3, 4, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
-                { targets: [5], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0, 1, 2], className: 'dt-body-left' }
+                { targets: [1, 2, 4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
+                { targets: [3], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
+                { targets: [0], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
                 var dados = []
@@ -39,33 +39,33 @@ $(document).ready(
                     tipo.push(settings.aoData[count]._aData[0]);
                     rubrica.push(settings.aoData[count]._aData[1]);
                     item.push(settings.aoData[count]._aData[2]);
-                    tabela_valor_y.push(parseFloat(settings.aoData[count]._aData[3]));
-                    tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[4]));
-                    tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[6]));
+                    tabela_valor_y.push(parseFloat(settings.aoData[count]._aData[1]));
+                    tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[2]));
+                    tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[4]));
                 };
     
                 // Função para somar valores de uma propriedade ('campo') do objecto ('dados')
-                var sumByProperty = (dados, property) => {
-                    return dados.reduce((sums, obj) => {
-                    const key = obj[property];
-                    // Assumindo que se quer somar o 'valor_maximo'
-                    sums[key] = (sums[key] || 0) + obj[3];
-                    return sums;
-                    }, {});
-                };
+                //var sumByProperty = (dados, property) => {
+                //    return dados.reduce((sums, obj) => {
+                //    const key = obj[property];
+                // Assumindo que se quer somar o 'valor_maximo'
+                //    sums[key] = (sums[key] || 0) + obj[3];
+                //    return sums;
+                //    }, {});
+                //};
                 
-                var sumByPropertyAndFilter = (dados, sumProperty, filterProperty, filterValue) => {
-                    return dados
-                      .filter(obj => obj[filterProperty] === filterValue)
-                      .reduce((sums, obj) => {
-                        var key = obj[sumProperty];
-                        sums[key] = (sums[key] || 0) + obj[3]; // Assuming we want to sum the 'age' property
-                        return sums;
-                      }, {});
-                };
+                //var sumByPropertyAndFilter = (dados, sumProperty, filterProperty, filterValue) => {
+                //    return dados
+                //      .filter(obj => obj[filterProperty] === filterValue)
+                //      .reduce((sums, obj) => {
+                //        var key = obj[sumProperty];
+                //        sums[key] = (sums[key] || 0) + obj[3]; // Assuming we want to sum the 'age' property
+                //        return sums;
+                //      }, {});
+                //};
 
                 // Soma agrupando por Sector de Actividade
-                var somaPorRubrica = sumByProperty(dados[2], dados[3]);
+                //var somaPorRubrica = sumByProperty(dados[2], dados[3]);
                 // Soma agrupando por Rubrica
                 //var SomaPorRubrica = sumByProperty(data, 'rubrica');
                 // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Gastos
@@ -76,9 +76,9 @@ $(document).ready(
                             
                 console.log("Data", dados);
                 console.log("Tipo", tipo);
-                console.log("Rubrica", rubrica);
-                console.log("Item", item);
-                console.log("Sum", somaPorRubrica);
+                //console.log("Rubrica", rubrica);
+                //console.log("Item", item);
+                //console.log("Sum", somaPorRubrica);
 
 
                 // ** Cartões
@@ -88,13 +88,13 @@ $(document).ready(
                 // Create card element
                 var classeCartao = ''
                 var iconeCartao = ''
-                if (result[5] < 10) {
+                if (result[3] < 10) {
                     var classeCartao = 'bg-danger';
                     var iconeCartao = 'fa-thumbs-down'
-                } else if (result[5] > 10 & result[5]< 35){
+                } else if (result[3] > 10 & result[3]< 35){
                     var classeCartao = 'bg-warning';
                     var iconeCartao = 'fa-warning'
-                } else if (result[5] >35 & result[5] < 75){
+                } else if (result[3] >35 & result[3] < 75){
                     var classeCartao = 'bg-primary';
                     var iconeCartao = 'fa-cogs'
                 } else {
@@ -111,11 +111,11 @@ $(document).ready(
                     <div class="card-body">
                         <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
-                            <p class="mb-0 text-white">${result[2]}</p>
+                            <p class="mb-0 text-white">${result[0]}</p>
                             <!--Faturado-->
-                            <h3 class="text-white">${Number(result[4]).toLocaleString('pt')}€<span class="h6">- ${result[5]}%</span></h3>
+                            <h3 class="text-white">${Number(result[2]).toLocaleString('pt')}€<span class="h6">- ${result[3]}%</span></h3>
                             <!--Adjudicado-->
-                            <h6 class="text-white">${Number(result[3]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                            <h6 class="text-white">${Number(result[1]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                         </div>
                         <div class="align-self-center">
                             <i class="fas ${iconeCartao} text-white fa-3x"></i>
@@ -133,7 +133,7 @@ $(document).ready(
 
                 // ** Gráficos
                 var chart_data1 = {
-                labels: item,
+                labels: tipo,
                 datasets:[
                     {
                     label : 'Orçamento',
