@@ -82,7 +82,7 @@ $(document).ready(
 
 
                 // ** Cartões
-                var container = document.getElementById('cartoes');
+                var container = document.getElementById('cartoesEsquerdaGrafico');
                 container.innerHTML = "";
                 dados.forEach((result, idx) => {
                 // Create card element
@@ -106,7 +106,7 @@ $(document).ready(
                 card.classList = 'card-body';
                 
                 var cartoes = `
-                
+                <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0" >
                     <div class="card ${classeCartao}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between px-md-1">
@@ -123,7 +123,7 @@ $(document).ready(
                         </div>
                     </div>
                     </div>
-                
+                </div>
                 `;
                 
                 // Append newyly created card element to the container
