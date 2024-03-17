@@ -160,131 +160,49 @@
             
                 <!-- 1 Linha, e 2 Colunas iguais-->
                 <div class="row">
-                    
                     <!-- Coluna 1 -->
                     <div class="col-xl-4">
                         <div class="card-mb-4">
                             <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Cards</div>
-                            <h1 class="mt-4"></h1>
+                            
                             <!--Section: Minimal statistics cards-->
                             <section>
                                 <!-- 1.ª Linha -->
-                                <div class="row">
-
-                                    <div class="col-l-3 col-sm-6 col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between px-md-1">
-                                                    <div class="text-end">
-                                                        <h3 class="text-primary">10.000<span class="h5">.00</span></h3>
-                                                        <h6 class="text-primary">67.98%</h6>
-
-                                                    </div>
-                                                    <div class="align-self-center">
-                                                        <i class="fas fa-tachometer-alt text-primary fa-3x"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="col-l-3 col-sm-6 col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between px-md-1">
-                                                    <div class="text-end">
-                                                        <h3 class="text-primary">10.000<span class="h5">.00</span></h3>
-                                                        <h6 class="text-primary">67.98%</h6>
-                                                    </div>
-                                                    <div class="align-self-center">
-                                                        <i class="fas fa-tachometer-alt text-primary fa-3x"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <!-- 2.ª Linha -->
-                                <div class="row">
-
-                                    <div class="col-l-3 col-sm-6 col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between px-md-1">
-                                                    <div class="text-end">
-                                                        <h3 class="text-success">10.000<span class="h5">.00</span></h3>
-                                                        <h6 class="text-success">67.98%</h6>
-                                                    </div>
-                                                    <div class="align-self-center bg-inverse-icon-success">
-                                                        <i class="fas fa-life-ring text-success fa-3x"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="col-l-3 col-sm-6 col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between px-md-1">
-                                                    <div class="text-end">
-                                                        <h3 class="text-success">10.000<span class="h5">.00</span></h3>
-                                                        <h6 class="text-success">67.98%</h6>
-                                                    </div>
-                                                    <div class="align-self-center">
-                                                        <i class="fas fa-life-ring text-success fa-3x"></i>
-                                                    </div>
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 3.ª Linha -->
-                                <div class="row">
-                                    <div class="col-l-3 col-sm-6 col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between px-md-1">
-                                                    <div class="text-end">
-                                                        <h3 class="text-danger">10.000<span class="h5">.00</span></h3>
-                                                        <h6 class="text-danger">67.98%</h6>
-                                                    </div>
-                                                    <div class="align-self-center">
-                                                        <i class="fas fa-map-signs text-danger fa-3x"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="col-l-3 col-sm-6 col-12 mb-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between px-md-1">
-                                                    <div class="text-end">
-                                                        <h3 class="text-danger">10.000<span class="h5">.00</span></h3>
-                                                        <h6 class="text-danger">67.98%</h6>
-                                                    </div>
-                                                    <div class="align-self-center">
-                                                        <i class="fas fa-map-signs text-danger fa-3x"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="row" id="cartoesEsquerdaGrafico">
+                                    
                                 </div>
 
                             </section>
                             <!--Section: Minimal statistics cards-->
                         </div>
                     </div>
-                
                     <!-- Coluna 2 -->
-                    <!-- Tabela de Dados -->
                     <div class="col-xl-8">
+                        <div class="card-mb-4">
+                            <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Investimento Realizado (€)</div>
+                            <!-- Gáfico - Graph.JS -->
+                            <div class="card-body">
+                                <canvas id="grafico"></canvas>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header"><i class="fas fa-columns mr-1"></i>Reembolsos sobre Facturação (%)</div>
+                            <!-- Progress Bar -->
+                            <div class="card-body">
+                                <div id="container-progresso"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h1 class="mt-4"></h1>
+                
+                <!-- 1 Linha, e 2 Colunas iguais-->
+                <div class="row">
+                    
+                    
+                    <!-- Tabela de Dados -->
+                    <div class="col-xl-12">
                         <div class="card md-8">
                             <div class="card-header"><i class="fas fa-table mr-1"></i>Candidaturas Aprovadas</div>
                             <div class="card-body">
@@ -308,32 +226,6 @@
                         </div>
                     </div>
 
-                </div>
-                <h1 class="mt-4"></h1>
-                <!-- Progress Bar e Gráfico -->
-                <!-- 1 Linha, e 2 Colunas iguais-->
-                <div class="row">
-                    
-                    <div class="col-xl-6">
-                        <div class="card mb-4">
-                            <div class="card-header"><i class="fas fa-columns mr-1"></i>Reembolsos sobre Facturação (%)</div>
-                            <!-- Progress Bar -->
-                            <div class="card-body">
-                                <div id="container-progresso"></div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="col-xl-6">
-                        <div class="card-mb-4">
-                            <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Investimento Realizado (€)</div>
-                            <!-- Gáfico - Graph.JS -->
-                            <div class="card-body">
-                                <canvas id="grafico"></canvas>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             
 <!-- InstanceEndEditable -->

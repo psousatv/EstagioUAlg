@@ -35,11 +35,10 @@ if(isset($_POST["action"]))
         if(isset($_POST["search"]["value"]))
         {
 			$search_query .= 'WHERE proces_report_valores = 1 AND
-							  (proces_orc_ano = YEAR(NOW()) OR
-							  proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" )';
+							  proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
  
-		$group_by_query = ' GROUP BY tipo ';
+		$group_by_query = ' GROUP BY tipo, rubrica, item ';
 
 		$order_by_query = '';
 
@@ -79,8 +78,8 @@ if(isset($_POST["action"]))
 		{
 			$sub_array = array();
 			$sub_array[] = $row['tipo'];
-            //$sub_array[] = $row['rubrica'];
-			//$sub_array[] = $row['item'];
+            $sub_array[] = $row['rubrica'];
+			$sub_array[] = $row['item'];
 			$sub_array[] = $row['orcamento'];
             $sub_array[] = $row['adjudicado'];
 			$sub_array[] = $row['percent'];;
