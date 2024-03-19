@@ -21,44 +21,68 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [2, 3, 4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
+                { targets: [3, 4, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
                 { targets: [5], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0, 1], className: 'dt-body-left' }
+                { targets: [0, 1, 2], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
                 var dados = []
+                var tipo = []
                 var rubrica = [];
+                var item = [];
                 var tabela_valor_y = [];
                 var tabela_valor_y1 = [];
                 var tabela_valor_y2 = [];
 
                 for(var count = 0; count < settings.aoData.length; count++){
-                    dados.push(settings.aoData[count]._aData)
-                    rubrica.push(settings.aoData[count]._aData[0]);
-                    tabela_valor_y.push(parseFloat(settings.aoData[count]._aData[2]));
-                    tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[3]));
-                    tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[4]));
+                    dados.push(settings.aoData[count]._aData);
+                    tipo.push(settings.aoData[count]._aData[0]);
+                    rubrica.push(settings.aoData[count]._aData[1]);
+                    item.push(settings.aoData[count]._aData[2]);
+                    tabela_valor_y.push(parseFloat(settings.aoData[count]._aData[3]));
+                    tabela_valor_y1.push(parseFloat(settings.aoData[count]._aData[4]));
+                    tabela_valor_y2.push(parseFloat(settings.aoData[count]._aData[6]));
                 };
     
-                var sumByPropertyAndFilter = (dados, sumProperty, filterProperty, filterValue) => {
-                    return dados
-                      .filter(obj => obj[filterProperty] === filterValue)
-                      .reduce((sums, obj) => {
-                        var key = obj[sumProperty];
-                        sums[key] = (sums[key] || 0) + obj.tabela_valor_y2; // Assuming we want to sum the 'age' property
-                        return sums;
-                      }, {});
-                };
+                // Função para somar valores de uma propriedade ('campo') do objecto ('dados')
+                //var sumByProperty = (dados, property) => {
+                //    return dados.reduce((sums, obj) => {
+                //    const key = obj[property];
+                // Assumindo que se quer somar o 'valor_maximo'
+                //    sums[key] = (sums[key] || 0) + obj[3];
+                //    return sums;
+                //    }, {});
+                //};
+                
+                //var sumByPropertyAndFilter = (dados, sumProperty, filterProperty, filterValue) => {
+                //    return dados
+                //      .filter(obj => obj[filterProperty] === filterValue)
+                //      .reduce((sums, obj) => {
+                //        var key = obj[sumProperty];
+                //        sums[key] = (sums[key] || 0) + obj[3]; // Assuming we want to sum the 'age' property
+                //        return sums;
+                //      }, {});
+                //};
+
+                // Soma agrupando por Sector de Actividade
+                //var somaPorRubrica = sumByProperty(dados[2], dados[3]);
+                // Soma agrupando por Rubrica
+                //var SomaPorRubrica = sumByProperty(data, 'rubrica');
+                // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Gastos
+                //var SomaPorRubricaGastos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Gastos');
+                // Soma os Valores agrupando por Rubrica e filtrado por Tipo de de Despesa = Investimentos
+                //var SomaPorRubricaInvestimentos = sumByPropertyAndFilter(data, 'rubrica', 'tipo_rubrica', 'Investimento');
 
                             
                 console.log("Data", dados);
-                console.log ("dados: ", dados[3][3]);
-                console.log("Rubrica", rubrica);
-                console.log("Sum", sumByPropertyAndFilter);
+                console.log("Tipo", tipo);
+                //console.log("Rubrica", rubrica);
+                //console.log("Item", item);
+                //console.log("Sum", somaPorRubrica);
 
 
                 // ** Cartões
-                var container = document.getElementById('cartoes');
+                var container = document.getElementById('cartoesEsquerdaGrafico');
                 container.innerHTML = "";
                 dados.forEach((result, idx) => {
                 // Create card element
@@ -82,12 +106,12 @@ $(document).ready(
                 card.classList = 'card-body';
                 
                 var cartoes = `
-                
+                <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3" >
                     <div class="card ${classeCartao}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
-                            <p class="mb-0 text-white">${idx+1} - ${result[0]}</p>
+                            <p class="mb-0 text-white">${result[2]}</p>
                             <!--Faturado-->
                             <h3 class="text-white">${Number(result[4]).toLocaleString('pt')}€<span class="h6">- ${result[5]}%</span></h3>
                             <!--Adjudicado-->
@@ -99,7 +123,7 @@ $(document).ready(
                         </div>
                     </div>
                     </div>
-                
+                </div>
                 `;
                 
                 // Append newyly created card element to the container
@@ -109,11 +133,11 @@ $(document).ready(
 
                 // ** Gráficos
                 var chart_data1 = {
-                labels: rubrica,
+                labels: item,
                 datasets:[
                     {
                     label : 'Orçamento',
-                    backgroundColor : 'rgba(3, 138, 255, .3)',
+                    backgroundColor : 'rgba(178, 34, 34, .3)',
                     //color : '#fff',
                     data: tabela_valor_y
                     },

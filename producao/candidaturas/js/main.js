@@ -32,8 +32,8 @@ $.ajax(
             var allData = [];
             var dadosProgresso = [];
             var dadosGrafico = [];
-            var titulo_colunas = []
-            var nome_candidatura = []
+            var titulo_colunas = [];
+            var nome_candidatura = [];
 
             dataTable.rows().every(
                 function(){
