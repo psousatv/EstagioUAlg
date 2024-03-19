@@ -1,8 +1,8 @@
 <?php
 
 //Variaveis conexão ao servidor
-$myHost = "localhost";
-//$myHost = "mdb1";
+//$myHost = "localhost";
+$myHost = "mdb1";
 $user = "tv";
 $password = "taviraverde";
 //Bases de Dados
