@@ -149,6 +149,8 @@ $.ajax(
                 createProgressBar();
             });
 
+            console.log("barraProgresso", dadosProgresso)
+            
             // ** Cartões
 
             console.log("Data: ", data)

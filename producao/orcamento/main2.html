@@ -155,60 +155,73 @@
 
 <!-- InstanceBeginEditable name="bodyContent" -->
                 <section>
-                  <!-- 1 Linha, e 2 Colunas iguais-->
                   <div class="row">
-                    <!-- Coluna 1 -->
-                    <div class="col-xl-4">
-                      <div class="card-mb-4">
-                        <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Progresso</div>
-                        <!-- Barras Progresso -->
-                        <div id="barraProgresso"></div>
-                        <!-- Fim Barras Progresso -->
-                      </div>
-                    </div>
-                    <!-- Coluna 2 -->
-                    <div class="col-xl-8">
-                      <div class="card-mb-4">
-                        <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Gráfico</div>
-                        <!-- Gáfico-->
+                    <div class="col-xl-12">
+                      <div class="card mb-4">
+                        <div class="card-header"><i class="fas fa-table mr-1"></i>Cartões</div>
                         <div class="card-body">
-                          <canvas id="grafico"></canvas>
+                          
+                          
+                            <!-- Cartões junto ao gráfico -->
+                            <div class="row" id="cartoesAcimaGrafico">
+                            </div>
+                            <!-- Fim Cartões junto ao gráfico -->
+                        
+
                         </div>
                       </div>
                     </div>
                   </div>
-                </section>
-                
-                <h1 class="mt-4"></h1>
 
-                <section>
                   <div class="row">
                     <div class="col-xl-12">
                       <div class="card mb-4">
-                        <div class="card-header"><i class="fas fa-table mr-1"></i>Rúbricas</div>
+                        <div class="card-header"><i class="fas fa-table mr-1"></i>Gráfico</div>
                         <div class="card-body">
-                          <div class="table-responsive">
-                            <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
-                              <thead>
-                                <tr>
-                                  <!--<th>Tipo</th>
-                                  <th>Rubrica</th>-->
-                                  <th>Item</th>
-                                  <th>Orçamento</th>
-                                  <th>Adjudicado</th>
-                                  <th>%</th>
-                                  <th>Faturado</th>
-                                </tr>
-                              </thead>
-                              <tbody></tbody>
-                            </table>
+                          
+                          <!-- Gráfico -->
+                          <div class="col-sm-12">
+                            <div class="flot-chart-wrapper">
+                              <div id="flotChart" class="flot-chart">
+                                <canvas class="flot-base" id="grafico"></canvas>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </section>
+
+                    <h1 class="mt-4"></h1>
+
+                    <div class="row">
+                      <div class="col-xl-12">
+                        <div class="card mb-4">
+                          <div class="card-header"><i class="fas fa-table mr-1"></i>Rúbricas</div>
+                          <div class="card-body">
+                            <div class="table-responsive">
+                              <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
+                                <thead>
+                                  <tr>
+                                    <!--<th>Tipo</th>
+                                    <th>Rubrica</th>-->
+                                    <th>Item</th>
+                                    <th>Orçamento</th>
+                                    <th>Adjudicado</th>
+                                    <th>%</th>
+                                    <th>Faturado</th>
+                                  </tr>
+                                </thead>
+                                <tbody></tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </section>
-
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="bodyFooter" -->

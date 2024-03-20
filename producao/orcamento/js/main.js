@@ -26,8 +26,9 @@ $(document).ready(
                 { targets: [0], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
-                var dados = []
-                var tipo = []
+                var dados = [];
+                var barraProgresso = [];
+                var tipo = [];
                 var rubrica = [];
                 var item = [];
                 var y = [];
@@ -40,6 +41,9 @@ $(document).ready(
                     //tipo.push(settings.aoData[count]._aData[0]);
                     //rubrica.push(settings.aoData[count]._aData[1]);
                     item.push(settings.aoData[count]._aData[0]);
+                    barraProgresso.push([settings.aoData[count]._aData[0],
+                                        settings.aoData[count]._aData[3]]);
+
                     y.push(parseFloat(settings.aoData[count]._aData[1],
                                       settings.aoData[count]._aData[2],
                                       settings.aoData[count]._aData[4]));
@@ -48,98 +52,105 @@ $(document).ready(
                     y3.push(parseFloat(settings.aoData[count]._aData[4]));
                 };
 
-                console.log("Data", dados);
-                //console.log("Tipo", tipo);
-                console.log("Grafico", y);
-                //console.log("Rubrica", rubrica);
-                console.log("Item", item);
-                //console.log("Sum", somaPorRubrica);
-
-
-                // ** Cartões
-                var container = document.getElementById('cartoesAcimaGrafico');
-                container.innerHTML = "";
-                dados.forEach((result, idx) => {
-                // Create card element
-                var classeCartao = ''
-                var iconeCartao = ''
-                if (result[3] < 10) {
-                    var classeCartao = 'bg-danger';
-                    var iconeCartao = 'fa-thumbs-down'
-                } else if (result[3] > 10 & result[3]< 35){
-                    var classeCartao = 'bg-warning';
-                    var iconeCartao = 'fa-warning'
-                } else if (result[3] >35 & result[3] < 75){
-                    var classeCartao = 'bg-primary';
-                    var iconeCartao = 'fa-cogs'
-                } else {
-                    var classeCartao = 'bg-success';
-                    var iconeCartao = 'fa-smile'
-                };
-
-                const card = document.createElement('div');
-                card.classList = 'card-body';
-                
-                var cartoes = `
-                
-                    <div class="card ${classeCartao}">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between px-md-1">
-                        <div class="text-end">
-                            <p class="mb-0 text-white">${result[0]}</p>
-                            <!--Faturado-->
-                            <h3 class="text-white">${Number(result[2]).toLocaleString('pt')}€<span class="h6">- ${result[3]}%</span></h3>
-                            <!--Adjudicado-->
-                            <h6 class="text-white">${Number(result[1]).toLocaleString('pt')}€<span class="h6"> </span></h6>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas ${iconeCartao} text-white fa-3x"></i>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                
-                `;
-                
-                // Append newyly created card element to the container
-                container.innerHTML += cartoes;
-                });
-
-
                 // ** Gráficos
                 var chart_data = {
-                labels: item,
-                datasets:[
+                    labels: item,
+                    datasets:[
+                        {
+                        label : 'Orçamento',
+                        backgroundColor : 'rgba(178, 34, 34, .3)',
+                        //color : '#fff',
+                        data: y1
+                        },
+                        {
+                        label : 'Adjudicado',
+                        backgroundColor : 'rgba(3, 100, 255, .3)',
+                        //color : '#fff',
+                        data: y2
+                        },
+                        {
+                        label : 'Facturado',
+                        backgroundColor : 'rgba(0, 181, 204, .5)',
+                        //color : '#fff',
+                        data: y3
+                        }
+                    ]
+                    };
+                    var group_chart = $('#grafico');
+                    if(grafico)
                     {
-                    label : 'Orçamento',
-                    backgroundColor : 'rgba(178, 34, 34, .3)',
-                    //color : '#fff',
-                    data: y1
-                    },
-                    {
-                    label : 'Adjudicado',
-                    backgroundColor : 'rgba(3, 100, 255, .3)',
-                    //color : '#fff',
-                    data: y2
-                    },
-                    {
-                    label : 'Facturado',
-                    backgroundColor : 'rgba(0, 181, 204, .5)',
-                    //color : '#fff',
-                    data: y3
+                    grafico.destroy();
                     }
-                ]
-                };
-                var group_chart = $('#grafico');
-                if(grafico)
+                    grafico1 = new Chart(group_chart,
+                    {
+                    type: 'bar',
+                    data: chart_data
+                    })
+
+                // Progress Bar
+                // Contentores para agregar as barras de progresso
+                const progressBarsContainer = document.getElementById('barraProgresso');
+                progressBarsContainer.innerHTML = "";
+                // Função para crear una barra de progresso
+                
+                function createProgressBar(value)
                 {
-                grafico.destroy();
+                    // Contentores
+                    // 1
+                    const progressWrapper = document.createElement('div');
+                    progressWrapper.className = 'mt-3';
+                    //2
+                    const progressWrapperFlex = document.createElement('div');
+                    progressWrapperFlex.className = 'd-flex no-block align-items-center';
+                    //3 - Os títulos das barras - acima das barras
+                    const progressSpan = document.createElement('span')
+                    //4 - Agregador das barras
+                    const progressContainer = document.createElement('div');
+                    progressContainer.className = 'progress';
+                    //5 - As barras
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'progress-bar progress-bar-striped';
+                    //6 - As designações das barras - dentro das barras
+                    const progressSpanBar = document.createElement('span')
+
+                    // configuração dos contentores - ordem
+                    progressBarsContainer.appendChild(progressWrapper);
+                    progressWrapper.appendChild(progressSpan);
+                    progressWrapper.appendChild(progressContainer);
+                    progressContainer.appendChild(progressBar);
+                    progressBar.appendChild(progressSpanBar);
+
+                    // Configuração das barras
+                    var width = 0;
+                    const interval = setInterval(function()
+                    {
+                        if (width >= value[1]) {
+                            clearInterval(interval);
+                        } else {
+                            width++;
+                            progressBar.style.width = width + '%';
+                            progressSpan.textContent = value[0];
+                            progressSpanBar.textContent = value[1] + '%';
+                        }
+                    }, 1);
                 }
-                grafico1 = new Chart(group_chart,
+
+                // Atribuir os dados às barras de progresso
+                barraProgresso.forEach(function(value)
                 {
-                type: 'bar',
-                data: chart_data
-                })
+                    createProgressBar(value);
+                });
+
+                // Iniciar as barras de progresso quando se acede à Página
+                //window.addEventListener('load', function(){
+                //    createProgressBar();
+                //});
+                
+            console.log("Data", dados);
+            console.log("barraProgresso", barraProgresso);
+            //console.log("Item", item);
+            //console.log("Sum", somaPorRubrica);
+
             }
             });
         }
