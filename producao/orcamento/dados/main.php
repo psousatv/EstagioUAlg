@@ -17,7 +17,7 @@ if(isset($_POST["action"]))
 		//			   INNER JOIN rubricas ru ON rub_item = o.orcam_rubrica_item ';
 
 		$main_query = 'SELECT
-						r.rub_item AS item,
+						r.rub_rubrica AS rubrica,
 						ROUND(SUM(proces_val_base), 2) AS orcamento,
 						ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
 						IF(SUM(proces_val_base) = 0 OR (SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) = 0, 0, 
@@ -35,7 +35,7 @@ if(isset($_POST["action"]))
 							  proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
  
-		$group_by_query = ' GROUP BY item ';
+		$group_by_query = ' GROUP BY rubrica ';
 
 		$order_by_query = '';
 
@@ -45,7 +45,7 @@ if(isset($_POST["action"]))
 		}
 		else
 		{
-			$order_by_query = ' ORDER BY item ASC ';
+			$order_by_query = ' ORDER BY rubrica ASC ';
 		}
 
 		$limit_query = '';
@@ -75,8 +75,8 @@ if(isset($_POST["action"]))
 		{
 			$sub_array = array();
 			//$sub_array[] = $row['tipo'];
-            //$sub_array[] = $row['rubrica'];
-			$sub_array[] = $row['item'];
+            $sub_array[] = $row['rubrica'];
+			//$sub_array[] = $row['item'];
 			$sub_array[] = $row['orcamento'];
             $sub_array[] = $row['adjudicado'];
 			$sub_array[] = $row['percent'];;

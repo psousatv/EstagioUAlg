@@ -40,8 +40,9 @@ $(document).ready(
                     dados.push(settings.aoData[count]._aData);
                     //tipo.push(settings.aoData[count]._aData[0]);
                     //rubrica.push(settings.aoData[count]._aData[1]);
-                    item.push(settings.aoData[count]._aData[0]);
-                    barraProgresso.push([settings.aoData[count]._aData[0],
+                    item.push([count + 1]);
+                    barraProgresso.push([count + 1, 
+                                        settings.aoData[count]._aData[0],
                                         settings.aoData[count]._aData[3]]);
 
                     y.push(parseFloat(settings.aoData[count]._aData[1],
@@ -124,13 +125,13 @@ $(document).ready(
                     var width = 0;
                     const interval = setInterval(function()
                     {
-                        if (width >= value[1]) {
+                        if (width >= value[2]) {
                             clearInterval(interval);
                         } else {
                             width++;
                             progressBar.style.width = width + '%';
-                            progressSpan.textContent = value[0];
-                            progressSpanBar.textContent = value[1] + '%';
+                            progressSpan.textContent = value[0] + ' - ' + value[1];
+                            progressSpanBar.textContent = value[2] + '%';
                         }
                     }, 1);
                 }
@@ -146,9 +147,9 @@ $(document).ready(
                 //    createProgressBar();
                 //});
                 
-            console.log("Data", dados);
+            //console.log("Data", dados);
             console.log("barraProgresso", barraProgresso);
-            //console.log("Item", item);
+            console.log("Item", item);
             //console.log("Sum", somaPorRubrica);
 
             }

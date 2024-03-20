@@ -154,97 +154,100 @@
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="bodyContent" -->
-                <section>
-                  <!-- 1 Linha, e 2 Colunas iguais-->
-                  <div class="row">
-                    <!-- Coluna 1 -->
-                    <div class="col-xl-4">
-                      <div class="card-mb-4">
-                        <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Progresso</div>
-                        <!-- Barras Progresso -->
-                        <div id="barraProgresso"></div>
-                        <!-- Fim Barras Progresso -->
-                      </div>
-                    </div>
-                    <!-- Coluna 2 -->
-                    <div class="col-xl-8">
-                      <div class="card-mb-4">
-                        <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Gráfico</div>
-                        <!-- Gáfico-->
-                        <div class="card-body">
-                          <canvas id="grafico"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-                
-                <h1 class="mt-4"></h1>
+<section>
+  <!-- 1 Linha, e 2 Colunas iguais-->
+  <div class="row">
+    <!-- Coluna 1 -->
+    <div class="col-xl-4">
+      <div class="card-mb-4">
+        <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Progresso</div>
+        <!-- Barras Progresso -->
+        <div id="barraProgresso"></div>
+        <!-- Fim Barras Progresso -->
+      </div>
+    </div>
+    <!-- Coluna 2 -->
+    <div class="col-xl-8">
+      <div class="card-mb-4">
+        <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Gráfico</div>
+        <!-- Gáfico-->
+        <div class="card-body">
+          <canvas id="grafico"></canvas>
+        </div>
+        <div class="col-sm-8">
+          <p class="text-muted mb-0"> O orçamento ... <b>Paulo</b></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                <section>
-                  <div class="row">
-                    <div class="col-xl-12">
-                      <div class="card mb-4">
-                        <div class="card-header"><i class="fas fa-table mr-1"></i>Rúbricas</div>
-                        <div class="card-body">
-                          <div class="table-responsive">
-                            <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
-                              <thead>
-                                <tr>
-                                  <!--<th>Tipo</th>
-                                  <th>Rubrica</th>-->
-                                  <th>Item</th>
-                                  <th>Orçamento</th>
-                                  <th>Adjudicado</th>
-                                  <th>%</th>
-                                  <th>Faturado</th>
-                                </tr>
-                              </thead>
-                              <tbody></tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
+<h1 class="mt-4"></h1>
+
+<section>
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card mb-4">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Rúbricas</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <!--<th>Tipo</th>
+                  <th>Rubrica</th>-->
+                  <th>Rubrica</th>
+                  <th>Orçamento</th>
+                  <th>Adjudicado</th>
+                  <th>%</th>
+                  <th>Faturado</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="bodyFooter" -->
 <!-- InstanceEndEditable -->
-                <footer id="footer">
-                  <div class="py-2 bg-light mt-auto">
-                    <div class="container">
-                      <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
-                        <div>
-                          <a href="#">Política de Privacidade</a>&middot;
-                          <a href="#">Termos &amp; Condições</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </footer>
-              
+        <footer id="footer">
+          <div class="py-2 bg-light mt-auto">
+            <div class="container">
+              <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
+                <div>
+                  <a href="#">Política de Privacidade</a>&middot;
+                  <a href="#">Termos &amp; Condições</a>
+                </div>
               </div>
-            </main>
+            </div>
           </div>
-        </div>
+        </footer>
 
-    <!-- Global
-    <script src="../../global/js/scripts.js"></script>-->
-    <!-- JQuery -->
-    <script src="../../vendors/jquery/jquery-3.7.0.js"></script>
-    <!-- Bootstrap -->
-    <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
-    <!-- Fontawesome -->
-    <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
-    <script src="../../vendors/font-awesome/all.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="../../vendors/datatables/datatables.min.js"></script>
-    <!-- Charts -->
-    <script src="../../vendors/charts/Chart.min.js"></script>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Global
+<script src="../../global/js/scripts.js"></script>-->
+<!-- JQuery -->
+<script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+<!-- Fontawesome -->
+<!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
+<script src="../../vendors/font-awesome/all.min.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/datatables/datatables.min.js"></script>
+<!-- Charts -->
+<script src="../../vendors/charts/Chart.min.js"></script>
 
 
 <!-- InstanceBeginEditable name="scriptPagina" -->
