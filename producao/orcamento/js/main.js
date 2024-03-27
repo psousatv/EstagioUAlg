@@ -147,7 +147,7 @@ $(document).ready(
                 //    createProgressBar();
                 //});
                 
-            //console.log("Data", dados);
+            console.log("Data", dados);
             console.log("barraProgresso", barraProgresso);
             console.log("Item", item);
             //console.log("Sum", somaPorRubrica);

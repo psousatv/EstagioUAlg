@@ -17,11 +17,11 @@ if(isset($_POST["action"]))
 		//			   INNER JOIN rubricas ru ON rub_item = o.orcam_rubrica_item ';
 
 		$main_query = 'SELECT
-						r.rub_rubrica AS rubrica,
-						ROUND(SUM(proces_val_base), 2) AS orcamento,
+						r.rub_tipo AS rubrica,
+						ROUND(SUM(proces_val_max), 2) AS orcamento,
 						ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
-						IF(SUM(proces_val_base) = 0 OR (SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) = 0, 0, 
-						ROUND(((SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) / SUM(proces_val_base)) * 100, 2)) AS percent,
+						IF(SUM(proces_val_max) = 0 OR (SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) = 0, 0, 
+						ROUND(((SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) / SUM(proces_val_max)) * 100, 2)) AS percent,
 						ROUND(SUM(proces_val_faturacao), 2) AS faturado
 						FROM processo
 						JOIN rubricas r ON r.rub_cod = proces_rub_cod 
