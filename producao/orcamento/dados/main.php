@@ -17,7 +17,7 @@ if(isset($_POST["action"]))
 		//			   INNER JOIN rubricas ru ON rub_item = o.orcam_rubrica_item ';
 
 		$main_query = 'SELECT
-						r.rub_tipo AS rubrica,
+						r.rub_rubrica AS rubrica,
 						ROUND(SUM(proces_val_max), 2) AS orcamento,
 						ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
 						IF(SUM(proces_val_max) = 0 OR (SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) = 0, 0, 
