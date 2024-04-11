@@ -21,9 +21,9 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [1, 2, 4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
-                { targets: [3], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0], className: 'dt-body-left' }
+                { targets: [3, 4, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
+                { targets: [5], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
+                { targets: [0, 1, 2], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
                 var dados = [];
@@ -42,15 +42,15 @@ $(document).ready(
                     //rubrica.push(settings.aoData[count]._aData[1]);
                     item.push([count + 1]);
                     barraProgresso.push([count + 1, 
-                                        settings.aoData[count]._aData[0],
-                                        settings.aoData[count]._aData[3]]);
+                                        settings.aoData[count]._aData[2],
+                                        settings.aoData[count]._aData[5]]);
 
-                    y.push(parseFloat(settings.aoData[count]._aData[1],
-                                      settings.aoData[count]._aData[2],
-                                      settings.aoData[count]._aData[4]));
-                    y1.push(parseFloat(settings.aoData[count]._aData[1]));
-                    y2.push(parseFloat(settings.aoData[count]._aData[2]));
-                    y3.push(parseFloat(settings.aoData[count]._aData[4]));
+                    y.push(parseFloat(settings.aoData[count]._aData[3],
+                                      settings.aoData[count]._aData[4],
+                                      settings.aoData[count]._aData[6]));
+                    y1.push(parseFloat(settings.aoData[count]._aData[3]));
+                    y2.push(parseFloat(settings.aoData[count]._aData[4]));
+                    y3.push(parseFloat(settings.aoData[count]._aData[6]));
                 };
 
                 // ** Gráficos

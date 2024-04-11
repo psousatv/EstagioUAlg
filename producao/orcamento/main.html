@@ -149,7 +149,7 @@
             <div class="container-fluid">
                 <h1 class="mt-4"></h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">Orçamento</li>
+                    <li class="breadcrumb-item active">Orçamentos</li>
                 </ol>
 <!-- InstanceEndEditable -->
 
@@ -160,7 +160,7 @@
     <!-- Coluna 1 -->
     <div class="col-xl-4">
       <div class="card-mb-4">
-        <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Progresso</div>
+        <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Execução do Orçamento</div>
         <!-- Barras Progresso -->
         <div id="barraProgresso"></div>
         <!-- Fim Barras Progresso -->
@@ -175,7 +175,7 @@
           <canvas id="grafico"></canvas>
         </div>
         <div class="col-sm-8">
-          <p class="text-muted mb-0"> O orçamento ... <b>Paulo</b></p>
+          <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
         </div>
       </div>
     </div>
@@ -188,15 +188,15 @@
   <div class="row">
     <div class="col-xl-12">
       <div class="card mb-4">
-        <div class="card-header"><i class="fas fa-table mr-1"></i>Rúbricas</div>
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Orçamento por Tipo e Rúbrica</div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <!--<th>Tipo</th>
-                  <th>Rubrica</th>-->
+                  <th>Tipo</th>
                   <th>Rubrica</th>
+                  <th>Item</th>
                   <th>Orçamento</th>
                   <th>Adjudicado</th>
                   <th>%</th>
