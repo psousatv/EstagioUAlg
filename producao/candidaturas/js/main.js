@@ -20,12 +20,12 @@ $.ajax(
                 aoColumns:[
                     { mDataProp: 'candidatura'},
                     { mDataProp: 'aprovado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
-                    { mDataProp: 'execucao_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'validado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
+                    { mDataProp: 'recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'execucao_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
                 ]
             })
 
