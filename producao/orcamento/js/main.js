@@ -4,7 +4,8 @@ $(document).ready(
     function()
     {
         fetch_data();
-        var grafico;
+        var grafico_investimentos;
+        var grafico_gastos;
 
         function fetch_data()
         {
@@ -45,9 +46,9 @@ $(document).ready(
                                         settings.aoData[count]._aData[2],
                                         settings.aoData[count]._aData[5]]);
 
-                    y.push(parseFloat(settings.aoData[count]._aData[3],
-                                      settings.aoData[count]._aData[4],
-                                      settings.aoData[count]._aData[6]));
+                    y.push([parseFloat(settings.aoData[count]._aData[3]),
+                            parseFloat(settings.aoData[count]._aData[4]),
+                            parseFloat(settings.aoData[count]._aData[6])]);
                     y1.push(parseFloat(settings.aoData[count]._aData[3]));
                     y2.push(parseFloat(settings.aoData[count]._aData[4]));
                     y3.push(parseFloat(settings.aoData[count]._aData[6]));
@@ -77,12 +78,12 @@ $(document).ready(
                         }
                     ]
                     };
-                    var group_chart = $('#grafico');
-                    if(grafico)
+                    var group_chart = $('#Investimentos');
+                    if(grafico_investimentos)
                     {
-                    grafico.destroy();
+                        grafico_investimentos.destroy();
                     }
-                    grafico1 = new Chart(group_chart,
+                    grafico_investimentos = new Chart(group_chart,
                     {
                     type: 'bar',
                     data: chart_data
@@ -148,9 +149,9 @@ $(document).ready(
                 //});
                 
             console.log("Data", dados);
-            console.log("barraProgresso", barraProgresso);
-            console.log("Item", item);
-            //console.log("Sum", somaPorRubrica);
+            console.log("DadosGraficos", y);
+            console.log("DadosGraficos y1", y1);
+            console.log("Progresso", barraProgresso);
 
             }
             });

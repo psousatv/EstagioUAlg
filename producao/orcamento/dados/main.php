@@ -6,30 +6,17 @@ if(isset($_POST["action"]))
 {
 	if($_POST["action"] == 'fetch')
 	{
-		$main_query = 'SELECT 
-		               o.orc_ano AS ano,
-					   o.orc_rub_cod AS cod,
+		$main_query = 'SELECT
 					   r.rub_tipo AS tipo,
 					   r.rub_rubrica AS rubrica,
 					   r.rub_item AS item,
-					   o.orc_valor_previsto AS previsto,
-					   o.orc_valor_adjudicado AS adjudicado,
-					   ROUND((o.orc_valor_adjudicado  / o.orc_valor_previsto) * 100, 2) AS percent,
-					   o.orc_valor_faturado AS faturado
+					   ROUND(SUM(o.orc_valor_previsto), 2) AS previsto,
+					   ROUND(SUM(o.orc_valor_adjudicado), 2) AS adjudicado,
+					   ROUND((SUM(o.orc_valor_adjudicado)  / SUM(o.orc_valor_previsto)) * 100, 2) AS percent,
+					   ROUND(SUM(o.orc_valor_faturado), 2) AS faturado
 					   FROM orcamento o
 					   INNER JOIN rubricas r ON r.rub_cod = o.orc_rub_cod ';
-
-		//$main_query = 'SELECT
-		//				r.rub_rubrica AS rubrica,
-		//				ROUND(SUM(proces_val_max), 2) AS orcamento,
-		//				ROUND(SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos), 2) AS adjudicado,
-		//				IF(SUM(proces_val_max) = 0 OR (SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) = 0, 0, 
-		//				ROUND(((SUM(proces_val_adjudicacoes) - SUM(proces_val_faturacao_menos)) / SUM(proces_val_max)) * 100, 2)) AS percent,
-		//				ROUND(SUM(proces_val_faturacao), 2) AS faturado
-		//				FROM processo
-		//				JOIN rubricas r ON r.rub_cod = proces_rub_cod 
-		//				';
-
+					   
         $search_query = ' ';
         
         if(isset($_POST["search"]["value"]))
