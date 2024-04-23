@@ -158,39 +158,38 @@
   <!-- 1 Linha, e 2 Colunas iguais-->
   <div class="row">
     <!-- Coluna 1 -->
-    <div class="col-xl-4">
-      <div class="card-mb-4">
+    <div class="col-md-4">
+      <div class="card">
         <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Execução do Orçamento</div>
-        <!-- Barras Progresso -->
-        <div id="barraProgresso"></div>
-        <!-- Fim Barras Progresso -->
+        <div class="card-body">
+          <!-- Barras Progresso -->
+          <div id="barraProgresso"></div>
+          <!-- Fim Barras Progresso -->
+        </div>
       </div>
     </div>
     <!-- Coluna 2 -->
-    <div class="col-xl-8">
-      <div class="col-xl-6">
-        <div class="card-mb-2">
-          <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Investimentos</div>
-          <!-- Gáfico Investimentos -->
-          <div class="card-body">
-            <canvas id="Investimentos"></canvas>
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Investimentos e Gastos</div>
+        <div class="card-body">
+          <div class="row md-3">
+            <!-- Gáfico Investimentos -->
+            <div class="col-md-6">
+              <canvas id="Investimentos"></canvas>
+            </div>
+            <!-- Gáfico Gastos -->
+            <div class="col-md-6">
+              <canvas id="Gastos"></canvas>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-xl-6">
-        <div class="card-mb-4">
-          <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Gastos</div>
-          <!-- Gáfico Gastos -->
-          <div class="card-body">
-            <canvas id="Gastos"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-8">
+      <div class="col-sm-12">
         <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
       </div>
-
     </div>
+
   </div>
 </section>
 

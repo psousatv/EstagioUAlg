@@ -54,7 +54,7 @@ $(document).ready(
                     y3.push(parseFloat(settings.aoData[count]._aData[6]));
                 };
 
-                // ** Gráficos
+                // Investimentos
                 var chart_data = {
                     labels: item,
                     datasets:[
@@ -87,6 +87,41 @@ $(document).ready(
                     {
                     type: 'bar',
                     data: chart_data
+                    })
+                
+                // Gastos
+                var chart_data1 = {
+                    labels: item,
+                    datasets:[
+                        {
+                        label : 'Orçamento',
+                        backgroundColor : 'rgba(178, 34, 34, .3)',
+                        //color : '#fff',
+                        data: y1
+                        },
+                        {
+                        label : 'Adjudicado',
+                        backgroundColor : 'rgba(3, 100, 255, .3)',
+                        //color : '#fff',
+                        data: y2
+                        },
+                        {
+                        label : 'Facturado',
+                        backgroundColor : 'rgba(0, 181, 204, .5)',
+                        //color : '#fff',
+                        data: y3
+                        }
+                    ]
+                    };
+                    var group_chart1 = $('#Gastos');
+                    if(grafico_gastos)
+                    {
+                        grafico_gastos.destroy();
+                    }
+                    grafico_gastos = new Chart(group_chart1,
+                    {
+                    type: 'bar',
+                    data: chart_data1
                     })
 
                 // Progress Bar
