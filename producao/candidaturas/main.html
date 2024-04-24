@@ -162,8 +162,8 @@
                 <!-- 1 Linha, e 2 Colunas iguais-->
                 <div class="row">
                     <!-- Coluna 1 -->
-                    <div class="col-xl-4">
-                        <div class="card-mb-4">
+                    <div class="col-md-4">
+                        <div class="card">
                             <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Facturação sobre a Adjudicação</div>
                             
                             <!--Section: Minimal statistics cards-->
@@ -178,22 +178,27 @@
                         </div>
                     </div>
                     <!-- Coluna 2 -->
-                    <div class="col-xl-8">
-                        <div class="card-mb-4">
-                            <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Investimento Aprovado (€)</div>
-                            <!-- Gáfico - Graph.JS -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Investimento Aprovado e Valores Recebidos (€)</div>
                             <div class="card-body">
-                                <canvas id="grafico"></canvas>
+                                <div class="row">
+                                    <!-- Gáfico -->
+                                    <div class="col-md-6">
+                                        <canvas id="grafico"></canvas>
+                                    </div>
+                                    <!-- Barras Progresso -->
+                                    <div class="col-md-6">
+                                        <div id="container-progresso"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card mb-4">
-                            <div class="card-header"><i class="fas fa-columns mr-1"></i>Reembolsos sobre Facturação (%)</div>
-                            <!-- Progress Bar -->
-                            <div class="card-body">
-                                <div id="container-progresso"></div>
-                            </div>
+                        <div class="col-sm-12">
+                            <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
                         </div>
                     </div>
+                
                 </div>
                 
                 <h1 class="mt-4"></h1>

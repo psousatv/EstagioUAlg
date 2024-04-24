@@ -128,7 +128,7 @@ $.ajax(
                 var width = 0;
                 const interval = setInterval(function()
                 {
-                    if (width >= value[1]) {
+                    if (width >= value[2]) {
                         clearInterval(interval);
                     } else {
                         width++;
@@ -136,7 +136,7 @@ $.ajax(
                         progressSpan.textContent = value[0];
                         progressSpanBar.textContent = value[1].toLocaleString('pt-PT') +' - ' + value[2] + '%';
                     }
-                }, 10);
+                }, 1);
             }
 
             // Atribuir os dados às barras de progresso
@@ -179,7 +179,7 @@ $.ajax(
             card.classList = 'card-body';
             
             var cartoes = `
-            <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0" >
+            <div class="col-md-12 col-md-6 stretch-card pb-sm-3 pb-lg-0" >
                 <div class="card ${classeCartao}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
