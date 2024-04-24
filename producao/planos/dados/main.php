@@ -6,22 +6,6 @@ if(isset($_POST["action"]))
 {
 	if($_POST["action"] == 'fetch')
 	{
-		//$main_query = 'SELECT
-		//				r.rub_tipo AS tipo,
-		//				r.rub_rubrica AS rubrica,
-		//				r.rub_item AS item,
-		//				ROUND(SUM(pp_valor), 2) AS previsto,
-		//				(SELECT
-		//				ROUND(SUM(p.proces_val_adjudicacoes), 2) 
-		//				FROM processo p 
-		//				WHERE p.proces_rub_cod = r.rub_cod AND p.proces_orc_ano = pp_ano ) AS adjudicado,
-		//				ROUND(SUM(pp_executado_valor), 2) AS faturado,
-		//				ROUND((SUM(pp_executado_valor)  / SUM(pp_valor)) * 100, 2) AS percent
-		//				FROM plano_pagamento
-		//				INNER JOIN processo p ON p.proces_check = pp_proces_check
-		//				INNER JOIN rubricas r ON r.rub_cod = p.proces_rub_cod ';
-
-
 		$main_query = 'SELECT
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
