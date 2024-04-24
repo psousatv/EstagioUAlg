@@ -39,8 +39,8 @@ $(document).ready(
 
                 for(var count = 0; count < settings.aoData.length; count++){
                     dados.push(settings.aoData[count]._aData);
-                    //tipo.push(settings.aoData[count]._aData[0]);
-                    //rubrica.push(settings.aoData[count]._aData[1]);
+                    tipo.push(settings.aoData[count]._aData[0]);
+                    rubrica.push(settings.aoData[count]._aData[1]);
                     item.push([count + 1]);
                     barraProgresso.push([count + 1, 
                                         settings.aoData[count]._aData[2],
@@ -187,6 +187,7 @@ $(document).ready(
             console.log("DadosGraficos", y);
             console.log("DadosGraficos y1", y1);
             console.log("Progresso", barraProgresso);
+            
 
             }
             });
