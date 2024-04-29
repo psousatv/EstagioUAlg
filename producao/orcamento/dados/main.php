@@ -12,8 +12,9 @@ if(isset($_POST["action"]))
 					   r.rub_item AS item,
 					   ROUND(SUM(o.orc_valor_previsto), 2) AS previsto,
 					   ROUND(SUM(o.orc_valor_adjudicado), 2) AS adjudicado,
-					   ROUND((SUM(o.orc_valor_adjudicado)  / SUM(o.orc_valor_previsto)) * 100, 2) AS percent,
-					   ROUND(SUM(o.orc_valor_faturado), 2) AS faturado
+					   ROUND((SUM(o.orc_valor_adjudicado)  / SUM(o.orc_valor_previsto)) * 100, 2) AS orcamento_percent,
+					   ROUND(SUM(o.orc_valor_faturado), 2) AS faturado,
+					   ROUND((SUM(o.orc_valor_faturado)  / SUM(o.orc_valor_adjudicado)) * 100, 2) AS faturado_percent
 					   FROM orcamento o
 					   INNER JOIN rubricas r ON r.rub_cod = o.orc_rub_cod ';
 					   
@@ -67,9 +68,10 @@ if(isset($_POST["action"]))
             $sub_array[] = $row['rubrica'];
 			$sub_array[] = $row['item'];
 			$sub_array[] = $row['previsto'];
+			$sub_array[] = $row['orcamento_percent'];
             $sub_array[] = $row['adjudicado'];
-			$sub_array[] = $row['percent'];;
 			$sub_array[] = $row['faturado'];
+			$sub_array[] = $row['faturado_percent'];
 
 			$data[] = $sub_array;
 		}
