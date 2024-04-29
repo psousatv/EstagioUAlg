@@ -13,6 +13,7 @@ $(document).ready(
             {
             //"scrollY": 300,
             //"paging": false,
+            "pageLength": 20,
             "processing": true,
             "serverSide": true,
             "myDataTable": [],
@@ -29,52 +30,62 @@ $(document).ready(
             "drawCallback": function(settings){
                 var dados = [];
                 var barraProgresso = [];
-                var tipo = [];
-                var rubrica = [];
-                var item = [];
-                var y = [];
-                var y1 = [];
-                var y2 = [];
-                var y3 = [];
+                //var tipo = [];
+                //var rubrica = [];
+                var inv_item = [];
+                var inv_y1 = [];
+                var inv_y2 = [];
+                var inv_y3 = [];
+                gast_item =  [];
+                var gast_y1 = [];
+                var gast_y2 = [];
+                var gast_y3 = [];
 
                 for(var count = 0; count < settings.aoData.length; count++){
                     dados.push(settings.aoData[count]._aData);
-                    tipo.push(settings.aoData[count]._aData[0]);
-                    rubrica.push(settings.aoData[count]._aData[1]);
-                    item.push([count + 1]);
+                    //tipo.push(settings.aoData[count]._aData[0]);
+                    //rubrica.push(settings.aoData[count]._aData[1]);
+                    
                     barraProgresso.push([count + 1, 
                                         settings.aoData[count]._aData[2],
                                         settings.aoData[count]._aData[4]]);
 
-                    y.push([parseFloat(settings.aoData[count]._aData[3]),
-                            parseFloat(settings.aoData[count]._aData[5]),
-                            parseFloat(settings.aoData[count]._aData[6])]);
-                    y1.push(parseFloat(settings.aoData[count]._aData[3]));
-                    y2.push(parseFloat(settings.aoData[count]._aData[5]));
-                    y3.push(parseFloat(settings.aoData[count]._aData[6]));
+                if(settings.aoData[count]._aData[0] === 'Investimento'){
+                    inv_item.push([count + 1]);
+                    inv_y1.push(parseFloat(settings.aoData[count]._aData[3]));
+                    inv_y2.push(parseFloat(settings.aoData[count]._aData[5]));
+                    inv_y3.push(parseFloat(settings.aoData[count]._aData[6]));
+
+                } else {
+                    gast_item.push([count + 1]);
+                    gast_y1.push(parseFloat(settings.aoData[count]._aData[3]));
+                    gast_y2.push(parseFloat(settings.aoData[count]._aData[5]));
+                    gast_y3.push(parseFloat(settings.aoData[count]._aData[6]));
+
+                };
                 };
 
                 // Investimentos
                 var chart_data = {
-                    labels: item,
+                    labels: inv_item,
                     datasets:[
                         {
                         label : 'Orçamento',
                         backgroundColor : 'rgba(178, 34, 34, .3)',
                         //color : '#fff',
-                        data: y1
+                        data: inv_y1
                         },
                         {
                         label : 'Adjudicado',
                         backgroundColor : 'rgba(3, 100, 255, .3)',
                         //color : '#fff',
-                        data: y2
+                        data: inv_y2
                         },
                         {
                         label : 'Facturado',
                         backgroundColor : 'rgba(0, 181, 204, .5)',
                         //color : '#fff',
-                        data: y3
+                        data: inv_y3
                         }
                     ]
                     };
@@ -87,29 +98,29 @@ $(document).ready(
                     {
                     type: 'bar',
                     data: chart_data
-                    })
-                
+                    });
+
                 // Gastos
                 var chart_data1 = {
-                    labels: item,
+                    labels: gast_item,
                     datasets:[
                         {
                         label : 'Orçamento',
                         backgroundColor : 'rgba(178, 34, 34, .3)',
                         //color : '#fff',
-                        data: y1
+                        data: gast_y1
                         },
                         {
                         label : 'Adjudicado',
                         backgroundColor : 'rgba(3, 100, 255, .3)',
                         //color : '#fff',
-                        data: y2
+                        data: gast_y2
                         },
                         {
                         label : 'Facturado',
                         backgroundColor : 'rgba(0, 181, 204, .5)',
                         //color : '#fff',
-                        data: y3
+                        data: gast_y3
                         }
                     ]
                     };
@@ -122,7 +133,7 @@ $(document).ready(
                     {
                     type: 'bar',
                     data: chart_data1
-                    })
+                    });
 
                 // Progress Bar
                 // Contentores para agregar as barras de progresso
@@ -184,9 +195,9 @@ $(document).ready(
                 //});
                 
             console.log("Data", dados);
-            console.log("DadosGraficos", y);
-            console.log("DadosGraficos y1", y1);
-            console.log("Progresso", barraProgresso);
+            console.log("Dados Inv_item", inv_item);
+            console.log("Dados Inv_item", gast_item);
+            //console.log("Progresso", barraProgresso);
             
 
             }
