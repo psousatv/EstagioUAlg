@@ -34,7 +34,7 @@
 
 <!-- InstanceBeginEditable name="adicionalCSSorScript" -->
 
-<!--
+
 <style>
     /* Hide the search input and button */
     .dataTables_filter {
@@ -44,7 +44,7 @@
       display: none;
     }
 </style>
--->
+
 
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="head" -->
@@ -158,100 +158,41 @@
 <!-- InstanceBeginEditable name="bodyContent" -->
                 <section>
                   <div class="row">
-                    <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
-                      <div class="row">
-                        <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
-                          <div class="card bg-success">
-                            <div class="card-body">
-                              <div class="d-flex justify-content-between px-md-1">
-                                <div class="text-end">
-                                  <h3 class="text-white">10.000<span class="h5">.00</span></h3>
-                                  <h6 class="text-white">67.98%</h6>
-                                </div>
-                                <div class="align-self-center">
-                                  <i class="fas fa-tachometer-alt text-black fa-3x"></i>
-                                </div>
-                              </div>
-                            </div>
+                    <div class="row">
+                      <!-- Coluna 1 -->
+                      <div class="col-md-4">
+                          <div class="card">
+                              <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Facturação sobre a Adjudicação</div>
+                              
+                              <!--Section: Minimal statistics cards-->
+                              <section>
+                                  <!-- 1.ª Linha -->
+                                  <div class="row" id="cartoesEsquerdaGrafico">
+                                      
+                                  </div>
+  
+                              </section>
+                              <!--Section: Minimal statistics cards-->
                           </div>
-                        </div>
-                        <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
-                          <div class="card bg-primary">
-                            <div class="card-body">
-                              <div class="d-flex justify-content-between px-md-1">
-                                <div class="text-end">
-                                  <h3 class="text-white">10.000<span class="h5">.00</span></h3>
-                                  <h6 class="text-white">67.98%</h6>
-                                </div>
-                                <div class="align-self-center bg-inverse-icon-success">
-                                  <i class="fas fa-life-ring text-black fa-3x"></i>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3 pb-lg-0 pb-xl-3">
-                          <div class="card bg-warning">
-                            <div class="card-body">
-                              <div class="d-flex justify-content-between px-md-1">
-                                <div class="text-end">
-                                  <h3 class="text-white">10.000<span class="h5">.00</span></h3>
-                                  <h6 class="text-white">67.98%</h6>
-                                </div>
-                                <div class="align-self-center">
-                                  <i class="fas fa-map-signs text-black fa-3x"></i>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0">
-                          <div class="card bg-danger">
-                            <div class="card-body">
-                              <div class="d-flex justify-content-between px-md-1">
-                                <div class="text-end">
-                                  <h3 class="text-white">1.000.000<span class="h5">.00</span></h3>
-                                  <h6 class="text-white">95.98%</h6>
-                                </div>
-                                <div class="align-self-center">
-                                  <i class="fas fa-map-signs text-black fa-3x"></i>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                       </div>
-                    </div>
-                    <div class="col-xl-9 stretch-card grid-margin">
-                      <div class="card">
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="col-sm-7">
-                              <h5>Valores Globais de Adudicação vs Facturação</h5>
-                            </div>
-                          </div>
-                          <div class="row my-3">
-                            <div class="col-sm-12">
-                              <div class="flot-chart-wrapper">
-                                <div id="flotChart" class="flot-chart">
-                                  <canvas class="flot-base" id="grafico"></canvas>
-                                </div>
+                      <!-- Coluna 2 -->
+                      <div class="col-md-8">
+                          <div class="card">
+                              <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Processos por tipo de Contrato (€)</div>
+                              <div class="card-body">
+                                  <div class="row">
+                                      <!-- Gáfico -->
+                                      <div class="col-md-8">
+                                          <canvas id="grafico"></canvas>
+                                      </div>
+                                  </div>
                               </div>
-                            </div>
                           </div>
-                          <div class="row">
-                            <div class="col-sm-8">
+                          <div class="col-sm-12">
                               <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
-                            </div>
-                            <div class="col-sm-4">
-                              <p class="mb-0 text-muted">Sales Revenue</p>
-                              <h5 class="d-inline-block survey-value mb-0"> $2,45,500 </h5>
-                              <p class="d-inline-block text-danger mb-0"> last 8 months </p>
-                            </div>
                           </div>
-                        </div>
                       </div>
-                    </div>
+                  
                   </div>
                 </section>
                     
@@ -269,6 +210,7 @@
                                       <th>Contrato</th>
                                       <th>Adjudicado</th>
                                       <th>Faturação</th>
+                                      <th>%</th>
                                     </tr>
                                   </thead>
                                   <tbody></tbody>

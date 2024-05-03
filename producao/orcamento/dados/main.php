@@ -12,9 +12,9 @@ if(isset($_POST["action"]))
 					   r.rub_item AS item,
 					   ROUND(SUM(o.orc_valor_previsto), 2) AS previsto,
 					   ROUND(SUM(o.orc_valor_adjudicado), 2) AS adjudicado,
-					   ROUND((SUM(o.orc_valor_adjudicado)  / SUM(o.orc_valor_previsto)) * 100, 2) AS orcamento_percent,
+					   IF (SUM(o.orc_valor_adjudicado) = 0, 0, ROUND((SUM(o.orc_valor_adjudicado)  / SUM(o.orc_valor_previsto)) * 100, 2)) AS orcamento_percent,
 					   ROUND(SUM(o.orc_valor_faturado), 2) AS faturado,
-					   ROUND((SUM(o.orc_valor_faturado)  / SUM(o.orc_valor_adjudicado)) * 100, 2) AS faturado_percent
+					   IF (SUM(o.orc_valor_faturado) = 0, 0, ROUND((SUM(o.orc_valor_faturado)  / SUM(o.orc_valor_adjudicado)) * 100, 2)) AS faturado_percent
 					   FROM orcamento o
 					   INNER JOIN rubricas r ON r.rub_cod = o.orc_rub_cod ';
 					   
@@ -22,7 +22,8 @@ if(isset($_POST["action"]))
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'WHERE o.orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'WHERE o.orc_ano = YEAR(NOW())  ';
+			//OR o.orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
  
 		$group_by_query = ' GROUP BY tipo, rubrica, item ';

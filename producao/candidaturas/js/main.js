@@ -1,4 +1,4 @@
-// Configuração e iniciação do Dashboard Candiaturas
+// Configuração e iniciação do Dashboard Candidaturas
 // Configura, atribui os dados e inicia os elementos da página - DataTable, Graph e Progress Bars
 // Esta página não tem as iterações Online com o Server
 // Para isso terá que se configurar as funções fetch_data. o PHP e DataTables (processing e server side)
@@ -150,11 +150,12 @@ $.ajax(
                 createProgressBar();
             });
 
-            console.log("barraProgresso", dadosProgresso)
+            console.log("barraProgresso", dadosProgresso);
+            console.log("Data: ", data);
+            console.log("AllData: ", allData);
+            
             
             // ** Cartões
-
-            console.log("Data: ", data)
             var container = document.getElementById('cartoesEsquerdaGrafico');
             container.innerHTML = "";
             data.forEach((result, idx) => {

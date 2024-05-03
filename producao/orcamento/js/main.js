@@ -195,9 +195,7 @@ $(document).ready(
                 //});
                 
             console.log("Data", dados);
-            console.log("Dados Inv_item", inv_item);
-            console.log("Dados Inv_item", gast_item);
-            //console.log("Progresso", barraProgresso);
+            console.log("Progresso", barraProgresso);
             
 
             }
