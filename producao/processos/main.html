@@ -148,100 +148,85 @@
 <!-- InstanceBeginEditable name="bodyHead" -->
     <div id="layoutSidenav_content">
         <main>
-            <div class="container-fluid">
-                <h1 class="mt-4"></h1>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">Investimentos e Aquisições</li>
-                </ol>
+          <div class="container-fluid">
+            <h1 class="mt-4"></h1>
+            <ol class="breadcrumb mb-4">
+              <li class="breadcrumb-item active">Processos</li>
+            </ol>
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="bodyContent" -->
-                <section>
-                  <div class="row">
-                    <div class="row">
-                      <!-- Coluna 1 -->
-                      <div class="col-md-4">
-                          <div class="card">
-                              <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Facturação sobre a Adjudicação</div>
-                              
-                              <!--Section: Minimal statistics cards-->
-                              <section>
-                                  <!-- 1.ª Linha -->
-                                  <div class="row" id="cartoesEsquerdaGrafico">
-                                      
-                                  </div>
-  
-                              </section>
-                              <!--Section: Minimal statistics cards-->
-                          </div>
-                      </div>
-                      <!-- Coluna 2 -->
-                      <div class="col-md-8">
-                          <div class="card">
-                              <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Processos por tipo de Contrato (€)</div>
-                              <div class="card-body">
-                                  <div class="row">
-                                      <!-- Gáfico -->
-                                      <div class="col-md-8">
-                                          <canvas id="grafico"></canvas>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-sm-12">
-                              <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
-                          </div>
-                      </div>
-                  
+            <!-- 1.ª Linha -->
+            <div class="row">
+              <!-- Coluna 1 -->
+              <div class="col-md-4">
+                <div class="card">
+                  <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Facturação sobre a Adjudicação</div>
+                  <div class="card-body">
+                    <div id="cartoesEsquerdaGrafico"></div>
                   </div>
-                </section>
-                    
-                    <h1 class="mt-4"></h1>
-                    
-                    <div class="row">
-                      <div class="col-xl-12">
-                        <div class="card mb-4">
-                            <div class="card-header"><i class="fas fa-table mr-1"></i>Processos</div>
-                            <div class="card-body">
-                              <div class="table-responsive">
-                                <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
-                                  <thead>
-                                    <tr style="text-align: center;">
-                                      <th>Contrato</th>
-                                      <th>Adjudicado</th>
-                                      <th>Faturação</th>
-                                      <th>%</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody></tbody>
-                                </table>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                </div>
+              </div>
+              <!-- Coluna 2 -->
+              <div class="col-md-8">
+                <div class="card">
+                  <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Processos por tipo de Contrato (€)</div>
+                  <div class="card-body">
+                    <div class="col-md-8">
+                      <canvas  id="grafico"></canvas>                        
+                    </div>
+                    <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h1 class="mt-2"></h1>
+            <!-- 2.ª Linha -->
+            <!-- Tabela -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card mb-4">
+                  <div class="card-header"><i class="fas fa-table mr-1"></i>Contratos</div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
+                        <thead>
+                          <tr style="text-align: center;">
+                            <th>Contrato</th>
+                            <th>Adjudicado</th>
+                            <th>Faturação</th>
+                            <th>%</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="bodyFooter" -->
 <!-- InstanceEndEditable -->
-                <footer id="footer">
-                  <div class="py-2 bg-light mt-auto">
-                    <div class="container">
-                      <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
-                        <div>
-                          <a href="#">Política de Privacidade</a>&middot;
-                          <a href="#">Termos &amp; Condições</a>
-                        </div>
-                      </div>
+            <footer id="footer">
+              <div class="py-2 bg-light mt-auto">
+                <div class="container">
+                  <div class="d-flex align-items-center justify-content-between small">
+                    <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
+                    <div>
+                      <a href="#">Política de Privacidade</a>&middot;
+                      <a href="#">Termos &amp; Condições</a>
                     </div>
                   </div>
-                </footer>
-              
+                </div>
               </div>
-            </main>
+            </footer>
+              
           </div>
-        </div>
+        </main>
+      </div>
+    </div>
 
     <!-- Global
     <script src="../../global/js/scripts.js"></script>-->
