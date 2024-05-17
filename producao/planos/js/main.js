@@ -13,6 +13,7 @@ $(document).ready(
             {
             //"scrollY": 300,
             //"paging": false,
+            "searching": false,
             "pageLength": 20,
             "processing": true,
             "serverSide": true,

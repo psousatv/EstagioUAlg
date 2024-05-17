@@ -7,23 +7,22 @@ if(isset($_POST["action"]))
 	if($_POST["action"] == 'fetch')
 	{
 		$main_query = 'SELECT
-					   r.rub_tipo AS tipo,
-					   r.rub_rubrica AS rubrica,
-					   r.rub_item AS item,
-					   ROUND(SUM(o.orc_valor_previsto), 2) AS previsto,
-					   ROUND(SUM(o.orc_valor_adjudicado), 2) AS adjudicado,
-					   IF (SUM(o.orc_valor_adjudicado) = 0, 0, ROUND((SUM(o.orc_valor_adjudicado)  / SUM(o.orc_valor_previsto)) * 100, 2)) AS orcamento_percent,
-					   ROUND(SUM(o.orc_valor_faturado), 2) AS faturado,
-					   IF (SUM(o.orc_valor_faturado) = 0, 0, ROUND((SUM(o.orc_valor_faturado)  / SUM(o.orc_valor_adjudicado)) * 100, 2)) AS faturado_percent
-					   FROM orcamento o
-					   INNER JOIN rubricas r ON r.rub_cod = o.orc_rub_cod ';
+						r.rub_tipo AS tipo,
+						r.rub_rubrica AS rubrica,
+						r.rub_item AS item,
+						ROUND(SUM(proces_val_base), 2) AS orcamento,
+						ROUND(SUM(proces_val_adjudicacoes), 2) AS adjudicado,
+						ROUND((SUM(proces_val_adjudicacoes)  / SUM(proces_val_base)) * 100, 2) AS orcamento_percent,
+						ROUND(SUM(proces_val_faturacao), 2) AS faturado,
+						ROUND((SUM(proces_val_faturacao)  / SUM(proces_val_adjudicacoes)) * 100, 2) AS faturado_percent
+						FROM processo
+						INNER JOIN rubricas r ON r.rub_cod = proces_rub_cod ';
 					   
         $search_query = ' ';
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'WHERE o.orc_ano = YEAR(NOW())  ';
-			//OR o.orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'WHERE proces_report_valores = 1 AND proces_orc_ano >= YEAR(NOW())-1 '; //OR o.orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
  
 		$group_by_query = ' GROUP BY tipo, rubrica, item ';
@@ -68,9 +67,9 @@ if(isset($_POST["action"]))
 			$sub_array[] = $row['tipo'];
             $sub_array[] = $row['rubrica'];
 			$sub_array[] = $row['item'];
-			$sub_array[] = $row['previsto'];
-			$sub_array[] = $row['orcamento_percent'];
+			$sub_array[] = $row['orcamento'];
             $sub_array[] = $row['adjudicado'];
+			$sub_array[] = $row['orcamento_percent'];
 			$sub_array[] = $row['faturado'];
 			$sub_array[] = $row['faturado_percent'];
 

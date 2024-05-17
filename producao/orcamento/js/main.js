@@ -12,6 +12,7 @@ $(document).ready(
         var dataTable = $('#tabela').DataTable(
             {
             //"scrollY": 300,
+            "searching": false,
             //"paging": false,
             "pageLength": 20,
             "processing": true,
@@ -23,8 +24,8 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [3, 5, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
-                { targets: [4, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
+                { targets: [3, 4, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
+                { targets: [5, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
                 { targets: [0, 1, 2], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
@@ -48,18 +49,18 @@ $(document).ready(
                     
                     barraProgresso.push([count + 1, 
                                         settings.aoData[count]._aData[2],
-                                        settings.aoData[count]._aData[4]]);
+                                        settings.aoData[count]._aData[5]]);
 
                 if(settings.aoData[count]._aData[0] === 'Investimento'){
                     inv_item.push([count + 1]);
                     inv_y1.push(parseFloat(settings.aoData[count]._aData[3]));
-                    inv_y2.push(parseFloat(settings.aoData[count]._aData[5]));
+                    inv_y2.push(parseFloat(settings.aoData[count]._aData[4]));
                     inv_y3.push(parseFloat(settings.aoData[count]._aData[6]));
 
                 } else {
                     gast_item.push([count + 1]);
                     gast_y1.push(parseFloat(settings.aoData[count]._aData[3]));
-                    gast_y2.push(parseFloat(settings.aoData[count]._aData[5]));
+                    gast_y2.push(parseFloat(settings.aoData[count]._aData[4]));
                     gast_y3.push(parseFloat(settings.aoData[count]._aData[6]));
 
                 };

@@ -10,7 +10,7 @@ if(isset($_POST["action"]))
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
-						ROUND(SUM(proces_val_base), 2) AS previsto,
+						ROUND(SUM(proces_val_base), 2) AS orcamento,
 						ROUND(SUM(proces_val_adjudicacoes), 2) AS adjudicado,
 						ROUND((SUM(proces_val_adjudicacoes)  / SUM(proces_val_base)) * 100, 2) AS orcamento_percent,
 						ROUND(SUM(proces_val_faturacao), 2) AS faturado,
@@ -22,7 +22,7 @@ if(isset($_POST["action"]))
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'WHERE proces_report_valores = 1 AND proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'WHERE proces_report_valores = 1 AND proces_orc_ano >= YEAR(NOW()) ';
 		}
  
 		$group_by_query = ' GROUP BY tipo, rubrica, item ';
@@ -67,7 +67,7 @@ if(isset($_POST["action"]))
 			$sub_array[] = $row['tipo'];
             $sub_array[] = $row['rubrica'];
 			$sub_array[] = $row['item'];
-			$sub_array[] = $row['previsto'];
+			$sub_array[] = $row['orcamento'];
 			$sub_array[] = $row['orcamento_percent'];
 			$sub_array[] = $row['adjudicado'];
 			$sub_array[] = $row['faturado'];
