@@ -127,9 +127,7 @@ pre,
 code,
 kbd,
 samp {
-
-  font-family: "Times New Roman", Times, serif;
-  /** font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;**/
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 1em;
 }
 
@@ -9585,8 +9583,7 @@ button.bg-dark:focus {
   }
 }
 .text-monospace {
-  font-family: "Times New Roman", Times, serif !important;
-  /*font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;*/
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
 
 .text-justify {
