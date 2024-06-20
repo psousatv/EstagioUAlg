@@ -1,47 +1,55 @@
 // Testes
 
-
-
-
-
-$(document).ready(
-    function()
+$.ajax(
     {
-        fetch_data();
-        function fetch_data()
+    url: "dados/main.php",
+    method: 'GET',
+    contentType: 'application/json'
+    }).done(
+        function(data)
         {
-        var dataTable = $('#tabela').DataTable(
-            {
-            //"scrollY": 300,
-            //"paging": false,
-            //"searching": false,
-            "pageLength": 20,
-            "processing": true,
-            "serverSide": true,
-            "myDataTable": [],
-            "ajax":{
-                url:"dados/main.php",
-                type:"POST",
-                data:{action:'fetch'}
-            },
-            "columnDefs":[
-                { targets: [3, 5, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
-                { targets: [4, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0, 1, 2], className: 'dt-body-left' }
-            ],
-            "drawCallback": function(settings){
-                var dados = [];
-                
+            var dataTable = $('#tabela').DataTable({
+                aaData: data,
+                aoColumns:[
+                    { mDataProp: 'codigo'},
+                    { mDataProp: 'estado'},
+                    { mDataProp: 'designacao'},
+                    { mDataProp: 'orcamento', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'orcamento_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'faturado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
+                ]
+            })
+            
+            console.log("DataTable Data:", data)
 
-                for(var count = 0; count < settings.aoData.length; count++){
-                    dados.push(settings.aoData[count]._aData);
-                    
-                };
-
-            console.log("Data", dados);
-
-            }
-            });
         }
-    }
     );
+
+
+    $.ajax({
+        url : 'dados/main.php', // my php file
+        type : 'GET', // type of the HTTP request
+        success : function(data){ 
+           //var obj = jQuery.parseJSON(data);
+           
+           var container = document.getElementById('lista');
+           
+           data.forEach((result) => {
+           var lista = `
+                   <div>
+                       <p>
+                       ${result["codigo"] + " " +  result["estado"] + " " + result["designacao"] + " " + 
+                       Number(result["adjudicado"]).toLocaleString('pt') + " " + result["orcamento_percent"] + "%" + " " +
+                       Number(result["faturado"]).toLocaleString('pt')}
+                       </p>
+                   </div>
+           `;
+
+           container.innerHTML += lista;
+
+           });
+
+        }
+     });

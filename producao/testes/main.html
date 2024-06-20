@@ -31,6 +31,7 @@
 
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+<!--<link href="../../global/css/style.min.css" rel="stylesheet" type="text/css">-->
 
 <!-- InstanceBeginEditable name="adicionalCSSorScript" -->
 
@@ -147,7 +148,7 @@
             <div class="container-fluid">
                 <h1 class="mt-4"></h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">Planos</li>
+                    <li class="breadcrumb-item active">Testes</li>
                 </ol>
 <!-- InstanceEndEditable -->
 
@@ -155,20 +156,141 @@
 
 <section>
   <div class="row">
+    <!-- 1st Column -->
+    <div class="col-lg-6">
+      <div class="card" style="height: 450px">
+        <!-- Tab links -->
+        <div class="tab">
+          <button class="tablinks" onclick="openTab(event, 'historico')">Histórico</button>
+          <button class="tablinks" onclick="openTab(event, 'faturacao')">Facturação</button>
+          <button class="tablinks" onclick="openTab(event, 'outros')">Outros</button>
+        </div>
+
+        <!-- Tab content -->
+        <div id="historico" class="tabcontent">
+          <h3>Histórico</h3>
+          <p>Listar o histórico do processo.</p>
+        </div>
+
+        <div id="faturacao" class="tabcontent">
+          <h3>Faturação</h3>
+          <p>Listar a faturação do processo</p>
+        </div>
+
+        <div id="outros" class="tabcontent">
+          <h3>Outros</h3>
+          <p>Para adaptar.</p>
+        </div>
+
+      </div>
+    </div>
+    <!-- 1st Column End -->
+    
+    <!-- 2nd Column -->
+    <div class="col-lg-6">
+      <!-- Card To Do List -->
+      <div class="card">
+        <div class="card-body" style="height: 450px">
+          <h4 class="card-title">To Do</h4>
+          <div class="todo-widget scrollable">
+            <ul class="list-task todo-list list-group mb-0" data-role="tasklist">
+              <li class="list-group-item todo-item" data-role="task">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="customCheck"/>
+                  <label class="form-check-label w-100 mb-0 todo-label" for="customCheck">
+                    <span class="todo-desc fw-normal" >Ensaios Pressão</span>
+                    <span class="badge rounded-pill bg-danger float-end " >Today</span>
+                  </label>
+                </div>
+                <ul class="list-style-none assignedto">
+                  <li class="rounded-circle" >Obra</li>
+                  <li class="rounded-circle" >Obra</li>
+                </ul>
+              </li>
+              <li class="list-group-item todo-item" data-role="task">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="customCheck1"/>
+                  <label class="form-check-label w-100 mb-0 todo-label" for="customCheck1">
+                    <span class="todo-desc fw-normal">Recepção de Propostas </span>
+                    <span class="badge rounded-pill bg-primary float-end">1 week</span>
+                  </label>
+                </div>
+                <div class="item-date">26 jun 2021</div>
+              </li>
+              <li class="list-group-item todo-item" data-role="task">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="customCheck2"/>
+                  <label class="form-check-label w-100 mb-0 todo-label" for="customCheck2">
+                    <span class="todo-desc fw-normal">Give Purchase report to </span>
+                    <span class="badge rounded-pill bg-info float-end">Yesterday</span>
+                  </label>
+                </div>
+                <ul class="list-style-none assignedto">
+                  <li class="assignee">
+                    <img class="rounded-circle" height="20" width="20" src="../../templates/favicon.png" alt="user" data-toggle="tooltip" data-placement="top" title="" data-original-title="Priyanka"/>
+                  </li>
+                  <li class="assignee">
+                    <img class="rounded-circle" height="20" width="20" src="../../templates/favicon.png" alt="user" data-toggle="tooltip" data-placement="top" title="" data-original-title="Priyanka"/>
+                  </li>
+                </ul>
+              </li>
+              <li class="list-group-item todo-item" data-role="task">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="customCheck3"/>
+                  <label class="form-check-label w-100 mb-0 todo-label" for="customCheck3">
+                    <span class="todo-desc fw-normal">Lorem Ipsum is simply dummy text of the printing </span>
+                    <span class="badge rounded-pill bg-warning float-end">2 weeks</span>
+                  </label>
+                </div>
+                <div class="item-date">Termina a 26 jun 2021</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <!-- 2nd Column -->
+  </div>
+  <!-- Fim 1.ª Linha -->
+</section>
+<h1 class="mt-4"></h1>
+<section>
+  <!-- 2.ª Linha -->
+  <div class="row">
+    <!-- 1.ª Coluna -->
+    <div class="col-lg-6">
+      <!-- XXXXX -->
+      <div class="card">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Processos</div>
+        <div class="card-body" id="listas"></div>
+      </div>
+    </div>
+    <!-- 2.ª Coluna -->
+    <div class="col-lg-6">
+      <!-- XXXXX -->
+      <div class="card">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>aaaa</div>
+        <div class="card-body" id="aaaa"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<h1 class="mt-4"></h1>
+<section>
+  <div class="row">
     <div class="col-xl-12">
-      <div class="card mb-4">
-        <div class="card-header"><i class="fas fa-table mr-1"></i>Orçamento por Tipo e Rúbrica</div>
+      <div class="card">
+        <div class="card-header"><i class="fas fa-table mr-1"></i>Lista de Processos</div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th>Tipo</th>
-                  <th>Rubrica</th>
-                  <th>Item</th>
+                  <th>Codigo</th>
+                  <th>Estado</th>
+                  <th>Descrição</th>
                   <th>Orçamento</th>
+                  <th>Adjudicado%</th>
                   <th>%</th>
-                  <th>Adjudicado</th>
                   <th>Faturado</th>
                   <th>%</th>
                 </tr>
@@ -220,9 +342,11 @@
 <script src="../../vendors/charts/Chart.min.js"></script>
 
 
+
 <!-- InstanceBeginEditable name="scriptPagina" -->
 
 <script src="js/main.js"></script>
+<script src="../../global/js/tabs.js"></script>
 
 
 <!-- InstanceEndEditable -->
