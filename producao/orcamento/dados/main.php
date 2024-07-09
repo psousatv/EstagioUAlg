@@ -18,11 +18,11 @@ if(isset($_POST["action"]))
 						FROM processo
 						INNER JOIN rubricas r ON r.rub_cod = proces_rub_cod ';
 					   
-        $search_query = ' ';
+        $search_query = 'WHERE proces_report_valores = 1 ';
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'WHERE proces_report_valores = 1 AND proces_orc_ano >= YEAR(NOW())-1 '; //OR o.orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'AND (proces_orc_ano >= YEAR(NOW())-1 OR proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%") ';
 		}
  
 		$group_by_query = ' GROUP BY tipo, rubrica, item ';

@@ -9,10 +9,9 @@ $(document).ready(
 
         function fetch_data()
         {
-        var dataTable = $('#tabela').DataTable(
-            {
+        var dataTable = $('#tabela').DataTable({
             //"scrollY": 300,
-            "searching": false,
+            "searching": true,
             //"paging": false,
             "pageLength": 20,
             "processing": true,
