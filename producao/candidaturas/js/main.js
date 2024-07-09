@@ -19,13 +19,14 @@ $.ajax(
                 aaData: data,
                 aoColumns:[
                     { mDataProp: 'candidatura'},
-                    { mDataProp: 'aprovado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'contratado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'validado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'validado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
-                    { mDataProp: 'execucao_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
+                    
+                    { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
                 ]
             })
 
@@ -48,7 +49,7 @@ $.ajax(
                     // Dados para a barra de progresso - etiquetas e valores - array
                     dadosProgresso.push([rowData["candidatura"], rowData["recebido"], rowData["recebido_percent"]]);
                     // Valores recebidos - para o Gráfico
-                    dadosGrafico.push(rowData["aprovado"]);
+                    dadosGrafico.push(rowData["recebido"]);
                 }
             );
 

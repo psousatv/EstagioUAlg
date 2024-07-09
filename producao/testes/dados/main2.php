@@ -13,7 +13,7 @@ $query = 'SELECT
             JOIN rubricas r ON r.rub_cod = proces_rub_cod 
             WHERE proces_orc_ano = YEAR(NOW()) AND proces_report_valores = 1
             GROUP BY rubrica 
-            ORDER BY rubrica ';
+            ORDER BY proces_cpv_sigla ASC, proces_estado ASC  ';
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

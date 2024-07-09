@@ -9,6 +9,7 @@ $.ajax(
         function(data)
         {
             var dataTable = $('#tabela').DataTable({
+                ordering: false,
                 aaData: data,
                 aoColumns:[
                     { mDataProp: 'codigo'},
@@ -26,30 +27,3 @@ $.ajax(
 
         }
     );
-
-
-    $.ajax({
-        url : 'dados/main.php', // my php file
-        type : 'GET', // type of the HTTP request
-        success : function(data){ 
-           //var obj = jQuery.parseJSON(data);
-           
-           var container = document.getElementById('lista');
-           
-           data.forEach((result) => {
-           var lista = `
-                   <div>
-                       <p>
-                       ${result["codigo"] + " " +  result["estado"] + " " + result["designacao"] + " " + 
-                       Number(result["adjudicado"]).toLocaleString('pt') + " " + result["orcamento_percent"] + "%" + " " +
-                       Number(result["faturado"]).toLocaleString('pt')}
-                       </p>
-                   </div>
-           `;
-
-           container.innerHTML += lista;
-
-           });
-
-        }
-     });

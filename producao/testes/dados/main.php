@@ -10,7 +10,6 @@ $query = 'SELECT
 				proces_nome AS designacao,
 				proces_orc_ano AS ano,
 				proces_orc_actividade AS actividade,
-
 				r.rub_tipo AS tipo,
 				r.rub_rubrica AS rubrica,
 				r.rub_item AS item,
@@ -22,7 +21,7 @@ $query = 'SELECT
 				FROM processo
 				INNER JOIN rubricas r ON r.rub_cod = proces_rub_cod
 				WHERE proces_report_valores = 1
-				ORDER BY proces_orc_ano ';
+				ORDER BY proces_estado ASC, proces_cpv_sigla ASC  ';
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
