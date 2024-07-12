@@ -32,7 +32,7 @@ if(isset($_POST["action"]))
 		if(isset($_POST["search"]["value"]))
 		{
 			$search_query .= 'AND (codigo LIKE "%'.$_POST["search"]["value"].'%" 
-						           OR estado LIKE "%'.$_POST["search"]["value"].'%"
+								   OR estado LIKE "%'.$_POST["search"]["value"].'%"
 								   OR designacao LIKE "%'.$_POST["search"]["value"].'%"
 								   ) ';
 		}
