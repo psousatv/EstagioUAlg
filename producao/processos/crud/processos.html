@@ -52,7 +52,7 @@
 </head>
 <body class="sb-nav-fixed">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-      <a class="navbar-brand" href="../../producao/processos/main.html">Processos</a>
+      <a class="navbar-brand" href="../main.html">Processos</a>
       <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
       <a class="nav-item text-muted" href="//mdb1">Home</a>
       <!-- Navbar Search-->
@@ -85,7 +85,7 @@
             <div class="sb-sidenav-menu">
                 <div class="nav">
                     <div class="sb-sidenav-menu-heading">Core</div>
-                    <a class="nav-link" href="../../../index.html"
+                    <a class="nav-link" href="../main.html"
                         ><div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Dashboard
                     </a>
@@ -155,7 +155,10 @@
                       <div class="form-group row">
                         <label class="col-sm-2 col-form-label col-form-label-sm">Processo</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control form-control-sm" id="procuraProcesso" placeholder="Digite o Número ou Nome do Processo">
+                          <input type="text" class="form-control form-control-sm" 
+                          id="procuraProcesso" 
+                          placeholder="Digite o Número ou Nome do Processo"
+                          oninput="mostraProcessos(this.value)">
                         </div>
                       </div>
                     </form>
@@ -163,6 +166,9 @@
 
 <!-- InstanceBeginEditable name="bodyContent" -->
                 <section>
+                  <div id="idProcesso">
+                    <b>Os dados do processo são listado aqui...</b>
+                  </div>
                   
                 </section>
                     
@@ -213,7 +219,8 @@
 
 <!-- InstanceBeginEditable name="scriptPagina" -->
 
-<script src="../js/main.js"></script>
+<!--<script src="../js/main.js"></script>-->
+<script src="../js/processos.js"></script>
 
 
 <!-- InstanceEndEditable -->
