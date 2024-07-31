@@ -18,6 +18,7 @@ function mostraProcesso(str) {
       xmlhttp.send();
 
       historicoProcesso(str);
+      faturacaoProcesso(str);
       
     }
   }
@@ -35,6 +36,23 @@ function historicoProcesso(str) {
       }
     };
     xmlhttp.open("GET","dados/processoHistorico.php?processo="+str,true);
+    xmlhttp.send();
+  }
+}
+
+// Facturação do Processo
+function faturacaoProcesso(str) {
+  if (str == "") {
+    document.getElementById("idFaturacao").innerHTML = "";
+    return;
+  } else {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("idFaturacao").innerHTML = this.responseText;
+      }
+    };
+    xmlhttp.open("GET","dados/processoFaturacao.php?processo="+str,true);
     xmlhttp.send();
   }
 }
