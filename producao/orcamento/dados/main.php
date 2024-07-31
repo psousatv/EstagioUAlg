@@ -22,7 +22,7 @@ if(isset($_POST["action"]))
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'AND (proces_orc_ano >= YEAR(NOW())-1 OR proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%") ';
+			$search_query .= 'AND (proces_orc_ano >= YEAR(NOW())-1) '; //OR proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%") ';
 		}
  
 		$group_by_query = ' GROUP BY tipo, rubrica, item ';

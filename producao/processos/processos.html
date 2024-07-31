@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-PT"><!-- InstanceBegin template="/Templates/main.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Processos</title>
+
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="../../templates/favicon.png"/>
+
+<!-- CSS -->
+<!-- Materials /*Cards de Teste 2 */ -->
+<link href="../../global/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+
+
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body >
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="main.html">Processos</a>
+    <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <a class="nav-item text-muted" href="//localhost">Home</a>
+    <!--<a class="nav-item text-muted" href="//mdb1">Home</a>-->
+    <!-- Credenciação-->
+    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+      <div class="nav-item text-muted small">Credenciais: Não Credenciado</div>
+    </div>
+    <!-- Logged -->
+    <ul class="navbar-nav ml-auto ml-md-0">
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+              <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Login</a>
+              <a class="dropdown-item" href="#">Logout</a>
+          </div>
+      </li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1 class="mt-4"></h1>
+    <div class="container-fluid">
+    <!--<h1 class="mt-4"></h1>-->
+
+      <!-- 1.ª Linha -->
+      <div class="col-lg-4">
+
+          <form>
+            <div class="form-group row">
+              <label class="col-form-label-sm">Processo</label>
+              <div class="col-sm-5">
+                <input type="text" class="form-control form-control-sm" 
+                id="procuraProcesso" 
+                placeholder="Digite o Código do Processo"
+                oninput="mostraProcesso(this.value)">
+              </div>
+            </div>
+          </form>
+      <!-- Fima da 1.ª Linha -->   
+      </div>
+
+        
+      <!-- 2.ª Linha -->
+      <div class="row">
+        <!-- 1.ª Coluna -->
+        <div class="col-lg-4">
+          <div class="card">
+            <!-- Formulário de busca de processo -->
+            <div class="card-header"><i class="fas fa-book-open mr-1"></i>Processo</div>
+            <!-- Lista os dados de Identificação do processo -->
+            <div class="card-body">
+              <section>
+                <h1 class="mt-2"></h1>
+                <div id="idProcesso">
+                  <b>Os dados do processo são listado aqui...</b>
+                </div>
+              </section>
+            </div>
+          </div>
+        <!-- Fim da 1.ª Coluna -->
+        </div>
+        
+        <!-- 2.ª Coluna -->
+        <div class="col-lg-8">
+          <div class="card">
+            <!-- Lista o Histórico do processo -->
+            <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Histórico</div>
+            <div class="card-body">
+              <section>
+                <h1 class="mt-2"></h1>
+                <div id="listaHistorico">
+                  <b>O Histórico é listado aqui...</b>
+                </div>
+              </section>
+            </div>
+          </div>
+        <!-- Fim da 2.ª Coluna -->
+        </div>
+      <!-- Fim da 2.ª Linha -->
+      </div>
+    </div>
+  </main>
+
+
+  <footer id="footer">
+    <div class="py-2 bg-light mt-auto">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between small">
+          <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
+          <div>
+            <a href="#">Política de Privacidade</a>&middot;
+            <a href="#">Termos &amp; Condições</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<!-- Global
+<script src="../../global/js/scripts.js"></script>-->
+<!-- JQuery -->
+<script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+<!-- Fontawesome -->
+<!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
+<script src="../../vendors/font-awesome/all.min.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/datatables/datatables.min.js"></script>
+<!-- Charts -->
+<script src="../../vendors/charts/Chart.min.js"></script>
+
+<!-- InstanceBeginEditable name="scriptPagina" -->
+<!--<script src="../js/main.js"></script>-->
+<script src="js/processo.js"></script>
+
+
+
+</body>  
+
+</html>
