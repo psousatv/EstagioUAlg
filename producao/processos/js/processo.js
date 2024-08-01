@@ -19,11 +19,12 @@ function mostraProcesso(str) {
 
       historicoProcesso(str);
       faturacaoProcesso(str);
+      orcamentoProcesso(str);
       
     }
   }
 
-// Histórico do Processo
+// Histórico
 function historicoProcesso(str) {
   if (str == "") {
     document.getElementById("listaHistorico").innerHTML = "";
@@ -40,7 +41,7 @@ function historicoProcesso(str) {
   }
 }
 
-// Facturação do Processo
+// Facturação
 function faturacaoProcesso(str) {
   if (str == "") {
     document.getElementById("idFaturacao").innerHTML = "";
@@ -53,6 +54,23 @@ function faturacaoProcesso(str) {
       }
     };
     xmlhttp.open("GET","dados/processoFaturacao.php?processo="+str,true);
+    xmlhttp.send();
+  }
+}
+
+// Orcamento
+function orcamentoProcesso(str) {
+  if (str == "") {
+    document.getElementById("idOrcamento").innerHTML = "";
+    return;
+  } else {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("idOrcamento").innerHTML = this.responseText;
+      }
+    };
+    xmlhttp.open("GET","dados/processoOrcamento.php?processo="+str,true);
     xmlhttp.send();
   }
 }
