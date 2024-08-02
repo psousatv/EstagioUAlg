@@ -32,7 +32,7 @@ $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //Orçamento
 echo "
 <b>Orçamento</b>
-<table class='table table-responsive table-dark table-hover small'>
+<table class='table table-responsive table-bordered table-dark table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
     <th>Acum</th>
