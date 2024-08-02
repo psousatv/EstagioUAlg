@@ -14,29 +14,34 @@ $stmt = $myConn->query($processoHistorico);
 $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-echo "<table class='small'>
-<tr style='text-align: center'>
-<th>Data</th>
-<th>Aprovado</th>
-<th>Movimento</th>
-<th>Documento</th>
-<th>Outro</th>
-<th>Valor</th>
-<th>Observações</th>
+echo "
+<table class='table table-striped table-responsive table-hover small'>
+  <tr style='text-align: center'>
+    <th>Data</th>
+    <th>Aprovado</th>
+    <th>Movimento</th>
+    <th>Valor</th>
+    <th>Documento</th>
+    <th>Outro</th>
+    <th>Observações</th>
+  </tr>";
 
-</tr>";
 foreach($resultado as $row)
 {
-  echo "<tr>";
-  echo "<td style='width: 100px'>" .$row['historico_dataemissao']. "</td>";
-  echo "<td style='width: 100px'>" .$row['historico_datamov']. "</td>";
-  echo "<td style='width: 210px'>" .$row['historico_descr_nome']. "</td>";
-  echo "<td style='width: 180px'>" .$row['historico_doc']. "</td>";
-  echo "<td style='width: 180px'>" .$row['historico_num']. "</td>";
-  echo "<td style='width: 100px; text-align:right'>" .number_format($row['historico_valor'], 2, ',', '.'). "</td>";
-  echo "<td style='width: 200px'>" .$row['historico_obs']. "</td>";
-  
-  echo "</tr>";
+  echo "
+    <tr>
+      <td style='width: 100px'>" .$row['historico_dataemissao']. "</td>
+      <td style='width: 100px'>" .$row['historico_datamov']. "</td>
+      <td style='width: 250px'>" .$row['historico_descr_nome']. "</td>
+      <td style='width: 100px; text-align:right'>" .number_format($row['historico_valor'], 2, ',', '.'). "</td>
+      <td style='width: 180px'>" .$row['historico_doc']. "</td>
+      <td style='width: 180px'>" .$row['historico_num']. "</td>
+      <td style='width: 250px'>" .$row['historico_obs']. "</td>
+    </tr>
+    ";
 }
-echo "</table>";
+
+echo "
+  </table>
+</div>";
 

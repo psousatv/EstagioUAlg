@@ -1,77 +1,80 @@
 // Chamada de dados via PHP pelo método XMLHttpRequest
 
-
 // Seleciona o Processo
 function mostraProcesso(str) {
     if (str == "") {
-      document.getElementById("idProcesso").innerHTML = "";
+      document.getElementById("lstProcesso").innerHTML = "";
       return;
     } else {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("idProcesso").innerHTML = this.responseText;
+          document.getElementById("lstProcesso").innerHTML = this.responseText;
         }
-      };
+      }
       
       xmlhttp.open("GET","dados/processoSelect.php?processo="+str,true);
       xmlhttp.send();
 
-      historicoProcesso(str);
       faturacaoProcesso(str);
+      historicoProcesso(str);
       orcamentoProcesso(str);
+      nomeProcesso(str);
       
     }
-  }
+  };
 
-// Histórico
-function historicoProcesso(str) {
-  if (str == "") {
-    document.getElementById("listaHistorico").innerHTML = "";
-    return;
-  } else {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("listaHistorico").innerHTML = this.responseText;
-      }
-    };
-    xmlhttp.open("GET","dados/processoHistorico.php?processo="+str,true);
-    xmlhttp.send();
-  }
+// Teste
+function nomeProcesso(str) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("nomeProcesso").innerHTML = this.responseText;
+    }
+  };
+  
+  xmlhttp.open("GET","dados/processoNome.php?processo="+str,true);
+  xmlhttp.send();
+
 }
 
 // Facturação
 function faturacaoProcesso(str) {
-  if (str == "") {
-    document.getElementById("idFaturacao").innerHTML = "";
-    return;
-  } else {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("idFaturacao").innerHTML = this.responseText;
-      }
-    };
-    xmlhttp.open("GET","dados/processoFaturacao.php?processo="+str,true);
-    xmlhttp.send();
-  }
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+    }
+  };
+  
+  xmlhttp.open("GET","dados/processoFaturacao.php?processo="+str,true);
+  xmlhttp.send();
+
 }
 
 // Orcamento
 function orcamentoProcesso(str) {
-  if (str == "") {
-    document.getElementById("idOrcamento").innerHTML = "";
-    return;
-  } else {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("idOrcamento").innerHTML = this.responseText;
-      }
-    };
-    xmlhttp.open("GET","dados/processoOrcamento.php?processo="+str,true);
-    xmlhttp.send();
-  }
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstOrcamento").innerHTML = this.responseText;
+    }
+  };
+  
+  xmlhttp.open("GET","dados/processoOrcamento.php?processo="+str,true);
+  xmlhttp.send();
 }
 
+// Histórico
+function historicoProcesso(str) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstHistorico").innerHTML = this.responseText;
+    }
+  };
+  
+  xmlhttp.open("GET","dados/processoHistorico.php?processo="+str,true);
+  xmlhttp.send();
+
+}
