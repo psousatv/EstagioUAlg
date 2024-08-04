@@ -2,23 +2,22 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$processo = intval($_GET['processo']);
+$codigoProcesso = intval($_GET['codigoProcesso']);
 //$q = $_GET['q'];
 
 //intval($check) = "SELECT proces_check FROM processo WHERE proces_nome LIKE '%$processo%'";
 
 
 
-//Seleciona o Processo
-$processoSelect = "SELECT * FROM processo
+//Resumo o Processo
+$processoResumo = "SELECT * FROM processo
                   INNER JOIN procedimento ON proced_cod = proces_proced_cod
                   INNER JOIN entidade ON ent_cod = proces_ent_cod
                   WHERE (proces_cod > 0 AND proces_report_valores = 1) AND proces_estado_nome <> 'Qualquer Contrato' 
-                  AND proces_check = '" .$processo. "'";
+                  AND proces_check = '" .$codigoProcesso. "'";
 
-$stmt = $myConn->query($processoSelect);
+$stmt = $myConn->query($processoResumo);
 $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 foreach($resultado as $row)
 {
@@ -70,7 +69,8 @@ foreach($resultado as $row)
     <div class="col-md-9 d-grid">'.$row['proces_cand'].' </div>
     <div class="col-md-3 d-grid"><b>Reembolsado: </b></div>
     <div class="col-md-9 d-grid">'.number_format($row['proces_cand_recebido'], 2, ',', '.').'€</div>
-  </div>';
+  </div>
+  <hr>';
 
 };
 

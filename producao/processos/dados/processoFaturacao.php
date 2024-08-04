@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$processo = intval($_GET['processo']);
+$codigoProcesso = intval($_GET['codigoProcesso']);
 //$q = $_GET['q'];
 
 //Histórico Processos
@@ -22,7 +22,7 @@ $processoFaturacao = "SELECT
                     sum(if((month(fact_auto_data) = 11),round(fact_valor,2),0)) AS 'Nov',
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
-                    WHERE fact_proces_check = '" .$processo. "'
+                    WHERE fact_proces_check = '" .$codigoProcesso. "'
                     GROUP BY year(fact_auto_data)
                     ORDER BY fact_auto_num ASC" ;
 

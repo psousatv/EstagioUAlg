@@ -2,12 +2,11 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$processo = intval($_GET['processo']);
-//$q = $_GET['q'];
+$codigoProcesso = intval($_GET['codigoProcesso']);
 
 //Histórico Processos
 $processoHistorico = 'SELECT * FROM historico
-                    WHERE historico_proces_check = "' .$processo. '"
+                    WHERE historico_proces_check = "' .$codigoProcesso. '"
                     ORDER BY historico_dataemissao DESC' ;
 
 $stmt = $myConn->query($processoHistorico);
