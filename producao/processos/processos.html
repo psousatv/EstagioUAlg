@@ -62,7 +62,7 @@
       <div class="row">
         <div class="col-md-6 d-grid">
           <form>
-            <input type="text" class="form-control form-control-sm" placeholder="Digite o Código do Processo" oninput="nomeProcesso(this.value)">
+            <input id="idProcesso" type="text" class="form-control form-control-sm" placeholder="Digite o qualquer parte do nome do Processo" oninput="nomeProcesso(this.value)">
           </form>
         </div>
       </div>
@@ -71,7 +71,7 @@
 
       <div class="row">
         <!--<div class="col-md-1 d-grid" id="codigoProcesso"></div>-->
-        <div class="col-md-11 d-grid" id="idProcesso"></div>
+        <div class="col-md-12 d-grid" id="lstProcesso"></div>
       </div>
 
       <h1 class="mt-2"></h1>
@@ -79,7 +79,6 @@
       <div class="row">
         <div class="col-lg-4 d-grid">
           <div class="card">
-            <!-- Formulário de busca de processo -->
             <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
             <!-- Lista os dados de Identificação do processo -->
             <div class="card-body">
