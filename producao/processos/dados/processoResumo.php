@@ -50,9 +50,9 @@ foreach($resultado as $row)
     <div class="col-md-4 d-grid""><b>Orçamento: </b></div>
     <div class="col-md-8 d-grid">'.$row['proces_orc_ano']. '</div>
     <div class="col-md-4 d-grid""><b>Área de Atuação: </b></div>
-    <div class="col-md-8 d-grid">'.$row['proces_orc_ano']. '</div>
-    <div class="col-md-4 d-grid""><b>Rubrica: </b></div> 
     <div class="col-md-8 d-grid">'.$row['proces_orc_actividade']. '</div>
+    <div class="col-md-4 d-grid""><b>Rubrica: </b></div> 
+    <div class="col-md-8 d-grid">'.$row['proces_orc_rubrica']. '</div>
     <div class="col-md-4 d-grid"><b>Valor Base: </b></div>
     <div class="col-md-8 d-grid">'.number_format($row['proces_val_base'], 2, ',', '.').'€</div>
   </div>

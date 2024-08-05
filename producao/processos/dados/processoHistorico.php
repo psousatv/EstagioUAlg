@@ -14,7 +14,7 @@ $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 echo "
-<table class='table table-striped table-responsive table-hover small'>
+<table class='table table-responsive table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Data</th>
     <th>Aprovado</th>

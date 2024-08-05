@@ -36,11 +36,12 @@
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="main.html">Processos</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-    <a class="nav-item text-muted" href="//localhost">Home</a>
+    <a class="nav-item text-muted" href="//mdb1">Home</a>
     <!--<a class="nav-item text-muted" href="//mdb1">Home</a>-->
     <!-- Credenciação-->
     <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-      <div class="nav-item text-muted small">Credenciais: Não Credenciado</div>
+      <!--Se não credenciado text-white, caso contrário text-mute -->
+      <div class="nav-item text-white small">Credenciais: Não Credenciado</div>
     </div>
     <!-- Logged -->
     <ul class="navbar-nav ml-auto ml-md-0">
@@ -56,9 +57,9 @@
   </nav>
 
   <main>
-    <h1 class="mt-4"></h1>
-    <div class="container-fluid">
-
+    <h1 class="mt-2"></h1>
+    <div class="container">
+      <!-- Procura processo -->
       <div class="row">
         <div class="col-md-6 d-grid">
           <form>
@@ -68,29 +69,34 @@
       </div>
       
       <h1 class="mt-2"></h1>
-
+      
+      <!-- Mostra o processo encontrado -->
       <div class="row">
-        <!--<div class="col-md-1 d-grid" id="codigoProcesso"></div>-->
         <div class="col-md-12 d-grid" id="lstProcesso"></div>
       </div>
 
       <h1 class="mt-2"></h1>
-      
+      <!-- Mostra o progresso do processo -->
+      <div class="row">
+        <div class="col-md-12 d-grid" id="stepProgresso"></div>
+      </div>
+
+      <h1 class="mt-2"></h1>
+      <!-- Detalhes do processo -->
       <div class="row">
         <div class="col-lg-4 d-grid">
           <div class="card">
             <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
-            <!-- Lista os dados de Identificação do processo -->
+            <!-- Resumo do processo -->
             <div class="card-body">
               <div id="lstResumo">
                 <b>Os dados do processo são listado aqui...</b>
               </div>
             </div>
           </div>
-        </div>
-        
+        </div>        
         <div class="col-lg-8 d-grid">
-          <!-- Lista os dados de Faturação e Orçamento -->
+          <!-- Faturação e Orçamento do processo -->
           <div class="card">
             <div class="card-header"><i class="fas fa-table mr-1"></i>Orçamento e Faturação</div>
             <div class="card-body">
@@ -101,7 +107,7 @@
           
           <h1 class="mt-2"></h1>
 
-          <!-- Lista o Histórico do processo -->
+          <!-- Histórico do processo -->
           <div class="card">
             <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Histórico</div>
             <div class="card-body">
