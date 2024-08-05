@@ -9,7 +9,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 $processoOrcamento = "SELECT
                     year(fact_auto_data) AS 'Ano',
                     sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'Acum',
-                    sum(if((month(fact_auto_data) = 1),round(fact_valor,2),0)) AS 'Jan',
+                    sum(if((month(fact_auto_data) = 1 AND month(pp_executado_data) = 1), (round(fact_valor,2) / round(pp_valor,2)),0)) AS 'Jan',
                     sum(if((month(fact_auto_data) = 2),round(fact_valor,2),0)) AS 'Fev',
                     sum(if((month(fact_auto_data) = 3),round(fact_valor,2),0)) AS 'Mar',
                     sum(if((month(fact_auto_data) = 4),round(fact_valor,2),0)) AS 'Abr',
@@ -22,6 +22,7 @@ $processoOrcamento = "SELECT
                     sum(if((month(fact_auto_data) = 11),round(fact_valor,2),0)) AS 'Nov',
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
+                    INNER JOIN plano_pagamento pp ON pp_proces_check = fact_proces_check
                     WHERE fact_proces_check = '" .$codigoProcesso. "'
                     GROUP BY year(fact_auto_data)
                     ORDER BY fact_auto_num ASC" ;
@@ -29,9 +30,9 @@ $processoOrcamento = "SELECT
 $stmt = $myConn->query($processoOrcamento);
 $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//Orçamento
+//Plano de Pagamentos
 echo "
-<b>Orçamento</b>
+<b>Cumprimento do Plano de Pagamentos</b>
 <table class='table table-responsive table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>

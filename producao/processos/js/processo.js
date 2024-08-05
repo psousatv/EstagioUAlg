@@ -1,5 +1,7 @@
 // Chamada de dados via PHP pelo método XMLHttpRequest
 
+var processo;
+
 // Mome do Processo o Processo
 function nomeProcesso() {
   var formNomeProcesso = document.getElementById('idProcesso').value;
@@ -10,31 +12,28 @@ function nomeProcesso() {
     if (this.readyState == 4 && this.status == 200) {
       var nomeProcesso = JSON.parse(xhr.responseText);
       var output = '';
-      if (nomeProcesso.Erro){
-        output = '<div class="btn btn-danger col-md-12 d-grid small text-center">' + resposta.Erro + '</div>'
-      } else if (nomeProcesso.Mensagem) {
-        output = '<div class="btn btn-info col-md-12 d-grid small text-center">' + resposta.Mensagem + '</div>'
-      } else {
-        output = ' <div class="btn btn-primary col-md-12 d-grid small text-left">';
-        output += nomeProcesso[0]["proces_check"] + " - ";
-        output += nomeProcesso[0]["proces_padm"] + "_";
-        output += nomeProcesso[0]["proces_nome"] + '</div>';
-      }
-      
-      document.getElementById("lstProcesso").innerHTML = output;
+      output = ' <div class="btn btn-primary col-md-12 d-grid small text-left">';
+      output += nomeProcesso[0]["proces_check"] + " - ";
+      output += nomeProcesso[0]["proces_padm"] + "_";
+      output += nomeProcesso[0]["proces_nome"] + '</div>';
     }
+      
+    processo = nomeProcesso[0]['proces_check']
+    
+    document.getElementById("lstProcesso").innerHTML = output;
+    
+    resumoProcesso(processo);
+    historicoProcesso(processo);
+    faturacaoProcesso(processo);
+    pagamentosProcesso(processo);
 
-    console.log("uriComponent", formNomeProcesso);
-    console.log("response", nomeProcesso);
-
-    resumoProcesso(nomeProcesso[0]["proces_check"]);
-    historicoProcesso(nomeProcesso[0]["proces_check"]);
-    faturacaoProcesso(nomeProcesso[0]["proces_check"]);
-    orcamentoProcesso(nomeProcesso[0]["proces_check"]);
+    console.log("processo",processo)
+    console.log("nomeProcesso",nomeProcesso)
 
   };
-  
+
   xhr.send();
+
 }
 
 // Resumo do Processo
@@ -48,35 +47,7 @@ function resumoProcesso(codigoProcesso) {
   
   xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigoProcesso,true);
   xmlhttp.send();
-
-};
-
-// Facturação
-function faturacaoProcesso(codigoProcesso) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFaturacao").innerHTML = this.responseText;
-    }
-  }
-  
-  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigoProcesso,true);
-  xmlhttp.send();
-
-};
-
-// Orcamento
-function orcamentoProcesso(codigoProcesso) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstOrcamento").innerHTML = this.responseText;
-    }
-  }
-  
-  xmlhttp.open("GET","dados/processoOrcamento.php?codigoProcesso="+codigoProcesso,true);
-  xmlhttp.send();
-};
+}
 
 // Histórico
 function historicoProcesso(codigoProcesso) {
@@ -90,4 +61,30 @@ function historicoProcesso(codigoProcesso) {
   xmlhttp.open("GET","dados/processoHistorico.php?codigoProcesso="+codigoProcesso,true);
   xmlhttp.send();
 
-};
+}
+
+// Facturação
+function faturacaoProcesso(codigoProcesso) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigoProcesso,true);
+  xmlhttp.send();
+}
+
+// Plano de Pagamentos
+function pagamentosProcesso(codigoProcesso) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigoProcesso,true);
+  xmlhttp.send();
+}
