@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeProcesso = strval($_GET['nomeProcesso']);
+$nomeProcesso = strval($_GET['nomeSearch']);
 
 //$nomeProcesso = isset($_GET['nomeProcesso']) ? $_GET['nomeProcesso'] : '';
 $query = "SELECT proces_check, proces_padm, proces_nome 
@@ -46,7 +46,7 @@ foreach($fetch as $row) {
 //header('Content-Type: application/json');
 //echo json_encode($data);
 
-//foreach($resultado as $row)
+//foreach($data as $row)
 //{
 //  echo
 //  '
@@ -56,4 +56,4 @@ foreach($fetch as $row) {
 //  ';
 //};
 
-//$stmt->close();
+$stmt->close();

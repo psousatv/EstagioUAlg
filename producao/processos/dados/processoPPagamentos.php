@@ -5,34 +5,35 @@ include "../../../global/config/dbConn.php";
 $codigoProcesso = intval($_GET['codigoProcesso']);
 //$q = $_GET['q'];
 
-//Orçamento
+//Plano de Pagamentos
 $processoOrcamento = "SELECT
-                    year(fact_auto_data) AS 'Ano',
-                    sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'Acum',
-                    sum(if((month(fact_auto_data) = 1 AND month(pp_executado_data) = 1), (round(fact_valor,2) / round(pp_valor,2)),0)) AS 'Jan',
-                    sum(if((month(fact_auto_data) = 2),round(fact_valor,2),0)) AS 'Fev',
-                    sum(if((month(fact_auto_data) = 3),round(fact_valor,2),0)) AS 'Mar',
-                    sum(if((month(fact_auto_data) = 4),round(fact_valor,2),0)) AS 'Abr',
-                    sum(if((month(fact_auto_data) = 5),round(fact_valor,2),0)) AS 'Mai',
-                    sum(if((month(fact_auto_data) = 6),round(fact_valor,2),0)) AS 'Jun',
-                    sum(if((month(fact_auto_data) = 7),round(fact_valor,2),0)) AS 'Jul',
-                    sum(if((month(fact_auto_data) = 8),round(fact_valor,2),0)) AS 'Ago',
-                    sum(if((month(fact_auto_data) = 9),round(fact_valor,2),0)) AS 'Set',
-                    sum(if((month(fact_auto_data) = 10),round(fact_valor,2),0)) AS 'Out',
-                    sum(if((month(fact_auto_data) = 11),round(fact_valor,2),0)) AS 'Nov',
-                    sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
-                    FROM factura
-                    INNER JOIN plano_pagamento pp ON pp_proces_check = fact_proces_check
-                    WHERE fact_proces_check = '" .$codigoProcesso. "'
-                    GROUP BY year(fact_auto_data)
-                    ORDER BY fact_auto_num ASC" ;
+                      pp_ano AS 'Ano',
+                      sum(if((pp_proces_check = pp_proces_check), round(pp_valor,2),0)) AS 'Acum',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 1),round(pp_valor,2),0)) AS 'Jan',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 2),round(pp_valor,2),0)) AS 'Fev',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 3),round(pp_valor,2),0)) AS 'Mar',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 4),round(pp_valor,2),0)) AS 'Abr',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 5),round(pp_valor,2),0)) AS 'Mai',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 6),round(pp_valor,2),0)) AS 'Jun',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 7),round(pp_valor,2),0)) AS 'Jul',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 8),round(pp_valor,2),0)) AS 'Ago',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 9),round(pp_valor,2),0)) AS 'Set',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 10),round(pp_valor,2),0)) AS 'Out',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 11),round(pp_valor,2),0)) AS 'Nov',
+                      sum(if((pp_ano = pp_ano AND pp_mes = 12),round(pp_valor,2),0)) AS 'Dez'
+                      FROM plano_pagamento
+                      WHERE pp_proces_check = '" .$codigoProcesso. "'
+                      GROUP BY pp_ano
+                      ORDER BY pp_ano, pp_auto_num" ;
 
 $stmt = $myConn->query($processoOrcamento);
 $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+
 //Plano de Pagamentos
 echo "
-<b>Cumprimento do Plano de Pagamentos</b>
+<b>Plano de Pagamentos</b>
 <table class='table table-responsive table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>

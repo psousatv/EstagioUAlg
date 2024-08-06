@@ -30,7 +30,7 @@ foreach($resultado as $row)
     <div class="col-md-4 d-grid"><b>Prazo de Execução: </b></div>
     <div class="col-md-8 d-grid">'.$row["proces_prz_exec"].' dias</div>
     <div class="col-md-4 d-grid"><b>Adjudicatária: </b></div>
-    <div class="col-md-8 d-grid">'.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
+    <div class="col-md-8 d-grid">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
     <div class="col-md-4 d-grid"><b>Descrição: </b></div>
     <div class="col-md-8 d-grid">'.$row['proces_obs']. '</div>
   </div> 
