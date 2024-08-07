@@ -31,6 +31,8 @@ foreach($resultado as $row)
     <div class="col-md-8 d-grid">'.$row["proces_prz_exec"].' dias</div>
     <div class="col-md-4 d-grid"><b>Adjudicatária: </b></div>
     <div class="col-md-8 d-grid">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
+    <div class="col-md-4 d-grid"><b>Identificação: </b></div>
+    <div class="col-md-8 d-grid">'.$row['proces_nome']. '</div>
     <div class="col-md-4 d-grid"><b>Descrição: </b></div>
     <div class="col-md-8 d-grid">'.$row['proces_obs']. '</div>
   </div> 
@@ -41,6 +43,10 @@ foreach($resultado as $row)
   <div class="row small text-justify">
     <div class="col-md-4 d-grid"><b>Regime: </b></div>
     <div class="col-md-8 d-grid">'.$row['proced_regime'].'</div>
+    <div class="col-md-4 d-grid"><b>Publicado em: </b></div>
+    <div class="col-md-8 d-grid">'.$row['proces_data_pub_se'].'€</div>
+    <div class="col-md-4 d-grid"><b>Valor Máximo: </b></div>
+    <div class="col-md-8 d-grid">'.number_format($row['proces_val_max'], 2, ',', '.').'€</div>
     <div class="col-md-4 d-grid"><b>Contrato: </b></div>
     <div class="col-md-8 d-grid">'.$row['proced_contrato'].'</div>
     <div class="col-md-4 d-grid"><b>Procedimento: </b></div>
