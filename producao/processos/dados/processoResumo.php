@@ -9,7 +9,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 
 
 
-//Resumo o Processo
+//Resumo do Processo
 $processoResumo = "SELECT * FROM processo
                   INNER JOIN procedimento ON proced_cod = proces_proced_cod
                   INNER JOIN entidade ON ent_cod = proces_ent_cod
