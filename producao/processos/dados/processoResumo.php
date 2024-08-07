@@ -44,7 +44,7 @@ foreach($resultado as $row)
     <div class="col-md-4 d-grid"><b>Regime: </b></div>
     <div class="col-md-8 d-grid">'.$row['proced_regime'].'</div>
     <div class="col-md-4 d-grid"><b>Publicado em: </b></div>
-    <div class="col-md-8 d-grid">'.$row['proces_data_pub_se'].'€</div>
+    <div class="col-md-8 d-grid">'.$row['proces_data_pub_se'].'</div>
     <div class="col-md-4 d-grid"><b>Valor Máximo: </b></div>
     <div class="col-md-8 d-grid">'.number_format($row['proces_val_max'], 2, ',', '.').'€</div>
     <div class="col-md-4 d-grid"><b>Contrato: </b></div>
