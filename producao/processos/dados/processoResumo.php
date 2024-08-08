@@ -13,8 +13,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 $processoResumo = "SELECT * FROM processo
                   INNER JOIN procedimento ON proced_cod = proces_proced_cod
                   INNER JOIN entidade ON ent_cod = proces_ent_cod
-                  WHERE (proces_cod > 0 AND proces_report_valores = 1) AND proces_estado_nome <> 'Qualquer Contrato' 
-                  AND proces_check = '" .$codigoProcesso. "'";
+                  WHERE proces_cod > 0 AND proces_check = '" .$codigoProcesso. "'";
 
 $stmt = $myConn->query($processoResumo);
 $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);

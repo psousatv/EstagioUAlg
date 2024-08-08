@@ -6,7 +6,7 @@ $nomeProcesso = strval($_GET['nomeSearch']);
 
 $query = "SELECT proces_check, proces_padm, proces_nome 
           FROM processo
-          WHERE proces_nome LIKE '%"  .$nomeProcesso. "%' AND proces_report_valores = 1";
+          WHERE proces_nome LIKE '%"  .$nomeProcesso. "%'";
 
 
 $stmt = $myConn->query($query);
