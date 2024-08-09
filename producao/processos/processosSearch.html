@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT"><!-- InstanceBegin template="/Templates/main.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="pt-PT">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -34,7 +34,7 @@
 
 <body >
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" >Detalhes de Processos</a>
+    <a class="navbar-brand" >Processos - Teste</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     <a class="nav-item text-muted" href="main.html">Home</a>
     <!--<a class="nav-item text-muted" href="//mdb1">Home</a>-->
@@ -57,70 +57,86 @@
   </nav>
 
   <div class="page_wrapper">
-    <h1 class="mt-2"></h1>
-    <div class="container-fluid">
-      <!-- Procura processo -->
-      <div class="row">
-        <div class="col-md-6 d-grid">
-          <form>
-            <input id="idProcesso" type="text" class="form-control form-control-sm" placeholder="Digite o qualquer parte do nome do Processo" oninput="nomeProcesso(this.value)">
+    
+    <!-- Page Content-->
+      <div class="container-fluid">
+      <!-- Linha 1 -->
+      <h1 class="mt-2"></h1>
+
+      <div class="row id='procuraProcesso'">
+        <!--form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"-->
+        <div class="breadcrumb col-md-12">
+          <form class="col-6 d-flex no-block align-items-left">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Digite qualquer parte do nome ..." id="nomeProcesso" oninput="procuraProcesso(this.value)" aria-label="Search" aria-describedby="basic-addon2" />
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
           </form>
         </div>
       </div>
-      
+
+      <!-- Linha 2 -->
       <h1 class="mt-2"></h1>
-      
-      <!-- Mostra o processo encontrado -->
       <div class="row">
-        <div class="col-md-12 d-grid" id="lstProcesso"></div>
-      </div>
-
-      <h1 class="mt-2"></h1>
-      <!-- Mostra o progresso do processo -->
-      <div class="row">
-        <div class="col-md-12 d-grid" id="stepProgresso"></div>
-      </div>
-
-      <h1 class="mt-2"></h1>
-      <!-- Detalhes do processo -->
-      <div class="row" id="detalhesProcesso">
-        <div class="col-lg-4 d-grid">
+        <div class="col-md-8 col-lg-8">
           <div class="card">
-            <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
-            <!-- Resumo do processo -->
             <div class="card-body">
-              <div id="lstResumo">
-                <b>Os dados do processo são listado aqui...</b>
-              </div>
+              <div class="font-light small" id="showResultsProcesso"></div>
             </div>
           </div>
-        </div>        
-        <div class="col-lg-8 d-grid">
-          <!-- Faturação e Orçamento do processo -->
-          <div class="card">
-            <div class="card-header"><i class="fas fa-table mr-1"></i>Faturação e Plano de Pagamentos</div>
-            <div class="card-body">
-              <div id="lstFaturacao"><b>Os dados de Faturação são listado aqui...</b></div>
-              <div id="lstPagamentos"><b>Os dados do Orçamento são listado aqui...</b></div>
-            </div>
-          </div>
-          
-          <h1 class="mt-2"></h1>
-
-          <!-- Histórico do processo -->
-          <div class="card">
-            <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Histórico</div>
-            <div class="card-body">
-              <div id="lstHistorico">
-                <b>O Histórico é listado aqui...</b>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
 
-      <footer id="footer">
+      <!-- Linha 3 -->
+      <h1 class="mt-2"></h1>
+      <div class="row id='opcoesProcesso'">
+        <!--Coluna 1 -->
+        <div class="col-md-6 col-lg-3">
+          <div class="card">
+            <div class="box bg-danger text-center">
+              <h1 class="font-light text-white">
+                <i class="fas fa-chart-pie mr-1"></i>
+              </h1>
+              <h6 class="text-white">Coluna 1</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card">
+            <div class="box bg-primary text-center">
+              <h1 class="font-light text-white">
+                <i class="fas fa-chart-pie mr-1"::before></i>
+              </h1>
+              <h6 class="text-white">Coluna 2</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card">
+            <div class="box bg-info text-center">
+              <h1 class="font-light text-white">
+                <i class="fas fa-chart-pie mr-1"::before></i>
+              </h1>
+              <h6 class="text-white">Coluna 3</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card">
+            <div class="box bg-dark text-center">
+              <h1 class="font-light text-white">
+                <i class="fas fa-chart-pie mr-1"::before></i>
+              </h1>
+              <h6 class="text-white">Coluna 4</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Footer -->
+      <div class="footer text-center">
         <div class="py-2 bg-light mt-auto">
           <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-between small">
@@ -132,9 +148,10 @@
             </div>
           </div>
         </div>
-      </footer>
-
-    </div>
+      </div>
+      <!-- Footer End-->
+      
+      </div>
   </div>
 
 <!-- Global
@@ -151,8 +168,7 @@
 <!-- Charts -->
 <script src="../../vendors/charts/Chart.min.js"></script>
 
-
-<script src="js/processo.js"></script>
+<script src="js/processoSearch.js"></script>
 
 </body>  
 

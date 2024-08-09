@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeProcesso = strval($_GET['nomeSearch']);
+$nomeProcesso = strval($_GET['nomeProcesso']);
 
 $query = "SELECT proces_check, proces_padm, proces_nome 
           FROM processo
