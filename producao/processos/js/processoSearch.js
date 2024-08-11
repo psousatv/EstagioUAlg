@@ -1,40 +1,105 @@
+
+//Esconde extras
+function escondeElementos(){
+  $("#showResultsProcesso").hide();
+  $("#resultsWrapper").hide();
+  $("#selecionadoWrapper").hide();
+};
+
+//Ativa extras
+function mostraElementos(){
+  $("#selecionadoWrapper").show();
+};
+
 // Chamada de dados via PHP pelo método XMLHttpRequest
-
-// Procurar por Mome ds Processo
-function procuraProcesso() {
-  var nomeProcesso = document.getElementById('nomeProcesso').value;
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET","dados/processoSearch.php?nomeProcesso=" + encodeURIComponent(nomeProcesso), true);
-  //xhr.open("GET","dados/processoNome.php?nomeProcesso="+nomeProcesso, true);
-
-  if(nomeProcesso != ''){
-
-    xhr.onreadystatechange = function() {
+// Procurar por Mome do Processo
+function procuraProcesso(nomeProcesso) {
+  $("#procuraProcesso").show();
+  var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        var processo = JSON.parse(xhr.responseText);
-        var output = '';
-        for(var i=0; i < processo.length; i++){
-        
-        output = processo[i]["proces_check"] + " - ";
-        output += processo[i]["proces_padm"] + "_";
-        output += processo[i]["proces_nome"] + '</div>';
-        }
+        document.getElementById("showResultsProcesso").innerHTML = this.responseText;
+        $("#showResultsProcesso").show();
       }
-    
-      document.getElementById("showResultsProcesso").innerHTML = output;
-      document.getElementById('opcoesProcesso').style.display = 'none';
+    }
 
-     //document.getElementById("lstProcesso").innerHTML = this.responseText;
-    
-      var processoCheck = processo[0]["proces_check"]; //nomeProcesso.proces_check
-      
-      console.log("Nome Digitado no formulário", nomeProcesso);
-      console.log("Nome Devolvido pelo servidor", Processo);
-      console.log("Código do processo resultante da resposta do servidor xx[0]['proces_check']: ", processoCheck);
+    xmlhttp.open("GET","dados/processoSearch.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.send();
+
+};
+
+// Guarda o resultado da escolha 
+function codigoProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+
+        resumoProcesso(codigo);
+        historicoProcesso(codigo);
+        faturacaoProcesso(codigo);
+        pagamentosProcesso(codigo);
+        //mostraElementos();
+        $("#searchWrapper").hide();
+
+      }
     }
-     } else {
-      document.getElementById('opcoesProcesso').style.display = 'none';
+
+    xmlhttp.open("GET","dados/processoSearch.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.send();
+
+  };
+
+  // Resumo do Processo
+function resumoProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstResumo").innerHTML = this.responseText;
+      $("#resultsWrapper").show();
+      $("#selecionadoWrapper").show();
     }
-    
-    xhr.send();
   }
+  
+  xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
+// Histórico
+function historicoProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstHistorico").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoHistorico.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+
+}
+
+// Facturação
+function faturacaoProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+}
+
+// Plano de Pagamentos
+function pagamentosProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+}
