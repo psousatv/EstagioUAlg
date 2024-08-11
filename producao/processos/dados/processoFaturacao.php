@@ -27,7 +27,7 @@ $processoFaturacao = "SELECT
                     ORDER BY fact_auto_num ASC" ;
 
 $stmt = $myConn->query($processoFaturacao);
-$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //Faturação
 echo "
@@ -51,23 +51,23 @@ echo "
     </tr>
     ";
 
-foreach($resultado as $row)
+foreach($data as $row)
 {
   echo "<tr>";
   echo "<td style='text-align:center'>" .$row['Ano']. "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Acum'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Jan'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Fev'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Mar'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Abr'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Mai'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Jun'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Jul'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Ago'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Set'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Out'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Nov'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right; width: 100px'>" .number_format($row['Dez'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Acum'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Jan'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Fev'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Mar'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Abr'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Mai'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Jun'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Jul'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Ago'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Set'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Out'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Nov'], 2, ',', '.'). "</td>";
+  echo "<td style='text-align:right'>" .number_format($row['Dez'], 2, ',', '.'). "</td>";
   echo "</tr>";
 }
 echo "</table>";

@@ -10,12 +10,12 @@ $processoHistorico = 'SELECT * FROM historico
                     ORDER BY historico_dataemissao DESC' ;
 
 $stmt = $myConn->query($processoHistorico);
-$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-echo "
-<table class='table table-striped table-hover small'>
-  <tr style='text-align: center'>
+echo '
+<table class="table table-striped table-hover small">
+  <tr style="text-align: center">
     <th>Data</th>
     <th>Aprovado</th>
     <th>Movimento</th>
@@ -23,24 +23,23 @@ echo "
     <th>Documento</th>
     <th>Outro</th>
     <th>Observações</th>
-  </tr>";
+  </tr>';
 
-foreach($resultado as $row)
+foreach($data as $row)
 {
-  echo "
+  echo '
     <tr>
-      <td style='width: 100px'>" .$row['historico_dataemissao']. "</td>
-      <td style='width: 100px'>" .$row['historico_datamov']. "</td>
-      <td style='width: 250px'>" .$row['historico_descr_nome']. "</td>
-      <td style='width: 100px; text-align:right'>" .number_format($row['historico_valor'], 2, ',', '.'). "</td>
-      <td style='width: 180px'>" .$row['historico_doc']. "</td>
-      <td style='width: 180px'>" .$row['historico_num']. "</td>
-      <td style='width: 250px'>" .$row['historico_obs']. "</td>
+      <td>'.$row["historico_dataemissao"].'</td>
+      <td>' .$row["historico_datamov"].'</td>
+      <td>' .$row["historico_descr_nome"].'</td>
+      <td>'.number_format($row["historico_valor"], 2, ",", ".").'</td>
+      <td>' .$row["historico_doc"].'</td>
+      <td>' .$row["historico_num"].'</td>
+      <td>' .$row["historico_obs"].'</td>
     </tr>
-    ";
+    ';
 }
 
-echo "
-  </table>
-</div>";
+echo '
+  </table>';
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT"><!-- InstanceBegin template="/Templates/main.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="pt-PT">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -32,9 +32,9 @@
 
 </head>
 
-<body >
+<body onload="escondeElementos()">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" >Detalhes de Processos</a>
+    <a class="navbar-brand" >Processos - Teste</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     <a class="nav-item text-muted" href="main.html">Home</a>
     <!--<a class="nav-item text-muted" href="//mdb1">Home</a>-->
@@ -57,46 +57,99 @@
   </nav>
 
   <div class="page_wrapper">
-    <h1 class="mt-2"></h1>
-    <div class="container-fluid">
-      <!-- Procura processo -->
+    <!-- Page Content-->
+    <div class="container-fluid" id="searchWrapper">
+      <!-- Linha 1 -->
+      <!-- Procura Processo-->
+      <h1 class="mt-2"></h1>
       <div class="row">
-        <div class="col-md-6 d-grid">
-          <form>
-            <input id="idProcesso" type="text" class="form-control form-control-sm" placeholder="Digite o qualquer parte do nome do Processo" oninput="nomeProcesso(this.value)">
-          </form>
+        <div class="col-md-10 col-lg-10">
+          <div class="row">
+            <form class="col-6 d-flex no-block align-items-left" id="procuraProcesso">
+              <div class="input-group">
+                  <input
+                  class="form-control"
+                  type="text"
+                  placeholder="Digite qualquer parte do nome do Processo ..."
+                  aria-label="Search" aria-describedby="basic-addon2"
+                  id="nomeProcesso"
+                  oninput="procuraProcesso(this.value)"
+                  autofocus
+                  >
+              </div>
+            </form>
+          </div>
+        
+          <!-- Resultados da Procura -->
+          <h1 class="mt-4"></h1>
+          <div class="row" id="showResultsProcesso">
+            <!--
+            <div class="card col-md-12 d-grid">
+                <ul class="list-group list-group-flush" id="showResultsProcesso">
+                </ul>
+            </div>
+          -->
+          </div>
+
         </div>
       </div>
-      
-      <h1 class="mt-2"></h1>
-      
-      <!-- Mostra o processo encontrado -->
-      <div class="row">
-        <div class="col-md-12 d-grid" id="lstProcesso"></div>
+    </div>
+ 
+    <div class="container-fluid">
+    <!-- Linha 2 -->
+     <h1 class="mt-2"></h1>
+     <div class="row" id="resultsWrapper">
+      <!-- Nome do Processo -->
+      <div class="row col-md-12 col-lg-12">
+        <div class="col-md-12 d-grid" id="nomeProcessoSelecionado">
+          <b>O nome do Processo é listado aqui...</b>
+        </div>
       </div>
-
+      <!-- Opções -->
       <h1 class="mt-2"></h1>
+      <div class="row  col-md-12 col-lg-12" id="opcoesProcesso">
+        <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-sm">Opção 1</button>
+        <button type="button" class="btn btn-secondary btn-sm">Opção 2</button>
+        <button type="button" class="btn btn-success btn-sm">Opção 3</button>
+        <button type="button" class="btn btn-danger btn-sm">Opção 4</button>
+        <button type="button" class="btn btn-warning btn-sm">Opção 5</button>
+        <button type="button" class="btn btn-info btn-sm">Opção 6</button>
+        <button type="button" class="btn btn-light btn-sm">Opção 7</button>
+        <button type="button" class="btn btn-dark btn-sm">Opção 8</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <!-- Linha 3 -->
+    <!-- Mostra os dados do processo selecionado -->
+    <h1 class="mt-2"></h1>
+    <div class="row col-md-12 col-lg-12" id="selecionadoWrapper">
       <!-- Mostra o progresso do processo -->
-      <div class="row">
-        <div class="col-md-12 d-grid" id="stepProgresso"></div>
+      <div class="row col-md-12 d-grid">
+        <div id="stepProgresso">
+          <b>Uma linha de progresso é mostrado aqui ...</b>
+        </div>
       </div>
-
-      <h1 class="mt-2"></h1>
       <!-- Detalhes do processo -->
-      <div class="row" id="detalhesProcesso">
-        <div class="col-lg-4 d-grid">
-          <div class="card">
-            <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
-            <!-- Resumo do processo -->
-            <div class="card-body">
-              <div id="lstResumo">
-                <b>Os dados do processo são listado aqui...</b>
-              </div>
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 d-grid">
+        <div class="col-lg-4 d-grid" id="detalhesProcesso">
+            <div class="card">
+              <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
+                <!-- Resumo do processo -->
+                <div class="card-body">
+                  <div id="lstResumo">
+                    <b>Os dados do processo são listado aqui...</b>
+                  </div>
+                </div>
             </div>
-          </div>
-        </div>        
+        </div>
+        <!-- Faturação, Orçamento e Historico do processo -->
         <div class="col-lg-8 d-grid">
-          <!-- Faturação e Orçamento do processo -->
+          <!-- Faturação e Orçamento -->
           <div class="card">
             <div class="card-header"><i class="fas fa-table mr-1"></i>Faturação e Plano de Pagamentos</div>
             <div class="card-body">
@@ -104,56 +157,49 @@
               <div id="lstPagamentos"><b>Os dados do Orçamento são listado aqui...</b></div>
             </div>
           </div>
-          
-          <h1 class="mt-2"></h1>
-
           <!-- Histórico do processo -->
+          <h1 class="mt-2"></h1>
           <div class="card">
             <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Histórico</div>
             <div class="card-body">
-              <div id="lstHistorico">
-                <b>O Histórico é listado aqui...</b>
-              </div>
+              <div id="lstHistorico"><b>O Histórico é listado aqui...</b></div>
             </div>
           </div>
-
         </div>
       </div>
-
-      <footer id="footer">
-        <div class="py-2 bg-light mt-auto">
-          <div class="container-fluid">
-            <div class="d-flex align-items-center justify-content-between small">
-              <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
-              <div>
-                <a href="#">Política de Privacidade</a>&middot;
-                <a href="#">Termos &amp; Condições</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
-
     </div>
   </div>
 
-<!-- Global
-<script src="../../global/js/scripts.js"></script>-->
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="py-2 bg-light mt-auto">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between small">
+          <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
+          <div>
+            <a href="#">Política de Privacidade</a>&middot;
+            <a href="#">Termos &amp; Condições</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- Footer End-->
+
 <!-- JQuery -->
 <script src="../../vendors/jquery/jquery-3.7.0.js"></script>
 <!-- Bootstrap -->
 <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
 <!-- Fontawesome -->
-<!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
 <script src="../../vendors/fonts/all.min.js"></script>
-<!-- Bootstrap -->
+<!-- Datatables -->
 <script src="../../vendors/datatables/datatables.min.js"></script>
 <!-- Charts -->
 <script src="../../vendors/charts/Chart.min.js"></script>
 
+<script src="js/processos.js"></script>
 
-<script src="js/processo.js"></script>
 
-</body>  
+</body>
 
 </html>

@@ -23,7 +23,7 @@ function procuraProcesso(nomeProcesso) {
       }
     }
 
-    xmlhttp.open("GET","dados/processoSearch.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
 };
@@ -34,20 +34,22 @@ function codigoProcesso(codigo) {
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
 
+        //document.getElementById("nomeProcessoSelecionado").innerHTML = "output";
+
         resumoProcesso(codigo);
         historicoProcesso(codigo);
         faturacaoProcesso(codigo);
         pagamentosProcesso(codigo);
-        //mostraElementos();
         $("#searchWrapper").hide();
 
       }
     }
 
-    xmlhttp.open("GET","dados/processoSearch.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
   };
+
 
   // Resumo do Processo
 function resumoProcesso(codigo) {
@@ -59,7 +61,6 @@ function resumoProcesso(codigo) {
       $("#selecionadoWrapper").show();
     }
   }
-  
   xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
@@ -72,7 +73,7 @@ function historicoProcesso(codigo) {
       document.getElementById("lstHistorico").innerHTML = this.responseText;
     }
   }
-  
+
   xmlhttp.open("GET","dados/processoHistorico.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 

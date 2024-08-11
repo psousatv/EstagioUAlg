@@ -16,9 +16,9 @@ $processoResumo = "SELECT * FROM processo
                   WHERE proces_cod > 0 AND proces_check = '" .$codigoProcesso. "'";
 
 $stmt = $myConn->query($processoResumo);
-$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-foreach($resultado as $row)
+foreach($data as $row)
 {
   //Dados Genéricos do Processo
   echo '
