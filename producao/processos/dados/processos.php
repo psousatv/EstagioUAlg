@@ -4,7 +4,7 @@ include "../../../global/config/dbConn.php";
 
 $nomeProcesso = $_GET['nomeProcesso'];
 
-$query = "SELECT *
+$query = "SELECT proces_check, proces_padm, proces_nome
           FROM processo
           WHERE proces_nome LIKE '%".$nomeProcesso."%'";
 
@@ -13,6 +13,9 @@ $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $rows = $stmt->rowCount();
+
+//header('Content-Type: application/json');
+//echo json_encode($data);
 
 foreach($data as $row) {
 echo '

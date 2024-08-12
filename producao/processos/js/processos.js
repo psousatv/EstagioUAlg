@@ -1,25 +1,23 @@
 
 //Esconde extras
 function escondeElementos(){
-  $("#showResultsProcesso").hide();
   $("#resultsWrapper").hide();
   $("#selecionadoWrapper").hide();
 };
 
 //Ativa extras
 function mostraElementos(){
+  $("#resultsWrapper").show();
   $("#selecionadoWrapper").show();
 };
 
-// Chamada de dados via PHP pelo método XMLHttpRequest
 // Procurar por Mome do Processo
 function procuraProcesso(nomeProcesso) {
-  $("#procuraProcesso").show();
+  //$("searchWrapper").show();
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         document.getElementById("showResultsProcesso").innerHTML = this.responseText;
-        $("#showResultsProcesso").show();
       }
     }
 
@@ -30,17 +28,17 @@ function procuraProcesso(nomeProcesso) {
 
 // Guarda o resultado da escolha 
 function codigoProcesso(codigo) {
+  $("searchWrapper").hide();
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-
-        //document.getElementById("nomeProcessoSelecionado").innerHTML = "output";
-
+        nome(codigo);
         resumoProcesso(codigo);
         historicoProcesso(codigo);
         faturacaoProcesso(codigo);
         pagamentosProcesso(codigo);
-        $("#searchWrapper").hide();
+
+        mostraElementos();
 
       }
     }
@@ -50,6 +48,17 @@ function codigoProcesso(codigo) {
 
   };
 
+// Nome do Processo
+function nome(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("nomeProcessoSelecionado").innerHTML = this.responseText;
+    }
+  }
+  xmlhttp.open("GET","dados/processoNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
 
   // Resumo do Processo
 function resumoProcesso(codigo) {
@@ -57,8 +66,6 @@ function resumoProcesso(codigo) {
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstResumo").innerHTML = this.responseText;
-      $("#resultsWrapper").show();
-      $("#selecionadoWrapper").show();
     }
   }
   xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
