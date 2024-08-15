@@ -1,19 +1,11 @@
-
-//Esconde extras
-function escondeElementos(){
-  $("#resultsWrapper").hide();
-  $("#selecionadoWrapper").hide();
-};
-
-//Ativa extras
-function mostraElementos(){
-  $("#resultsWrapper").show();
-  $("#selecionadoWrapper").show();
+function escondeResultados(){
+  document.getElementById("showResultsProcesso").style.display = "none";
+  document.getElementById("selecionadoWrapper").style.display = "none";
+  
 };
 
 // Procurar por Mome do Processo
 function procuraProcesso(nomeProcesso) {
-  //$("searchWrapper").show();
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
@@ -28,17 +20,18 @@ function procuraProcesso(nomeProcesso) {
 
 // Guarda o resultado da escolha 
 function codigoProcesso(codigo) {
-  $("searchWrapper").hide();
+  document.getElementById("searchWrapper").style.display = "none";
+  document.getElementById("selecionadoWrapper").style.display = "block";
+
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
+        
         nome(codigo);
         resumoProcesso(codigo);
         historicoProcesso(codigo);
         faturacaoProcesso(codigo);
         pagamentosProcesso(codigo);
-
-        mostraElementos();
 
       }
     }
