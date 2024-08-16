@@ -1,18 +1,29 @@
 function escondeResultados(){
-  document.getElementById("showResultsProcesso").style.display = "none";
-  document.getElementById("selecionadoWrapper").style.display = "none";
+  document.getElementById("selectedProcesso").style.display = "none";
+  document.getElementById("buttonsProcesso").style.display = "none";
+  document.getElementById("detailsWrapper").style.display = "none";
   
 };
+
+
+function mostraResultados(){
+  document.getElementById("detailsWrapper").style.display = "block";
+  document.getElementById("selectedProcesso").style.display = "block";
+  document.getElementById("buttonsProcesso").style.display = "block";
+};
+
+
 
 // Procurar por Mome do Processo
 function procuraProcesso(nomeProcesso) {
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("showResultsProcesso").innerHTML = this.responseText;
+        document.getElementById("showResultsForm").innerHTML = this.responseText;
       }
     }
 
+    //document.getElementById("detailsWrapper").style.display = "none";
     xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
@@ -20,9 +31,6 @@ function procuraProcesso(nomeProcesso) {
 
 // Guarda o resultado da escolha 
 function codigoProcesso(codigo) {
-  document.getElementById("searchWrapper").style.display = "none";
-  document.getElementById("selecionadoWrapper").style.display = "block";
-
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
@@ -32,6 +40,7 @@ function codigoProcesso(codigo) {
         historicoProcesso(codigo);
         faturacaoProcesso(codigo);
         pagamentosProcesso(codigo);
+        mostraResultados();
 
       }
     }
@@ -46,9 +55,12 @@ function nome(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("nomeProcessoSelecionado").innerHTML = this.responseText;
+      
+      document.getElementById("selectedProcesso").innerHTML = this.responseText;
     }
   }
+
+  document.getElementById("searchWrapper").style.display = "none";
   xmlhttp.open("GET","dados/processoNome.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };

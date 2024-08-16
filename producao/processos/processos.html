@@ -32,7 +32,7 @@
 
 </head>
 
-<body onload="escondeResultados()">
+<body>
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" >Processos - Teste</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
@@ -64,68 +64,61 @@
       <h1 class="mt-2"></h1>
       <div class="row" id="searchWrapper">
         <div class="col-md-10 col-lg-10">
-          <div class="row">
-            <form class="col-6 d-flex no-block align-items-left" id="procuraProcesso">
-              <div class="input-group">
-                  <input
-                  class="form-control"
-                  type="text"
-                  placeholder="Digite qualquer parte do nome do Processo ..."
-                  aria-label="Search" aria-describedby="basic-addon2"
-                  id="nomeProcesso"
-                  autofocus
-                  oninput="procuraProcesso(this.value)"
-                  >
-              </div>
+            <form class="col-6 d-flex no-block align-items-left" id="searchForm">
+              <input
+              class="form-control"
+              type="text"
+              placeholder="Digite qualquer parte do nome do Processo ..."
+              aria-label="Search" aria-describedby="basic-addon2"
+              id="nomeProcesso"
+              autofocus
+              onfocus="escondeResultados()"
+              oninput="procuraProcesso(this.value)"
+              >
             </form>
-          </div>
         
           <!-- Resultados da Procura -->
           <h1 class="mt-4"></h1>
-          <div class="row" id="showResultsProcesso"></div>
-
-        </div>
+          <div class="row" id="showResultsForm"></div>
       </div>
     </div>
- 
+    <h1 class="mt-2"></h1>
+
     <div class="container-fluid">
       <!-- Linha 2 -->
+      <!-- Nome do Processo -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12" id="selectedProcesso">
+        <b>O nome do Processo é listado aqui...</b>
+      </div>
+      <h1 class="mt-2"></h1>
 
-      <div class="row col-md-12 col-lg-12" id="listaWrapper">
-
-        <!-- Nome do Processo -->
-        <h1 class="mt-2"></h1>
-        <div class="row col-md-12 col-lg-12" id="nomeProcessoSelecionado">
-          <b>O nome do Processo é listado aqui...</b>
-        </div>
-        <!-- Opções -->
-        <h1 class="mt-2"></h1>
-        <div class="row col-md-12 col-lg-12" id="opcoesProcesso">
-          <button type="button" class="btn btn-primary btn-sm">Opção 1</button>
-          <button type="button" class="btn btn-secondary btn-sm">Opção 2</button>
-          <button type="button" class="btn btn-success btn-sm">Opção 3</button>
-          <button type="button" class="btn btn-danger btn-sm">Opção 4</button>
-          <button type="button" class="btn btn-warning btn-sm">Opção 5</button>
-          <button type="button" class="btn btn-info btn-sm">Opção 6</button>
-          <button type="button" class="btn btn-light btn-sm">Opção 7</button>
-          <button type="button" class="btn btn-dark btn-sm">Opção 8</button>
-        </div>
-
+      <!-- Opções -->
+      <div class="row col-md-12 col-lg-12" id="buttonsProcesso">
+        <button type="button" class="btn btn-primary btn-sm">Opção 1</button>
+        <button type="button" class="btn btn-secondary btn-sm">Opção 2</button>
+        <button type="button" class="btn btn-success btn-sm">Opção 3</button>
+        <button type="button" class="btn btn-danger btn-sm">Opção 4</button>
+        <button type="button" class="btn btn-warning btn-sm">Opção 5</button>
+        <button type="button" class="btn btn-info btn-sm">Opção 6</button>
+        <button type="button" class="btn btn-light btn-sm">Opção 7</button>
+        <button type="button" class="btn btn-dark btn-sm">Opção 8</button>
       </div>
     </div>
+    <h1 class="mt-2"></h1>
 
   <div class="container-fluid">
     <!-- Linha 3 -->
     <!-- Mostra os dados do processo selecionado -->
     <h1 class="mt-2"></h1>
-    <div class="row col-md-12 col-lg-12" id="selecionadoWrapper">
+    <div class="row col-md-12 col-lg-12" id="detailsWrapper">
       <!-- Mostra o progresso do processo -->
       <div class="row col-md-12 col-lg-12" id="stepProgresso">
         <b>Uma linha de progresso é mostrado aqui ...</b>
       </div>
       <!-- Detalhes do processo -->
       <h1 class="mt-2"></h1>
-      <div class="row col-md-12 col-lg-12" id="detalhesProcesso">
+      <div class="row col-md-12 col-lg-12" id="detailsProcesso">
         <div class="col-lg-4 d-grid" >
             <div class="card">
               <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
