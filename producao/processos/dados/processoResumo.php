@@ -25,13 +25,15 @@ foreach($data as $row)
   <div class="badge bg-primary text-white">Dados Genéricos do Processo</div>
   <div class="row small text-justify">
     <div class="col-md-4 d-grid"><b>Estado: </b></div>
-    <div class="col-md-8 d-grid">'.$row["proces_estado_nome"].'</div>
+    <div class="col-md-8 d-grid">'.$row["proces_estado_nome"].' ('.$row["proces_data_adjudicacao"].')</div>
     <div class="col-md-4 d-grid"><b>Prazo de Execução: </b></div>
     <div class="col-md-8 d-grid">'.$row["proces_prz_exec"].' dias</div>
     <div class="col-md-4 d-grid"><b>Adjudicatária: </b></div>
     <div class="col-md-8 d-grid">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
+    <div class="col-md-4 d-grid"><b>Processo Administrativo: </b></div>
+    <div class="col-md-8 d-grid">'.$row['proces_padm'].'</div>
     <div class="col-md-4 d-grid"><b>Identificação: </b></div>
-    <div class="col-md-8 d-grid">'.$row['proces_nome']. '</div>
+    <div class="col-md-8 d-grid">('.$row['proces_check'].') - '.$row['proces_nome'].'</div>
     <div class="col-md-4 d-grid"><b>Descrição: </b></div>
     <div class="col-md-8 d-grid">'.$row['proces_obs']. '</div>
   </div> 
@@ -47,7 +49,7 @@ foreach($data as $row)
     <div class="col-md-4 d-grid"><b>Contrato: </b></div>
     <div class="col-md-8 d-grid">'.$row['proced_contrato'].'</div>
     <div class="col-md-4 d-grid"><b>Procedimento: </b></div>
-    <div class="col-md-8 d-grid">'.$row['proced_escolha'].'</div>
+    <div class="col-md-8 d-grid">('.$row['proces_proced_cod'].') - '.$row['proced_escolha'].'</div>
     <div class="col-md-4 d-grid""><b>Limite: </b></div>
     <div class="col-md-8 d-grid">'.number_format($row['proced_limite'], 2, ',', '.').'€</div>
     <div class="col-md-4 d-grid""><b>Orçamento: </b></div>
