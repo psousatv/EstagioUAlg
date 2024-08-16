@@ -2,17 +2,13 @@ function escondeResultados(){
   document.getElementById("selectedProcesso").style.display = "none";
   document.getElementById("buttonsProcesso").style.display = "none";
   document.getElementById("detailsWrapper").style.display = "none";
-  
 };
-
 
 function mostraResultados(){
   document.getElementById("detailsWrapper").style.display = "block";
   document.getElementById("selectedProcesso").style.display = "block";
   document.getElementById("buttonsProcesso").style.display = "block";
 };
-
-
 
 // Procurar por Mome do Processo
 function procuraProcesso(nomeProcesso) {
@@ -25,6 +21,21 @@ function procuraProcesso(nomeProcesso) {
 
     //document.getElementById("detailsWrapper").style.display = "none";
     xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.send();
+
+};
+
+// Procurar por Mome do Fornecedor
+function procuraFornecedor(nomeFornecedor) {
+  var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("showResultsForm").innerHTML = this.responseText;
+      }
+    }
+
+    //document.getElementById("detailsWrapper").style.display = "none";
+    xmlhttp.open("GET","dados/fornecedor.php?nomeFornecedor="+nomeFornecedor,true);
     xmlhttp.send();
 
 };
