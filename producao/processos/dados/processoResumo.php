@@ -44,8 +44,6 @@ foreach($data as $row)
     <div class="col-md-8 d-grid">'.$row['proced_regime'].'</div>
     <div class="col-md-4 d-grid"><b>Publicado em: </b></div>
     <div class="col-md-8 d-grid">'.$row['proces_data_pub_se'].'</div>
-    <div class="col-md-4 d-grid"><b>Valor Máximo: </b></div>
-    <div class="col-md-8 d-grid">'.number_format($row['proces_val_max'], 2, ',', '.').'€</div>
     <div class="col-md-4 d-grid"><b>Contrato: </b></div>
     <div class="col-md-8 d-grid">'.$row['proced_contrato'].'</div>
     <div class="col-md-4 d-grid"><b>Procedimento: </b></div>
@@ -60,19 +58,20 @@ foreach($data as $row)
     <div class="col-md-8 d-grid">'.$row['proces_orc_rubrica']. '</div>
     <div class="col-md-4 d-grid"><b>Valor Base: </b></div>
     <div class="col-md-8 d-grid">'.number_format($row['proces_val_base'], 2, ',', '.').'€</div>
+    <div class="col-md-4 d-grid"><b>Valor Máximo: </b></div>
+    <div class="col-md-8 d-grid">'.number_format($row['proces_val_max'], 2, ',', '.').'€</div>
   </div>
   <hr>';
   //Valores
   echo '
   <div class="badge bg-success text-white">Valores</div>
   <div class="row small text-justify">
+    <div class="col-md-3 d-grid"><b>Financiado: </b></div>
+    <div class="col-md-9 d-grid">'.$row['proces_cand'].' </div>
     <div class="col-md-3 d-grid"><b>Adjudicado: </b></div>
     <div class="col-md-9 d-grid">'.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
     <div class="col-md-3 d-grid"><b>Faturado: </b></div>
-    <div class="col-md-9 d-grid">'.number_format($row['proces_val_faturacao'], 2, ',', '.').'€</div>
-    <div class="col-md-3 d-grid"><b>Financiado: </b></div>
-    <div class="col-md-9 d-grid">'.$row['proces_cand'].' </div>
-    <div class="col-md-3 d-grid"><b>Reembolsado: </b></div>
+    <div class="col-md-9 d-grid">'.number_format($row['proces_val_faturacao'], 2, ',', '.').'€</div><div class="col-md-3 d-grid"><b>Reembolsado: </b></div>
     <div class="col-md-9 d-grid">'.number_format($row['proces_cand_recebido'], 2, ',', '.').'€</div>
   </div>
   <hr>';

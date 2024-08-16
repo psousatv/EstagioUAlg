@@ -32,7 +32,7 @@
 
 </head>
 
-<body>
+<body onload="escondeResultados()">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" >Processos</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
@@ -69,19 +69,17 @@
               class="form-control"
               type="text"
               placeholder="Digite qualquer parte do nome do Processo ..."
-              aria-label="Search" aria-describedby="basic-addon2"
+              aria-label="Search1" aria-describedby="basic-addon1"
               id="nomeProcesso"
               autofocus
-              onfocus="escondeResultados()"
+              
               oninput="procuraProcesso(this.value)">
               <input
               class="form-control"
               type="text"
               placeholder="Digite qualquer parte do nome do Fornecedor ..."
-              aria-label="Search" aria-describedby="basic-addon2"
+              aria-label="Search2" aria-describedby="basic-addon2"
               id="nomeFornecedor"
-              autofocus
-              onfocus="escondeResultados()"
               oninput="procuraFornecedor(this.value)">
             </form>
         
