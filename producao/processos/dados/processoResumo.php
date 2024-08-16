@@ -25,9 +25,9 @@ foreach($data as $row)
   <div class="badge bg-primary text-white">Dados Genéricos do Processo</div>
   <div class="row small text-justify">
     <div class="col-md-4 d-grid"><b>Estado: </b></div>
-    <div class="col-md-8 d-grid">'.$row["proces_estado_nome"].' ('.$row["proces_data_adjudicacao"].')</div>
+    <div class="col-md-8 d-grid">'.$row["proces_estado_nome"].'</div>
     <div class="col-md-4 d-grid"><b>Prazo de Execução: </b></div>
-    <div class="col-md-8 d-grid">'.$row["proces_prz_exec"].' dias</div>
+    <div class="col-md-8 d-grid">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
     <div class="col-md-4 d-grid"><b>Adjudicatária: </b></div>
     <div class="col-md-8 d-grid">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
     <div class="col-md-4 d-grid"><b>Processo Administrativo: </b></div>
@@ -71,7 +71,7 @@ foreach($data as $row)
     <div class="col-md-3 d-grid"><b>Financiado: </b></div>
     <div class="col-md-9 d-grid">'.$row['proces_cand'].' </div>
     <div class="col-md-3 d-grid"><b>Adjudicado: </b></div>
-    <div class="col-md-9 d-grid">'.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
+    <div class="col-md-9 d-grid">('.$row["proces_data_adjudicacao"].'): '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
     <div class="col-md-3 d-grid"><b>Faturado: </b></div>
     <div class="col-md-9 d-grid">'.number_format($row['proces_val_faturacao'], 2, ',', '.').'€</div><div class="col-md-3 d-grid"><b>Reembolsado: </b></div>
     <div class="col-md-9 d-grid">'.number_format($row['proces_cand_recebido'], 2, ',', '.').'€</div>
