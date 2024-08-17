@@ -35,7 +35,7 @@ function procuraFornecedor(nomeFornecedor) {
     }
 
     //document.getElementById("detailsWrapper").style.display = "none";
-    xmlhttp.open("GET","dados/fornecedor.php?nomeFornecedor="+nomeFornecedor,true);
+    xmlhttp.open("GET","dados/processosFornecedor.php?nomeFornecedor="+nomeFornecedor,true);
     xmlhttp.send();
 
 };
