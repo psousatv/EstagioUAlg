@@ -1,7 +1,7 @@
 <?php
 
 //Variaveis conexão ao servidor
-$myHost = "127.0.0.1";
+$myHost = "localhost";
 //$myHost = "mdb1";
 $user = "tv";
 $password = "taviraverde";
