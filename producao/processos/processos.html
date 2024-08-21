@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Processos</title>
+
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="../../templates/favicon.png"/>
+
+<!-- CSS -->
+<!-- Materials /*Cards de Teste 2 */ -->
+<link href="../../vendors/fonts/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+
+
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body onload="escondeResultados()">
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" >Processos</a>
+    <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <a class="nav-item text-muted" href="main.html">Home</a>
+    <!--<a class="nav-item text-muted" href="//mdb1">Home</a>-->
+    <!-- Credenciação-->
+    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+      <!--Se não credenciado text-white, caso contrário text-mute -->
+      <div class="nav-item text-white small">Credenciais: Não Credenciado</div>
+    </div>
+    <!-- Logged -->
+    <ul class="navbar-nav ml-auto ml-md-0">
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+              <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Login</a>
+              <a class="dropdown-item" href="#">Logout</a>
+          </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="page_wrapper">
+    <!-- Page Content-->
+    <div class="container-fluid">
+      <!-- Linha 1 -->
+      <!-- Procura Processo-->
+      <h1 class="mt-2"></h1>
+      <div class="row" id="searchWrapper">
+        <div class="col-md-12 col-lg-12">
+            <form id="searchForm">
+              <div class="row">
+                <div class="col-md-6 col-lg-6 align-items-left">
+                  <input
+                  class="form-control"
+                  type="text"
+                  placeholder="Digite qualquer parte do nome do Processo ..."
+                  aria-label="Search1" aria-describedby="basic-addon1"
+                  id="nomeProcesso"
+                  autofocus
+                  
+                  oninput="procuraProcesso(this.value)">
+                </div>
+              
+                <div class="col-md-6 col-lg-6 align-items-left">
+                  <input
+                  class="form-control"
+                  type="text"
+                  placeholder="Digite qualquer parte do nome do Fornecedor ..."
+                  aria-label="Search2" aria-describedby="basic-addon2"
+                  id="nomeFornecedor"
+                  oninput="procuraFornecedor(this.value)">
+                </div>
+              </div>
+            </form>
+        
+          <!-- Resultados da Procura -->
+          <h1 class="mt-4"></h1>
+          <div class="row" id="showResultsForm"></div>
+        </div>
+      </div>
+    </div>
+    <h1 class="mt-2"></h1>
+
+    <div class="container-fluid">
+      <!-- Linha 2 -->
+      <!-- Nome do Processo -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12" id="selectedProcesso">
+        <b>O nome do Processo é listado aqui...</b>
+      </div>
+      <!-- Mostra o progresso do processo -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12" id="stepProgresso">
+        <b>Uma linha de progresso é mostrada aqui ...</b>
+      </div>
+      <!-- Opções -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12 d-grid small text-white" id="buttonsProcesso">
+        
+      </div>
+    </div>
+    
+
+    <div class="container-fluid">
+      <!-- Linha 3 -->
+      <!-- Mostra os dados do processo selecionado -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12" id="detailsWrapper">
+        
+
+
+        <!-- Detalhes do processo -->
+        <h1 class="mt-2"></h1>
+        <div class="row col-md-12 col-lg-12" id="detailsProcesso">
+          <div class="row">
+            <div class="col-lg-12 d-grid">
+              <div class="btn btn-primary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+              <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+              <div class="btn btn-success"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+              <div class="btn btn-danger"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+              <div class="btn btn-warning"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+              <div class="btn btn-info"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+              <div class="btn btn-dark"><i class="fas fa-globe"></i></div>
+            </div>
+          </div>
+          <h1 class="mt-2"></h1>
+          <div class="row">
+            <div class="col-lg-4 d-grid" >
+              <div class="card">
+                <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
+                  <!-- Resumo do processo -->
+                  <div class="card-body">
+                    <div id="lstResumo">
+                      <b>Os dados do processo são listado aqui...</b>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <!-- Faturação, Orçamento e Historico do processo -->
+            <div class="col-lg-8 d-grid">
+              <!-- Faturação e Orçamento -->
+              <div class="card">
+                <div class="card-header"><i class="fas fa-table mr-1"></i>Faturação e Plano de Pagamentos</div>
+                <div class="card-body">
+                  <div id="lstFaturacao"><b>Os dados de Faturação são listado aqui...</b></div>
+                  <div id="lstPagamentos"><b>Os dados do Orçamento são listado aqui...</b></div>
+                </div>
+              </div>
+              <!-- Histórico do processo -->
+              <h1 class="mt-2"></h1>
+              <div class="card">
+                <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Histórico</div>
+                <div class="card-body">
+                  <div id="lstHistorico"><b>O Histórico é listado aqui...</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+      <div class="py-2 bg-light mt-auto">
+        <div class="container">
+          <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
+            <div>
+              <a href="#">Política de Privacidade</a>&middot;
+              <a href="#">Termos &amp; Condições</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Footer End-->
+
+  </div>
+
+
+
+<!-- JQuery -->
+<script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+<!-- Fontawesome -->
+<script src="../../vendors/fonts/all.min.js"></script>
+<!-- Datatables -->
+<script src="../../vendors/datatables/datatables.min.js"></script>
+<!-- Charts -->
+<script src="../../vendors/charts/Chart.min.js"></script>
+
+<script src="js/processos.js"></script>
+
+
+</body>
+
+</html>
