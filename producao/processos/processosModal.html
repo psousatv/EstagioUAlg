@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Processos</title>
+
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="../../templates/favicon.png"/>
+
+<!-- CSS -->
+<!-- Materials /*Cards de Teste 2 */ -->
+<link href="../../vendors/fonts/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+
+
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+  
+
+  <div class="page_wrapper">
+    <!-- Page Content-->
+    <div class="container-fluid">
+      <!-- Linha 1 -->
+      <!-- Procura Processo-->
+      <h1 class="mt-2"></h1>
+      <div class="row" id="searchWrapper">
+        <div class="col-md-8 col-lg-8">
+            <form id="searchForm">
+              <div class="row">
+                <div class="col-md-4 col-lg-4 align-items-left">
+                  <input
+                  class="form-control"
+                  type="text"
+                  placeholder="Digite qualquer parte do nome do Processo ..."
+                  id="nomeProcesso"
+                  autofocus
+                  oninput="procuraProcesso(this.value)">
+                </div>
+              
+                <div class="col-md-4 col-lg-4 align-items-left">
+                  <input
+                  class="form-control"
+                  type="text"
+                  placeholder="Digite qualquer parte do nome do Fornecedor ..."
+                  aria-label="Search2" aria-describedby="basic-addon2"
+                  id="nomeFornecedor"
+                  oninput="procuraFornecedor(this.value)">
+                </div>
+              </div>
+            </form>
+        
+          <!-- Resultados da Procura -->
+          <h1 class="mt-4"></h1>
+          <div class="row" id="showResultsForm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<!-- JQuery -->
+<script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+<!-- Fontawesome -->
+<script src="../../vendors/fonts/all.min.js"></script>
+<!-- Datatables -->
+<script src="../../vendors/datatables/datatables.min.js"></script>
+<!-- Charts -->
+<script src="../../vendors/charts/Chart.min.js"></script>
+
+<script src="js/processos.js"></script>
+
+
+</body>
+
+</html>
