@@ -1,13 +1,15 @@
 function escondeResultados(){
   document.getElementById("selectedProcesso").style.display = "none";
+  document.getElementById("stepProgresso").style.display = "none";
   document.getElementById("buttonsProcesso").style.display = "none";
   document.getElementById("detailsWrapper").style.display = "none";
 };
 
 function mostraResultados(){
-  document.getElementById("detailsWrapper").style.display = "block";
   document.getElementById("selectedProcesso").style.display = "block";
+  document.getElementById("stepProgresso").style.display = "block";
   document.getElementById("buttonsProcesso").style.display = "block";
+  document.getElementById("detailsWrapper").style.display = "block";
 };
 
 // Procurar por Mome do Processo
