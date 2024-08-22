@@ -76,126 +76,112 @@
 
   <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
-<!-- InstanceBeginEditable name="menuLateral" -->
-<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-  <div class="sb-sidenav-menu">
-  <div class="nav">
-      <div class="sb-sidenav-menu-heading">Principal</div>
-      <a class="nav-link" href="../../index.html"><div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-          Dashboard
-      </a>
+      <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+          <div class="nav">
+              <div class="sb-sidenav-menu-heading">Principal</div>
+              <a class="nav-link" href="../../index.html"><div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                  Dashboard
+              </a>
 
-      <div class="sb-sidenav-menu-heading">Interface</div>
-      <a class="nav-link" href="../../global/401.html"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-          Registo
-      </a>
-      <a class="nav-link" href="processosModal.html"><div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-          Consultas
-      </a>
-      <a class="nav-link" href="../../global/401.html"><div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-        Listagens
-    </a>
-  </div>
-</div>
-<div class="sb-sidenav-footer">
-  <div class="small">Logged in as:</div>
-  Não Credenciado
-</div>
-</nav>
-<!-- InstanceEndEditable -->
-    </div>
-<!-- InstanceBeginEditable name="bodyHead" -->
-    <div id="layoutSidenav_content">
-        <main>
-          <div class="container-fluid">
-            <h1 class="mt-4"></h1>
-            <ol class="breadcrumb mb-4">
-              <li class="breadcrumb-item active">Processos</li>
-            </ol>
-<!-- InstanceEndEditable -->
-
-<!-- InstanceBeginEditable name="bodyContent" -->
-            <!-- 1.ª Linha -->
-            <div class="row">
-              <!-- Coluna 1 -->
-              <div class="col-md-4">
-                <div class="card">
-                  <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Facturação sobre a Adjudicação</div>
-                  <div class="card-body">
-                    <div id="cartoesEsquerdaGrafico"></div>
-                  </div>
-                </div>
-              </div>
-              <!-- Coluna 2 -->
-              <div class="col-md-8">
-                <div class="card">
-                  <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Processos por tipo de Contrato (€)</div>
-                  <div class="card-body">
-                    <div class="col-md-8">
-                      <canvas  id="grafico"></canvas>                        
-                    </div>
-                    <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <h1 class="mt-2"></h1>
-            <!-- 2.ª Linha -->
-            <!-- Tabela -->
-            <div class="row">
-              <div class="col-md-12">
-                <div class="card mb-4">
-                  <div class="card-header"><i class="fas fa-table mr-1"></i>Contratos</div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
-                        <thead>
-                          <tr style="text-align: center;">
-                            <th>Contrato</th>
-                            <th>Adjudicado</th>
-                            <th>Faturação</th>
-                            <th>%</th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-<!-- InstanceEndEditable -->
-
-<!-- InstanceBeginEditable name="bodyFooter" -->
-<!-- InstanceEndEditable -->             
+              <div class="sb-sidenav-menu-heading">Interface</div>
+              <a class="nav-link" href="../../global/401.html"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                  Registo
+              </a>
+              <a class="nav-link" href="processosBKup.html"><div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                  Consultas
+              </a>
+              <a class="nav-link" href="../../global/401.html"><div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                Listagens
+            </a>
           </div>
-        </main>
-      </div>
+        </div>
+        <div class="sb-sidenav-footer">
+          <div class="small">Logged in as:</div>
+          Não Credenciado
+        </div>
+      </nav>
     </div>
 
-    <!-- Global
-    <script src="../../global/js/scripts.js"></script>-->
-    <!-- JQuery -->
-    <script src="../../vendors/jquery/jquery-3.7.0.js"></script>
-    <!-- Bootstrap -->
-    <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
-    <!-- Fontawesome -->
-    <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
-    <script src="../../vendors/fonts/all.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="../../vendors/datatables/datatables.min.js"></script>
-    <!-- Charts -->
-    <script src="../../vendors/charts/Chart.min.js"></script>
+    <div id="layoutSidenav_content">
+      <main>
+        <div class="container-fluid">
+          <h1 class="mt-4"></h1>
+          <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Processos</li>
+          </ol>
+          <!-- 1.ª Linha -->
+          <div class="row">
+            <!-- Coluna 1 -->
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Facturação sobre a Adjudicação</div>
+                <div class="card-body">
+                  <div id="cartoesEsquerdaGrafico"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Coluna 2 -->
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Processos por tipo de Contrato (€)</div>
+                <div class="card-body">
+                  <div class="col-md-8">
+                    <canvas  id="grafico"></canvas>                        
+                  </div>
+                  <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h1 class="mt-2"></h1>
+          <!-- 2.ª Linha -->
+          <!-- Tabela -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-table mr-1"></i>Contratos</div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
+                      <thead>
+                        <tr style="text-align: center;">
+                          <th>Contrato</th>
+                          <th>Adjudicado</th>
+                          <th>Faturação</th>
+                          <th>%</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>           
+        </div>
+      </main>
+    </div>
+  </div>
 
+  <!-- Global
+  <script src="../../global/js/scripts.js"></script>-->
+  <!-- JQuery -->
+  <script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+  <!-- Bootstrap -->
+  <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+  <!-- Fontawesome -->
+  <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
+  <script src="../../vendors/fonts/all.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="../../vendors/datatables/datatables.min.js"></script>
+  <!-- Charts -->
+  <script src="../../vendors/charts/Chart.min.js"></script>
 
-<!-- InstanceBeginEditable name="scriptPagina" -->
-
-<script src="js/main.js"></script>
-
-
-<!-- InstanceEndEditable -->
+  <script src="js/main.js"></script>
 
 </body>
+
 <footer id="footer">
   <div class="py-2 bg-light mt-auto">
     <div class="container">
@@ -209,7 +195,5 @@
     </div>
   </div>
 </footer>
-
-<!-- InstanceEnd -->
 
 </html>
