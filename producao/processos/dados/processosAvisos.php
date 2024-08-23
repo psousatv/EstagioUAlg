@@ -16,6 +16,6 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($data as $row) {
 echo  '
-  <div class="small text-left">'.$row["descr_fase_processo"].'_'.$row["proces_padm"].'_'.$row["proces_cod"].'_'.$row["proces_sub"].'</div>
+  <div class="small text-left">'.$row["proces_nome"].'</div>
 ';
 };
