@@ -32,7 +32,7 @@
 
 </head>
 
-<body onload="escondeResultados()">
+<body onload="escondeResultados(), avisos(208)">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" >Processos</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
@@ -70,7 +70,7 @@
             <!-- XXXXX -->
             <div class="card">
               <div class="card-header text-white" style="background-color: green;"><i class="fa-duotne fa-solid fa-person-digging"></i> Em Curso</div>
-              <div class="card-body" id="processoCurso">Lista os processos aqui</div>
+              <div class="card-body" id="processosFaseCurso">Lista os processos aqui</div>
             </div>
           </div>
           <!-- 2.ª Coluna -->
@@ -78,7 +78,7 @@
             <!-- XXXXX -->
             <div class="card">
               <div class="card-header text-white" style="background-color: blue;"><i class="fas fa-table mr-1"></i> Em Concurso</div>
-              <div class="card-body" id="processosConcurso">Lista os processos aqui</div>
+              <div class="card-body" id="processosFaseConcurso">Lista os processos aqui</div>
             </div>
           </div>
           <!-- 3.ª Coluna -->
@@ -86,7 +86,7 @@
             <!-- XXXXX -->
             <div class="card">
               <div class="card-header text-dark" style="background-color: cyan;"><i class="fas fa-table mr-1"></i> Em Consulta</div>
-              <div class="card-body" id="processosConsulta">Lista os processos aqui</div>
+              <div class="card-body" id="processosFaseConsulta">Lista os processos aqui</div>
             </div>
           </div>
           <!-- 4.ª Coluna -->
@@ -94,7 +94,7 @@
             <!-- XXXXX -->
             <div class="card">
               <div class="card-header text-white" style="background-color: red;"><i class="fas fa-table mr-1"></i> Em Preparação / Revisão</div>
-              <div class="card-body" id="processosRevisao">Lista os processos aqui</div>
+              <div class="card-body" id="processosFase">Lista os processos aqui</div>
             </div>
           </div>
         </div>

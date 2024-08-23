@@ -12,6 +12,22 @@ function mostraResultados(){
   document.getElementById("detailsWrapper").style.display = "block";
 };
 
+// Avisos
+function avisos(faseProcessos){
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("processosFaseCurso").innerHTML = this.responseText;
+    }
+  }
+
+  
+  xmlhttp.open("GET","dados/processosAvisos.php?faseProcessos="+faseProcessos,true);
+
+  xmlhttp.send();
+
+};
+
 // Procurar por Mome do Processo
 function procuraProcesso(nomeProcesso) {
   var xmlhttp = new XMLHttpRequest();
@@ -21,7 +37,6 @@ function procuraProcesso(nomeProcesso) {
       }
     }
 
-    //document.getElementById("detailsWrapper").style.display = "none";
     xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
