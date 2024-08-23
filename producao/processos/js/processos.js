@@ -48,6 +48,7 @@ function codigoProcesso(codigo) {
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         
+        document.getElementById("Avisos").style.display = "none";
         nome(codigo);
         resumoProcesso(codigo);
         historicoProcesso(codigo);
