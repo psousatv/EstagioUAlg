@@ -15,7 +15,7 @@ $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($data as $row) {
-echo  '
-  <div class="small text-left">'.$row["proces_nome"].'</div>
-';
+  echo  '
+    <div class="small text-left">'.$row["proces_nome"].'</div>
+    ';
 };
