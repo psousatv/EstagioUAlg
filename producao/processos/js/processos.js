@@ -13,18 +13,17 @@ function mostraResultados(){
 };
 
 // Avisos
-function avisos(faseProcessos){
+function avisos(){
   var xmlhttp = new XMLHttpRequest();
 
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("processosFaseCurso").innerHTML = this.responseText;
-      document.getElementById("processosFaseConcurso").innerHTML = this.responseText;
+      document.getElementById("Avisos").innerHTML = this.responseText;
     }
   }
 
  
-  xmlhttp.open("GET","dados/processosAvisos.php?faseProcessos="+'208',true);
+  xmlhttp.open("GET","dados/processosAvisos.php");
   xmlhttp.send();
 
 };
