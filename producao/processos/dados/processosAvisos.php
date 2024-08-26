@@ -26,7 +26,7 @@ echo '
 <!-- 1.ª Coluna -->
     <div class="col-sm-4">
       <div class="card">
-        <div class="card-header text-white" style="background-color: green;"><i class="fa-duotne fa-solid fa-person-digging"></i> Em Curso</div>
+        <div class="card-header text-white" style="background-color: green;"><i class="fas fa-person-digging"></i> Em Curso</div>
         <div class="card-body" id="processosFaseCurso">
           <table class="table table-striped small">
         ';
@@ -45,7 +45,7 @@ echo '
     <!-- 2.ª Coluna -->
     <div class="col-sm-4">
       <div class="card">
-        <div class="card-header text-white" style="background-color: blue;"><i class="fas fa-table mr-1"></i> Em Contratação ou Adjudicado</div>
+        <div class="card-header text-white" style="background-color: blue;"><i class="fas fa-book mr-1"></i> Em Contratação ou Adjudicado</div>
         <div class="card-body" id="processosFaseConcurso">
           <table class="table table-striped small">
         ';
@@ -64,7 +64,7 @@ echo '
     <!-- 3.ª Coluna -->
     <div class="col-sm-4">
       <div class="card">
-        <div class="card-header text-white" style="background-color: red;"><i class="fas fa-table mr-1"></i> Em Consulta de Mercado</div>
+        <div class="card-header text-white" style="background-color: red;"><i class="fas fa-search mr-1"></i> Em Consulta de Mercado</div>
         <div class="card-body" id="processosFaseConsulta">
           <table class="table table-striped small">
         ';

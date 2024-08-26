@@ -10,19 +10,19 @@ if(isset($_POST["action"]))
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
-						ROUND(SUM(orc_valor_previsto), 2) AS orcamento,
-						ROUND(SUM(orc_valor_adjudicado), 2) AS adjudicado,
-						ROUND((SUM(orc_valor_adjudicado)  / SUM(orc_valor_previsto)) * 100, 2) AS orcamento_percent,
-						ROUND(SUM(orc_valor_faturado), 2) AS faturado,
-						ROUND((SUM(orc_valor_faturado)  / SUM(orc_valor_adjudicado)) * 100, 2) AS faturado_percent
-						FROM orcamento
-						INNER JOIN rubricas r ON r.rub_cod = orc_rub_cod ';
+						ROUND(SUM(proces_val_base), 2) AS orcamento,
+						ROUND(SUM(proces_val_adjudicacoes), 2) AS adjudicado,
+						ROUND((SUM(proces_val_adjudicacoes)  / SUM(proces_val_base)) * 100, 2) AS orcamento_percent,
+						ROUND(SUM(proces_val_faturacao), 2) AS faturado,
+						ROUND((SUM(proces_val_faturacao)  / SUM(proces_val_adjudicacoes)) * 100, 2) AS faturado_percent
+						FROM processo
+						INNER JOIN rubricas r ON r.rub_cod = proces_rub_cod ';
 					   
-        $search_query = 'WHERE orc_ano <> 0 AND orc_rub_cod <> 100 AND orc_rub_cod <> 999 ';
+        $search_query = 'WHERE proces_report_valores = 1 ';
         
         if(isset($_POST["search"]["value"]))
         {
-			$search_query .= 'AND orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
+			$search_query .= 'AND proces_orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
  
 		$group_by_query = ' GROUP BY tipo, rubrica, item ';
