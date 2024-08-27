@@ -132,53 +132,67 @@
       <div class="row col-md-12 col-lg-12" id="detailsWrapper">
         
         <h1 class="mt-2"></h1>
-
-        <div class="row col-md-12 col-lg-12" id="detailsProcesso">
-          <!-- Opções -->
-          <div class="row">
-            <div class="col-lg-12 d-grid">
-              <div class="btn btn-primary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-              <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-              <div class="btn btn-success"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-              <div class="btn btn-danger"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-              <div class="btn btn-warning"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-              <div class="btn btn-info"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-              <div class="btn btn-dark"><i class="fas fa-globe"></i></div>
-              <h1 class="mt-2"></h1>
-            </div>
+        <!-- Opções -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="btn btn-primary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-success"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-danger"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-warning"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-info"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-dark"><i class="fas fa-globe"></i></div>
+            <h1 class="mt-2"></h1>
           </div>
-          
-          <!-- Detalhes do processo -->
-          <div class="row">
-            <div class="col-lg-4 d-grid" >
-              <div class="card">
-                <div class="card-header"><i class="fas fa-book-open mr-1"></i>Resumo</div>
-                  <!-- Resumo do processo -->
-                  <div class="card-body">
-                    <div id="lstResumo">
-                      <b>Os dados do processo são listado aqui...</b>
-                    </div>
-                  </div>
-              </div>
-            </div>
-            <!-- Faturação, Orçamento e Historico do processo -->
-            <div class="col-lg-8 d-grid">
-              <!-- Faturação e Orçamento -->
-              <div class="card">
-                <div class="card-header"><i class="fas fa-table mr-1"></i>Faturação e Plano de Pagamentos</div>
-                <div class="card-body">
-                  <div id="lstFaturacao"><b>Os dados de Faturação são listado aqui...</b></div>
-                  <div id="lstPagamentos"><b>Os dados do Orçamento são listado aqui...</b></div>
+        </div>
+        
+        <!-- Detalhes do processo -->
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#resumo" role="tab" aria-selected="true">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Resumo</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#financeiro" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Financeiro</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#historico" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Histórico</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#faturas" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Faturas</span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="tab-content tabcontent-border">
+                <div class="tab-pane active" id="resumo" role="tabpanel" >
+                  <div class="p-20" id="lstResumo"><b>Os dados do processo são listado aqui...</b></div>
+                </div>
+                <div class="tab-pane p-20" id="financeiro" role="tabpanel" >
+                  <div class="p-20" id="lstFaturacao"><b>Os dados de Faturação são listado aqui...</b></div>
+                  <div class="p-20" id="lstPagamentos"><b>Os dados do Orçamento são listado aqui...</b></div>
+                </div>
+                <div class="tab-pane p-20" id="historico" role="tabpanel" >
+                  <div class="p-20" id="lstHistorico"><b>O Histórico é listado aqui...</b></div>
+                </div>
+                <div class="tab-pane p-20" id="faturas" role="tabpanel" >
+                  <div class="p-20" id="lstFaturas"><b>As Faturas são listadas aqui...</b></div>
                 </div>
               </div>
-              <!-- Histórico do processo -->
-              <h1 class="mt-2"></h1>
-              <div class="card">
-                <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>Histórico</div>
-                <div class="card-body">
-                  <div id="lstHistorico"><b>O Histórico é listado aqui...</b></div>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
@@ -222,3 +236,4 @@
 </body>
 
 </html>
+
