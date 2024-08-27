@@ -68,6 +68,7 @@ function codigoProcesso(codigo) {
         resumoProcesso(codigo);
         historicoProcesso(codigo);
         faturacaoProcesso(codigo);
+        faturasProcesso(codigo);
         pagamentosProcesso(codigo);
         mostraResultados();
 
@@ -117,8 +118,7 @@ function historicoProcesso(codigo) {
 
   xmlhttp.open("GET","dados/processoHistorico.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
-
-}
+};
 
 // Facturação
 function faturacaoProcesso(codigo) {
@@ -131,7 +131,20 @@ function faturacaoProcesso(codigo) {
   
   xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
-}
+};
+
+// Facturas
+function faturasProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFaturas").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoFaturas.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
 
 // Plano de Pagamentos
 function pagamentosProcesso(codigo) {
@@ -144,4 +157,4 @@ function pagamentosProcesso(codigo) {
   
   xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
-}
+};
