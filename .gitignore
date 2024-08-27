@@ -1,2 +1,3 @@
 .vscode/*
-global/config/dbConn.php
+
+global/config/*.*
