@@ -17,7 +17,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 echo '
 <div class="card">
 <div class="card-body">
-<div class="card-header">Estado dos Processos</div>
+<div class="card-header bg-secondary text-white" >Estado dos Processos</div>
 <h1 class="mt-2"></h1>
 <div class="col col-md-12">
   <div class="row">
