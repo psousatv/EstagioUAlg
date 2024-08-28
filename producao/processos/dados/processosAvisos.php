@@ -14,70 +14,96 @@ $query = 'SELECT proces_check, proces_nome, proces_estado, proces_estado_data, p
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+echo '
+<div class="card">
+<div class="card-body">
+<div class="card-header">Estado dos Processos</div>
+<h1 class="mt-2"></h1>
+<div class="col col-md-12">
+  <div class="row">
+  
+      <ul class="nav flex-column nav-pills me-6" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" id="emCurso_tab" href="#curso" role="tab" aria-selected="true">
+            <span class="hidden-sm-up"></span>
+            <span class="hidden-xs-down">Em curso</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" id="emContratacao_tab" href="#contratado" role="tab" aria-selected="false">
+            <span class="hidden-sm-up"></span>
+            <span class="hidden-xs-down">Contratado</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" id="emConsulta_tab" href="#consulta" role="tab" aria-selected="false">
+            <span class="hidden-sm-up"></span>
+            <span class="hidden-xs-down">Em Consulta</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" id="outraSituacao_tab" href="#outro" role="tab" aria-selected="false">
+            <span class="hidden-sm-up"></span>
+            <span class="hidden-xs-down">Outro</span>
+          </a>
+        </li>
+      </ul>
 
-
-//foreach($data as $row) {
-//  echo  '
-//    <div class="small text-left">'.$row["proces_nome"].'</div>
-//    ';
-//};
-
-echo '  
-<!-- 1.ª Coluna -->
-    <div class="col-sm-4">
-      <div class="card">
-        <div class="card-header text-white" style="background-color: green;"><i class="fas fa-person-digging"></i> Em Curso</div>
-        <div class="card-body" id="processosFaseCurso">
-          <table class="table table-striped small">
-        ';
-        foreach($data as $row) {
-          if($row['proces_estado'] == '208'){
-          echo  '
-            <tr>
-              <td>'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
-            </tr>
-          ';}};
-  echo '
-          </table>
-        </div>
-      </div>
-    </div>
-    <!-- 2.ª Coluna -->
-    <div class="col-sm-4">
-      <div class="card">
-        <div class="card-header text-white" style="background-color: blue;"><i class="fas fa-book mr-1"></i> Em Contratação ou Adjudicado</div>
-        <div class="card-body" id="processosFaseConcurso">
-          <table class="table table-striped small">
-        ';
-        foreach($data as $row) {
-          if($row['proces_estado'] == '205' OR $row['proces_estado'] == '206'){
-          echo  '
-            <tr>
-              <td>'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
-            </tr>
-          ';}};
-  echo '
-          </table>
-        </div>
-      </div>
-    </div>
-    <!-- 3.ª Coluna -->
-    <div class="col-sm-4">
-      <div class="card">
-        <div class="card-header text-white" style="background-color: red;"><i class="fas fa-search mr-1"></i> Em Consulta de Mercado</div>
-        <div class="card-body" id="processosFaseConsulta">
-          <table class="table table-striped small">
-        ';
-        foreach($data as $row) {
-          if($row['proces_estado'] == '203'){
-          echo  '
-            <tr>
-              <td>'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
-            </tr>
-          ';}};
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="curso" role="tabpanel" aria-labelledby="emCurso_tab">
+          <div id="processosFaseCurso">
+            <table class="table table-striped small">';
+              foreach($data as $row) {
+                if($row['proces_estado'] == '208'){
+    echo  '
+                  <tr>
+                    <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                  </tr>';
+                }
+              };
 echo '
             </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="contratado" role="tabpanel" aria-labelledby="emContratacao_tab">
+          <div id="processosFaseConcurso">
+            <table class="table table-striped small"> ';
+              foreach($data as $row) {
+                if($row['proces_estado'] == '205' OR $row['proces_estado'] == '206'){
+echo  '
+              <tr>
+                <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                </tr>';
+              }
+            };
+echo '
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="consulta" role="tabpanel" aria-labelledby="emConsulta_tab">
+          <div id="processosFaseConsulta">
+            <table class="table table-striped small">';
+              foreach($data as $row) {
+                if($row['proces_estado'] == '203'){
+echo  '                       
+                <tr>
+                  <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                </tr>';
+              }
+            };
+echo '
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="outro" role="tabpanel" aria-labelledby="outraSituacao_tab">
+          <div id="lstFaturas"><b>Outra situação é listada aqui...</b></div>
         </div>
       </div>
+
+      </div>
     </div>
-    ';
+  </div>
+</div>
+
+<script src="js/processos.js"></script>
+';
