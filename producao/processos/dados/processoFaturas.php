@@ -31,9 +31,8 @@ echo "
     <th>Garantia</th>
     <th>Reduções</th>
     <th>Cativo</th>
-    </tr>
+  </tr>
     ";
-
 foreach($data as $row)
 {
   echo "<tr>";
