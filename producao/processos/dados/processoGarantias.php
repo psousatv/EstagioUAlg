@@ -6,48 +6,43 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 //$q = $_GET['q'];
 
 //Histórico Processos
-$processoFaturas = "SELECT *
+$processoGarantias = "SELECT 
+                    fact_proces_check,
+                    ROUND(SUM(fact_duovalor), 2) AS duo,
+                    ROUND(SUM(fact_garban), 2) AS gb,
+                    ROUND(SUM(fact_duopaga), 2) AS duoDevolve,
+                    ROUND(SUM(fact_garbanpaga), 2) AS gbReducao,
+                    (ROUND(SUM(fact_duovalor), 2) + ROUND(SUM(fact_garban), 2)) -
+                    (ROUND(SUM(fact_duopaga), 2) + ROUND(SUM(fact_garbanpaga), 2)) AS cativo 
                     FROM factura
                     WHERE fact_proces_check = '" .$codigoProcesso. "'
-                    ORDER BY fact_auto_num DESC" ;
+                    GROUP BY fact_proces_check" ;
 
-$stmt = $myConn->query($processoFaturas);
+$stmt = $myConn->query($processoGarantias);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//Faturação
+// Valores Descontados na Faturação
 echo "
-<b>Faturas</b>
+<b>Valores Descontados na Faturação</b>
+<br>
+<a class='small bg-warning'>Com Garantia Bancária prestada: </a>
 <table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
-    <th>Expediente</th>
-    <th>Fatura</th>
-    <th>Data</th>
-    <th>Auto</th>
-    <th>Data</th>
-    <th>Valor</th>
-    <th>Retenção</th>
-    <th>Devoluções</th>
-    <th>Retido</th>
+    <th>Duodécimos</th>
     <th>Garantia</th>
+    <th>Devolvido</th>
     <th>Reduções</th>
     <th>Cativo</th>
-  </tr>
-    ";
+  </tr>";
 foreach($data as $row)
 {
-  echo "<tr>";
-  echo "<td style='text-align:left'>".$row['fact_expediente']."</td>";
-  echo "<td style='text-align:left'>".$row['fact_tipo'].'_'.$row['fact_num']."</td>";
-  echo "<td style='text-align:right'>".$row['fact_data']."</td>";
-  echo "<td style='text-align:right'>".$row['fact_auto_num']."</td>";
-  echo "<td style='text-align:right'>".$row['fact_auto_data']."</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_valor'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_duovalor'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_duopaga'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_duovalor']-$row['fact_duopaga'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_garban'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_garbanpaga'], 2, ',', '.'). "</td>";
-  echo "<td style='text-align:right'>" .number_format($row['fact_garban']-$row['fact_garbanpaga'], 2, ',', '.'). "</td>";
-  echo "</tr>";
-}
+  echo "
+    <tr>
+      <td style='text-align:right'>" .number_format($row['duo'], 2, ',', '.'). "</td>
+      <td style='text-align:right'>" .number_format($row['gb'], 2, ',', '.'). "</td>
+      <td style='text-align:right'>" .number_format($row['duoDevolve'], 2, ',', '.'). "</td>
+      <td style='text-align:right'>" .number_format($row['gbReducao'], 2, ',', '.'). "</td>
+      <td style='text-align:right'>" .number_format($row['cativo'], 2, ',', '.'). "</td>
+    </tr>";
+};
 echo "</table>";

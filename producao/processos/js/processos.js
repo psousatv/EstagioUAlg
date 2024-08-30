@@ -15,7 +15,6 @@ function mostraResultados(){
 // Avisos
 function avisos(){
   var xmlhttp = new XMLHttpRequest();
-
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("Avisos").innerHTML = this.responseText;
@@ -57,19 +56,22 @@ function procuraFornecedor(nomeFornecedor) {
 
 };
 
-// Guarda o resultado da escolha 
+// Escolha 
 function codigoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         
         document.getElementById("Avisos").style.display = "none";
+
         nome(codigo);
         resumoProcesso(codigo);
         historicoProcesso(codigo);
+        pagamentosProcesso(codigo);
         faturacaoProcesso(codigo);
         faturasProcesso(codigo);
-        pagamentosProcesso(codigo);
+        garantiasProcesso(codigo);
+        
         mostraResultados();
 
       }
@@ -120,6 +122,19 @@ function historicoProcesso(codigo) {
   xmlhttp.send();
 };
 
+// Plano de Pagamentos
+function pagamentosProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
 // Facturação
 function faturacaoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
@@ -138,23 +153,27 @@ function faturasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFaturas").innerHTML = this.responseText;
+      document.getElementById("lstFacturas").innerHTML = this.responseText;
     }
+
+    
   }
   
   xmlhttp.open("GET","dados/processoFaturas.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
-// Plano de Pagamentos
-function pagamentosProcesso(codigo) {
+// Facturas
+function garantiasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+      document.getElementById("lstGarantias").innerHTML = this.responseText;
     }
+
+    
   }
   
-  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };

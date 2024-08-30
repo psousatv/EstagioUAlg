@@ -22,7 +22,7 @@ echo '
 <div class="col col-md-12">
   <div class="row">
   
-      <ul class="nav flex-column nav-pills me-6" role="tablist">
+      <ul class="nav flex-column nav-pills" role="tablist">
         <li class="nav-item">
           <a class="nav-link active" data-toggle="tab" id="emCurso_tab" href="#curso" role="tab" aria-selected="true">
             <span class="hidden-sm-up"></span>

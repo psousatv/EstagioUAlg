@@ -35,7 +35,7 @@ echo "
 <table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
-    <th>Acum</th>
+    <th>Acumulado</th>
     <th>Jan</th>
     <th>Fev</th>
     <th>Mar</th>
@@ -49,8 +49,7 @@ echo "
     <th>Nov</th>
     <th>Dez</th>
   </tr>";
-foreach($data as $row)
-{
+foreach($data as $row){
   echo "
   <tr>
     <td style='text-align:center'>" .$row['Ano']. "</td>
@@ -68,5 +67,5 @@ foreach($data as $row)
     <td style='text-align: right'>" .number_format($row['Nov'], 2, ',', '.'). "</td>
     <td style='text-align: right'>" .number_format($row['Dez'], 2, ',', '.'). "</td>
     </tr>";
-};
+  };
 echo "</table>";
