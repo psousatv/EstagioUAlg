@@ -36,7 +36,7 @@ function procuraProcesso(nomeProcesso) {
       }
     }
 
-    xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/obras.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
 };
@@ -51,7 +51,7 @@ function procuraFornecedor(nomeFornecedor) {
     }
 
     //document.getElementById("detailsWrapper").style.display = "none";
-    xmlhttp.open("GET","dados/processosFornecedor.php?nomeFornecedor="+nomeFornecedor,true);
+    xmlhttp.open("GET","dados/obrasFornecedor.php?nomeFornecedor="+nomeFornecedor,true);
     xmlhttp.send();
 
 };
@@ -77,7 +77,7 @@ function codigoProcesso(codigo) {
       }
     }
 
-    xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/obras.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
   };
@@ -93,7 +93,7 @@ function nome(codigo) {
   }
 
   document.getElementById("searchWrapper").style.display = "none";
-  xmlhttp.open("GET","dados/processoNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/obrasNome.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
