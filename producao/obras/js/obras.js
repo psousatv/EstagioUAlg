@@ -22,7 +22,7 @@ function avisos(){
   }
 
  
-  xmlhttp.open("GET","dados/processosAvisos.php");
+  xmlhttp.open("GET","dados/obrasAvisos.php");
   xmlhttp.send();
 
 };
@@ -163,7 +163,7 @@ function faturasProcesso(codigo) {
   xmlhttp.send();
 };
 
-// Facturas
+// Garantias
 function garantiasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {

@@ -26,7 +26,7 @@ echo "
 <b>Valores Descontados na Faturação</b>
 <br>
 <a class='small bg-warning'>Com Garantia Bancária prestada: </a>
-<table class='table table-bordered table-striped table-hover small'>
+<table class='table table-responsive table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Duodécimos</th>
     <th>Garantia</th>
