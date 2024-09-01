@@ -65,10 +65,10 @@ function codigoProcesso(codigo) {
         document.getElementById("Avisos").style.display = "none";
 
         nome(codigo);
-        resumoProcesso(codigo);
-        historicoProcesso(codigo);
-        pagamentosProcesso(codigo);
-        faturacaoProcesso(codigo);
+        //resumoProcesso(codigo);
+        mapaTrabalhos(codigo);
+        mapaAutos(codigo);
+        //pagamentosProcesso(codigo);
         faturasProcesso(codigo);
         garantiasProcesso(codigo);
         
@@ -109,16 +109,16 @@ function resumoProcesso(codigo) {
   xmlhttp.send();
 };
 
-// Histórico
-function historicoProcesso(codigo) {
+// Mapa de Autos
+function mapaAutos(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstHistorico").innerHTML = this.responseText;
+      document.getElementById("lstAutos").innerHTML = this.responseText;
     }
   }
 
-  xmlhttp.open("GET","dados/processoHistorico.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/obraMapaAutos.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
@@ -135,16 +135,16 @@ function pagamentosProcesso(codigo) {
   xmlhttp.send();
 };
 
-// Facturação
-function faturacaoProcesso(codigo) {
+// Mapa de Trabalhos
+function mapaTrabalhos(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+      document.getElementById("lstMapaTrabalhos").innerHTML = this.responseText;
     }
   }
   
-  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/obraMapaTrabalhos.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
