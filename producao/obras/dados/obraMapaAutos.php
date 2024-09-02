@@ -12,6 +12,7 @@ $mapaAutos = "SELECT
                 mt_designacao AS designacao,
                 mt_indexador AS indexador,
                 auto_num,
+                SUM(CASE WHEN auto_indexador = mt_indexador THEN auto_valor ELSE 0 END) AS total,
                 SUM(CASE WHEN auto_indexador = mt_indexador AND auto_num=1 THEN auto_valor ELSE 0 END) AS auto1,
                 SUM(CASE WHEN auto_indexador = mt_indexador AND auto_num=2 THEN auto_valor ELSE 0 END) AS auto2,
                 SUM(CASE WHEN auto_indexador = mt_indexador AND auto_num=3 THEN auto_valor ELSE 0 END) AS auto3,
@@ -42,12 +43,13 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //Mapa Trabalhos
 echo "
-<b>Mapa de Trabalhos</b>
+<b>Mapa de Autos</b>
 <table class='table table-responsive table-hover small'>
   <tr style='text-align: center'>
     <th>Conta</th>
     <th>Item</th>
     <th>Designação</th>
+    <th>Acum</th>
     <th>1</th>
     <th>2</th>
     <th>3</th>
@@ -92,6 +94,7 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
           <td style='text-align:left'>" .$row['designacao']. "</td>
+          <td style='text-align:right'>" .number_format($row['total'], 2, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['auto1'], 2, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['auto2'], 2, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['auto3'], 2, ',', '.'). "</td>
