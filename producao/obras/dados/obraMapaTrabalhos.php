@@ -24,7 +24,7 @@ $mapaTrabalhos = "SELECT
 $stmt = $myConn->query($mapaTrabalhos);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//Faturação
+//Mapa Trabalhos
 echo "
 <b>Mapa de Trabalhos</b>
 <table class='table table-responsive table-hover small'>

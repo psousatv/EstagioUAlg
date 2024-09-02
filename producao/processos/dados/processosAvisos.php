@@ -24,33 +24,33 @@ echo '
   
       <ul class="nav flex-column nav-pills" role="tablist">
         <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" id="emCurso_tab" href="#curso" role="tab" aria-selected="true">
+          <a class="nav-link active" data-toggle="tab" id="Curso_tab" href="#curso" role="tab" aria-selected="true">
             <span class="hidden-sm-up"></span>
-            <span class="hidden-xs-down">Em curso</span>
+            <span class="hidden-xs-down">Em Curso</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="emContratacao_tab" href="#contratado" role="tab" aria-selected="false">
+          <a class="nav-link" data-toggle="tab" id="Adjudicado_tab" href="#adjudicado" role="tab" aria-selected="false">
             <span class="hidden-sm-up"></span>
-            <span class="hidden-xs-down">Contratado</span>
+            <span class="hidden-xs-down">Ajudicado</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="emConsulta_tab" href="#consulta" role="tab" aria-selected="false">
+          <a class="nav-link" data-toggle="tab" id="Concurso_tab" href="#concurso" role="tab" aria-selected="false">
             <span class="hidden-sm-up"></span>
-            <span class="hidden-xs-down">Em Consulta</span>
+            <span class="hidden-xs-down">Concurso</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="outraSituacao_tab" href="#outro" role="tab" aria-selected="false">
+          <a class="nav-link" data-toggle="tab" id="Consulta_tab" href="#consulta" role="tab" aria-selected="false">
             <span class="hidden-sm-up"></span>
-            <span class="hidden-xs-down">Outro</span>
+            <span class="hidden-xs-down">Consulta</span>
           </a>
         </li>
       </ul>
 
       <div class="tab-content">
-        <div class="tab-pane fade show active" id="curso" role="tabpanel" aria-labelledby="emCurso_tab">
+        <div class="tab-pane fade show active" id="curso" role="tabpanel" aria-labelledby="Curso_tab">
           <div id="processosFaseCurso">
             <table class="table table-striped small">';
               foreach($data as $row) {
@@ -65,11 +65,11 @@ echo '
             </table>
           </div>
         </div>
-        <div class="tab-pane fade" id="contratado" role="tabpanel" aria-labelledby="emContratacao_tab">
-          <div id="processosFaseConcurso">
+        <div class="tab-pane fade" id="adjudicado" role="tabpanel" aria-labelledby="Adjudicado_tab">
+          <div id="processosFaseAjudicado">
             <table class="table table-striped small"> ';
               foreach($data as $row) {
-                if($row['proces_estado'] == '205' OR $row['proces_estado'] == '206'){
+                if($row['proces_estado'] == '206'){
 echo  '
               <tr>
                 <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
@@ -80,9 +80,24 @@ echo '
             </table>
           </div>
         </div>
-        <div class="tab-pane fade" id="consulta" role="tabpanel" aria-labelledby="emConsulta_tab">
-          <div id="processosFaseConsulta">
+        <div class="tab-pane fade" id="concurso" role="tabpanel" aria-labelledby="Concurso_tab">
+          <div id="processosFaseConcurso">
             <table class="table table-striped small">';
+              foreach($data as $row) {
+                if($row['proces_estado'] == '205'){
+echo  '                       
+                <tr>
+                  <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                </tr>';
+              }
+            };
+echo '
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="consulta" role="tabpanel" aria-labelledby="Consulta_tab">
+          <div id="processosFaseConsulta">
+          <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '203'){
 echo  '                       
@@ -95,11 +110,6 @@ echo '
             </table>
           </div>
         </div>
-        <div class="tab-pane fade" id="outro" role="tabpanel" aria-labelledby="outraSituacao_tab">
-          <div id="lstFaturas"><b>Outra situação é listada aqui...</b></div>
-        </div>
-      </div>
-
       </div>
     </div>
   </div>
