@@ -48,9 +48,15 @@ echo '
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="Registado_tab" href="#registado" role="tab" aria-selected="false">
+          <a class="nav-link" data-toggle="tab" id="Preparar_tab" href="#preparar" role="tab" aria-selected="false">
             <span class="hidden-sm-up"></span>
-            <span class="hidden-xs-down">Registado</span>
+            <span class="hidden-xs-down">Preparar</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" id="Outros_tab" href="#outros" role="tab" aria-selected="false">
+            <span class="hidden-sm-up"></span>
+            <span class="hidden-xs-down">Outros</span>
           </a>
         </li>
       </ul>
@@ -116,11 +122,26 @@ echo '
             </table>
           </div>
         </div>
-        <div class="tab-pane fade" id="registado" role="tabpanel" aria-labelledby="Registado_tab">
-          <div id="processosRegistados">
+        <div class="tab-pane fade" id="preparar" role="tabpanel" aria-labelledby="Preparar_tab">
+          <div id="processosPreparar">
           <table class="table table-striped small">';
               foreach($data as $row) {
-                if($row['proces_estado'] == '201'){
+                if($row['proces_estado'] == '202' ){
+echo  '                       
+                <tr>
+                  <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                </tr>';
+              }
+            };
+echo '
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="outros" role="tabpanel" aria-labelledby="Outros_tab">
+          <div id="processosOutrasSituacoes">
+          <table class="table table-striped small">';
+              foreach($data as $row) {
+                if($row['proces_estado'] == '200' OR $row['proces_estado'] == '201'){
 echo  '                       
                 <tr>
                   <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
