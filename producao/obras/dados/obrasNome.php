@@ -17,6 +17,6 @@ echo  '
   <div class="btn btn-primary col-md-8 d-grid small text-white text-left">'.$row["proces_padm"].'_'.$row["proces_nome"].'</div>
   <div class="btn btn-warning" onclick="codigoProcesso('.$row["proces_check"].')"><i class="fa fa-solid fa-refresh"></i></div>  
   <div class="btn btn-primary"><a class="text-white" href="obras.html"><i class="fa fa-solid fa-search"></i></a></div>
-  <div class="btn btn-danger"><a class="text-white" href="main.html"><i class="fa fa-solid fa-house"></i></a></div>
+  <div class="btn btn-danger"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
 ';
 };
