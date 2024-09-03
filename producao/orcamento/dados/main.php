@@ -18,7 +18,7 @@ if(isset($_POST["action"]))
 						FROM orcamento
 						INNER JOIN rubricas r ON r.rub_cod = orc_rub_cod ';
 					   
-        $search_query = 'WHERE orc_ano <> 0 AND orc_rub_cod <> 100 AND orc_rub_cod <> 999 ';
+        $search_query = 'WHERE orc_ano = YEAR(NOW()) AND orc_rub_cod <> 100 AND orc_rub_cod <> 999 ';
         
         if(isset($_POST["search"]["value"]))
         {
