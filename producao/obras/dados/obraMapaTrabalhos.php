@@ -29,17 +29,32 @@ echo "
 <b>Mapa de Trabalhos</b>
 <table class='table table-responsive table-hover small'>
   <tr style='text-align: center'>
-    <th>Ordem</th>
+  <colgroup>
+    <col span='5'>  
+    <col span='3' style='background-color: #D6EEEE'>
+    <col span='2' style='background-color: pink'>
+  </colgroup>
+  <tr style='text-align: center'>
+    <th>Ordem</th>  
     <th>Conta</th>
     <th>Item</th>
     <th>Designação</th>
-    <th>UN</th>
-    <th>QT</th>
-    <th>PU.Orc.</th>
-    <th>Total</th>
-    <th>PU.Ctr.</th>
-    <th>Total</th>
-    </tr>";
+    <th>un</th>
+    <th colspan='3'>Orçamento</th>
+    <th colspan='2'>Proposto</th>
+   </tr>
+   <tr style='text-align: center'>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>Qt</td>
+    <td>PUnit</td>
+    <td>Valor</td>
+    <td>PUnit</td>
+    <td>Valor</td>
+   </tr>";
 foreach($data as $row){
   if($row['tipo_conta'] === 'R'){
     echo "

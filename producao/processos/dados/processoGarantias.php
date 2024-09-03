@@ -24,8 +24,6 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Valores Descontados na Faturação
 echo "
 <b>Valores Descontados na Faturação</b>
-<br>
-<a class='small bg-warning'>Com Garantia Bancária prestada: </a>
 <table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Duodécimos</th>

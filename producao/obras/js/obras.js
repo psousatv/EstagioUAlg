@@ -97,44 +97,6 @@ function nome(codigo) {
   xmlhttp.send();
 };
 
-  // Resumo do Processo
-function resumoProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstResumo").innerHTML = this.responseText;
-    }
-  }
-  xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
-
-// Mapa de Autos
-function mapaAutos(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstAutos").innerHTML = this.responseText;
-    }
-  }
-
-  xmlhttp.open("GET","dados/obraMapaAutos.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
-
-// Plano de Pagamentos
-function pagamentosProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstPagamentos").innerHTML = this.responseText;
-    }
-  }
-  
-  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
-
 // Mapa de Trabalhos
 function mapaTrabalhos(codigo) {
   var xmlhttp = new XMLHttpRequest();
@@ -145,6 +107,19 @@ function mapaTrabalhos(codigo) {
   }
   
   xmlhttp.open("GET","dados/obraMapaTrabalhos.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
+// Mapa de Situacao
+function mapaAutos(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstMapaSituacao").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/obraMapaSituacao.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
@@ -159,7 +134,7 @@ function faturasProcesso(codigo) {
     
   }
   
-  xmlhttp.open("GET","dados/processoFaturas.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","../processos/dados/processoFaturas.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
@@ -174,6 +149,6 @@ function garantiasProcesso(codigo) {
     
   }
   
-  xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","../processos/dados/processoGarantias.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
