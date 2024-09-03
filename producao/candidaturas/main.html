@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-PT"><!-- InstanceBegin template="/Templates/main.dwt" codeOutsideHTMLIsLocked="false" -->
+<html lang="pt-PT">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-<!-- InstanceBeginEditable name="docTitle" -->
-<!--region HeadTitle -->
-  <title>Candidaturas</title>
-<!--endregion HeadTitle-->
-<!-- InstanceEndEditable -->
+
+<title>Candidaturas</title>
 <link
   rel="icon"
   type="image/png"
@@ -28,224 +25,182 @@
 
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
-
-<!-- InstanceBeginEditable name="adicionalCSSorScript" -->
-<!--
-<style>
-    /* Hide the search input and button */
-    .dataTables_filter {
-      display: none;
-    }
-    .dataTables_length {
-      display: none;
-    }
-</style>
--->
-
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
 </head>
+
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="main.html">Candidaturas</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-        <a class="nav-item text-muted" href="main.html">Home</a>
-        <!--<a class="nav-item text-muted" href="//mdb1">Home</a>-->
-        <!-- Credenciação-->
+        <a class="navbar-brand" href="#">Candidaturas</a>
+    
         <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-          <div class="nav-item text-muted small">Credenciais: Não Credenciado</div>
+          <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
+          </div>
         </div>
+    
         <!-- Logged -->
         <ul class="navbar-nav ml-auto ml-md-0">
           <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                  <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Login</a>
-                  <a class="dropdown-item" href="#">Logout</a>
-              </div>
+            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Login</a>
+                <a class="dropdown-item" href="#">Logout</a>
+            </div>
           </li>
         </ul>
       </nav>
     
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-<!-- InstanceBeginEditable name="menuLateral" -->
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
-                <div class="nav">
-                    <div class="sb-sidenav-menu-heading">Principal</div>
-                    <a class="nav-link" href="../../index.html">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Dashboard
-                    </a>
-                    <div class="sb-sidenav-menu-heading">Interface</div>
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                        Registos
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="../../producao/candidaturas/main.html">Avisos</a>
-                            <a class="nav-link" href="../../producao/candidaturas/main.html">Candidatura</a>
-                        </nav>
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Principal</div>
+                        <a class="nav-link" href="../../index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Interface</div>
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            Registos
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="../../producao/candidaturas/main.html">Avisos</a>
+                                <a class="nav-link" href="../../producao/candidaturas/main.html">Candidatura</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Consultas
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                    Avisos
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="#">Login</a>
+                                        <a class="nav-link" href="#">Register</a>
+                                        <a class="nav-link" href="#">Forgot Password</a>
+                                    </nav>
+                                </div>
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
+                                    Error
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="/global/401.html">401 Page</a>
+                                        <a class="nav-link" href="/global/404.html">404 Page</a>
+                                        <a class="nav-link" href="/global/500.html">500 Page</a>
+                                    </nav>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="sb-sidenav-menu-heading">Addons</div>
+                        <a class="nav-link" href="../charts.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            Charts
+                        </a>
+                        <a class="nav-link" href="../tables.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                            Tables
+                        </a>
                     </div>
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        Consultas
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                Avisos
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="#">Login</a>
-                                    <a class="nav-link" href="#">Register</a>
-                                    <a class="nav-link" href="#">Forgot Password</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                Error
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/global/401.html">401 Page</a>
-                                    <a class="nav-link" href="/global/404.html">404 Page</a>
-                                    <a class="nav-link" href="/global/500.html">500 Page</a>
-                                </nav>
-                            </div>
-                        </nav>
-                    </div>
-                    <div class="sb-sidenav-menu-heading">Addons</div>
-                    <a class="nav-link" href="../charts.html">
-                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        Charts
-                    </a>
-                    <a class="nav-link" href="../tables.html">
-                        <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                        Tables
-                    </a>
                 </div>
-            </div>
-            <div class="sb-sidenav-footer">
-                <div class="small">Logged in as:</div>
-                Não Credenciado
-            </div>
-        </nav>
-<!-- InstanceEndEditable -->
-    </div>
-<!-- InstanceBeginEditable name="bodyHead" -->
-    <div id="layoutSidenav_content">
-        <main>
-            <div class="container-fluid">
-                <h1 class="mt-4"></h1>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">Candidaturas</li>
-                </ol>
-<!-- InstanceEndEditable -->
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    Não Credenciado
+                </div>
+            </nav>
+        </div>
 
-<!-- InstanceBeginEditable name="bodyContent" -->
-            
-                <!-- Linha1 , 2 Colunas md4 e md8 -->
-                <div class="row">
-                    <!-- Coluna 1 -->
-                    <div class="col-xl-4">
-                        <div class="card-mb-4">
-                            <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Execução</div>
-                            
-                            <!--Section: Minimal statistics cards-->
-                            <section>
-                                <!-- 1.ª Linha -->
-                                <div class="row" id="cartoesEsquerdaGrafico">
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <h1 class="mt-4"></h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item active">Candidaturas</li>
+                    </ol>
+                
+                    <!-- Linha1 , 2 Colunas md4 e md8 -->
+                    <div class="row">
+                        <!-- Coluna 1 -->
+                        <div class="col-xl-4">
+                            <div class="card-mb-4">
+                                <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Execução</div>
+                                
+                                <!--Section: Minimal statistics cards-->
+                                <section>
+                                    <!-- 1.ª Linha -->
+                                    <div class="row" id="cartoesEsquerdaGrafico">
+                                        
+                                    </div>
+
+                                </section>
+                                <!--Section: Minimal statistics cards-->
+                            </div>
+                        </div>
+                        <!-- Coluna 2 -->
+                        <div class="col-xl-8">
+                            <div class="card-mb-4">
+                                <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Comparticipação</div>
+                                <div class="card-body"><!-- Gáfico -->
                                     
-                                </div>
-
-                            </section>
-                            <!--Section: Minimal statistics cards-->
-                        </div>
-                    </div>
-                    <!-- Coluna 2 -->
-                    <div class="col-xl-8">
-                        <div class="card-mb-4">
-                            <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Comparticipação</div>
-                            <div class="card-body"><!-- Gáfico -->
-                                
-                                    <div class="card-body">
-                                        <canvas id="grafico"></canvas>
+                                        <div class="card-body">
+                                            <canvas id="grafico"></canvas>
+                                        </div>
+                                    
+                                    <div class="card-mb-4"> <!-- Barras Progresso -->
+                                        <div class="card-body">
+                                            <div id="container-progresso"></div>
+                                        </div>
                                     </div>
-                                
-                                <div class="card-mb-4"> <!-- Barras Progresso -->
-                                    <div class="card-body">
-                                        <div id="container-progresso"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                            </div>
+                        </div>
+                    
+                    </div>
+                    
+                    <h1 class="mt-4"></h1>
+                    
+                    <!-- 1 Linha, e 2 Colunas iguais-->
+                    <div class="row">
+                        <!-- Tabela de Dados -->
+                        <div class="col-xl-12">
+                            <div class="card md-8">
+                                <div class="card-header"><i class="fas fa-table mr-1"></i>Candidaturas Aprovadas</div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr style="text-align: center;">
+                                                    <th>Candidatura</th>
+                                                    <th>Contratado</th>
+                                                    <th>Validado</th>
+                                                    <th>%</th>
+                                                    <th>Adjudicado</th>
+                                                    <th>Faturado</th>
+                                                    <th>Recebido</th>
+                                                    <th>%</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
-                        </div>
                     </div>
-                
-                </div>
-                
-                <h1 class="mt-4"></h1>
-                
-                <!-- 1 Linha, e 2 Colunas iguais-->
-                <div class="row">
-                    
-                    
-                    <!-- Tabela de Dados -->
-                    <div class="col-xl-12">
-                        <div class="card md-8">
-                            <div class="card-header"><i class="fas fa-table mr-1"></i>Candidaturas Aprovadas</div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="tabela" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr style="text-align: center;">
-                                                <th>Candidatura</th>
-                                                <th>Contratado</th>
-                                                <th>Validado</th>
-                                                <th>%</th>
-                                                <th>Adjudicado</th>
-                                                <th>Faturado</th>
-                                                <th>Recebido</th>
-                                                <th>%</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="bodyFooter" -->
-                <footer id="footer">
-                    <div class="py-2 bg-light mt-auto">
-                    <div class="container">
-                        <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Paulo Sousa 2023/2024</div>
-                        <div>
-                            <a href="#">Política de Privacidade</a>
-                            &middot;
-                            <a href="#">Termos &amp; Condições</a>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </footer>
-<!-- InstanceEndEditable -->
                 </div>
             </main>
         </div>
@@ -265,13 +220,8 @@
     <!-- Charts -->
     <script src="../../vendors/charts/Chart.min.js"></script>
 
-<!-- InstanceBeginEditable name="scriptPagina" -->
-
 <!-- JS de Página -->
     <script src="js/main.js"></script>
 
-<!-- InstanceEndEditable -->
 </body>
-    
-
-<!-- InstanceEnd --></html>
+</html>
