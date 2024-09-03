@@ -181,7 +181,7 @@ $.ajax(
             card.classList = 'card-body';
             
             var cartoes = `
-            <div class="col-md-12 col-md-6 stretch-card pb-sm-3 pb-lg-0" >
+            <div class="col-md-6 col-md-6 pb-sm-3 pb-lg-0" >
                 <div class="card ${classeCartao}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
