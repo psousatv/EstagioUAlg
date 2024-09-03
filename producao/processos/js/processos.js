@@ -127,7 +127,8 @@ function pagamentosProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+      var resposta = this.responseText;
+      document.getElementById("lstPagamentos").innerHTML = resposta;
     }
   }
   
@@ -140,13 +141,49 @@ function faturacaoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+      var resposta = this.responseText;
+      document.getElementById("lstFaturacao").innerHTML = resposta;
+
+      console.log("Resposta", resposta)
+
+      var grafFinanceiro;
+      //Gráfico de Faturação
+      var mixedChart = {
+        labels: resposta.map(row => row.Ano),
+        datasets:[
+          {
+          label : 'Adjudicado',
+          backgroundColor : 'rgba(178, 34, 34, .3)',
+          //color : '#fff',
+          data: resposta.map(row => row.Jan)
+          },
+          {
+          label : 'Faturado',
+          backgroundColor : 'rgba(3, 100, 255, .3)',
+          //color : '#fff',
+          data: resposta.map(row => row.Fev)
+          }
+        ]
+      };
+
+      var ctx = $('#grafFinanceiro');
+
+      if(grafFinanceiro){
+        grafFinanceiro.destroy();
+      }
+      grafFinanceiro = new Chart(ctx,
+        {
+          data: mixedChart
+        });
+
     }
   }
-  
+
   xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
+
 };
+
 
 // Facturas
 function faturasProcesso(codigo) {
