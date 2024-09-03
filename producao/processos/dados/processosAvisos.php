@@ -47,6 +47,12 @@ echo '
             <span class="hidden-xs-down">Consulta</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" id="Registado_tab" href="#registado" role="tab" aria-selected="false">
+            <span class="hidden-sm-up"></span>
+            <span class="hidden-xs-down">Registado</span>
+          </a>
+        </li>
       </ul>
 
       <div class="tab-content">
@@ -100,6 +106,21 @@ echo '
           <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '203'){
+echo  '                       
+                <tr>
+                  <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                </tr>';
+              }
+            };
+echo '
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="registado" role="tabpanel" aria-labelledby="Registado_tab">
+          <div id="processosRegistados">
+          <table class="table table-striped small">';
+              foreach($data as $row) {
+                if($row['proces_estado'] == '201'){
 echo  '                       
                 <tr>
                   <td onclick="codigoProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
