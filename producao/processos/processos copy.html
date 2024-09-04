@@ -61,17 +61,18 @@
 
     <div class="container-fluid">
       <section>
-        <div class="row">
-          <div class="col col-md-12">
-            <div class="card" id="searchWrapper">
-              <div class="card-header bg-primary text-white">Pesquisa de Processos</a></div>
-              <div class="car-body">
-                <h1 class="mt-1"></h1>
-                <div class="row">
-                  <div class="col col-md-4">
-                    <form id="searchForm">
-                      
-                        <label>Processo</label>
+        <div class="card" id="searchWrapper">
+          <div class="card-header bg-primary text-white">Pesquisa de Processos</a></div>
+          <div class="car-body">
+            
+            <h1 class="mt-2"></h1>
+            <!-- Procura Processo-->
+            <div class="row" >
+              <div class="col col-md-12">
+                  <form id="searchForm">
+                    <div class="row">
+                      <div class="col col-md-6 align-items-left">
+                        <label>Pesquisa pela designação do Processo</label>
                         <input
                         class="form-control"
                         type="text"
@@ -81,10 +82,10 @@
                         autofocus
                         
                         oninput="procuraProcesso(this.value)">
-                      
-                        <h1 class="mt-2"></h1>
-
-                        <label>Fornecedor</label>
+                      </div>
+                    
+                      <div class="col col-md-6 align-items-left">
+                        <label>Pesquisa pelo nome de Fornecedor</label>
                         <input
                         class="form-control"
                         type="text"
@@ -92,17 +93,17 @@
                         aria-label="Search2" aria-describedby="basic-addon2"
                         id="nomeFornecedor"
                         oninput="procuraFornecedor(this.value)">
-                      
-                    </form>
-                  </div>
-                
-                  <div class="col col-md-8">
-                    <div class="row d-flex justify-content-center" id="showResultsForm"><a><img src="../../global/imagens/LogotipoTVerde.jpg" alt="Foto 1" style="width:55%;"></a></div>
-                  </div>
-
-                </div>
+                      </div>
+                    </div>
+                  </form>
+              
+                <!-- Resultados da Procura -->
+                <h1 class="mt-2"></h1>
+                <div class="row" id="showResultsForm"></div>
               </div>
             </div>
+            
+
           </div>
         </div>
       </section>
@@ -110,7 +111,7 @@
       <h1 class="mt-2"></h1>
 
       <section>
-        
+        <!-- 2.ª Linha -->
         <div class="row col-md-12 col-lg-12" id="Avisos"></div>
       </section>
     
