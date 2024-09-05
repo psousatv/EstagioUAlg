@@ -22,9 +22,17 @@
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
 <!-- Datables -->
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
-
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+
+<style>
+    /* Adiciona uma imagem em 'background' a toda a página */
+    body  {
+      background-image: url('../../global/imagens/bgPages.jpg');
+      background-size: cover;
+    }
+</style>
+
 </head>
 
 <body>
@@ -125,54 +133,48 @@
             <main>
                 <div class="container-fluid">
                     <h1 class="mt-2"></h1>
-
-                    <!-- Linha1 , 2 Colunas md4 e md8 -->
                     <div class="row">
-                        <!-- Coluna 1 -->
-                        <div class="col-xl-4">
-                            <div class="card-mb-4">
-                                <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>Execução</div>
-                                
-                                <!--Section: Minimal statistics cards-->
-                                <section>
-                                    <!-- 1.ª Linha -->
-                                    <div class="row" id="cartoesEsquerdaGrafico">
-                                        
-                                    </div>
-
-                                </section>
-                                <!--Section: Minimal statistics cards-->
+                        <!-- Cartões e Gráfico -->
+                        <div class="col col-xl-6">
+                            <div class="card">
+                                <div class="card-header small"><i class="fas fa-chart-pie mr-1"></i>Execução</div>
+                                    <div class="row" id="cartoesEsquerdaGrafico"></div>
                             </div>
                         </div>
-                        <!-- Coluna 2 -->
-                        <div class="col-xl-8">
-                            <div class="card-mb-4">
-                                <div class="card-header"><i class="fas fa fa-chart-area mr-1"></i>Comparticipação</div>
-                                <div class="card-body"><!-- Gáfico -->
-                                    
-                                        <div class="card-body">
-                                            <canvas id="grafico"></canvas>
-                                        </div>
-                                    
-                                    <div class="card-mb-4"> <!-- Barras Progresso -->
-                                        <div class="card-body">
-                                            <div id="container-progresso"></div>
-                                        </div>
+                        <!-- Gáfico -->
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-header small"><i class="fas fa fa-chart-area mr-1"></i>Valores de Comparticipação</div>
+                                <div class="card-body">
+                                    <div class="card-body">
+                                        <canvas id="grafico"></canvas>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                                <div class="col-sm-12">
+                                    <p class="small mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <h1 class="mt-2"></h1>
                     
+                    <!-- Barras Progresso -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="card ">
+                                <div class="card-header small">Percentil de Comparticipação</div>
+                                <div class="card-body">
+                                    <div id="progresso"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <h1 class="mt-4"></h1>
-                    
-                    <!-- 1 Linha, e 2 Colunas iguais-->
+                    <h1 class="mt-2"></h1>
+
+                    <!-- Tabela de Dados -->
                     <div class="row">
-                        <!-- Tabela de Dados -->
                         <div class="col-xl-12">
                             <div class="card md-8">
                                 <div class="card-header"><i class="fas fa-table mr-1"></i>Candidaturas Aprovadas</div>
@@ -198,6 +200,8 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Fim Tabela de Dados -->
+                
                 </div>
             </main>
         </div>

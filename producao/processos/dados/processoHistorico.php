@@ -32,7 +32,7 @@ foreach($data as $row)
       <td>'.$row["historico_dataemissao"].'</td>
       <td>' .$row["historico_datamov"].'</td>
       <td>' .$row["historico_descr_nome"].'</td>
-      <td>'.number_format($row["historico_valor"], 2, ",", ".").'</td>
+      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
       <td>' .$row["historico_doc"].'</td>
       <td>' .$row["historico_num"].'</td>
       <td>' .$row["historico_obs"].'</td>

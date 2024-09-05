@@ -30,6 +30,9 @@ $.ajax(
                 ]
             })
 
+            //document.getElementById("tabela").hidden = true;
+            //document.getElementById("progresso").hidden = true;
+
             // Conversões dos dados do DataTable para os Gráficos e Progress Bar
             var allData = [];
             var dadosProgresso = [];
@@ -96,7 +99,7 @@ $.ajax(
 
             // Progress Bar
             // Contentores para agregar as barras de progresso
-            const progressBarsContainer = document.getElementById('container-progresso');
+            const progressBarsContainer = document.getElementById('progresso');
             // Função para crear una barra de progresso
             function createProgressBar(value)
             {
@@ -181,7 +184,7 @@ $.ajax(
             card.classList = 'card-body';
             
             var cartoes = `
-            <div class="col-md-6 col-md-6 pb-sm-3 pb-lg-0" >
+            <div class="col col-sm-12" >
                 <div class="card ${classeCartao}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">

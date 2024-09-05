@@ -30,17 +30,23 @@
 
 
 <style>
-    /* Hide the search input and button */
-    .dataTables_filter {
-      display: none;
-    }
-    .dataTables_length {
-      display: none;
-    }
+  /* Adiciona uma imagem em 'background' a toda a página */
+  body  {
+    background-image: url('../../global/imagens/bgPages.jpg');
+    background-size: cover;
+  }
+  /* Hide the search input and button */
+  .dataTables_filter {
+    display: none;
+  }
+  .dataTables_length {
+    display: none;
+  }
 </style>
 
+
 </head>
-<body class="bg-info bg-gradient">
+<body>
 
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Processos</a>
@@ -117,7 +123,7 @@
                   <div class="col-md-8">
                     <canvas  id="grafico"></canvas>                        
                   </div>
-                  <p class="text-muted mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                  <p class="text-muted small mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
                 </div>
               </div>
             </div>
