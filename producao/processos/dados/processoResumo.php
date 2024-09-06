@@ -3,16 +3,13 @@
 include "../../../global/config/dbConn.php";
 
 $codigoProcesso = intval($_GET['codigoProcesso']);
-//$q = $_GET['q'];
-
-//intval($check) = "SELECT proces_check FROM processo WHERE proces_nome LIKE '%$processo%'";
-
-
 
 //Resumo do Processo
 $processoResumo = "SELECT * FROM processo
                   INNER JOIN procedimento ON proced_cod = proces_proced_cod
                   INNER JOIN entidade ON ent_cod = proces_ent_cod
+                  INNER JOIN 18cpv1 ON cpv1_cod = proces_18cpv1
+                  INNER JOIN 18cpv2 ON cpv2_cod = proces_18cpv2
                   WHERE proces_cod > 0 AND proces_check = '" .$codigoProcesso. "'";
 
 $stmt = $myConn->query($processoResumo);
@@ -58,6 +55,10 @@ foreach($data as $row)
     <div class="col-md-10">'.$row['proces_orc_actividade']. '</div>
     <div class="col-md-2"><b>Rubrica: </b></div> 
     <div class="col-md-10">'.$row['proces_orc_rubrica']. '</div>
+    <div class="col-md-2"><b>CPV Principal: </b></div> 
+    <div class="col-md-10">'.$row['proces_18cpv1'].' - '.$row['cpv1_nome'].' - ['.$row['cpv1_referencia'].']</div>
+    <div class="col-md-2"><b>CPV Secundário: </b></div> 
+    <div class="col-md-10">'.$row['proces_18cpv2'].' - '.$row['cpv2_nome'].'</div>
     <div class="col-md-2"><b>Valor Base: </b></div>
     <div class="col-md-10">'.number_format($row['proces_val_base'], 2, ',', '.').'€</div>
     <div class="col-md-2"><b>Valor Máximo: </b></div>
