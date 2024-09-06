@@ -25,13 +25,13 @@ echo "
     <th>Data</th>
     <th>Auto</th>
     <th>Data</th>
-    <th>Valor</th>
-    <th>Retenção</th>
+    <th class='bg-success'>Valor</th>
+    <th>Duodécimo</th>
     <th>Devoluções</th>
-    <th>Retido</th>
+    <th class='bg-warning'>Retido</th>
     <th>Garantia</th>
     <th>Reduções</th>
-    <th>Cativo</th>
+    <th class='bg-warning'>Cativo</th>
   </tr>";
 foreach($data as $row)
 {
@@ -42,13 +42,13 @@ foreach($data as $row)
       <td style='text-align:right'>".$row['fact_data']."</td>
       <td style='text-align:right'>".$row['fact_auto_num']."</td>
       <td style='text-align:right'>".$row['fact_auto_data']."</td>
-      <td style='text-align:right'>" .number_format($row['fact_valor'], 2, ',', '.'). "</td>
+      <td class='bg-success' style='text-align:right'>" .number_format($row['fact_valor'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['fact_duovalor'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['fact_duopaga'], 2, ',', '.'). "</td>
-      <td style='text-align:right'>" .number_format($row['fact_duovalor']-$row['fact_duopaga'], 2, ',', '.'). "</td>
+      <td class='bg-warning' style='text-align:right'>" .number_format($row['fact_duovalor']-$row['fact_duopaga'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['fact_garban'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['fact_garbanpaga'], 2, ',', '.'). "</td>
-      <td style='text-align:right'>" .number_format($row['fact_garban']-$row['fact_garbanpaga'], 2, ',', '.'). "</td>
+      <td class='bg-warning' style='text-align:right'>" .number_format($row['fact_garban']-$row['fact_garbanpaga'], 2, ',', '.'). "</td>
     </tr>";
 };
 echo "</table>";

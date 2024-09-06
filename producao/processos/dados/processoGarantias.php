@@ -25,8 +25,8 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 echo "
 <b>Valores Descontados na Faturação</b>
 <table class='table table-responsive table-striped table-hover small'>
-  <tr style='text-align: center'>
-    <th>Cativo</th>  
+  <tr class='text-center'>
+    <th class='bg-warning'>Cativo</th>  
     <th>Duodécimos</th>
     <th>Devolvido</th>
     <th>Garantia</th>
@@ -36,11 +36,11 @@ foreach($data as $row)
 {
   echo "
     <tr>
-      <td style='text-align:right'>" .number_format($row['cativo'], 2, ',', '.'). "</td>  
-      <td style='text-align:right'>" .number_format($row['duo'], 2, ',', '.'). "</td>
-      <td style='text-align:right'>" .number_format($row['duoDevolve'], 2, ',', '.'). "</td>
-      <td style='text-align:right'>" .number_format($row['gb'], 2, ',', '.'). "</td>
-      <td style='text-align:right'>" .number_format($row['gbReducao'], 2, ',', '.'). "</td>
+      <td class='bg-warning'  style='text-align:left'>" .number_format($row['cativo'], 2, ',', '.'). "</td>  
+      <td  style='text-align:right'>" .number_format($row['duo'], 2, ',', '.'). "</td>
+      <td  style='text-align:right'>" .number_format($row['duoDevolve'], 2, ',', '.'). "</td>
+      <td  style='text-align:right'>" .number_format($row['gb'], 2, ',', '.'). "</td>
+      <td  style='text-align:right'>" .number_format($row['gbReducao'], 2, ',', '.'). "</td>
     </tr>";
 };
 echo "</table>";
