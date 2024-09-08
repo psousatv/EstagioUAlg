@@ -122,6 +122,19 @@ function historicoProcesso(codigo) {
   xmlhttp.send();
 };
 
+// Facturação
+function faturacaoProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/processoFinanceiro.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
 // Plano de Pagamentos
 function pagamentosProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
@@ -130,25 +143,9 @@ function pagamentosProcesso(codigo) {
       document.getElementById("lstPagamentos").innerHTML = this.responseText;
     }
   }
-  
-  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
 
-// Facturação
-function faturacaoProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFaturacao").innerHTML = this.responseText;
-      //pesquisar como passar o json
-      console.log("Resposta:", this.responseText)
-    }
-  }
-
-  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoFinanceiro2.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
-  
 };
 
 
@@ -157,15 +154,14 @@ function faturasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFacturas").innerHTML = this.responseText;
+      document.getElementById("lstFaturas").innerHTML = this.responseText;
     }
-
-    
   }
   
   xmlhttp.open("GET","dados/processoFaturas.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
+
 
 // Facturas
 function garantiasProcesso(codigo) {

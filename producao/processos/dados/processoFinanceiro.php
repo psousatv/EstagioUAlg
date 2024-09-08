@@ -32,7 +32,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //Faturação
 echo "
 <b>Faturação</b>
-<table class='table table-bordered table-striped table-hover small'>
+<table class='table table-responsive table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
     <th>Acumulado</th>
