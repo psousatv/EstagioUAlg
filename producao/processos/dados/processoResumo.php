@@ -23,8 +23,6 @@ foreach($data as $row)
   <div class="row small text-justify">
     <div class="col-md-2"><b>Enquadramento/Aprovado: </b></div>
     <div class="col-md-10">'.$row["proces_enquadramento"].'/'.$row["proces_data_aprovacao"].'</div>  
-    <div class="col-md-2"><b>Estado: </b></div>
-    <div class="col-md-10">'.$row["proces_estado_nome"].'</div>
     <div class="col-md-2"><b>Processo Administrativo: </b></div>
     <div class="col-md-10">'.$row['proces_padm'].'</div>
     <div class="col-md-2"><b>Identificação: </b></div>
@@ -35,7 +33,10 @@ foreach($data as $row)
     <div class="col-md-10">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
     <div class="col-md-2"><b>Adjudicatária: </b></div>
     <div class="col-md-10">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
-    
+    <div class="col-md-2"><b>Estado: </b></div>
+    <div class="col-md-10">'.$row["proces_estado_nome"].'</div>
+    <div class="col-md-2"><b>Consignação: </b></div>
+    <div class="col-md-10">'.$row["proces_csgn"].'</div>
     
   </div> 
   <hr>';
