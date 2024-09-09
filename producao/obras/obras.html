@@ -67,17 +67,17 @@
 
     <div class="container-fluid">
       <section>
-        <div class="card" id="searchWrapper">
-          <div class="car-body">
-            <div class="card-header bg-primary text-white">Pesquisa de Processos</div>
-            <h1 class="mt-2"></h1>
-            <!-- Procura Processo-->
-            <div class="row" >
-              <div class="col col-md-12">
-                  <form id="searchForm">
-                    <div class="row">
-                      <div class="col col-md-6 align-items-left">
-                        <label>Pesquisa pela designação do Processo</label>
+        <div class="row">
+          <div class="col col-md-12">
+            <div class="card" id="searchWrapper">
+              <div class="card-header bg-primary text-white">Pesquisa de Processos</a></div>
+              <div class="car-body">
+                <h1 class="mt-1"></h1>
+                <div class="row">
+                  <div class="col col-md-4">
+                    <form id="searchForm">
+                      
+                        <label>Processo</label>
                         <input
                         class="form-control"
                         type="text"
@@ -87,10 +87,10 @@
                         autofocus
                         
                         oninput="procuraProcesso(this.value)">
-                      </div>
-                    
-                      <div class="col col-md-6 align-items-left">
-                        <label>Pesquisa pelo nome de Fornecedor</label>
+                      
+                        <h1 class="mt-1"></h1>
+
+                        <label>Fornecedor</label>
                         <input
                         class="form-control"
                         type="text"
@@ -98,17 +98,19 @@
                         aria-label="Search2" aria-describedby="basic-addon2"
                         id="nomeFornecedor"
                         oninput="procuraFornecedor(this.value)">
-                      </div>
-                    </div>
-                  </form>
-              
-                <!-- Resultados da Procura -->
-                <h1 class="mt-2"></h1>
-                <div class="row" id="showResultsForm"></div>
+
+                        <h1 class="mt-2"></h1>
+                      
+                    </form>
+                  </div>
+                
+                  <div class="col col-md-8">
+                    <div class="row d-flex justify-content-center" id="showResultsForm"><a><img src="../../global/imagens/LogotipoTVerde.jpg" alt="Foto 1" style="width:55%;"></a></div>
+                  </div>
+
+                </div>
               </div>
             </div>
-            
-
           </div>
         </div>
       </section>
@@ -123,7 +125,6 @@
     </div>
   
     <div class="container-fluid">
-      <!-- Linha 2 -->
       <!-- Nome do Processo -->
       <h1 class="mt-2"></h1>
       <div class="row col-md-12 col-lg-12" id="selectedProcesso">
@@ -133,22 +134,8 @@
       <h1 class="mt-2"></h1>
       <div class="row col-md-12 col-lg-12" id="stepProgresso">
         <b>Uma linha de progresso é mostrada aqui ...</b>
-      </div>
-      
-      <h1 class="mt-2"></h1>
-
-      <div class="row col-md-12 col-lg-12 d-grid small text-white" id="buttonsProcesso"></div>
-    </div>
-    
-    <div class="container-fluid">
-      <!-- Linha 3 -->
-      <!-- Mostra os dados do processo selecionado -->
-      <div class="row col-md-12 col-lg-12" id="detailsWrapper">
-        
-        <h1 class="mt-2"></h1>
-        <!-- Opções -->
-        <div class="row">
-          <div class="col-lg-6">
+        <div class="col-md-12 col-lg-12 small text-white" id="buttonsProcesso">
+          <div class="col col-lg-12 text-right">
             <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-folder-open"></i></div>
             <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-person-digging"></i></div>
             <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
@@ -159,10 +146,20 @@
             <h1 class="mt-2"></h1>
           </div>
         </div>
+      </div>
+    </div>
+    
+    <div class="container-fluid">
+      <!-- Linha 3 -->
+      <!-- Mostra os dados do processo selecionado -->
+      <div class="row col-md-12 col-lg-12" id="detailsWrapper">
+        
+      <!--h1 class="mt-2"></h1>-->
+ 
         
         <!-- Detalhes do processo -->
         <div class="row">
-          <div class="col-lg-12">
+          <div class="col col-lg-12">
             <div class="card">
               <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item">
@@ -191,7 +188,7 @@
                 </li>
               </ul>
 
-              <div class="tab-content tabcontent-border">
+               <div class="tab-content tabcontent-border">
                 <div class="tab-pane active" id="orcamento" role="tabpanel" >
                   <div class="p-20" id="lstMapaTrabalhos"><b>O Mapa de Trabalhos é listado aqui...</b></div>
                 </div>
@@ -212,14 +209,12 @@
                 <div class="tab-pane p-20 " id="outros" role="tabpanel" >
                   <div class="p-20" id="lstOutros"><b>Outro conteúdo é listado aqui...</b></div>
                 </div>
-
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
-  </div>
 
 <!-- JQuery -->
 <script src="../../vendors/jquery/jquery-3.7.0.js"></script>

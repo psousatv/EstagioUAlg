@@ -4,9 +4,11 @@ include "../../../global/config/dbConn.php";
 
 $nomeProcesso = $_GET['nomeProcesso'];
 
-$query = "SELECT proces_check, proces_padm, proces_nome
+$query = "SELECT proces_check, proces_padm, proces_nome, ent_nome, ent_nif 
           FROM processo
-          WHERE proces_nome LIKE '%".$nomeProcesso."%'";
+          INNER JOIN entidade ON ent_cod = proces_ent_cod
+          WHERE proces_nome LIKE '%".$nomeProcesso."%'
+          ORDER BY ent_nome";
 
 
 $stmt = $myConn->query($query);
@@ -24,7 +26,7 @@ echo '
             <ul class="list-group list-group-flush" >';
 echo '
                 <li class="list-group-item small" onclick="codigoProcesso('.$row["proces_check"].')">
-                '.$row["proces_check"]. ' - ' .$row["proces_nome"]. '
+                '.$row["ent_nome"]. ' [' .$row["ent_nif"].']: '.$row["proces_nome"].'
                 </li>';
 echo '      </ul>
         </div>

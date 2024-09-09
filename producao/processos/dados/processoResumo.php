@@ -21,18 +21,22 @@ foreach($data as $row)
   echo '
   <div class="badge bg-primary text-white">Dados Genéricos do Processo</div>
   <div class="row small text-justify">
+    <div class="col-md-2"><b>Enquadramento/Aprovado: </b></div>
+    <div class="col-md-10">'.$row["proces_enquadramento"].'/'.$row["proces_data_aprovacao"].'</div>  
     <div class="col-md-2"><b>Estado: </b></div>
     <div class="col-md-10">'.$row["proces_estado_nome"].'</div>
-    <div class="col-md-2"><b>Prazo de Execução: </b></div>
-    <div class="col-md-10">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
-    <div class="col-md-2"><b>Adjudicatária: </b></div>
-    <div class="col-md-10">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
     <div class="col-md-2"><b>Processo Administrativo: </b></div>
     <div class="col-md-10">'.$row['proces_padm'].'</div>
     <div class="col-md-2"><b>Identificação: </b></div>
     <div class="col-md-10">('.$row['proces_check'].') - '.$row['proces_nome'].'</div>
     <div class="col-md-2"><b>Descrição: </b></div>
     <div class="col-md-10">'.$row['proces_obs']. '</div>
+    <div class="col-md-2"><b>Prazo de Execução: </b></div>
+    <div class="col-md-10">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
+    <div class="col-md-2"><b>Adjudicatária: </b></div>
+    <div class="col-md-10">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
+    
+    
   </div> 
   <hr>';
   //Enquadramento Legal e Orçamento

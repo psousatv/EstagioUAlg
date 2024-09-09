@@ -100,7 +100,7 @@ function nome(codigo) {
 // Mapa de Trabalhos
 function mapaTrabalhos(codigo) {
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
+  xmlhttp.onload = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstMapaTrabalhos").innerHTML = this.responseText;
     }
@@ -113,10 +113,12 @@ function mapaTrabalhos(codigo) {
 // Mapa de Situacao
 function mapaAutos(codigo) {
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
+  xmlhttp.onload = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstMapaSituacao").innerHTML = this.responseText;
+      
     }
+    console.log("Resposta: ", this.responseText);
   }
 
   xmlhttp.open("GET","dados/obraMapaSituacao.php?codigoProcesso="+codigo,true);
@@ -126,7 +128,7 @@ function mapaAutos(codigo) {
 // Facturas
 function faturasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
+  xmlhttp.onload = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstFacturas").innerHTML = this.responseText;
     }
@@ -141,7 +143,7 @@ function faturasProcesso(codigo) {
 // Garantias
 function garantiasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
+  xmlhttp.onload = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstGarantias").innerHTML = this.responseText;
     }

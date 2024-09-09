@@ -89,9 +89,9 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['designacao']. "</td>
           <td style='text-align:left'>" .$row['unidades']. "</td>
           <td style='text-align:right'>" .number_format($row['quantidade'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_orcamento'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_orcamento'], 3, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['valor_orcamento'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'], 3, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['valor_empreiteiro'], 2, ',', '.'). "</td>
         </tr>";
       } 

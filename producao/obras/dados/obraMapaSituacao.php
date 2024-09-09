@@ -12,14 +12,14 @@ $mapaAutos = "SELECT
                 mt_item AS item,
                 mt_designacao AS designacao,
                 mt_indexador AS indexador,
-                SUM(CASE WHEN auto_indexador = mt_indexador THEN mt_qt ELSE 0 END) AS quantidade_proposto,
-                SUM(CASE WHEN auto_indexador = mt_indexador THEN mt_pu_obra ELSE 0 END) AS preco_unitario_proposto,
-                SUM(CASE WHEN auto_indexador = mt_indexador THEN mt_val_obra ELSE 0 END) AS valor_proposto,
+                CASE WHEN auto_indexador = mt_indexador THEN mt_qt ELSE 0 END AS quantidade_proposto,
+                CASE WHEN auto_indexador = mt_indexador THEN mt_pu_obra ELSE 0 END AS preco_unitario_proposto,
+                CASE WHEN auto_indexador = mt_indexador THEN mt_val_obra ELSE 0 END AS valor_proposto,
                 SUM(CASE WHEN auto_indexador = mt_indexador THEN auto_qt ELSE 0 END) AS quantidade_executado,
-                SUM(CASE WHEN auto_indexador = mt_indexador THEN auto_punit ELSE 0 END) AS preco_unitario_executado,
+                CASE WHEN auto_indexador = mt_indexador THEN auto_punit ELSE 0 END AS preco_unitario_executado,
                 SUM(CASE WHEN auto_indexador = mt_indexador THEN auto_valor ELSE 0 END) AS valor_executado
                 FROM mapa_trabalhos
-                INNER JOIN obra_autos ON mt_check = auto_check
+                LEFT JOIN obra_autos ON auto_indexador = mt_indexador
                 WHERE mt_check = '" .$codigoProcesso. "'
                 GROUP BY mt_item, mt_indexador " ;
 
@@ -59,7 +59,7 @@ echo "
   </tr>
 </tr>";
 foreach($data as $row){
-  if($row['tipo_conta'] === 'R'){
+  if($row['tipo_conta'] == 'R'){
     echo "
     <tr class='bg-primary text-white'>
       <td style='text-align:left'>" .$row['tipo_conta']. "</td>
@@ -87,10 +87,10 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['item']. "</td>
           <td style='text-align:left'>" .$row['designacao']. "</td>
           <td style='text-align:right'>" .number_format($row['quantidade_proposto'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_proposto'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_proposto'], 3, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['valor_proposto'], 2, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['quantidade_executado'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_executado'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_executado'], 3, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format($row['valor_executado'], 2, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format(($row['quantidade_proposto']-$row['quantidade_executado']), 2, ',', '.'). "</td>
           <td style='text-align:right'>" .number_format(($row['valor_proposto']-$row['valor_executado']), 2, ',', '.'). "</td>
