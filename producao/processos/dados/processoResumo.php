@@ -87,3 +87,4 @@ foreach($data as $row)
 
 };
 
+echo json_encode($data);

@@ -100,7 +100,7 @@ function resumoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstResumo").innerHTML = this.responseText;
+      data = document.getElementById("lstResumo").innerHTML = this.responseText;
     }
   }
   xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
