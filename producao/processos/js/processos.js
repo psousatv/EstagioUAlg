@@ -1,31 +1,4 @@
-function escondeResultados(){
-  document.getElementById("selectedProcesso").style.display = "none";
-  document.getElementById("stepProgresso").style.display = "none";
-  document.getElementById("buttonsProcesso").style.display = "none";
-  document.getElementById("detailsWrapper").style.display = "none";
-};
-
-function mostraResultados(){
-  document.getElementById("selectedProcesso").style.display = "block";
-  document.getElementById("stepProgresso").style.display = "block";
-  document.getElementById("buttonsProcesso").style.display = "block";
-  document.getElementById("detailsWrapper").style.display = "block";
-};
-
-// Avisos
-function avisos(){
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("Avisos").innerHTML = this.responseText;
-    }
-  }
-
- 
-  xmlhttp.open("GET","dados/processosAvisos.php");
-  xmlhttp.send();
-
-};
+var processoCodigo = []
 
 // Procurar por Mome do Processo
 function procuraProcesso(nomeProcesso) {
@@ -56,7 +29,36 @@ function procuraFornecedor(nomeFornecedor) {
 
 };
 
-// Escolha 
+// Passa o estado dos processos para HTML - Avisos
+function avisos(){
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("Avisos").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/processosAvisos.php");
+  xmlhttp.send();
+
+};
+
+// Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
+function nome(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("selectedProcesso").innerHTML = this.responseText;
+    }
+  }
+
+  document.getElementById("searchWrapper").style.display = "none";
+  xmlhttp.open("GET","dados/processoNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+
+};
+
+// Após a seleção do processo passa as informações para as páginas 
 function codigoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -77,27 +79,23 @@ function codigoProcesso(codigo) {
       }
     }
 
-    xmlhttp.open("GET","dados/processos.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/processos.php?nomeProcesso="+ nomeProcesso, true);
     xmlhttp.send();
+
+    processoCodigo.push(codigo)
 
   };
 
-// Processo Selecionado
-function nome(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      
-      document.getElementById("selectedProcesso").innerHTML = this.responseText;
-    }
-  }
+// Ao clicar nos botões, redirecina para a página ou rotina selecionada
+function botao(){
 
-  document.getElementById("searchWrapper").style.display = "none";
-  xmlhttp.open("GET","dados/processoNome.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
+
+  var obrasURL = "../../producao/obras/dados/obraMapaSituacao.php?codigoProcesso=" + processoCodigo;
+  window.location.href = obrasURL;
+
 };
 
-  // Resumo do Processo
+// Resumo do Processo
 function resumoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -176,4 +174,20 @@ function garantiasProcesso(codigo) {
   
   xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
+};
+
+
+// Esconde e mostra elementos HTML
+function escondeResultados(){
+  document.getElementById("selectedProcesso").style.display = "none";
+  document.getElementById("stepProgresso").style.display = "none";
+  document.getElementById("buttonsProcesso").style.display = "none";
+  document.getElementById("detailsWrapper").style.display = "none";
+};
+
+function mostraResultados(){
+  document.getElementById("selectedProcesso").style.display = "block";
+  document.getElementById("stepProgresso").style.display = "block";
+  document.getElementById("buttonsProcesso").style.display = "block";
+  document.getElementById("detailsWrapper").style.display = "block";
 };

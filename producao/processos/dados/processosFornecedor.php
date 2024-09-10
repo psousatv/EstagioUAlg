@@ -8,8 +8,7 @@ $query = "SELECT proces_check, proces_padm, proces_nome, ent_nome
           FROM processo
           INNER JOIN entidade ent ON ent_cod = proces_ent_cod
           WHERE ent_nome LIKE '%".$nomeFornecedor."%'
-          ORDER BY proces_data_adjudicacao DESC
-          ";
+          ORDER BY proces_nome ASC";
 
 
 $stmt = $myConn->query($query);
