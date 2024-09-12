@@ -86,5 +86,3 @@ foreach($data as $row)
   <hr>';
 
 };
-
-echo json_encode($data);
