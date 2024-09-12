@@ -37,12 +37,6 @@ $.ajax(
             );
 
             
-            console.log("AllData", allData);
-            console.log("Data", data);
-            console.log("Colunas", titulo_colunas);
-            console.log("Grafico", dadosGrafico);
-
-            
             // Gráfico
             var chart_data = {
                 labels: data.map(row => row.contrato),
