@@ -133,43 +133,49 @@
             <main>
                 <div class="container-fluid">
                     <h1 class="mt-2"></h1>
-                    <div class="row">
+                    <div class="row col-lg-12">
                         <!-- Cartões e Gráfico -->
-                        <div class="col col-xl-6">
+                        <div class="col col-md-4 col-sm-4">
                             <div class="card">
                                 <div class="card-header small"><i class="fas fa-chart-pie mr-1"></i>Execução</div>
                                     <div class="row" id="cartoesEsquerdaGrafico"></div>
                             </div>
                         </div>
-                        <!-- Gáfico -->
-                        <div class="col-xl-6">
-                            <div class="card">
-                                <div class="card-header small"><i class="fas fa fa-chart-area mr-1"></i>Valores de Comparticipação</div>
-                                <div class="card-body">
-                                    <div class="card-body">
-                                        <canvas id="grafico"></canvas>
+                                                   
+                        <div class="col col-md-8 col-sm-8">
+                            <div class="row col-lg-12">
+                                <!-- Gáfico -->
+                                <div class="row">
+                                    <div class="card">
+                                        <div class="card-header small"><i class="fas fa fa-chart-area mr-1"></i>Valores de Comparticipação</div>
+                                        <div class="card-body">
+                                            <div class="card-body">
+                                                <canvas id="grafico"></canvas>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <p class="small mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12">
-                                    <p class="small mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
+                            
+                                <!-- Barras Progresso -->
+                                <div class="row">
+                                    <div class="card ">
+                                        <div class="card-header small">Percentil de Comparticipação</div>
+                                        <div class="card-body">
+                                            <div id="progresso"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                
                     </div>
 
                     <h1 class="mt-2"></h1>
                     
-                    <!-- Barras Progresso -->
-                    <div class="row">
-                        <div class="col">
-                            <div class="card ">
-                                <div class="card-header small">Percentil de Comparticipação</div>
-                                <div class="card-body">
-                                    <div id="progresso"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                     
                     <h1 class="mt-2"></h1>
 
