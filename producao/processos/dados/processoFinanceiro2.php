@@ -32,7 +32,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //Plano de Pagamentos
 echo "
 <b>Plano de Pagamentos</b>
-<table class='table table-responsive table-bordered table-striped table-hover small'>
+<table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
     <th>Acumulado</th>

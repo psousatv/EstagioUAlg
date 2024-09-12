@@ -40,7 +40,7 @@
 
 </head>
 
-<body onload="escondeResultados(), avisos()">
+<body onload="processoSelected()">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="main.html">Processos</a>
 
@@ -68,67 +68,9 @@
     <h1 class="mt-2"></h1>
 
     <div class="container-fluid">
-      <section>
-        <div class="row">
-          <div class="col col-md-12">
-            <div class="card" id="searchWrapper">
-              <div class="card-header bg-primary text-white">Pesquisa de Processos</a></div>
-              <div class="car-body">
-                <h1 class="mt-1"></h1>
-                <div class="row">
-                  <div class="col col-md-4">
-                    <form id="searchForm">
-                      
-                        <label>Processo</label>
-                        <input
-                        class="form-control"
-                        type="text"
-                        placeholder="Digite qualquer parte do nome do Processo ..."
-                        aria-label="Search1" aria-describedby="basic-addon1"
-                        id="nomeProcesso"
-                        autofocus
-                        
-                        oninput="procuraProcesso(this.value)">
-                      
-                        <h1 class="mt-2"></h1>
-
-                        <label>Fornecedor</label>
-                        <input
-                        class="form-control"
-                        type="text"
-                        placeholder="Digite qualquer parte do nome do Fornecedor ..."
-                        aria-label="Search2" aria-describedby="basic-addon2"
-                        id="nomeFornecedor"
-                        oninput="procuraFornecedor(this.value)">
-                      
-                    </form>
-                  </div>
-                
-                  <div class="col col-md-8">
-                    <div class="row d-flex justify-content-center" id="showResultsForm"><a><img src="../../global/imagens/LogotipoTVerde.jpg" alt="Foto 1" style="width:55%;"></a></div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <h1 class="mt-2"></h1>
-
-      <section>
-        
-        <div class="row col-md-12 col-lg-12" id="Avisos"></div>
-      </section>
-    
-    </div>
-  
-    <div class="container-fluid">
-      <!-- Linha 2 -->
       <!-- Nome do Processo -->
       <h1 class="mt-2"></h1>
-      <div class="row col-md-12 col-lg-12" id="selectedProcesso">
+      <div class="row col-md-12 col-lg-12" id="processoSelected">
         <b>O nome do Processo é listado aqui...</b>
       </div>
       <!-- Mostra o progresso do processo -->
@@ -139,17 +81,17 @@
       
       <h1 class="mt-2"></h1>
 
-      <div class="row col-md-12 col-lg-12 d-grid small text-white" id="buttonsProcesso"></div>
+      <div class="row col-md-12 col-lg-12 d-grid small text-white" id="b"></div>
     </div>
     
     <div class="container-fluid">
       <!-- Linha 3 -->
       <!-- Mostra os dados do processo selecionado -->
-      <div class="row col-md-12 col-lg-12" id="detailsWrapper">
+      <div class="row" id="detailsWrapper">
         
         <!--h1 class="mt-2"></h1>-->
         <!-- Opções -->
-        <div class="row">
+        <div class="row col sm-12">
           <div class="col col-lg-12 text-right">
             <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-folder-open"></i></div>
             <div class="btn btn-secondary" onclick="botao()"><i class="fa-sharp-duotone fa-solid fa-person-digging"></i></div>
@@ -162,9 +104,10 @@
           </div>
         </div>
         
+        
         <!-- Detalhes do processo -->
-        <div class="row">
-          <div class="col col-lg-12">
+        <div class="row col-sm-12">
+          <div class="col col-lg-12 text-left">
             <div class="card">
               <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item">
@@ -223,27 +166,25 @@
                     </div>
                   </div>
                 </div>
-
+              </div>
             </div>
-          </div>
+          </div>          
         </div>
-
       </div>
     </div>
-  </div>
 
-<!-- JQuery -->
-<script src="../../vendors/jquery/jquery-3.7.0.js"></script>
-<!-- Bootstrap -->
-<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
-<!-- Fontawesome -->
-<script src="../../vendors/fonts/all.min.js"></script>
-<!-- Datatables -->
-<script src="../../vendors/datatables/datatables.min.js"></script>
-<!-- Charts -->
-<script src="../../vendors/charts/Chart.min.js"></script>
+  <!-- JQuery -->
+  <script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+  <!-- Bootstrap -->
+  <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+  <!-- Fontawesome -->
+  <script src="../../vendors/fonts/all.min.js"></script>
+  <!-- Datatables -->
+  <script src="../../vendors/datatables/datatables.min.js"></script>
+  <!-- Charts -->
+  <script src="../../vendors/charts/Chart.min.js"></script>
 
-<script src="js/processos.js"></script>
+  <script src="js/processosResults.js"></script>
 
 
 </body>

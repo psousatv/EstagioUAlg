@@ -25,7 +25,7 @@ echo '
         <div class="card col-md-12">
             <ul class="list-group list-group-flush" >';
 echo '
-                <li class="list-group-item small" onclick="codigoProcesso('.$row["proces_check"].')">
+                <li class="list-group-item small" onclick="processoSelected('.$row["proces_check"].')">
                 '.$row["ent_nome"]. ' [' .$row["ent_nif"].']: '.$row["proces_nome"].'
                 </li>';
 echo '      </ul>
