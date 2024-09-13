@@ -1,4 +1,4 @@
-var processoCodigo = []
+//var processoCodigo = []
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
@@ -114,3 +114,4 @@ function botao(codigo){
   window.location.href = obrasURL;
 };
 
+// Botões

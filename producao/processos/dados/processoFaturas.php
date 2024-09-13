@@ -18,7 +18,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //Faturação
 echo "
 <b>Faturas</b>
-<table class='table table-responsive table-striped table-hover small'>
+<table class='table table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Expediente</th>
     <th>Fatura</th>

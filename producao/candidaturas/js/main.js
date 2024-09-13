@@ -189,7 +189,7 @@ $.ajax(
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                        <p class="mb-0 text-white">${result["candidatura"]}</p>
+                        <p class="mb-0 small text-white">${result["candidatura"]}</p>
                         <!--Faturado-->
                         <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["execucao_percent"]}%</span></h3>
                         <!--Adjudicado-->

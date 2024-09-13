@@ -133,55 +133,51 @@
             <main>
                 <div class="container-fluid">
                     <h1 class="mt-2"></h1>
-                    <div class="row col-lg-12">
+                    <div class="row">
                         <!-- Cartões e Gráfico -->
-                        <div class="col col-md-4 col-sm-4">
-                            <div class="card">
+                        <div class="col col-xl-4">
+                            <div class="card md-12">
                                 <div class="card-header small"><i class="fas fa-chart-pie mr-1"></i>Execução</div>
                                     <div class="row" id="cartoesEsquerdaGrafico"></div>
                             </div>
                         </div>
                                                    
-                        <div class="col col-md-8 col-sm-8">
-                            <div class="row col-lg-12">
+                        <div class="col col-md-8">
+                            <!--div class="row"-->
                                 <!-- Gáfico -->
-                                <div class="row">
-                                    <div class="card">
+                                <!--div class="row"-->
+                                    <div class="card md-12">
                                         <div class="card-header small"><i class="fas fa fa-chart-area mr-1"></i>Valores de Comparticipação</div>
                                         <div class="card-body">
                                             <div class="card-body">
                                                 <canvas id="grafico"></canvas>
                                             </div>
                                         </div>
-                                        <div class="col-sm-12">
+                                        <div class="card-footer">
                                             <p class="small mb-0"> Os valores representados correspondem aos dados conhecidos da <b>DAS e ex-DPO</b></p>
                                         </div>
                                     </div>
-                                </div>
-                            
+                                <!--/div-->
+                                <h1 class="mt-2"></h1>
                                 <!-- Barras Progresso -->
-                                <div class="row">
-                                    <div class="card ">
+                                <!--div class="row"-->
+                                    <div class="card md-12">
                                         <div class="card-header small">Percentil de Comparticipação</div>
                                         <div class="card-body">
                                             <div id="progresso"></div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                <!--/div-->
+                            <!--/div-->
                         </div>
                 
                     </div>
 
                     <h1 class="mt-2"></h1>
                     
-                    
-                    
-                    <h1 class="mt-2"></h1>
-
                     <!-- Tabela de Dados -->
                     <div class="row">
-                        <div class="col-xl-12">
+                        <div class="col col-xl-12">
                             <div class="card md-8">
                                 <div class="card-header"><i class="fas fa-table mr-1"></i>Candidaturas Aprovadas</div>
                                 <div class="card-body">

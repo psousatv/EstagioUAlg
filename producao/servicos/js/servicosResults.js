@@ -2,7 +2,7 @@ var processoCodigo = []
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
-function obraSelected() { 
+function servicoSelected() { 
 
   var params = new URLSearchParams(window.location.search);
   var codigo = params.get("codigoProcesso"); 
@@ -10,13 +10,13 @@ function obraSelected() {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("obraSelected").innerHTML = this.responseText;
+      document.getElementById("servicoSelected").innerHTML = this.responseText;
     }
   }
 
   //console.log("Código passa do Search: ", codigo);
 
-  xmlhttp.open("GET","dados/obraShowNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/servicoShowNome.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
           mapaTrabalhos(codigo);
@@ -35,7 +35,7 @@ function mapaTrabalhos(codigo) {
     }
   }
   
-  xmlhttp.open("GET","dados/obraMapaTrabalhos.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/servicoMapaTrabalhos.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
@@ -47,10 +47,9 @@ function mapaAutos(codigo) {
       document.getElementById("lstMapaSituacao").innerHTML = this.responseText;
       
     }
-    console.log("Resposta: ", this.responseText);
   }
 
-  xmlhttp.open("GET","dados/obraMapaSituacao.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/servicoMapaSituacao.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
