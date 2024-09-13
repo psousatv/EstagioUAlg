@@ -152,12 +152,7 @@ $.ajax(
             // Iniciar as barras de progresso quando se acede à Página
             window.addEventListener('load', function(){
                 createProgressBar();
-            });
-
-            console.log("barraProgresso", dadosProgresso);
-            console.log("Data: ", data);
-            console.log("AllData: ", allData);
-            
+            });            
             
             // ** Cartões
             var container = document.getElementById('cartoesEsquerdaGrafico');
@@ -184,7 +179,7 @@ $.ajax(
             card.classList = 'card-body';
             
             var cartoes = `
-            <div class="col col-sm-12" >
+            <div class="col col-sm-12" onclick="candidaturaSelected('${result["candidatura"]}')">
                 <div class="card ${classeCartao}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
