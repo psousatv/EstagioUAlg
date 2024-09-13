@@ -7,25 +7,25 @@ if(isset($_POST["action"]))
 	if($_POST["action"] == 'fetch')
 	{
 		$main_query = 'SELECT
+						orc_ano AS ano,
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
-						ROUND(SUM(orc_valor_previsto), 2) AS orcamento,
-						ROUND(SUM(orc_valor_adjudicado), 2) AS adjudicado,
-						ROUND((SUM(orc_valor_adjudicado)  / SUM(orc_valor_previsto)) * 100, 2) AS orcamento_percent,
-						ROUND(SUM(orc_valor_faturado), 2) AS faturado,
-						ROUND((SUM(orc_valor_faturado)  / SUM(orc_valor_adjudicado)) * 100, 2) AS faturado_percent
-						FROM orcamento
-						INNER JOIN rubricas r ON r.rub_cod = orc_rub_cod ';
+						ROUND(SUM(orc_valor_previsto), 2) AS orcamento
+						FROM orcamento2
+						LEFT JOIN rubricas r ON r.rub_cod = orc_rub_cod ';
+
 					   
-        $search_query = 'WHERE orc_ano = YEAR(NOW()) AND orc_rub_cod <> 100 AND orc_rub_cod <> 999 ';
+        $search_query = 'WHERE orc_ano = YEAR(NOW()) 
+						 AND orc_rub_cod <> 100
+						 AND orc_rub_cod <> 999 ';
         
         if(isset($_POST["search"]["value"]))
         {
 			$search_query .= 'AND orc_ano LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
  
-		$group_by_query = ' GROUP BY tipo, rubrica, item ';
+		$group_by_query = ' GROUP BY tipo, rubrica, item, ano ';
 
 		$order_by_query = '';
 
@@ -63,15 +63,17 @@ if(isset($_POST["action"]))
 
 		foreach($result as $row)
 		{
+			
 			$sub_array = array();
+			$sub_array[] = $row['ano'];
 			$sub_array[] = $row['tipo'];
             $sub_array[] = $row['rubrica'];
 			$sub_array[] = $row['item'];
 			$sub_array[] = $row['orcamento'];
-            $sub_array[] = $row['adjudicado'];
-			$sub_array[] = $row['orcamento_percent'];
-			$sub_array[] = $row['faturado'];
-			$sub_array[] = $row['faturado_percent'];
+            //$sub_array[] = $row['adjudicado'];
+			//$sub_array[] = $row['orcamento_percent'];
+			//$sub_array[] = $row['faturado'];
+			//$sub_array[] = $row['faturado_percent'];
 
 			$data[] = $sub_array;
 		}

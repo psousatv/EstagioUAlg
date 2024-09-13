@@ -16,7 +16,7 @@ function processoSelected() {
 
   //console.log("Código passa do Search: ", codigo);
 
-  xmlhttp.open("GET","dados/processoNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoShowNome.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
         resumoProcesso(codigo);
@@ -53,19 +53,6 @@ function historicoProcesso(codigo) {
   xmlhttp.send();
 };
 
-// Plano de Pagamentos
-function pagamentosProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstPagamentos").innerHTML = this.responseText;
-    }
-  }
-
-  xmlhttp.open("GET","dados/processoFinanceiro2.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
-
 // Facturação
 function faturacaoProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
@@ -76,6 +63,19 @@ function faturacaoProcesso(codigo) {
   }
 
   xmlhttp.open("GET","dados/processoFinanceiro.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
+// Plano de Pagamentos
+function pagamentosProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/processoFinanceiro2.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 

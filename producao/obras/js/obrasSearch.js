@@ -7,7 +7,7 @@ function avisos(){
     }
   }
 
-  xmlhttp.open("GET","dados/processosAvisos.php");
+  xmlhttp.open("GET","dados/obrasAvisos.php");
   xmlhttp.send();
 
 };
@@ -21,7 +21,7 @@ function procuraNomeProcesso(nomeProcesso) {
       }
     }
 
-    xmlhttp.open("GET","dados/processosSearchNome.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/obrasSearchNome.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
 };
@@ -36,14 +36,14 @@ function procuraNomeFornecedor(nomeFornecedor) {
     }
 
     //document.getElementById("detailsWrapper").style.display = "none";
-    xmlhttp.open("GET","dados/processosNomeFornecedor.php?nomeFornecedor="+nomeFornecedor,true);
+    xmlhttp.open("GET","dados/obrasSearchFornecedor.php?nomeFornecedor="+nomeFornecedor,true);
     xmlhttp.send();  
 
 };
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
-function processoSelected(codigo) {
+function obraSelected(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -51,12 +51,12 @@ function processoSelected(codigo) {
 
       var params = codigo;
 
-      var URL = "processosResults.html?codigoProcesso=" + params;
+      var URL = "obrasResults.html?codigoProcesso=" + params;
       window.location.href = URL;
     }
   }
 
-  xmlhttp.open("GET","dados/processosSearchNome.php?codigoProcesso="+ codigo, true);
+  xmlhttp.open("GET","dados/obrasSearchNome.php?codigoProcesso="+ codigo, true);
   xmlhttp.send();
 
 };

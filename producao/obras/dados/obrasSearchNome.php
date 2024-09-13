@@ -2,14 +2,11 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeFornecedor = $_GET['nomeFornecedor'];
+$nomeProcesso = $_GET['nomeProcesso'];
 
-$query = "SELECT proces_check, proces_padm, proces_nome, ent_nome
+$query = "SELECT proces_check, proces_padm, proces_nome
           FROM processo
-          INNER JOIN entidade ent ON ent_cod = proces_ent_cod
-          WHERE ent_nome LIKE '%".$nomeFornecedor."%'
-          ORDER BY proces_data_adjudicacao DESC
-          ";
+          WHERE proces_nome LIKE '%".$nomeProcesso."%'";
 
 
 $stmt = $myConn->query($query);
@@ -26,11 +23,10 @@ echo '
         <div class="card col-md-12">
             <ul class="list-group list-group-flush" >';
 echo '
-                <li class="list-group-item small" onclick="codigoProcesso('.$row["proces_check"].')">
-                '.$row["ent_nome"]. ': (' .$row["proces_check"]. ') - ' .$row["proces_nome"]. '
+                <li class="list-group-item small" onclick="obraSelected('.$row["proces_check"].')">
+                '.$row["proces_check"]. ' - ' .$row["proces_nome"]. '
                 </li>';
 echo '      </ul>
         </div>
-        
     </div>';
 };

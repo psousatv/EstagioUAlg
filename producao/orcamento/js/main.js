@@ -23,9 +23,9 @@ $(document).ready(
                 data:{action:'fetch'}
             },
             "columnDefs":[
-                { targets: [3, 4, 6], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
-                { targets: [5, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0, 1, 2], className: 'dt-body-left' }
+                { targets: [4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
+                //{ targets: [5, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
+                { targets: [0, 1, 2, 3], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
                 var dados = [];
@@ -47,21 +47,17 @@ $(document).ready(
                     //rubrica.push(settings.aoData[count]._aData[1]);
                     
                     barraProgresso.push([count + 1, 
-                                        settings.aoData[count]._aData[2],
-                                        settings.aoData[count]._aData[5]]);
+                                        settings.aoData[count]._aData[3],
+                                        settings.aoData[count]._aData[4]]);
 
-                if(settings.aoData[count]._aData[0] === 'Investimento'){
+                if(settings.aoData[count]._aData[1] === 'Investimento'){
                     inv_item.push([count + 1]);
-                    inv_y1.push(parseFloat(settings.aoData[count]._aData[3]));
-                    inv_y2.push(parseFloat(settings.aoData[count]._aData[4]));
-                    inv_y3.push(parseFloat(settings.aoData[count]._aData[6]));
-
+                    inv_y1.push(parseFloat(settings.aoData[count]._aData[4]));
+                    
                 } else {
                     gast_item.push([count + 1]);
-                    gast_y1.push(parseFloat(settings.aoData[count]._aData[3]));
-                    gast_y2.push(parseFloat(settings.aoData[count]._aData[4]));
-                    gast_y3.push(parseFloat(settings.aoData[count]._aData[6]));
-
+                    gast_y1.push(parseFloat(settings.aoData[count]._aData[4]));
+                    
                 };
                 };
 

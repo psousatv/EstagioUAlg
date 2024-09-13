@@ -38,9 +38,9 @@
 
 </head>
 
-<body onload="escondeResultados(), avisos()">
+<body onload="obraSelected()">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="main.html">Empreitadas</a>
+    <a class="navbar-brand" href="main.html">Obras</a>
 
     <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
       <div class="d-flex align-items-center justify-content-between small">
@@ -64,70 +64,11 @@
   <div class="page_wrapper">
     <!-- Page Content-->
     <h1 class="mt-2"></h1>
-
-    <div class="container-fluid">
-      <section>
-        <div class="row">
-          <div class="col col-md-12">
-            <div class="card" id="searchWrapper">
-              <div class="card-header bg-primary text-white">Pesquisa de Processos</a></div>
-              <div class="car-body">
-                <h1 class="mt-1"></h1>
-                <div class="row">
-                  <div class="col col-md-4">
-                    <form id="searchForm">
-                      
-                        <label>Processo</label>
-                        <input
-                        class="form-control"
-                        type="text"
-                        placeholder="Digite qualquer parte do nome do Processo ..."
-                        aria-label="Search1" aria-describedby="basic-addon1"
-                        id="nomeProcesso"
-                        autofocus
-                        
-                        oninput="procuraProcesso(this.value)">
-                      
-                        <h1 class="mt-1"></h1>
-
-                        <label>Fornecedor</label>
-                        <input
-                        class="form-control"
-                        type="text"
-                        placeholder="Digite qualquer parte do nome do Fornecedor ..."
-                        aria-label="Search2" aria-describedby="basic-addon2"
-                        id="nomeFornecedor"
-                        oninput="procuraFornecedor(this.value)">
-
-                        <h1 class="mt-2"></h1>
-                      
-                    </form>
-                  </div>
-                
-                  <div class="col col-md-8">
-                    <div class="row d-flex justify-content-center" id="showResultsForm"><a><img src="../../global/imagens/LogotipoTVerde.jpg" alt="Foto 1" style="width:55%;"></a></div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <h1 class="mt-2"></h1>
-
-      <section>
-        <!-- 2.ª Linha -->
-        <div class="row col-md-12 col-lg-12" id="Avisos"></div>
-      </section>
-    
-    </div>
   
     <div class="container-fluid">
       <!-- Nome do Processo -->
       <h1 class="mt-2"></h1>
-      <div class="row col-md-12 col-lg-12" id="selectedProcesso">
+      <div class="row col-md-12 col-lg-12" id="obraSelected">
         <b>O nome do Processo é listado aqui...</b>
       </div>
       <!-- Mostra o progresso do processo -->
@@ -150,14 +91,9 @@
     </div>
     
     <div class="container-fluid">
-      <!-- Linha 3 -->
-      <!-- Mostra os dados do processo selecionado -->
-      <div class="row col-md-12 col-lg-12" id="detailsWrapper">
-        
-      <!--h1 class="mt-2"></h1>-->
- 
-        
-        <!-- Detalhes do processo -->
+      <!-- Mostra os dados da obra selecionada -->
+      <div class="row col-md-12 col-lg-12" id="detailsWrapper">        
+        <!-- Detalhes da obra -->
         <div class="row">
           <div class="col col-lg-12">
             <div class="card">
@@ -227,7 +163,7 @@
 <!-- Charts -->
 <script src="../../vendors/charts/Chart.min.js"></script>
 
-<script src="js/obras.js"></script>
+<script src="js/obrasResults.js"></script>
 
 
 </body>
