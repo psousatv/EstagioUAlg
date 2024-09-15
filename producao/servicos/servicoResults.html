@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Results SFOR</title>
+
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="../../templates/favicon.png"/>
+
+<!-- CSS -->
+<!-- Materials /*Cards de Teste 2 */ -->
+<link href="../../vendors/fonts/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+
+<style>
+  /* Adiciona uma imagem em 'background' a toda a página */
+  body  {
+    background-image: url('../../global/imagens/bgPages.jpg');
+    background-size: cover;
+  }
+</style>
+
+</head>
+
+<body onload="servicoSelected()">
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="main.html">Prestação de Serviços e Bens</a>
+
+    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+      <div class="d-flex align-items-center justify-content-between small">
+        <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
+      </div>
+    </div>
+
+    <!-- Logged -->
+    <ul class="navbar-nav ml-auto ml-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+            <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Login</a>
+            <a class="dropdown-item" href="#">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="page_wrapper">
+    <!-- Page Content-->
+    <h1 class="mt-2"></h1>
+  
+    <div class="container-fluid">
+      <!-- Nome do Processo -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12" id="servicoSelected">
+        <b>O nome do Processo é listado aqui...</b>
+      </div>
+      <!-- Mostra o progresso do processo -->
+      <h1 class="mt-2"></h1>
+      <div class="row col-md-12 col-lg-12" id="stepProgresso">
+        <b>Uma linha de progresso é mostrada aqui ...</b>
+        <div class="col-md-12 col-lg-12 small text-white" id="buttonsProcesso">
+          <div class="col col-lg-12 text-right">
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-folder-open"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-person-digging"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-secondary"><i class="fas fa-globe"></i></div>
+            <h1 class="mt-2"></h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container-fluid">
+      <!-- Mostra os dados da obra selecionada -->
+      <div class="row col-md-12 col-lg-12" id="detailsWrapper">        
+        <!-- Detalhes da obra -->
+        <div class="row">
+          <div class="col col-lg-12">
+            <div class="card">
+              <ul class="nav nav-pills" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#orcamento" role="tab" aria-selected="true">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Mapa de Trabalhos</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#situacao" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Mapa de Situação</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#faturas" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Faturas</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#outros" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Outros</span>
+                  </a>
+                </li>
+              </ul>
+
+               <div class="tab-content tabcontent-border">
+                <div class="tab-pane active" id="orcamento" role="tabpanel" >
+                  <div class="p-20" id="lstMapaTrabalhos"><b>O Mapa de Trabalhos é listado aqui...</b></div>
+                </div>
+                <div class="tab-pane p-20 " id="situacao" role="tabpanel" >
+                  <div class="p-20" id="lstMapaSituacao"><b>O Mapa de Situação é listado aqui...</b></div>
+                </div>
+                <div class="tab-pane p-20" id="faturas" role="tabpanel" >
+                  <div class="row">
+                    <div class="col col-lg-8">
+                      <div class="p-20" id="lstGarantias"><b>Os valores cativos são listados aqui...</b></div>
+                      <div class="p-20" id="lstFacturas"><b>As Faturas são listadas aqui...</b></div>
+                    </div>
+                    <div class="col col-lg-4">
+                      <div class="p-20" id="grafFaturas"><b>Gráfico aqui...</b></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane p-20 " id="outros" role="tabpanel" >
+                  <div class="p-20" id="lstOutros"><b>Outro conteúdo é listado aqui...</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- JQuery -->
+<script src="../../vendors/jquery/jquery-3.7.0.js"></script>
+<!-- Bootstrap -->
+<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+<!-- Fontawesome -->
+<script src="../../vendors/fonts/all.min.js"></script>
+<!-- Datatables -->
+<script src="../../vendors/datatables/datatables.min.js"></script>
+<!-- Charts -->
+<script src="../../vendors/charts/Chart.min.js"></script>
+
+<script src="js/servicosResults.js"></script>
+
+
+</body>
+
+</html>
+

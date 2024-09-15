@@ -6,7 +6,6 @@
 // Cores a atribuir aos Gráficos
 //var cores = ['red', 'blue', 'green', 'purple', 'orange'];
 
-
 $.ajax(
     {
     url: "dados/main.php",
@@ -179,12 +178,12 @@ $.ajax(
             card.classList = 'card-body';
             
             var cartoes = `
-            <div class="col col-sm-12" onclick="candidaturaSelected('${result["candidatura"]}')">
+            <div class="col col-sm-12" >
                 <div class="card ${classeCartao}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                        <p class="mb-0 small text-white">${result["candidatura"]}</p>
+                        <p class="mb-0 small text-white" onclick="candidaturaRedirected('${result["candidatura"]}')">${result["candidatura"]}</p>
                         <!--Faturado-->
                         <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["execucao_percent"]}%</span></h3>
                         <!--Adjudicado-->
@@ -206,7 +205,12 @@ $.ajax(
         }
     );
 
-
-
-
-
+// Os resultados da Seleção é redirecionado para a candidaturasResults.html
+// Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
+function candidaturaRedirected(nomeCandidatura) {
+    console.log("Nome Candidatura", nomeCandidatura);
+    //var params = nomeCandidatura;
+    var URL = "candidaturasResults.html?nomeCandidatura=" + nomeCandidatura;
+    window.location.href = URL;
+    
+    };
