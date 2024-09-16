@@ -11,7 +11,17 @@ if(isset($_POST["action"]))
 						r.rub_tipo AS tipo,
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
-						ROUND(SUM(orc_valor_previsto), 2) AS orcamento
+						ROUND(SUM(orc_valor_previsto), 2) AS orcamento,
+						(SELECT DISTINCT
+							ROUND(SUM(orc_valor_previsto),2)
+							FROM orcamento
+							WHERE orc_ano = ano
+							GROUP BY tipo ) AS total_orcamento,
+							ROUND((SUM(orc_valor_previsto) / (SELECT DISTINCT
+							SUM(orc_valor_previsto)
+							FROM orcamento
+							WHERE orc_ano = ano
+							GROUP BY tipo ))*100, 2) AS percent
 						FROM orcamento
 						LEFT JOIN rubricas r ON r.rub_cod = orc_rub_cod ';
 
@@ -70,6 +80,8 @@ if(isset($_POST["action"]))
             $sub_array[] = $row['rubrica'];
 			$sub_array[] = $row['item'];
 			$sub_array[] = $row['orcamento'];
+			$sub_array[] = $row['total_orcamento'];
+			$sub_array[] = $row['percent'];
             //$sub_array[] = $row['adjudicado'];
 			//$sub_array[] = $row['orcamento_percent'];
 			//$sub_array[] = $row['faturado'];

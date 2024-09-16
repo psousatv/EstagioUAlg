@@ -25,12 +25,12 @@ $(document).ready(
             "columnDefs":[
                 { targets: [4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
                 //{ targets: [5, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0, 1, 2, 3], className: 'dt-body-left' }
+                { targets: [0, 1, 2, 3,], className: 'dt-body-left' }
             ],
             "drawCallback": function(settings){
                 var dados = [];
                 var barraProgresso = [];
-                //var tipo = [];
+                var totalOrcamento = [];
                 //var rubrica = [];
                 var inv_item = [];
                 var inv_y1 = [];
@@ -41,14 +41,18 @@ $(document).ready(
                 var gast_y2 = [];
                 var gast_y3 = [];
 
+                
+
                 for(var count = 0; count < settings.aoData.length; count++){
                     dados.push(settings.aoData[count]._aData);
                     //tipo.push(settings.aoData[count]._aData[0]);
                     //rubrica.push(settings.aoData[count]._aData[1]);
+
+                    totalOrcamento.push(["valor",parseFloat(settings.aoData[count]._aData[4])])
                     
                     barraProgresso.push([count + 1, 
                                         settings.aoData[count]._aData[3],
-                                        settings.aoData[count]._aData[4]]);
+                                        settings.aoData[count]._aData[6]]);
 
                 if(settings.aoData[count]._aData[1] === 'Investimento'){
                     inv_item.push([count + 1]);
@@ -131,6 +135,9 @@ $(document).ready(
                     data: chart_data1
                     });
 
+                console.log("Data", dados);
+                console.log("Progresso", barraProgresso);
+                
                 // Progress Bar
                 // Contentores para agregar as barras de progresso
                 const progressBarsContainer = document.getElementById('barraProgresso');
@@ -189,11 +196,6 @@ $(document).ready(
                 //window.addEventListener('load', function(){
                 //    createProgressBar();
                 //});
-                
-            console.log("Data", dados);
-            console.log("Progresso", barraProgresso);
-            
-
             }
             });
         }
