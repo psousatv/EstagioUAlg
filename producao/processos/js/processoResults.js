@@ -1,4 +1,4 @@
-//var processoCodigo = []
+var processoCodigo = []
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
@@ -11,6 +11,8 @@ function processoSelected() {
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("processoSelected").innerHTML = this.responseText;
+
+      processoCodigo.push(codigo);
     }
   }
 
@@ -122,10 +124,14 @@ function garantiasProcesso(codigo) {
   xmlhttp.send();
 };
 
+// Botões
 // Ao clicar nos botões, redirecina para a página ou rotina selecionada
-function botao(codigo){
-  var obrasURL = "../../producao/obras/dados/obra.html?codigoProcesso=" + codigo;
+function redirectButtons(){
+  var obrasURL = "../../producao/obras/obrasResults.html?codigoProcesso=" + processoCodigo;
   window.location.href = obrasURL;
 };
 
-// Botões
+function returnToOrigin(){
+  var URL = "../../producao/obras/obrasResults.html?codigoProcesso=" + processoCodigo;
+  window.location.href = URL;
+};

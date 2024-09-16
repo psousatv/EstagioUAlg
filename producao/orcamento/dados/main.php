@@ -12,7 +12,7 @@ if(isset($_POST["action"]))
 						r.rub_rubrica AS rubrica,
 						r.rub_item AS item,
 						ROUND(SUM(orc_valor_previsto), 2) AS orcamento
-						FROM orcamento2
+						FROM orcamento
 						LEFT JOIN rubricas r ON r.rub_cod = orc_rub_cod ';
 
 					   

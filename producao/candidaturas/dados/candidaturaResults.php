@@ -26,7 +26,7 @@ echo '
         foreach($data as $row) {
             echo  '
               <tr>
-                <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].'</td>
+                <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].'</td>
               </tr>';
           };
             echo '

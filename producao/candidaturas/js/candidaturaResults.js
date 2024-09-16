@@ -1,5 +1,4 @@
 
-
 function candidaturaSelected(nomeCandidatura) { 
 
   var params = new URLSearchParams(window.location.search);
@@ -27,7 +26,13 @@ function candidaturaProcessos(nomeCandidatura) {
     }
   }
 
-  xmlhttp.open("GET","dados/candidaturasResults.php?nomeCandidatura="+nomeCandidatura,true);
+  xmlhttp.open("GET","dados/candidaturaResults.php?nomeCandidatura="+nomeCandidatura,true);
   xmlhttp.send();
  
+};
+
+// Ao clicar no processo redireciona para o processo
+function redirectProcesso(codigoProcesso){
+  var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso=" + codigoProcesso;
+  window.location.href = obrasURL;
 };

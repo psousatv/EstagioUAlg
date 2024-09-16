@@ -210,7 +210,7 @@ $.ajax(
 function candidaturaRedirected(nomeCandidatura) {
     console.log("Nome Candidatura", nomeCandidatura);
     //var params = nomeCandidatura;
-    var URL = "candidaturasResults.html?nomeCandidatura=" + nomeCandidatura;
+    var URL = "candidaturaResults.html?nomeCandidatura=" + nomeCandidatura;
     window.location.href = URL;
     
     };
