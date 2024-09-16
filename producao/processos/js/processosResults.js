@@ -21,9 +21,10 @@ function processoSelected() {
 
         resumoProcesso(codigo);
         historicoProcesso(codigo);
-        pagamentosProcesso(codigo);
-        faturacaoProcesso(codigo);
-        faturasProcesso(codigo);
+        pagamentosProcesso(codigo); // Plano de Pagamentos
+        faturacaoProcesso(codigo); // Facturação
+        orcamentoProcesso(codigo); // Orçamento
+        faturasProcesso(codigo); // Detalhes daas Faturas
         garantiasProcesso(codigo);
 
 };
@@ -76,6 +77,19 @@ function pagamentosProcesso(codigo) {
   }
 
   xmlhttp.open("GET","dados/processoFinanceiro2.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
+// Orçamento
+function orcamentoProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstOrcamento").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/processoFinanceiro3.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 

@@ -7,7 +7,8 @@ $nomeCandidatura = $_GET['nomeCandidatura'];
 $query = "SELECT *
           FROM processo
           WHERE proces_cand LIKE '%".$nomeCandidatura."%'
-          AND proces_report_valores = 1";
+          AND proces_report_valores = 1
+          ORDER BY proces_estado_nome ASC";
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

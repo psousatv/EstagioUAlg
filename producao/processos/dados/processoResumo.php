@@ -32,7 +32,7 @@ foreach($data as $row)
     <div class="col-md-2"><b>Adjudicatária: </b></div>
     <div class="col-md-10">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].']</div>
     <div class="col-md-2"><b>Estado: </b></div>
-    <div class="col-md-10">'.$row["proces_estado_nome"].'</div>
+    <div class="col-md-10">('.$row["proces_estado_data"].'): '.$row["proces_estado_nome"].'</div>
     <div class="col-md-2"><b>Consignação: </b></div>
     <div class="col-md-10">'.$row["proces_csgn"].'</div>
     <div class="col-md-2"><b>Prazo de Execução: </b></div>

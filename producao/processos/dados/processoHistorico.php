@@ -20,10 +20,10 @@ echo '
     <th>Data</th>
     <th>Aprovado</th>
     <th>Movimento</th>
-    <th>Valor</th>
     <th>Documento</th>
     <th>Outro</th>
     <th>Observações</th>
+    <th>Valor</th>
   </tr>';
 
 foreach($data as $row)
@@ -36,10 +36,10 @@ foreach($data as $row)
       <td>'.$row["historico_dataemissao"].'</td>
       <td>' .$row["historico_datamov"].'</td>
       <td>' .$row["historico_descr_nome"].'</td>
-      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
       <td>' .$row["historico_doc"].'</td>
       <td>' .$row["historico_num"].'</td>
       <td>' .$row["historico_obs"].'</td>
+      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
     </tr>';} 
   elseif ($row['historico_descr_cod'] == 14 OR $row['historico_descr_cod'] == 17
           OR $row['historico_descr_cod'] == 19){
@@ -48,10 +48,10 @@ foreach($data as $row)
       <td>'.$row["historico_dataemissao"].'</td>
       <td>' .$row["historico_datamov"].'</td>
       <td>' .$row["historico_descr_nome"].'</td>
-      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
       <td>' .$row["historico_doc"].'</td>
       <td>' .$row["historico_num"].'</td>
       <td>' .$row["historico_obs"].'</td>
+      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
     </tr>';
   } else {
     echo '
@@ -59,10 +59,10 @@ foreach($data as $row)
       <td>'.$row["historico_dataemissao"].'</td>
       <td>' .$row["historico_datamov"].'</td>
       <td>' .$row["historico_descr_nome"].'</td>
-      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
       <td>' .$row["historico_doc"].'</td>
       <td>' .$row["historico_num"].'</td>
       <td>' .$row["historico_obs"].'</td>
+      <td class="text-right">'.number_format($row["historico_valor"], 2, ",", ".").'</td>
     </tr>';
   }
 };
