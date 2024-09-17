@@ -51,7 +51,7 @@ function processoSelected(codigo) {
 
       var params = codigo;
 
-      var URL = "processosResults.html?codigoProcesso=" + params;
+      var URL = "processoResults.html?codigoProcesso=" + params;
       window.location.href = URL;
     }
   }
