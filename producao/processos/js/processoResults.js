@@ -66,7 +66,7 @@ function relacoesProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processoRElacoes.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoRelacoes.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
