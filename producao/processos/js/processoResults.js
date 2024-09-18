@@ -16,8 +16,6 @@ function processoSelected() {
     }
   }
 
-  //console.log("Código passa do Search: ", codigo);
-
   xmlhttp.open("GET","dados/processoShowNome.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 

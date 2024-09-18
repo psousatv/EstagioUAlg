@@ -1,5 +1,11 @@
 //Processos
 
+// Conversões dos dados do DataTable para os Gráficos e Progress Bar
+var allData = [];
+var dadosGrafico = [];
+
+console.log("AllData: ", allData);
+
 $.ajax(
     {
     url: "dados/main.php",
@@ -18,11 +24,6 @@ $.ajax(
                     { mDataProp: 'percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
                 ]
             })
-
-            // Conversões dos dados do DataTable para os Gráficos e Progress Bar
-            var allData = [];
-            var dadosGrafico = [];
-            var titulo_colunas = [];
 
             dataTable.rows().every(
                 function(){
@@ -98,7 +99,7 @@ $.ajax(
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                        <p class="mb-0 text-white">${result["contrato"]}</p>
+                        <p class="mb-0 text-white" onclick="redirectTipoProcesso()">${result["contrato"]}</p>
                         <!--Faturado-->
                         <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["percent"]}%</span></h3>
                         <!--Adjudicado-->
@@ -112,10 +113,9 @@ $.ajax(
                 </div>
             </div>
             `;
-            
+
             // Append newyly created card element to the container
             container.innerHTML += cartoes;
-            });
-
-        }
-    );
+        });
+    }
+);
