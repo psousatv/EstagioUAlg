@@ -43,7 +43,7 @@ function procuraNomeFornecedor(nomeFornecedor) {
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
-function processoSelected(codigo) {
+function redirectProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {

@@ -69,7 +69,7 @@ echo '
                 if($row['proces_estado'] == '208'){
     echo  '
                   <tr>
-                    <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                    <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
                   </tr>';
                 }
               };
@@ -84,7 +84,7 @@ echo '
                 if($row['proces_estado'] == '206'){
 echo  '
               <tr>
-                <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
                 </tr>';
               }
             };
@@ -99,7 +99,7 @@ echo '
                 if($row['proces_estado'] == '205'){
 echo  '                       
                 <tr>
-                  <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                  <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
                 </tr>';
               }
             };
@@ -114,7 +114,7 @@ echo '
                 if($row['proces_estado'] == '203'){
 echo  '                       
                 <tr>
-                  <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                  <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
                 </tr>';
               }
             };
@@ -129,7 +129,7 @@ echo '
                 if($row['proces_estado'] == '202' ){
 echo  '                       
                 <tr>
-                  <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                  <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
                 </tr>';
               }
             };
@@ -144,7 +144,7 @@ echo '
                 if($row['proces_estado'] == '200' OR $row['proces_estado'] == '201'){
 echo  '                       
                 <tr>
-                  <td onclick="processoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                  <td onclick="redirectProcesso('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
                 </tr>';
               }
             };

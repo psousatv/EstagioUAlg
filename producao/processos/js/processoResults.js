@@ -23,6 +23,7 @@ function processoSelected() {
 
         resumoProcesso(codigo);
         historicoProcesso(codigo);
+        relacoesProcesso(codigo);
         pagamentosProcesso(codigo); // Plano de Pagamentos
         faturacaoProcesso(codigo); // Facturação
         orcamentoProcesso(codigo); // Orçamento
@@ -53,6 +54,19 @@ function historicoProcesso(codigo) {
   }
 
   xmlhttp.open("GET","dados/processoHistorico.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
+// Relacoes
+function relacoesProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstRelacoes").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/processoRElacoes.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
@@ -134,4 +148,24 @@ function redirectButtons(){
 function returnToOrigin(){
   var URL = "../../producao/obras/obrasResults.html?codigoProcesso=" + processoCodigo;
   window.location.href = URL;
+};
+
+// Os resultados da Seleção é redirecionado para a processosResults.html
+// Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
+function redirectProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      //document.getElementById("Avisos").style.display = "none";
+
+      var params = codigo;
+
+      var URL = "processoResults.html?codigoProcesso=" + params;
+      window.location.href = URL;
+    }
+  }
+
+  xmlhttp.open("GET","dados/processosSearchNome.php?codigoProcesso="+ codigo, true);
+  xmlhttp.send();
+
 };
