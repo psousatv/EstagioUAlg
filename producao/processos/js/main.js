@@ -99,7 +99,7 @@ $.ajax(
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                        <p class="mb-0 text-white" onclick="redirectTipoProcesso()">${result["contrato"]}</p>
+                        <p class="mb-0 text-white" onclick="redirectTipoProcesso(${result["contrato"]})">${result["contrato"]}</p>
                         <!--Faturado-->
                         <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["percent"]}%</span></h3>
                         <!--Adjudicado-->
@@ -119,3 +119,18 @@ $.ajax(
         });
     }
 );
+
+// Os resultados da Seleção é redirecionado para a página pretendida
+function redirectTipoProcesso(tipoProcesso) {
+
+    console.log("Tipo de Processo", tipoProcesso);
+
+    if(tipoProcesso == 'Empreitada'){
+        var URL = "../obras/obrasSearch.html";
+        window.location.href = URL;
+    } else if (tipoProcesso != 'Empreitada') {
+        var URL = "../servicos/servicosSearch.html";
+        window.location.href = URL;
+    }
+    
+    };

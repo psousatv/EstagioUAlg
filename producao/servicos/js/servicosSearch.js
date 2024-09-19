@@ -51,7 +51,7 @@ function servicoSelected(codigo) {
 
       var params = codigo;
 
-      var URL = "servicosResults.html?codigoProcesso=" + params;
+      var URL = "servicoResults.html?codigoProcesso=" + params;
       window.location.href = URL;
     }
   }

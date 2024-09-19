@@ -3,18 +3,25 @@
 include "../../../global/config/dbConn.php";
 
 $codigoProcesso = $_GET['codigoProcesso'];
+$nomeFornecedor = $_GET['nomeFornecedor'];
 
-$queryNome = 'SELECT proces_check, proces_padm, proces_nome
+$sqlNomeProcesso = 'SELECT proces_check, proces_padm, proces_nome
           FROM processo
           WHERE proces_check ="'.$codigoProcesso.'"';
 
+$sqlNomeFornecedor = "SELECT proces_check, proces_padm, proces_nome, ent_nome
+          FROM processo
+          INNER JOIN entidade ent ON ent_cod = proces_ent_cod
+          WHERE ent_nome LIKE '%".$nomeFornecedor."%'
+          ORDER BY proces_nome ASC";
 
-class Nome {
+
+class nomeProcesso {
 //Propriedades
 
 //Métodos
-function sqlNome($queryNome, $myConn){
-  $stmt = $myConn->query($queryNome);
+function sqlNome($sqlNomeProcesso, $myConn){
+  $stmt = $myConn->query($sqlNomeProcesso);
   $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   foreach($data as $row) {
@@ -26,4 +33,28 @@ function sqlNome($queryNome, $myConn){
   ';
   }
 }
+};
+
+class nomeFornecedor {
+//Propriedades
+
+//Métodos
+function sqlNomeFornecedor($sqlNomeFornecedor, $myConn){
+  $stmt = $myConn->query($sqlNomeFornecedor);
+  $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $rows = $stmt->rowCount();
+  foreach($data as $row) {
+    echo '
+      <div class="col-md-10 col-lg-10">
+        <div class="card col-md-12">
+          <ul class="list-group list-group-flush" >';
+    echo '
+            <li class="list-group-item small" onclick="redirectProcesso('.$row["proces_check"].')">
+            '.$row["ent_nome"]. ': (' .$row["proces_check"]. ') - ' .$row["proces_nome"]. '
+            </li>';
+    echo '</ul>
+        </div>
+      </div>';
+    }
+  }
 };
