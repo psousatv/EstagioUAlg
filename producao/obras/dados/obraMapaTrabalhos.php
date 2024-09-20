@@ -56,7 +56,7 @@ echo "
     <td>Valor</td>
    </tr>";
 foreach($data as $row){
-  if($row['tipo_conta'] === 'R'){
+  if($row['tipo_conta'] == 'R'){
     echo "
     <tr class='bg-primary text-white'>
       <td style='text-align:left'>" .$row['ordem']. "</td>
