@@ -25,7 +25,10 @@ echo '
                 if($row['proces_cpv_sigla'] === 'SF' AND $row['proces_estado'] == '208'){
                   echo  '
                     <tr>
-                      <td onclick="servicoSelected('.$row["proces_check"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].' ('.$row["ent_nome"].')</td>
+                      <td onclick="servicoSelected('.$row["proces_check"].')">'
+                      .$row["proces_estado_nome"].'</td> <td>'
+                      .$row["proces_nome"].'</td> <td>'
+                      .$row["ent_nome"].')</td>
                     </tr>';
                   }
                 };

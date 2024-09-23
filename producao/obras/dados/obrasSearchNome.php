@@ -24,7 +24,7 @@ echo '
             <ul class="list-group list-group-flush" >';
 echo '
                 <li class="list-group-item small" onclick="obraSelected('.$row["proces_check"].')">
-                '.$row["proces_check"]. ' - ' .$row["proces_nome"]. '
+                '.$row["proces_check"]. ' - '.$row["proces_nome"]. '
                 </li>';
 echo '      </ul>
         </div>
