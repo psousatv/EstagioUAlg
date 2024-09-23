@@ -37,7 +37,7 @@ echo '
   <h1 class="mt-2"></h1>
     <div class="col col-md-12">
       <div class="row">
-        <table class="table table-striped small">';
+        <table class="table table-responsive table-striped small">';
         foreach($data as $row) {
             echo '
               <tr>
