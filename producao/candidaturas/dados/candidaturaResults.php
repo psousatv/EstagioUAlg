@@ -29,6 +29,7 @@ $totalCandidatura = array();
 foreach($sqlTC as $key) {
   $totalCandidatura[] = $key["elegivel"];
   $logo = $key["proces_path_imagens"];
+  echo $logo;
 }
 
 
@@ -40,7 +41,7 @@ echo '
     <div class="card-header bg-secondary text-white" >Processos na Candidatura 
     ('.$rows.') - '.number_format($totalCandidatura[0], 2, ",", ".").'€
     </div>
-    <img src="../..global/imagens/BarrasAssinaturasAlgarve2030_Cores.svg" alt="2030" width="100" height="50">
+    <img src="../../global/imagens/BarrasAssinaturasAlgarve2030_Cores.svg" alt="2030" width="200" height="50">
     </div>
   <h1 class="mt-2"></h1>
     <div class="col col-md-12">
