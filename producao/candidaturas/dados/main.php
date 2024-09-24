@@ -7,7 +7,7 @@ include "../../../global/config/dbConn.php";
 $query = "SELECT
           proces_cand AS candidatura,
           cs.candoper_programa AS programa,
-          ROUND(SUM(proces_cand_elegivel), 2) AS contratado,
+          ROUND(SUM(proces_cand_elegivel), 2) AS elegivel,
           ROUND(SUM(proces_cand_elegivel_execucao), 2) AS validado,
           IF(SUM(proces_cand_elegivel_execucao) = 0 OR SUM(proces_cand_elegivel) = 0, 0,
           ROUND((SUM(proces_cand_elegivel_execucao) / SUM(proces_cand_elegivel))*100, 2)) AS validado_percent,

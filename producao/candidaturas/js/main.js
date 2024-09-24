@@ -18,7 +18,7 @@ $.ajax(
                 aaData: data,
                 aoColumns:[
                     { mDataProp: 'candidatura'},
-                    { mDataProp: 'contratado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'validado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'validado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
@@ -39,6 +39,7 @@ $.ajax(
             var titulo_colunas = [];
             var nome_candidatura = [];
 
+            
             dataTable.rows().every(
                 function(){
                     var rowData = this.data();
@@ -158,6 +159,7 @@ $.ajax(
             container.innerHTML = "";
             data.forEach((result, idx) => {
             // Create card element
+            
             var classeCartao = ''
             var iconeCartao = ''
             if (result["execucao_percent"] < 10) {
@@ -180,20 +182,20 @@ $.ajax(
             var cartoes = `
             <div class="col col-sm-12" >
                 <div class="card ${classeCartao}">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between px-md-1">
-                    <div class="text-end">
-                        <p class="mb-0 small text-white" onclick="candidaturaRedirected('${result["candidatura"]}')">${result["candidatura"]}</p>
-                        <!--Faturado-->
-                        <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["execucao_percent"]}%</span></h3>
-                        <!--Adjudicado-->
-                        <h6 class="text-white">${Number(result["adjudicado"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="text-end">
+                                <p class="mb-0 small text-white" onclick="candidaturaRedirected('${result["candidatura"]}')">${result["candidatura"]}</p>
+                                <!--Faturado-->
+                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["execucao_percent"]}%</span></h3>
+                                <!--Adjudicado-->
+                                <h6 class="text-white">${Number(result["adjudicado"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas ${iconeCartao} text-white fa-3x"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="align-self-center">
-                        <i class="fas ${iconeCartao} text-white fa-3x"></i>
-                    </div>
-                    </div>
-                </div>
                 </div>
             </div>
             `;
