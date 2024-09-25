@@ -23,14 +23,12 @@ foreach($data as $row) {
 echo '
     <div class="col-md-10 col-lg-10">
         <div class="card col-md-12">
-            <table class="table table-responsive table-striped" >';
+            <ul class="list-group list-group-flush" >';
 echo '
-                <tr class="small" onclick="redirectProcesso('.$row["proces_check"].')">
-                    <td>'.$row["ent_nome"].'</td>
-                    <td>'.$row["ent_nif"].'</td>
-                    <td>'.$row["proces_nome"].'
-                </tr>';
-echo '      </table>
+                <li class="list-group-item small" onclick="redirectProcesso('.$row["proces_check"].')">
+                '.$row["ent_nome"]. ' [' .$row["ent_nif"].']: '.$row["proces_nome"].'
+                </li>';
+echo '      </ul>
         </div>
     </div>';
 };

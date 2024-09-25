@@ -67,13 +67,12 @@ echo '
             <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '208'){
-    echo  '
-                  <tr>
-                    <td onclick="redirectProcesso('.$row["proces_check"].')">'
-                    .$row["proces_estado_nome"].'<td>'
-                    .$row["proces_nome"].'</td> <td>'
-                    .$row["ent_nome"].'</td>
-                  </tr>';
+echo  '
+                <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                  <td>'.$row["proces_estado_nome"].'<td>
+                  <td>'.$row["proces_nome"].'</td>
+                  <td>'.$row["ent_nome"].'</td>
+                </tr>';
                 }
               };
 echo '
@@ -86,14 +85,13 @@ echo '
               foreach($data as $row) {
                 if($row['proces_estado'] == '206'){
 echo  '
-                  <tr>
-                    <td onclick="redirectProcesso('.$row["proces_check"].')">'
-                    .$row["proces_estado_nome"].'<td>'
-                    .$row["proces_nome"].'</td> <td>'
-                    .$row["ent_nome"].'</td>
-                  </tr>';
-              }
-            };
+                <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                  <td>'.$row["proces_estado_nome"].'<td>
+                  <td>'.$row["proces_nome"].'</td>
+                  <td>'.$row["ent_nome"].'</td>
+                </tr>';
+                }
+              };
 echo '
             </table>
           </div>
@@ -103,15 +101,14 @@ echo '
             <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '205'){
-echo  '                       
-                <tr>
-                  <td onclick="redirectProcesso('.$row["proces_check"].')">'
-                  .$row["proces_estado_nome"].'<td>'
-                  .$row["proces_nome"].'</td> <td>'
-                  .$row["ent_nome"].'</td>
-                </tr>';
-              }
-            };
+echo  '
+                  <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                    <td>'.$row["proces_estado_nome"].'<td>
+                    <td>'.$row["proces_nome"].'</td>
+                    <td>'.$row["ent_nome"].'</td>
+                  </tr>';
+                }
+              };
 echo '
             </table>
           </div>
@@ -121,15 +118,14 @@ echo '
           <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '203'){
-echo  '                       
-                <tr>
-                  <td onclick="redirectProcesso('.$row["proces_check"].')">'
-                  .$row["proces_estado_nome"].'<td>'
-                  .$row["proces_nome"].'</td> <td>'
-                  .$row["ent_nome"].'</td>
-                </tr>';
-              }
-            };
+echo  '
+                  <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                    <td>'.$row["proces_estado_nome"].'<td>
+                    <td>'.$row["proces_nome"].'</td>
+                    <td>'.$row["ent_nome"].'</td>
+                  </tr>';
+                }
+              };
 echo '
             </table>
           </div>
@@ -139,16 +135,16 @@ echo '
           <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '202' ){
-echo  '                       
-                <tr>
-                  <td onclick="redirectProcesso('.$row["proces_check"].')">'
-                  .$row["proces_estado_nome"].'<td>'
-                  .$row["proces_nome"].'</td> <td>'
-                  .$row["ent_nome"].'</td>
-                </tr>';
-              }
-            };
-echo '            </table>
+echo  '
+                  <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                    <td>'.$row["proces_estado_nome"].'<td>
+                    <td>'.$row["proces_nome"].'</td>
+                    <td>'.$row["ent_nome"].'</td>
+                  </tr>';
+                }
+              };
+echo '            
+            </table>
           </div>
         </div>
         <div class="tab-pane fade" id="outros" role="tabpanel" aria-labelledby="Outros_tab">
@@ -156,15 +152,14 @@ echo '            </table>
           <table class="table table-striped small">';
               foreach($data as $row) {
                 if($row['proces_estado'] == '200' OR $row['proces_estado'] == '201'){
-echo  '                       
-                <tr>
-                  <td onclick="redirectProcesso('.$row["proces_check"].')">'
-                  .$row["proces_estado_nome"].'<td>'
-                  .$row["proces_nome"].'</td> <td>'
-                  .$row["ent_nome"].'</td>
-                </tr>';
-              }
-            };
+echo  '
+                  <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                    <td>'.$row["proces_estado_nome"].'<td>
+                    <td>'.$row["proces_nome"].'</td>
+                    <td>'.$row["ent_nome"].'</td>
+                  </tr>';
+                }
+              };
 echo '
             </table>
           </div>

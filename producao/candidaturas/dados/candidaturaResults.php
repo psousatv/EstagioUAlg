@@ -59,7 +59,7 @@ echo '
         foreach($procesosCandidatura as $row) {
             echo '
               <tr>
-                <td onclick="redirectProcesso('.$row["proces_check"].')">'
+                <td class="badge bg-info text-white" onclick="redirectProcesso('.$row["proces_check"].')">'
                   .$row["proces_estado_nome"].' <td> '
                   .$row["proces_nome"].'</td> ';
                   if($row["proces_val_adjudicacoes"] == 0){
