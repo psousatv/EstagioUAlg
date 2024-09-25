@@ -132,8 +132,12 @@ $.ajax(
                 var width = 0;
                 const interval = setInterval(function()
                 {
-                    if (width >= value[2]) {
+                    if (width > value[2]) {
                         clearInterval(interval);
+                    } else if (value[1] == 0){
+                        progressBar.style.width = 0;
+                        progressSpan.textContent = value[0];
+                        progressSpanBar.textContent = 0;
                     } else {
                         width++;
                         progressBar.style.width = width + '%';
@@ -142,6 +146,8 @@ $.ajax(
                     }
                 }, 1);
             }
+
+            console.log("progresso", dadosProgresso);
 
             // Atribuir os dados às barras de progresso
             dadosProgresso.forEach(function(value)
