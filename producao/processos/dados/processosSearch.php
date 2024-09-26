@@ -9,7 +9,7 @@ if (isset($_GET['nomeProcesso'])){
             FROM processo
             INNER JOIN entidade ON ent_cod = proces_ent_cod
             WHERE proces_nome LIKE '%".$nomeProcesso."%'
-            ORDER BY ent_nome, proces_nome";
+            ORDER BY proces_nome, ent_nif DESC";
 
     $stmt = $myConn->query($query);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -26,9 +26,9 @@ if (isset($_GET['nomeProcesso'])){
                 <table class="table table-responsive table-striped" >';
     echo '
                     <tr class="small" onclick="redirectProcesso('.$row["proces_check"].')">
+                        <td>'.$row["proces_nome"].'</td>    
+                        <td class="text-primary">'.$row["ent_nif"].'</td>
                         <td>'.$row["ent_nome"].'</td>
-                        <td>'.$row["ent_nif"].'</td>
-                        <td>'.$row["proces_nome"].'
                     </tr>';
     };
     echo '      </table>
@@ -61,9 +61,9 @@ if (isset($_GET['nomeProcesso'])){
                 <table class="table table-responsive table-striped" >';
     echo '
                     <tr class="small" onclick="redirectProcesso('.$row["proces_check"].')">
+                        <td>'.$row["proces_nome"].'</td>    
+                        <td class="text-primary">'.$row["ent_nif"].'</td>
                         <td>'.$row["ent_nome"].'</td>
-                        <td>'.$row["ent_nif"].'</td>
-                        <td>'.$row["proces_nome"].'
                     </tr>';
     };
     echo '      </table>

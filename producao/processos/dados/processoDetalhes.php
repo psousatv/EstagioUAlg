@@ -9,11 +9,6 @@ $queryNome = 'SELECT proces_check, proces_padm, proces_nome
           WHERE proces_check ="'.$codigoProcesso.'"';
 
 
-class Nome {
-//Propriedades
-
-//Métodos
-function sqlNome($queryNome, $myConn){
   $stmt = $myConn->query($queryNome);
   $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -24,6 +19,4 @@ function sqlNome($queryNome, $myConn){
     <div class="btn btn-primary"><a class="text-white" href="processosSearch.html"><i class="fa fa-solid fa-search"></i></a></div>
     <div class="btn btn-danger"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
   ';
-  }
-}
-};
+  };
