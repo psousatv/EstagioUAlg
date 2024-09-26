@@ -21,7 +21,7 @@ function procuraNomeProcesso(nomeProcesso) {
       }
     }
 
-    xmlhttp.open("GET","dados/processosSearchNome.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","dados/processosSearch.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
 };
@@ -36,7 +36,7 @@ function procuraNomeFornecedor(nomeFornecedor) {
     }
 
     //document.getElementById("detailsWrapper").style.display = "none";
-    xmlhttp.open("GET","dados/processosSearchFornecedor.php?nomeFornecedor="+nomeFornecedor,true);
+    xmlhttp.open("GET","dados/processosSearch.php?nomeFornecedor="+nomeFornecedor,true);
     xmlhttp.send();  
 
 };
@@ -56,7 +56,7 @@ function redirectProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processosSearchNome.php?codigoProcesso="+ codigo, true);
+  xmlhttp.open("GET","dados/processosSearch.php?codigoProcesso="+ codigo, true);
   xmlhttp.send();
 
 };

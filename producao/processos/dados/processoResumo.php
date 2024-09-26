@@ -76,6 +76,12 @@ foreach($data as $row)
   <div class="row small text-justify">
     <div class="col-md-2"><b>Financiado: </b></div>
     <div class="col-md-10 text-primary">'.$row['proces_cand'].' </div>
+    <div class="col-md-2"><b>Aprovado: </b></div>
+    <div class="col-md-10 text-primary">'.number_format($row['proces_cand_elegivel'], 2, ',', '.').'€</div>
+    <div class="col-md-2"><b>AutoFinanciamento: </b></div>
+    <div class="col-md-10 text-primary">'.number_format($row['proces_cand_nao_elegivel'], 2, ',', '.').'€</div>
+    <div class="col-md-2"><b>Reembolsável: </b></div>
+    <div class="col-md-10 text-primary">'.number_format($row['proces_cand_fundo'], 2, ',', '.').'€</div>
     <div class="col-md-2"><b>Adjudicado: </b></div>
     <div class="col-md-10">('.$row["proces_data_adjudicacao"].'): '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
     <div class="col-md-2"><b>Faturado: </b></div>
