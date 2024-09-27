@@ -82,7 +82,7 @@ foreach($data as $row){
           </tr>";
     } else {
       echo "
-        <tr>
+        <tr> <!-- Adicionar rotina para abrir o artigo com os autos em que foi faturado-->
           <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>

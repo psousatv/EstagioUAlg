@@ -1,203 +1,123 @@
-// Orçamento
+// Configuração e iniciação do Dashboard Candidaturas
+// Configura, atribui os dados e inicia os elementos da página - DataTable, Graph e Progress Bars
+// Esta página não tem as iterações Online com o Server
+// Para isso terá que se configurar as funções fetch_data. o PHP e DataTables (processing e server side)
 
-$(document).ready(
-    function()
+// Cores a atribuir aos Gráficos
+//var cores = ['red', 'blue', 'green', 'purple', 'orange'];
+
+$.ajax(
     {
-        fetch_data();
-        var grafico_investimentos;
-        var grafico_gastos;
-
-        function fetch_data()
+    url: "dados/main.php",
+    method: 'GET',
+    contentType: 'application/json'
+    }).done(
+        function(data)
         {
-        var dataTable = $('#tabela').DataTable({
-            //"scrollY": 300,
-            "searching": true,
-            //"paging": false,
-            "pageLength": 20,
-            "processing": true,
-            "serverSide": true,
-            "myDataTable": [],
-            "ajax":{
-                url:"dados/main.php",
-                type:"POST",
-                data:{action:'fetch'}
-            },
-            "columnDefs":[
-                { targets: [4], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','') },
-                //{ targets: [5, 7], className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '','%') },
-                { targets: [0, 1, 2, 3,], className: 'dt-body-left' }
-            ],
-            "drawCallback": function(settings){
-                var dados = [];
-                var barraProgresso = [];
-                var totalOrcamento = [];
-                //var rubrica = [];
-                var inv_item = [];
-                var inv_y1 = [];
-                var inv_y2 = [];
-                var inv_y3 = [];
-                gast_item =  [];
-                var gast_y1 = [];
-                var gast_y2 = [];
-                var gast_y3 = [];
+            var dataTable = $('#tabela').DataTable({
+                aaData: data,
+                aoColumns:[
+                    { mDataProp: 'ano'},
+                    { mDataProp: 'tipo'},
+                    { mDataProp: 'rubrica'},
+                    { mDataProp: 'item'},
+                    { mDataProp: 'orcamento', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'orcamento', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'orcamento', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
+                ]
+            })
 
-                
+            var allData = [];
+            var dadosProgresso = [];
+            var dadosGrafico = [];
+            var titulo_colunas = [];
+            var nome_candidatura = [];
 
-                for(var count = 0; count < settings.aoData.length; count++){
-                    dados.push(settings.aoData[count]._aData);
-                    //tipo.push(settings.aoData[count]._aData[0]);
-                    //rubrica.push(settings.aoData[count]._aData[1]);
-
-                    totalOrcamento.push(["valor",parseFloat(settings.aoData[count]._aData[4])])
-                    
-                    barraProgresso.push([count + 1, 
-                                        settings.aoData[count]._aData[3],
-                                        settings.aoData[count]._aData[6]]);
-
-                if(settings.aoData[count]._aData[1] === 'Investimento'){
-                    inv_item.push([count + 1]);
-                    inv_y1.push(parseFloat(settings.aoData[count]._aData[4]));
-                    
-                } else {
-                    gast_item.push([count + 1]);
-                    gast_y1.push(parseFloat(settings.aoData[count]._aData[4]));
-                    
-                };
-                };
-
-                // Investimentos
-                var chart_data = {
-                    labels: inv_item,
-                    datasets:[
-                        {
-                        label : 'Orçamento',
-                        backgroundColor : 'rgba(178, 34, 34, .3)',
-                        //color : '#fff',
-                        data: inv_y1
-                        },
-                        {
-                        label : 'Adjudicado',
-                        backgroundColor : 'rgba(3, 100, 255, .3)',
-                        //color : '#fff',
-                        data: inv_y2
-                        },
-                        {
-                        label : 'Facturado',
-                        backgroundColor : 'rgba(0, 181, 204, .5)',
-                        //color : '#fff',
-                        data: inv_y3
-                        }
-                    ]
-                    };
-                    var group_chart = $('#Investimentos');
-                    if(grafico_investimentos)
-                    {
-                        grafico_investimentos.destroy();
-                    }
-                    grafico_investimentos = new Chart(group_chart,
-                    {
-                    type: 'bar',
-                    data: chart_data
-                    });
-
-                // Gastos
-                var chart_data1 = {
-                    labels: gast_item,
-                    datasets:[
-                        {
-                        label : 'Orçamento',
-                        backgroundColor : 'rgba(178, 34, 34, .3)',
-                        //color : '#fff',
-                        data: gast_y1
-                        },
-                        {
-                        label : 'Adjudicado',
-                        backgroundColor : 'rgba(3, 100, 255, .3)',
-                        //color : '#fff',
-                        data: gast_y2
-                        },
-                        {
-                        label : 'Facturado',
-                        backgroundColor : 'rgba(0, 181, 204, .5)',
-                        //color : '#fff',
-                        data: gast_y3
-                        }
-                    ]
-                    };
-                    var group_chart1 = $('#Gastos');
-                    if(grafico_gastos)
-                    {
-                        grafico_gastos.destroy();
-                    }
-                    grafico_gastos = new Chart(group_chart1,
-                    {
-                    type: 'bar',
-                    data: chart_data1
-                    });
-
-                console.log("Data", dados);
-                console.log("Progresso", barraProgresso);
-                
-                // Progress Bar
-                // Contentores para agregar as barras de progresso
-                const progressBarsContainer = document.getElementById('barraProgresso');
-                progressBarsContainer.innerHTML = "";
-                // Função para crear una barra de progresso
-                
-                function createProgressBar(value)
-                {
-                    // Contentores
-                    // 1
-                    const progressWrapper = document.createElement('div');
-                    progressWrapper.className = 'mt-3';
-                    //2
-                    const progressWrapperFlex = document.createElement('div');
-                    progressWrapperFlex.className = 'd-flex no-block align-items-center';
-                    //3 - Os títulos das barras - acima das barras
-                    const progressSpan = document.createElement('span')
-                    //4 - Agregador das barras
-                    const progressContainer = document.createElement('div');
-                    progressContainer.className = 'progress';
-                    //5 - As barras
-                    const progressBar = document.createElement('div');
-                    progressBar.className = 'progress-bar progress-bar-striped';
-                    //6 - As designações das barras - dentro das barras
-                    const progressSpanBar = document.createElement('span')
-
-                    // configuração dos contentores - ordem
-                    progressBarsContainer.appendChild(progressWrapper);
-                    progressWrapper.appendChild(progressSpan);
-                    progressWrapper.appendChild(progressContainer);
-                    progressContainer.appendChild(progressBar);
-                    progressBar.appendChild(progressSpanBar);
-
-                    // Configuração das barras
-                    var width = 0;
-                    const interval = setInterval(function()
-                    {
-                        if (width >= value[2]) {
-                            clearInterval(interval);
-                        } else {
-                            width++;
-                            progressBar.style.width = width + '%';
-                            progressSpan.textContent = value[0] + ' - ' + value[1];
-                            progressSpanBar.textContent = value[2] + '%';
-                        }
-                    }, 1);
+            
+            dataTable.rows().every(
+                function(){
+                    var rowData = this.data();
+                    // Todos os dados de Datatable (data) para array local
+                    allData.push(rowData);
+                    // Títulos para x do gráfico
+                    titulo_colunas = Object.keys(rowData);
+                    // Designação das Candidaturas
+                    nome_candidatura.push(rowData["item"]);
+                    // Dados para a barra de progresso - etiquetas e valores - array
+                    dadosProgresso.push([rowData["item"], rowData["orcamento"], rowData["recebido_percent"]]);
+                    // Valores recebidos - para o Gráfico
+                    dadosGrafico.push(rowData["orcamento"]);
                 }
+                
+            );
 
-                // Atribuir os dados às barras de progresso
-                barraProgresso.forEach(function(value)
-                {
-                    createProgressBar(value);
-                });
+            
 
-                // Iniciar as barras de progresso quando se acede à Página
-                //window.addEventListener('load', function(){
-                //    createProgressBar();
-                //});
+            // Siglas das Candidaturas para os últimas 5 letras da Designação
+            var sigla_candidatura = []
+            for (var i = 0; i < nome_candidatura.length; i++) {
+                var originalString = nome_candidatura[i];
+                var lasttFiveLetters = originalString.slice(-6);
+                sigla_candidatura.push(lasttFiveLetters);
             }
+
+           
+            // ** Cartões
+            var container = document.getElementById('cartoesEsquerdaGrafico');
+            container.innerHTML = "";
+            data.forEach((result, idx) => {
+            // Create card element
+            
+            var classeCartao = ''
+            var iconeCartao = ''
+            if (result["orcamento"] < 10) {
+                var classeCartao = 'bg-danger';
+                var iconeCartao = 'fa-thumbs-down'
+            } else if (result["orcamento"] > 10 & result["orcamento"]< 35){
+                var classeCartao = 'bg-warning';
+                var iconeCartao = 'fa-warning'
+            } else if (result["orcamento"] >35 & result["orcamento"] < 75){
+                var classeCartao = 'bg-primary';
+                var iconeCartao = 'fa-cogs'
+            } else {
+                var classeCartao = 'bg-success';
+                var iconeCartao = 'fa-smile'
+            };
+
+            const card = document.createElement('div');
+            card.classList = 'card-body';
+            
+            var cartoes = `
+            
+                <div onclick="candidaturaRedirected('${result["item"]}')" class="card col-md-3 ${classeCartao}">
+                    <div class="d-flex justify-content-between px-md-1">
+                        <div class="text-end">
+                            <p class="mb-0 small text-white">${result["item"]}</p>
+                            <!--Faturado-->
+                            <h3 class="text-white">${Number(result["orcamento"]).toLocaleString('pt')}€<span class="h6">- ${result["orcamento"]}%</span></h3>
+                            <!--Adjudicado-->
+                            <h6 class="text-white">${Number(result["orcamento"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas ${iconeCartao} text-white fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Append newyly created card element to the container
+            container.innerHTML += cartoes;
             });
         }
-    }
     );
+
+// Os resultados da Seleção é redirecionado para a candidaturasResults.html
+// Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
+function candidaturaRedirected(nomeCandidatura) {
+    console.log("Nome Candidatura", nomeCandidatura);
+    //var params = nomeCandidatura;
+    var URL = "candidaturaResults.html?nomeCandidatura=" + nomeCandidatura;
+    window.location.href = URL;
+    
+    };

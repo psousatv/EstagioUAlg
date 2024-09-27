@@ -28,8 +28,8 @@ echo '
               foreach($data as $row) {
                 if($row['proces_cpv_sigla'] === 'EMP' AND $row['proces_estado'] == '208'){
                   echo  '
-                    <tr>
-                      <td onclick="obraSelected('.$row["proces_check"].')">'
+                    <tr onclick="obraSelected('.$row["proces_check"].')">
+                      <td>'
                       .$row["proces_estado_nome"].'</td> <td>'
                       .$row["proces_nome"].'</td> <td>'
                       .$row["ent_nome"].')</td>
