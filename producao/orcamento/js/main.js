@@ -27,36 +27,13 @@ $.ajax(
                 ]
             })
 
-            var allData = [];
-            var dadosProgresso = [];
-            var dadosGrafico = [];
-            var titulo_colunas = [];
-            var nome_candidatura = [];
-
-            
-            dataTable.rows().every(
-                function(){
-                    var rowData = this.data();
-                    // Todos os dados de Datatable (data) para array local
-                    allData.push(rowData);
-                    // Títulos para x do gráfico
-                    titulo_colunas = Object.keys(rowData);
-                    // Designação das Candidaturas
-                    nome_candidatura.push(rowData["item"]);
-                    // Dados para a barra de progresso - etiquetas e valores - array
-                    dadosProgresso.push([rowData["item"], rowData["orcamento"], rowData["recebido_percent"]]);
-                    // Valores recebidos - para o Gráfico
-                    dadosGrafico.push(rowData["orcamento"]);
-                }
-                
-            );
            
             // ** Cartões
             var container = document.getElementById('cartoesEsquerdaGrafico');
             container.innerHTML = "";
             data.forEach((result) => {
             // Create card element
-            
+            console.log("DAta: ", result);
             var classeCartao = ''
             var iconeCartao = ''
             if (result["realizado"] < 10) {
@@ -78,10 +55,10 @@ $.ajax(
             
             var cartoes = `
             
-                <div onclick="candidaturaRedirected('${result["item"]}')" class="card col-md-3 ${classeCartao}">
+                <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                     <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
-                            <p class="mb-0 small text-white">${result["item"]}</p>
+                            <p class="mb-0 small text-white">[${result["cod"]}] ${result["item"]}</p>
                             <!--FAturado-->
                             <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["realizado"]}%</span></h3>
                             <!--Orçamento-->
@@ -101,10 +78,10 @@ $.ajax(
 
 // Os resultados da Seleção é redirecionado para a candidaturasResults.html
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
-function candidaturaRedirected(nomeCandidatura) {
-    console.log("Nome Candidatura", nomeCandidatura);
+function orcamentoRedirected(orcamentoItem) {
+    console.log("Item: ", orcamentoItem);
     //var params = nomeCandidatura;
-    var URL = "candidaturaResults.html?nomeCandidatura=" + nomeCandidatura;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem;
     window.location.href = URL;
     
     };

@@ -1,24 +1,24 @@
 
-function candidaturaSelected(nomeCandidatura) { 
+function orcamentoItemSelected(orcamentoItem) { 
 
   var params = new URLSearchParams(window.location.search);
-  var nomeCandidatura = params.get("nomeCandidatura"); 
+  var orcamentoItem = params.get("orcamentoItem"); 
   
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("candidaturaSelected").innerHTML = this.responseText;
+      document.getElementById("orcamentoItemSelected").innerHTML = this.responseText;
     }
   }
 
-  xmlhttp.open("GET","dados/candidaturaNome.php?nomeCandidatura="+nomeCandidatura,true);
+  xmlhttp.open("GET","dados/orcamentoItemNome.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
 
-  candidaturaProcessos(nomeCandidatura);
+  orcamentoProcessos(orcamentoItem);
  
 };
 
-function candidaturaProcessos(nomeCandidatura) {
+function orcamentoProcessos(orcamentoItem) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -26,7 +26,7 @@ function candidaturaProcessos(nomeCandidatura) {
     }
   }
 
-  xmlhttp.open("GET","dados/candidaturaResults.php?nomeCandidatura="+nomeCandidatura,true);
+  xmlhttp.open("GET","dados/orcamentoResults.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
  
 };

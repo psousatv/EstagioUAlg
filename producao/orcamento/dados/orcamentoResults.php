@@ -2,43 +2,42 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeCandidatura = $_GET['nomeCandidatura'];
+$orcamentoItem = $_GET['orcamentoItem'];
 
-$sqlCandidatura = "SELECT  *, ca.cand_logo as logo
+$sqlOrcamento = "SELECT  *
           FROM processo
-          LEFT JOIN candidaturas_submetidas cs on  cs.candoper_codigo = proces_cand
-          LEFT JOIN candidaturas_avisos ca on ca.cand_aviso = cs.candsubm_aviso
-          WHERE proces_cand LIKE '%".$nomeCandidatura."%'
-          AND proces_report_valores = 1
+          WHERE proces_rub_cod LIKE '%".$orcamentoItem."%'
+          AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())
           ORDER BY proces_estado_nome ASC";
 
-$stmt = $myConn->query($sqlCandidatura);
-$procesosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $myConn->query($sqlOrcamento);
+$procesosOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-foreach($procesosCandidatura as $key) {
-  $logoCandidatura[] = $key["logo"];
-}
+//foreach($procesosOrcamento as $key) {
+//  $logoCandidatura[] = $key["logo"];
+//}
 
-$pathImagens = "../../global/imagens/";
-$logo = $pathImagens . $logoCandidatura[0];
+//$pathImagens = "../../global/imagens/";
+//$logo = $pathImagens . $logoOrcamento[0];
+$logo = "../../global/imagens/LogotipoTVerde.jpg";
 
 
-$rows = count($procesosCandidatura);
+$rows = count($procesosOrcamento);
 
-$sqlTotaisCandidatura = "SELECT
-          proces_path_imagens,
-          SUM(proces_cand_elegivel) AS elegivel
+$sqlTotaisOrcamento = "SELECT
+          SUM(proces_val_adjudicacoes) AS adjudicado,
+          SUM(proces_val_faturacao) AS faturado
           FROM processo
-          WHERE proces_cand LIKE '%".$nomeCandidatura."%'
-          AND proces_report_valores = 1";
+          WHERE proces_rub_cod LIKE '%".$orcamentoItem."%'
+          AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())";
 
-$stmt = $myConn->query($sqlTotaisCandidatura);
-$totaisCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $myConn->query($sqlTotaisOrcamento);
+$totaisOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-foreach($totaisCandidatura as $key) {
-  $totalCandidatura[] = $key["elegivel"];
-  $logoCandidatura[] = $key["proces_path_imagens"];
+foreach($totaisOrcamento as $key) {
+  $totalOrcamento[] = $key["adjudicado"];
+  //$logoOrcamento[] = $key["proces_path_imagens"];
 }
 
 
@@ -47,8 +46,8 @@ echo '
   <div class="card-body">
   
     <div class="d-flex align-items-center justify-content-between">
-    <div class="card-header bg-secondary text-white" >Processos na Candidatura 
-    ('.$rows.') - '.number_format($totalCandidatura[0], 2, ",", ".").'€
+    <div class="card-header bg-secondary text-white" >Processos na Rúbrica 
+    ('.$rows.') - '.number_format($totalOrcamento[0], 2, ",", ".").'€
     </div>
     <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
@@ -56,16 +55,16 @@ echo '
     <div class="col col-md-12">
       <div class="row">
         <table class="table table-responsive table-striped small">';
-        foreach($procesosCandidatura as $row) {
+        foreach($procesosOrcamento as $row) {
             echo '
               <tr onclick="redirectProcesso('.$row["proces_check"].')">
                 <td class="badge bg-info text-white" >'
                   .$row["proces_estado_nome"].' <td> '
                   .$row["proces_nome"].'</td> ';
-                  if($row["proces_val_adjudicacoes"] == 0){
-                    echo '<td class="bg-warning text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
+                  if($row["proces_val_faturacao"] == 0){
+                    echo '<td class="bg-warning text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
                   } else {
-                    echo '<td class="bg-success text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
+                    echo '<td class="bg-success text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
                   }
                 };
             echo '

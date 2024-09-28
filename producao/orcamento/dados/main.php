@@ -6,6 +6,7 @@ include "../../../global/config/dbConn.php";
 // dados para dashCandidaturas sem interações - Search ou outras
 $orcamento = "SELECT
               orc_ano AS ano,
+              r1.rub_cod AS cod,
               r1.rub_tipo AS tipo,
               r1.rub_rubrica AS rubrica,
               r1.rub_item AS item,

@@ -2,11 +2,11 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeCandidatura = $_GET['nomeCandidatura'];
+$orcamentoItem = $_GET['orcamentoItem'];
 
 $query = "SELECT *
-          FROM candidaturas_submetidas
-          WHERE candoper_codigo LIKE '%".$nomeCandidatura."%'";
+          FROM rubricas
+          WHERE rub_cod = '".$orcamentoItem."'";
 
 
 $stmt = $myConn->query($query);
@@ -19,11 +19,10 @@ $rows = $stmt->rowCount();
 
 foreach($data as $row) {
     echo  '
-        <div class="btn btn-primary col-md-8 d-grid small text-white text-left">            
-            '.$row["candoper_codigo"].': '.$row["candoper_nome"].'
+        <div class="btn btn-primary col-md-8 d-grid small text-white text-left">
+            '.$row["rub_cod"].': '.$row["rub_tipo"].' - '.$row["rub_rubrica"].'- '.$row["rub_item"].'
         </div>
-        
-        <div class="btn btn-warning" onclick="candidaturaSelected('.$row["candoper_codigo"].')"><i class="fa fa-solid fa-refresh"></i></div>  
+        <div class="btn btn-warning" onclick="orcamentoItemSelected('.$row["rub_cod"].')"><i class="fa fa-solid fa-refresh"></i></div>  
         <div class="btn btn-primary"><a class="text-white" href="main.html"><i class="fa fa-solid fa-search"></i></a></div>
         <div class="btn btn-danger"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
     ';
