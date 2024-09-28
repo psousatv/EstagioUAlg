@@ -4,14 +4,17 @@ include "../../../global/config/dbConn.php";
 
 $orcamentoItem = $_GET['orcamentoItem'];
 
-$sqlOrcamento = "SELECT  *
-          FROM processo
-          WHERE proces_rub_cod LIKE '%".$orcamentoItem."%'
-          AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())
-          ORDER BY proces_estado_nome ASC";
+$sqlProcessosItemRubrica = "SELECT  proces_check, proces_estado_nome, proces_nome, proces_val_adjudicacoes AS adjudicado,
+                          (SELECT DISTINCT ROUND(SUM(fact_valor),2)
+                          FROM factura
+                          WHERE fact_proces_check = proces_check) AS faturado
+                          FROM processo
+                          WHERE proces_rub_cod = '".$orcamentoItem."'
+                          AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())
+                          ORDER BY proces_estado_nome ASC";
 
-$stmt = $myConn->query($sqlOrcamento);
-$procesosOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $myConn->query($sqlProcessosItemRubrica);
+$processosItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //foreach($procesosOrcamento as $key) {
 //  $logoCandidatura[] = $key["logo"];
@@ -22,21 +25,24 @@ $procesosOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $logo = "../../global/imagens/LogotipoTVerde.jpg";
 
 
-$rows = count($procesosOrcamento);
+$rows = count($processosItemRubrica);
 
-$sqlTotaisOrcamento = "SELECT
-          SUM(proces_val_adjudicacoes) AS adjudicado,
-          SUM(proces_val_faturacao) AS faturado
-          FROM processo
-          WHERE proces_rub_cod LIKE '%".$orcamentoItem."%'
-          AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())";
+$sqlTotaisItemRubrica = "SELECT
+                        SUM(proces_val_adjudicacoes) AS adjudicado,
+                        (SELECT DISTINCT ROUND(SUM(historico_valor),2)
+                        FROM historico
+                        WHERE  historico_descr_cod = 14) AS adjudicacoes
+                        FROM processo
+                        WHERE proces_rub_cod = '".$orcamentoItem."'
+                        AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())";
 
-$stmt = $myConn->query($sqlTotaisOrcamento);
-$totaisOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $myConn->query($sqlTotaisItemRubrica);
+$totaisItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-foreach($totaisOrcamento as $key) {
-  $totalOrcamento[] = $key["adjudicado"];
+foreach($totaisItemRubrica as $key) {
+  $totalItemRubrica[] = $key["adjudicado"];
+  $totalItemRubrica2[] = $key["adjudicacoes"];
   //$logoOrcamento[] = $key["proces_path_imagens"];
 }
 
@@ -47,7 +53,7 @@ echo '
   
     <div class="d-flex align-items-center justify-content-between">
     <div class="card-header bg-secondary text-white" >Processos na Rúbrica 
-    ('.$rows.') - '.number_format($totalOrcamento[0], 2, ",", ".").'€
+    ('.$rows.') - '.number_format($totalItemRubrica[0], 2, ",", ".").'€  - '.number_format($totalItemRubrica2[0], 2, ",", ".").'€
     </div>
     <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
@@ -55,16 +61,16 @@ echo '
     <div class="col col-md-12">
       <div class="row">
         <table class="table table-responsive table-striped small">';
-        foreach($procesosOrcamento as $row) {
+        foreach($processosItemRubrica as $row) {
             echo '
               <tr onclick="redirectProcesso('.$row["proces_check"].')">
                 <td class="badge bg-info text-white" >'
                   .$row["proces_estado_nome"].' <td> '
                   .$row["proces_nome"].'</td> ';
-                  if($row["proces_val_faturacao"] == 0){
-                    echo '<td class="bg-warning text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
+                  if($row["faturado"] == 0){
+                    echo '<td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
                   } else {
-                    echo '<td class="bg-success text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+                    echo '<td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
                   }
                 };
             echo '
