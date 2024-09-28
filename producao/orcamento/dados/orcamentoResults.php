@@ -28,10 +28,7 @@ $logo = "../../global/imagens/LogotipoTVerde.jpg";
 $rows = count($processosItemRubrica);
 
 $sqlTotaisItemRubrica = "SELECT
-                        SUM(proces_val_adjudicacoes) AS adjudicado,
-                        (SELECT DISTINCT ROUND(SUM(historico_valor),2)
-                        FROM historico
-                        WHERE  historico_descr_cod = 14) AS adjudicacoes
+                        SUM(proces_val_adjudicacoes) AS adjudicado
                         FROM processo
                         WHERE proces_rub_cod = '".$orcamentoItem."'
                         AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())";
@@ -42,7 +39,6 @@ $totaisItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($totaisItemRubrica as $key) {
   $totalItemRubrica[] = $key["adjudicado"];
-  $totalItemRubrica2[] = $key["adjudicacoes"];
   //$logoOrcamento[] = $key["proces_path_imagens"];
 }
 
@@ -53,7 +49,7 @@ echo '
   
     <div class="d-flex align-items-center justify-content-between">
     <div class="card-header bg-secondary text-white" >Processos na Rúbrica 
-    ('.$rows.') - '.number_format($totalItemRubrica[0], 2, ",", ".").'€  - '.number_format($totalItemRubrica2[0], 2, ",", ".").'€
+    ('.$rows.') - '.number_format($totalItemRubrica[0], 2, ",", ".").'€
     </div>
     <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
