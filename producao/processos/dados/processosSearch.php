@@ -18,12 +18,9 @@ if (isset($_GET['nomeProcesso'])){
 
     echo '
         <div class="col-sm-12 col-lg-12"
-            <div class="card col-sm-12">';
-    foreach($data as $row) {
-    echo '
-        <!--div class="col-md-10 col-lg-10">
-            <div class="card col-md-12"-->
+            <div class="card col-sm-12">
                 <table class="table table-responsive table-striped" >';
+    foreach($data as $row) {
     echo '
                     <tr class="small" onclick="redirectProcesso('.$row["proces_check"].')">
                         <td>'.$row["proces_nome"].'</td>    
@@ -53,12 +50,9 @@ if (isset($_GET['nomeProcesso'])){
     //echo json_encode($data);
     echo '
         <div class="col-sm-12 col-lg-12"
-            <div class="card col-sm-12">';
-    foreach($data as $row) {
-    echo '
-        <!--div class="col-md-10 col-lg-10">
-            <div class="card col-md-12"-->
+            <div class="card col-sm-12">
                 <table class="table table-responsive table-striped" >';
+    foreach($data as $row) {
     echo '
                     <tr class="small" onclick="redirectProcesso('.$row["proces_check"].')">
                         <td>'.$row["proces_nome"].'</td>    

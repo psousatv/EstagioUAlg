@@ -64,9 +64,11 @@ echo '
                   .$row["proces_estado_nome"].' <td> '
                   .$row["proces_nome"].'</td> ';
                   if($row["faturado"] == 0){
-                    echo '<td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
+                    echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
+                    <td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
                   } else {
-                    echo '<td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
+                    echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
+                    <td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
                   }
                 };
             echo '
