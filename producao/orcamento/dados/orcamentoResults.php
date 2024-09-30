@@ -47,32 +47,39 @@ foreach($totaisItemRubrica as $key) {
 echo '
 <div class="card col-md-12">
   <div class="card-body">
-  
     <div class="d-flex align-items-center justify-content-between">
-    <div class="card-header bg-secondary text-white" >Processos na Rúbrica 
-    ('.$rows.') - '.number_format($totalItemRubrica[0], 2, ",", ".").'€
+      <div class="card-header bg-secondary text-white" >Processos na Rúbrica 
+        ('.$rows.') - '.number_format($totalItemRubrica[0], 2, ",", ".").'€
+      </div>
+      <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
-    <img src="'.$logo.'" alt="2030" width="200" height="50">
-    </div>
-  <h1 class="mt-2"></h1>
+    <h1 class="mt-2"></h1>
     <div class="col col-md-12">
       <div class="row">
-        <table class="table table-responsive table-striped small">';
-        foreach($processosItemRubrica as $row) {
-        echo '
-          <tr onclick="redirectProcesso('.$row["proces_check"].')">
-            <td class="badge badge-info align-middle text-white align-middle">'.$row["proces_estado_nome"].'<td>
-            <td class="badge badge-pill badge-primary text-white align-middle">' .$row["departamento"].'</td>
+        <table class="table table-responsive table-striped small">
+          <tr>
+            <th>Estado</th>
+            <th>DEP</th>
+            <th>Processo</th>
+            <th>Adjudicado</th>
+            <th>Faturado</th>
+          </tr>';
+    foreach($processosItemRubrica as $row) {
+    echo '<tr onclick="redirectProcesso('.$row["proces_check"].')">
+            <td class=" bg-info text-white">'.$row["proces_estado_nome"].'</td>
+            <td class=" bg-primary text-white">'.$row["departamento"].'</td>
             <td>'.$row["proces_nome"].'</td>';
             if($row["faturado"] == 0){
-            echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
-                  <td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
+      echo '
+            <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>
+            <td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
             } else {
-            echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
-                  <td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
+      echo '
+            <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>
+            <td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
             }
-            };
-        echo '
+    };
+    echo '
           </tr>
         </table>
       </div>

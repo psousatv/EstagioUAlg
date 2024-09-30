@@ -48,7 +48,7 @@ echo "
     <th>Out</th>
     <th>Nov</th>
     <th>Dez</th>
-    </tr>";
+  </tr>";
 foreach($data as $row){
   echo "
     <tr>
