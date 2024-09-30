@@ -4,14 +4,15 @@ include "../../../global/config/dbConn.php";
 
 $orcamentoItem = $_GET['orcamentoItem'];
 
-$sqlProcessosItemRubrica = "SELECT  proces_check, proces_estado_nome, proces_nome, proces_val_adjudicacoes AS adjudicado,
+$sqlProcessosItemRubrica = "SELECT  proces_check, proces_estado_nome, dep_sigla AS departamento, proces_nome, proces_val_adjudicacoes AS adjudicado,
                           (SELECT DISTINCT ROUND(SUM(fact_valor),2)
                           FROM factura
                           WHERE fact_proces_check = proces_check) AS faturado
                           FROM processo
+                          LEFT JOIN departamento ON dep_cod = proces_departamento
                           WHERE proces_rub_cod = '".$orcamentoItem."'
                           AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())
-                          ORDER BY proces_estado_nome ASC";
+                          ORDER BY dep_sigla, proces_estado_nome ASC";
 
 $stmt = $myConn->query($sqlProcessosItemRubrica);
 $processosItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -58,26 +59,24 @@ echo '
       <div class="row">
         <table class="table table-responsive table-striped small">';
         foreach($processosItemRubrica as $row) {
-            echo '
-              <tr onclick="redirectProcesso('.$row["proces_check"].')">
-                <td class="badge bg-info text-white" >'
-                  .$row["proces_estado_nome"].' <td> '
-                  .$row["proces_nome"].'</td> ';
-                  if($row["faturado"] == 0){
-                    echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
-                    <td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
-                  } else {
-                    echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
-                    <td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-                  }
-                };
-            echo '
-                </td>
-              </tr>
+        echo '
+          <tr onclick="redirectProcesso('.$row["proces_check"].')">
+            <td class="badge badge-info align-middle text-white align-middle">'.$row["proces_estado_nome"].'<td>
+            <td class="badge badge-pill badge-primary text-white align-middle">' .$row["departamento"].'</td>
+            <td>'.$row["proces_nome"].'</td>';
+            if($row["faturado"] == 0){
+            echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
+                  <td class="bg-warning text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>';
+            } else {
+            echo '<td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€ </td>
+                  <td class="bg-success text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
+            }
+            };
+        echo '
+          </tr>
         </table>
       </div>
     </div>
   </div>
-</div>
-';
+</div>';
 
