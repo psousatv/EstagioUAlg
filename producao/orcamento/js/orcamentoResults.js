@@ -15,6 +15,7 @@ function orcamentoItemSelected(orcamentoItem) {
   xmlhttp.send();
 
   orcamentoProcessos(orcamentoItem);
+  orcamentoFinanceiro(orcamentoItem);
  
 };
 
@@ -27,6 +28,19 @@ function orcamentoProcessos(orcamentoItem) {
   }
 
   xmlhttp.open("GET","dados/orcamentoResults.php?orcamentoItem="+orcamentoItem,true);
+  xmlhttp.send();
+ 
+};
+
+function orcamentoFinanceiro(orcamentoItem) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFinanceiro").innerHTML = this.responseText;
+    }
+  }
+
+  xmlhttp.open("GET","dados/orcamentoFinanceiro.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
  
 };
