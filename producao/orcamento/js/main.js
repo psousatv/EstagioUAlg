@@ -29,13 +29,14 @@ $.ajax(
 
            
             // ** Cartões
-            var container = document.getElementById('cartoesEsquerdaGrafico');
+            var container = document.getElementById('cartoes');
             container.innerHTML = "";
             data.forEach((result) => {
             // Create card element
-            console.log("DAta: ", result);
+            
             var classeCartao = ''
             var iconeCartao = ''
+
             if (result["realizado"] < 10) {
                 var classeCartao = 'bg-danger';
                 var iconeCartao = 'fa-thumbs-down'
@@ -53,13 +54,14 @@ $.ajax(
             const card = document.createElement('div');
             card.classList = 'card-body';
             
-            var cartoes = `
             
+            var cartoes = `
+                
                 <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                     <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
-                            <p class="mb-0 small text-white">[${result["cod"]}] ${result["item"]}</p>
-                            <!--FAturado-->
+                            <p class="mb-0 small text-white">${result["item"]}</p>
+                            <!--Faturado-->
                             <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["realizado"]}%</span></h3>
                             <!--Orçamento-->
                             <h6 class="text-white">${Number(result["orcamento"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
