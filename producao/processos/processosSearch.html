@@ -74,7 +74,6 @@
             <div class="card" id="searchWrapper">
               <div class="card-header bg-primary text-white">Pesquisa de Processos</a></div>
               <div class="car-body">
-                <h1 class="mt-1"></h1>
                 <div class="row">
                   <div class="col col-sm-3">
                     <form id="searchForm">
@@ -87,7 +86,6 @@
                         aria-label="Search1" aria-describedby="basic-addon1"
                         id="nomeProcesso"
                         autofocus
-                        
                         oninput="procuraNomeProcesso(this.value)">
                       
                         <h1 class="mt-2"></h1>
@@ -100,12 +98,27 @@
                         aria-label="Search2" aria-describedby="basic-addon2"
                         id="nomeFornecedor"
                         oninput="procuraNomeFornecedor(this.value)">
+
+                        <h1 class="mt-2"></h1>
+
+                        <label>Processo Administrativo</label>
+                        <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Digite qualquer parte do Processo Administrativo ..."
+                        aria-label="Search3" aria-describedby="basic-addon2"
+                        id="codigoProcessoAdministrativo"
+                        oninput="procuraProcessoAdministrativo(this.value)">
+
+                        <h1 class="mt-2"></h1>
                       
                     </form>
                   </div>
                 
                   <div class="col col-sm-9">
-                    <div class="row d-flex justify-content-center" id="showResultsForm"><a><img src="../../global/imagens/search1.webp" alt="Foto 1" style="width: 100px; height: 100px;"></a></div>
+                    <div class="row d-flex justify-content-center" id="showResultsForm">
+                      <a><img src="../../global/imagens/search1.webp" alt="Foto 1" style="width: 200px; height: 200px;"></a>
+                    </div>
                   </div>
 
                 </div>

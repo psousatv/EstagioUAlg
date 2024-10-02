@@ -21,7 +21,7 @@ function procuraNomeProcesso(nomeProcesso) {
       }
     }
 
-    xmlhttp.open("GET","dados/processosSearch.php?nomeProcesso="+nomeProcesso,true);
+    xmlhttp.open("GET","../_search/searchEngine.php?nomeProcesso="+nomeProcesso,true);
     xmlhttp.send();
 
 };
@@ -36,7 +36,22 @@ function procuraNomeFornecedor(nomeFornecedor) {
     }
 
     //document.getElementById("detailsWrapper").style.display = "none";
-    xmlhttp.open("GET","dados/processosSearch.php?nomeFornecedor="+nomeFornecedor,true);
+    xmlhttp.open("GET","../_search/searchEngine.php?nomeFornecedor="+nomeFornecedor,true);
+    xmlhttp.send();  
+
+};
+
+// Procurar por Processo Administrativo
+function procuraProcessoAdministrativo(codigoProcessoAdministrativo) {
+  var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("showResultsForm").innerHTML = this.responseText;
+      }
+    }
+
+    //document.getElementById("detailsWrapper").style.display = "none";
+    xmlhttp.open("GET","../_search/searchEngine.php?codigoProcessoAdministrativo="+codigoProcessoAdministrativo,true);
     xmlhttp.send();  
 
 };
@@ -56,7 +71,7 @@ function redirectProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processosSearch.php?codigoProcesso="+ codigo, true);
+  xmlhttp.open("GET","../_search/searchEngine.php?codigoProcesso="+ codigo, true);
   xmlhttp.send();
 
 };
