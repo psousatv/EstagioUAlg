@@ -163,7 +163,7 @@ function redirectProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processosSearch.php?codigoProcesso="+ codigo, true);
+  xmlhttp.open("GET","../_search/searchEngine.php?codigoProcesso="+ codigo, true);
   xmlhttp.send();
 
 };
