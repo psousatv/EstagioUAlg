@@ -18,12 +18,13 @@ $.ajax(
                 aaData: data,
                 aoColumns:[
                     { mDataProp: 'candidatura'},
-                    { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'faturado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
-                    { mDataProp: 'faturado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
+                    { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') }
                 ],
                 order: {
                     mDataProp: 'inicio',
@@ -57,12 +58,12 @@ $.ajax(
             
 
             // Siglas das Candidaturas para os últimas 5 letras da Designação
-            var sigla_candidatura = []
-            for (var i = 0; i < nome_candidatura.length; i++) {
-                var originalString = nome_candidatura[i];
-                var lasttFiveLetters = originalString.slice(-6);
-                sigla_candidatura.push(lasttFiveLetters);
-            }
+            //var sigla_candidatura = []
+            //for (var i = 0; i < nome_candidatura.length; i++) {
+            //    var originalString = nome_candidatura[i];
+            //    var lasttFiveLetters = originalString.slice(-6);
+            //    sigla_candidatura.push(lasttFiveLetters);
+            //}
 
            
             // ** Cartões
@@ -73,13 +74,14 @@ $.ajax(
             
             var classeCartao = ''
             var iconeCartao = ''
-            if (result["faturado_percent"] < 10) {
+            //Se taxa do valor recebido for menor que 15% que o valor previsto
+            if (result["recebido_percent"] <= result["percent"]- 15) {
                 var classeCartao = 'bg-danger';
                 var iconeCartao = 'fa-thumbs-down'
-            } else if (result["faturado_percent"] > 10 & result["faturado_percent"]< 35){
+            } else if (result["recebido_percent"] <= result["percent"]- 10){
                 var classeCartao = 'bg-warning';
                 var iconeCartao = 'fa-warning'
-            } else if (result["faturado_percent"] >35 & result["faturado_percent"] < 75){
+            } else if (result["recebido_percent"] <= result["percent"] - 5){
                 var classeCartao = 'bg-primary';
                 var iconeCartao = 'fa-cogs'
             } else {
@@ -96,10 +98,10 @@ $.ajax(
                     <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
                             <p class="mb-0 small text-white">${result["candidatura"]}</p>
-                            <!--Faturado-->
-                            <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["faturado_percent"]}%</span></h3>
-                            <!--Adjudicado-->
-                            <h6 class="text-white">${Number(result["adjudicado"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                            <!--Reembolsos-->
+                            <h3 class="text-white">${Number(result["recebido"]).toLocaleString('pt')}€<span class="h6">- ${result["recebido_percent"]}%</span></h3>
+                            <!--Elegível-->
+                            <h6 class="text-white">${Number(result["elegivel"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                         </div>
                         <div class="align-self-center">
                             <i class="fas ${iconeCartao} text-white fa-3x"></i>

@@ -28,7 +28,8 @@ $rows = count($procesosCandidatura);
 
 $sqlTotaisCandidatura = "SELECT
           proces_path_imagens,
-          SUM(proces_cand_elegivel) AS elegivel
+          SUM(proces_cand_elegivel) AS elegivel,
+          SUM(proces_val_max) AS valor_previsto_liquido_iva
           FROM processo
           WHERE proces_cand LIKE '%".$nomeCandidatura."%'
           AND proces_report_valores = 1";
@@ -39,6 +40,7 @@ $totaisCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($totaisCandidatura as $key) {
   $totalCandidatura[] = $key["elegivel"];
+  $totalCandidatura[] = $key["valor_previsto_liquido_iva"];
   $logoCandidatura[] = $key["proces_path_imagens"];
 }
 
@@ -48,8 +50,9 @@ echo '
   <div class="card-body">
   
     <div class="d-flex align-items-center justify-content-between">
-    <div class="card-header bg-secondary text-white" >Processos na Candidatura 
-    ('.$rows.') - '.number_format($totalCandidatura[0], 2, ",", ".").'€
+    <div class="card-header bg-secondary text-white" >
+      Processos ('.$rows.') - '.number_format($totalCandidatura[1], 2, ",", ".").'€ -> 
+      Candidatura ('.$rows.') - '.number_format($totalCandidatura[0], 2, ",", ".").'€
     </div>
     <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
