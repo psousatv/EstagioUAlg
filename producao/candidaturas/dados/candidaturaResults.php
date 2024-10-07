@@ -68,6 +68,7 @@ echo '
           <th>Previsto</th>
           <th>Adjudicado</th>
           <th>Faturado</th>
+          <th>Financiado</th>
         </tr>';
   foreach($procesosCandidatura as $row) {
   echo '
@@ -79,11 +80,13 @@ echo '
           if($row["proces_val_faturacao"] == 0){
     echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-warning text-white text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
           } else {
     echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-success text-white text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
           }
     };
   echo '
