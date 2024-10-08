@@ -59,7 +59,7 @@ function faturasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onload = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFacturas").innerHTML = this.responseText;
+      document.getElementById("lstFaturas").innerHTML = this.responseText;
     }
 
     
