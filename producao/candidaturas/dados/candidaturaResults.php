@@ -65,7 +65,7 @@ echo '
           <th>DEP</th>
           <th>PADM</th>
           <th>Processo</th>
-          <th>Previsto</th>
+          <th>Orçamento</th>
           <th>Adjudicado</th>
           <th>Faturado</th>
           <th>Financiado</th>
