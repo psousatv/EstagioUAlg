@@ -66,7 +66,7 @@ function redirectProcesso(codigo) {
 
       var params = codigo;
 
-      var URL = "obrasResults.html?codigoProcesso=" + params;
+      var URL = "../processos/processoResults.html?codigoProcesso=" + params;
       window.location.href = URL;
     }
   }
