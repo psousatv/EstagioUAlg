@@ -50,11 +50,15 @@ echo '
   <div class="card-body">
   
     <div class="d-flex align-items-center justify-content-between">
-    <div class="card-header bg-secondary text-white" >
-      Processos ('.$rows.') - '.number_format($totalCandidatura[1], 2, ",", ".").'€ -> 
-      Candidatura ('.$rows.') - '.number_format($totalCandidatura[0], 2, ",", ".").'€
-    </div>
-    <img src="'.$logo.'" alt="2030" width="200" height="50">
+      <table class="table table-responsive table-striped">
+        <tr>
+          <td class="bg-primary text-white">Processos ('.$rows.')</td> 
+          <td class="bg-primary text-white">'.number_format($totalCandidatura[1], 2, ",", ".").'€</td>
+          <td class="bg-secondary text-white">Candidatura ('.$rows.')</td>
+          <td class="bg-secondary text-white">'.number_format($totalCandidatura[0], 2, ",", ".").'€</td>
+        </tr>
+      </table>
+      <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
   <h1 class="mt-2"></h1>
     <div class="col col-md-12">
@@ -73,7 +77,7 @@ echo '
   foreach($procesosCandidatura as $row) {
   echo '
         <tr onclick="redirectProcesso('.$row["proces_check"].')">
-          <td class=" bg-primary text-white">'.$row["proces_estado_nome"].'</td>
+          <td class="bg-primary text-white">'.$row["proces_estado_nome"].'</td>
           <td class=" bg-secondary text-white">'.$row["dep_sigla"].'</td>
           <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
           <td>'.$row["proces_nome"].'</td>';

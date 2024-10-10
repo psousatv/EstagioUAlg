@@ -58,7 +58,7 @@ function procuraProcessoAdministrativo(codigoProcessoAdministrativo) {
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
-function servicoSelected(codigo) {
+function redirectProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -66,12 +66,12 @@ function servicoSelected(codigo) {
 
       var params = codigo;
 
-      var URL = "servicoResults.html?codigoProcesso=" + params;
+      var URL = "../processos/processoResults.html?codigoProcesso=" + params;
       window.location.href = URL;
     }
   }
 
-  xmlhttp.open("GET","../_search/searchEngine.php.php?codigoProcesso="+ codigo, true);
+  xmlhttp.open("GET","../_search/searchEngine.php?codigoProcesso="+ codigo, true);
   xmlhttp.send();
 
 };
