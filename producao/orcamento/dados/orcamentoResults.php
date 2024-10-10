@@ -55,9 +55,12 @@ echo '
 <div class="card col-md-12">
   <div class="card-body">
     <div class="d-flex align-items-center justify-content-between">
-      <div class="card-header bg-secondary text-white" >Processos na Rúbrica 
-        ('.$rows.') - '.number_format($totalItemRubrica[0], 2, ",", ".").'€
-      </div>
+      <table class="table table-responsive table-striped">
+        <tr>
+          <td class="bg-primary text-white">Processos ('.$rows.')</td>
+          <td class="bg-primary text-white">'.number_format($totalItemRubrica[0], 2, ",", ".").'€</td>
+        </tr>
+      </table>
       <img src="'.$logo.'" alt="2030" width="200" height="50">
     </div>
     <h1 class="mt-2"></h1>
