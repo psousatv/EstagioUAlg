@@ -11,7 +11,7 @@ function orcamentoItemSelected(orcamentoItem) {
     }
   }
 
-  xmlhttp.open("GET","dados/orcamentoItemNome.php?orcamentoItem="+orcamentoItem,true);
+  xmlhttp.open("GET","dados/orcamentoTitulo.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
 
   orcamentoProcessos(orcamentoItem);

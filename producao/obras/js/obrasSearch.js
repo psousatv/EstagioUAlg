@@ -75,3 +75,22 @@ function redirectProcesso(codigo) {
   xmlhttp.send();
 
 };
+
+function redirectObra(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("Avisos").style.display = "none";
+
+      var params = codigo;
+
+      var URL = "obraResults.html?codigoProcesso=" + params;
+      window.location.href = URL;
+    }
+  }
+
+  xmlhttp.open("GET","../_search/searchEngine.php?codigoProcesso="+ codigo, true);
+  xmlhttp.send();
+
+};
+

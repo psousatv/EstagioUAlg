@@ -16,7 +16,7 @@ function obraSelected() {
 
   //console.log("Código passa do Search: ", codigo);
 
-  xmlhttp.open("GET","dados/obraShowNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/obraTitulo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
           mapaTrabalhos(codigo);

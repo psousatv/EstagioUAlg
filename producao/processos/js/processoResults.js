@@ -16,7 +16,7 @@ function processoSelected() {
     }
   }
 
-  xmlhttp.open("GET","dados/processoShowNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoTitulo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
         resumoProcesso(codigo);
