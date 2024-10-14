@@ -19,11 +19,25 @@ function obraSelected() {
   xmlhttp.open("GET","dados/obraTitulo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
+          obraResults(codigo);
           mapaTrabalhos(codigo);
           mapaAutos(codigo);
           faturasProcesso(codigo);
           garantiasProcesso(codigo);
  
+};
+
+// Resumo
+function obraResults(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onload = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstObraResults").innerHTML = this.responseText;
+    }
+  }
+  
+  xmlhttp.open("GET","dados/obraResults.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
 };
 
 // Mapa de Trabalhos
