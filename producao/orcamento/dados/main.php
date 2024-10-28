@@ -15,22 +15,21 @@ $orcamento = "SELECT
               FROM factura
               LEFT JOIN processo ON proces_check = fact_proces_check
               LEFT JOIN rubricas r2 ON r2.rub_cod = proces_rub_cod
-              WHERE
-              YEAR(fact_auto_data) = YEAR(NOW()) AND
-              r2.rub_tipo = r1.rub_tipo AND
-              r2.rub_rubrica = r1.rub_rubrica AND
-              r2.rub_item = r1.rub_item) AS faturado,
-              ROUND(SUM(orc_valor_previsto), 2) AS orcamento,
-              ROUND(((SELECT DISTINCT
+              WHERE YEAR(fact_auto_data) = YEAR(NOW()) 
+              AND r2.rub_tipo = r1.rub_tipo 
+              AND r2.rub_rubrica = r1.rub_rubrica 
+              AND r2.rub_item = r1.rub_item) AS faturado,
+              ROUND(SUM(orc_valor_previsto), 2) AS previsto,
+              ROUND((
+                    (SELECT DISTINCT
               ROUND(SUM(fact_valor), 2)
               FROM factura
               LEFT JOIN processo ON proces_check = fact_proces_check
               LEFT JOIN rubricas r2 ON r2.rub_cod = proces_rub_cod
-              WHERE
-              YEAR(fact_auto_data) = YEAR(NOW()) AND
-              r2.rub_tipo = r1.rub_tipo AND
-              r2.rub_rubrica = r1.rub_rubrica AND
-              r2.rub_item = r1.rub_item) / ROUND(SUM(orc_valor_previsto), 2)*100),2) AS realizado
+              WHERE YEAR(fact_auto_data) = YEAR(NOW()) 
+              AND r2.rub_tipo = r1.rub_tipo 
+              AND r2.rub_rubrica = r1.rub_rubrica 
+              AND r2.rub_item = r1.rub_item) / ROUND(SUM(orc_valor_previsto), 2)*100),2) AS realizado
               FROM orcamento
               LEFT JOIN rubricas r1 ON r1.rub_cod = orc_rub_cod
               WHERE orc_ano = YEAR(NOW())

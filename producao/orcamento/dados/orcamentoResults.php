@@ -17,8 +17,9 @@ $sqlProcessosItemRubrica = "SELECT
                           WHERE fact_proces_check = proces_check) AS faturado
                           FROM processo
                           LEFT JOIN departamento ON dep_cod = proces_departamento
+                          LEFT JOIN orcamento ON orc_proces_check = proces_check
                           WHERE proces_rub_cod = '".$orcamentoItem."'
-                          AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())
+                          AND proces_report_valores = 1 AND orc_ano=YEAR(NOW())
                           ORDER BY dep_sigla, proces_nome ASC";
 
 $stmt = $myConn->query($sqlProcessosItemRubrica);
@@ -38,8 +39,9 @@ $rows = count($processosItemRubrica);
 $sqlTotaisItemRubrica = "SELECT
                         SUM(proces_val_adjudicacoes) AS adjudicado
                         FROM processo
+                        LEFT JOIN orcamento ON orc_proces_check = proces_check
                         WHERE proces_rub_cod = '".$orcamentoItem."'
-                        AND proces_report_valores = 1 AND proces_orc_ano=YEAR(NOW())";
+                        AND proces_report_valores = 1 AND orc_ano=YEAR(NOW())";
 
 $stmt = $myConn->query($sqlTotaisItemRubrica);
 $totaisItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -57,8 +59,8 @@ echo '
     <div class="d-flex align-items-center justify-content-between">
       <table class="table table-responsive table-striped">
         <tr>
-          <td class="bg-primary text-white">Processos ('.$rows.')</td>
-          <td class="bg-primary text-white">'.number_format($totalItemRubrica[0], 2, ",", ".").'€</td>
+          <td class="bg-secondary text-white">Processos ('.$rows.')</td>
+          <td class="bg-secondary text-white">'.number_format($totalItemRubrica[0], 2, ",", ".").'€</td>
         </tr>
       </table>
       <img src="'.$logo.'" alt="2030" width="200" height="50">

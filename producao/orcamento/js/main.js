@@ -21,7 +21,7 @@ $.ajax(
                     { mDataProp: 'tipo'},
                     { mDataProp: 'rubrica'},
                     { mDataProp: 'item'},
-                    { mDataProp: 'orcamento', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'previsto', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'realizado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
                 ]
@@ -62,7 +62,7 @@ $.ajax(
                                 <!--Faturado-->
                                 <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["realizado"]}%</span></h3>
                                 <!--Orçamento-->
-                                <h6 class="text-white">${Number(result["orcamento"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                                <h6 class="text-white">${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas ${iconeCartao} text-white fa-3x"></i>
@@ -108,7 +108,7 @@ $.ajax(
                                 <!--Faturado-->
                                 <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["realizado"]}%</span></h3>
                                 <!--Orçamento-->
-                                <h6 class="text-white">${Number(result["orcamento"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                                <h6 class="text-white">${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas ${iconeCartao} text-white fa-3x"></i>
