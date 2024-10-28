@@ -99,7 +99,13 @@
             <div class="card">
               <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#orcamento" role="tab" aria-selected="true">
+                  <a class="nav-link active" data-toggle="tab" href="#obraResults" role="tab" aria-selected="true">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Dados Gerais</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#orcamento" role="tab" aria-selected="false">
                     <span class="hidden-sm-up"></span>
                     <span class="hidden-xs-down">Mapa de Trabalhos</span>
                   </a>
@@ -125,7 +131,10 @@
               </ul>
 
                <div class="tab-content tabcontent-border">
-                <div class="tab-pane active" id="orcamento" role="tabpanel" >
+                <div class="tab-pane active" id="obraResults" role="tabpanel" >
+                  <div class="p-20" id="lstObraResults"><b>Os dados Gerais são listados aqui...</b></div>
+                </div>
+                <div class="tab-pane p-20" id="orcamento" role="tabpanel" >
                   <div class="p-20" id="lstMapaTrabalhos"><b>O Mapa de Trabalhos é listado aqui...</b></div>
                 </div>
                 <div class="tab-pane p-20 " id="situacao" role="tabpanel" >
@@ -164,7 +173,7 @@
 <!-- Charts -->
 <script src="../../vendors/charts/Chart.min.js"></script>
 
-<script src="js/obrasResults.js"></script>
+<script src="js/obraResults.js"></script>
 
 
 </body>

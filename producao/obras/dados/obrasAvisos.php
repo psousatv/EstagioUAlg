@@ -29,7 +29,7 @@ echo '
               foreach($data as $row) {
                 if($row['proces_cpv_sigla'] === 'EMP' AND $row['proces_estado'] == '208'){
                   echo  '
-                    <tr onclick="redirectProcesso('.$row["proces_check"].')">
+                    <tr onclick="redirectObra('.$row["proces_check"].')">
                       <td>'
                       .$row["proces_estado_nome"].'</td> <td>'
                       .$row["proces_nome"].'</td> <td>'

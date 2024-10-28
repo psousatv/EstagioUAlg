@@ -11,7 +11,7 @@ function candidaturaSelected(nomeCandidatura) {
     }
   }
 
-  xmlhttp.open("GET","dados/candidaturaNome.php?nomeCandidatura="+nomeCandidatura,true);
+  xmlhttp.open("GET","dados/candidaturaTitulo.php?nomeCandidatura="+nomeCandidatura,true);
   xmlhttp.send();
 
   candidaturaProcessos(nomeCandidatura);

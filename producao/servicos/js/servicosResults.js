@@ -16,7 +16,7 @@ function servicoSelected() {
 
   //console.log("Código passa do Search: ", codigo);
 
-  xmlhttp.open("GET","dados/servicoShowNome.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/servicoTitulo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
           mapaTrabalhos(codigo);
