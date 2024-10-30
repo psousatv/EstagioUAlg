@@ -3,7 +3,7 @@
 include "../../../global/config/dbConn.php";
 
 $orcamentoItem = $_GET['orcamentoItem'];
-//$q = $_GET['q'];
+$anoCorrente = 2024; // $_GET['anoCorrente'];
 
 //Histórico Processos
 $orcamentoFaturacao = "SELECT
@@ -25,9 +25,9 @@ $orcamentoFaturacao = "SELECT
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
                     LEFT JOIN processo ON proces_check = fact_proces_check
-                    LEFT JOIN orcamento ON orc_proces_check = proces_check
+                    
                     WHERE proces_rub_cod = '" .$orcamentoItem. "'
-                    AND proces_report_valores = 1 AND orc_ano=YEAR(NOW())
+                    AND proces_report_valores = 1 AND proces_orc_ano='".$anoCorrente."'
                     GROUP BY proces_rub_cod, proces_padm, year(fact_auto_data)
                     ORDER BY proces_padm ASC" ;
 

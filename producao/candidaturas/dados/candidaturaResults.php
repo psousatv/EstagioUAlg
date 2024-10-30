@@ -28,7 +28,7 @@ $rows = count($procesosCandidatura);
 
 $sqlTotaisCandidatura = "SELECT
           proces_path_imagens,
-          SUM(proces_cand_elegivel) AS elegivel,
+          SUM(proces_cand_elegivel) AS previsto,
           SUM(proces_val_max) AS valor_previsto_liquido_iva
           FROM processo
           WHERE proces_cand LIKE '%".$nomeCandidatura."%'
@@ -39,7 +39,7 @@ $totaisCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 foreach($totaisCandidatura as $key) {
-  $totalCandidatura[] = $key["elegivel"];
+  $totalCandidatura[] = $key["previsto"];
   $totalCandidatura[] = $key["valor_previsto_liquido_iva"];
   $logoCandidatura[] = $key["proces_path_imagens"];
 }

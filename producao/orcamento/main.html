@@ -56,7 +56,7 @@
             </div>
           </li>
         </ul>
-      </nav>
+    </nav>
     
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
@@ -132,14 +132,26 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid">
+                    <!-- Formulario para escolha do ano do Orçamento - Default = Ano Corrente -->
+                <h1 class="mt-2"></h1>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <a>Orçamento Corrente [Faturação vs Previsto]
+                                        <input class="text-right" type="text" id="anoCorrente" autofocus>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <h1 class="mt-2"></h1>
                     <div class="row">
                         <!-- Cartões e Gráfico -->
                         <div class="col col-md-12">
                             <div class="card">
-                                <div class="card-header"><i class="fas fa-euro mr-1"></i>
-                                    Orçamento Corrente [Faturação vs Previsto]
-                                </div>
+                                <h1 class="mt-2"></h1>
                                 <div class="card-header small"><i class="fas fa-euro mr-1"></i>
                                     Investimento
                                 </div>
@@ -211,6 +223,8 @@
 
 <!-- JS de Página -->
     <script src="js/main.js"></script>
+    <script>document.getElementById("anoCorrente").placeholder = new Date().getFullYear();</script>
+
 
 </body>
 </html>

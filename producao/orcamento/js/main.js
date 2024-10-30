@@ -125,7 +125,7 @@ $.ajax(
 // Os resultados da Seleção é redirecionado para a candidaturasResults.html
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
 function orcamentoRedirected(orcamentoItem) {
-    console.log("Item: ", orcamentoItem);
+    
     //var params = nomeCandidatura;
     var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem;
     window.location.href = URL;

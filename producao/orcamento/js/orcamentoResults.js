@@ -1,13 +1,14 @@
 
-function orcamentoItemSelected(orcamentoItem) { 
+function orcamentoTitulo(orcamentoItem) { 
 
   var params = new URLSearchParams(window.location.search);
   var orcamentoItem = params.get("orcamentoItem"); 
+  //var anoCorrente = params.get("anoCorrente"); 
   
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("orcamentoItemSelected").innerHTML = this.responseText;
+      document.getElementById("orcamentoTitulo").innerHTML = this.responseText;
     }
   }
 
