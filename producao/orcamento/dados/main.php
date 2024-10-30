@@ -2,6 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
+$anoCorrente = 2024; // $_GET['anoCorrente'];
 
 // dados para dashCandidaturas sem interações - Search ou outras
 $orcamento = "SELECT
@@ -32,7 +33,7 @@ $orcamento = "SELECT
               AND r2.rub_item = r1.rub_item) / ROUND(SUM(orc_valor_previsto), 2)*100),2) AS realizado
               FROM orcamento
               LEFT JOIN rubricas r1 ON r1.rub_cod = orc_rub_cod
-              WHERE orc_ano = YEAR(NOW())
+              WHERE orc_ano = '".$anoCorrente."'
               AND orc_rub_cod <> 100
               AND orc_rub_cod <> 999
               GROUP BY orc_ano, r1.rub_tipo, r1.rub_rubrica, r1.rub_item
