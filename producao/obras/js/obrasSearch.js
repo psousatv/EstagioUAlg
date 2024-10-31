@@ -67,7 +67,8 @@ function redirectProcesso(codigo) {
       var params = codigo;
 
       var URL = "../processos/processoResults.html?codigoProcesso=" + params;
-      window.location.href = URL;
+      window.open(URL, "_blank");
+      //window.location.href = URL;
     }
   }
 
@@ -85,7 +86,8 @@ function redirectObra(codigo) {
       var params = codigo;
 
       var URL = "obraResults.html?codigoProcesso=" + params;
-      window.location.href = URL;
+      window.open(URL, "_blank");
+      //window.location.href = URL;
     }
   }
 

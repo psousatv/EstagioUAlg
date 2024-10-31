@@ -49,5 +49,6 @@ function orcamentoFinanceiro(orcamentoItem) {
 // Ao clicar no processo redireciona para o processo
 function redirectProcesso(codigoProcesso){
   var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso=" + codigoProcesso;
-  window.location.href = obrasURL;
+  window.open(obrasURL, "_blank");
+  //window.location.href = obrasURL;
 };
