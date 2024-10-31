@@ -59,7 +59,7 @@ foreach($data as $row)
     <div class="col-md-2"><b>Área de Atuação: </b></div>
     <div class="col-md-10 text-primary">'.$row['proces_orc_actividade']. '</div>
     <div class="col-md-2"><b>Rubrica: </b></div> 
-    <div class="col-md-10">['.$row['proces_conta_imob'].'] - '.$row['proces_orc_rubrica'].'</div>
+    <div class="col-md-10">['.$row['proces_rub_cod'].'] - '.$row['proces_orc_rubrica'].'</div>
     <div class="col-md-2"><b>CPV Principal: </b></div> 
     <div class="col-md-10 text-primary">'.$row['proces_18cpv1'].' - '.$row['cpv1_nome'].' - ['.$row['cpv1_referencia'].']</div>
     <div class="col-md-2"><b>CPV Secundário: </b></div> 

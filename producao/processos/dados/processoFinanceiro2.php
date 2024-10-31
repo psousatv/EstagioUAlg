@@ -6,7 +6,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 //$q = $_GET['q'];
 
 //Plano de Pagamentos
-$processoOrcamento = "SELECT
+$processoPlanoPagamentos = "SELECT
                       pp_ano AS 'Ano',
                       sum(if((pp_proces_check = pp_proces_check), round(pp_valor,2),0)) AS 'Acum',
                       sum(if((pp_ano = pp_ano AND pp_mes = 1),round(pp_valor,2),0)) AS 'Jan',
@@ -26,12 +26,14 @@ $processoOrcamento = "SELECT
                       GROUP BY pp_ano
                       ORDER BY pp_ano, pp_auto_num" ;
 
-$stmt = $myConn->query($processoOrcamento);
+$stmt = $myConn->query($processoPlanoPagamentos);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$processoPlanoPagamentosAcumulado = array_sum(array_column($data, "Acum"));
 
 //Plano de Pagamentos
 echo "
-<b>Plano de Pagamentos</b>
+<b>Plano de Pagamentos » ".number_format($processoPlanoPagamentosAcumulado, 2, ",", ".")."€</b>
 <table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>

@@ -14,10 +14,11 @@ $processoFaturas = "SELECT *
 $stmt = $myConn->query($processoFaturas);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$processoFaturasAcumulado = array_sum(array_column($data, "fact_valor"));
 
 //Faturação
 echo "
-<b>Faturas</b>
+<b>Faturas » ".number_format($processoFaturasAcumulado, 2, ",", ".")."€</b>
 <table class='table table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Expediente</th>
