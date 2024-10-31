@@ -11,7 +11,7 @@ $anoCorrente = 2024; // $_GET['anoCorrente'];
 $sqlProcessosItemRubrica = "SELECT  
                           proces_check,
                           proces_padm,
-                          proces_estado_nome, 
+                          proces_estado_nome AS estado, 
                           dep_sigla AS departamento, 
                           proces_nome,
                           proces_val_max AS previsto,
@@ -23,7 +23,7 @@ $sqlProcessosItemRubrica = "SELECT
                           LEFT JOIN departamento ON dep_cod = proces_departamento
                           WHERE proces_rub_cod = '".$orcamentoItem."'
                           AND proces_report_valores = 1 AND proces_orc_ano='".$anoCorrente."'
-                          ORDER BY dep_sigla, proces_nome ASC";
+                          ORDER BY estado, dep_sigla, proces_nome ASC";
 
 $stmt = $myConn->query($sqlProcessosItemRubrica);
 $processosItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -76,7 +76,7 @@ echo '
           </tr>';
           foreach($processosItemRubrica as $row) {
           echo '<tr onclick="redirectProcesso('.$row["proces_check"].')">
-                  <td class=" bg-primary text-white">'.$row["proces_estado_nome"].'</td>
+                  <td class=" bg-primary text-white">'.$row["estado"].'</td>
                   <td class=" bg-secondary text-white">'.$row["departamento"].'</td>
                   <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
                   <td>'.$row["proces_nome"].'</td>';
