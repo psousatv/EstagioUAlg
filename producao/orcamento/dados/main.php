@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$anoCorrente = 2024; // $_GET['anoCorrente'];
+$anoCorrente = 2024; //$_GET['anoCorrente'];
 
 // dados para dashCandidaturas sem interações - Search ou outras
 $orcamento = "SELECT

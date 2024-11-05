@@ -7,7 +7,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 
 //Mapa de Trabalhos
 $mapaAutos = "SELECT
-                mt_linha,
+                mt_linha AS ordem,
                 mt_conta AS tipo_conta,
                 mt_item AS item,
                 mt_designacao AS designacao,
@@ -21,7 +21,8 @@ $mapaAutos = "SELECT
                 FROM mapa_trabalhos
                 LEFT JOIN obra_autos ON auto_indexador = mt_indexador
                 WHERE mt_check = '" .$codigoProcesso. "'
-                GROUP BY mt_item, mt_indexador " ;
+                GROUP BY mt_item, mt_indexador 
+                ORDER BY ordem" ;
 
 $stmt = $myConn->query($mapaAutos);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -32,19 +33,21 @@ echo "
 <table class='table table-responsive table-hover small'>
 <tr style='text-align: center'>
   <colgroup>
-    <col span='3'>  
-    <col span='3' style='background-color: #D6EEEE'>
+    <col span='4'>  
+    <col span='2' style='background-color: #D6EEEE'>
     <col span='3' style='background-color: pink'>
   </colgroup>
   <tr style='text-align: center'>
+    <th>Ordem</th>
     <th>Conta</th>
     <th>Item</th>
     <th>Designação</th>
-    <th colspan='3'>Proposto</th>
+    <th colspan='2'>Proposto</th>
     <th colspan='3'>Executado</th>
-    <th colspan='2'>Saldo</th>
+    <th colspan='3'>Saldo</th>
   </tr> 
   <tr style='text-align: center'>
+    <td></td>
     <td></td>
     <td></td>
     <td></td>
@@ -62,6 +65,7 @@ foreach($data as $row){
   if($row['tipo_conta'] == 'R'){
     echo "
     <tr class='bg-primary text-white'>
+      <td style='text-align:left'>" .$row['ordem']. "</td>
       <td style='text-align:left'>" .$row['tipo_conta']. "</td>
       <td style='text-align:left'>" .$row['item']. "</td>
       <td style='text-align:left'>" .$row['designacao']. "</td>
@@ -69,6 +73,7 @@ foreach($data as $row){
     } elseif ($row['tipo_conta'] == 'T'){
       echo "
         <tr class='bg-info text-white'>
+          <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
           <td style='text-align:left'>" .$row['designacao']. "</td>
@@ -76,6 +81,7 @@ foreach($data as $row){
     } elseif ($row['tipo_conta'] == 'I'){
       echo "
         <tr class='bg-secondary text-white'>
+          <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
           <td style='text-align:left'>" .$row['designacao']. "</td>
@@ -83,6 +89,7 @@ foreach($data as $row){
     } else {
       echo "
         <tr>
+          <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
           <td style='text-align:left'>" .$row['designacao']. "</td>

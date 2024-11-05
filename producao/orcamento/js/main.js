@@ -122,12 +122,12 @@ $.ajax(
         }
     );
 
-// Os resultados da Seleção é redirecionado para a candidaturasResults.html
+// Os resultados da Seleção é redirecionado para a orcamentoResults.html
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
-function orcamentoRedirected(orcamentoItem) {
+function orcamentoRedirected(orcamentoItem, anoCorrente) {
     
-    //var params = nomeCandidatura;
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem;
+    //var params = orcamentoItem;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente;
     window.location.href = URL;
     
     };

@@ -143,7 +143,8 @@
                                             <a>Orçamento Corrente [Faturação vs Previsto]</a>
                                         </div>
                                         <div class="col-sm-3 col-md-3 col-lg-2">
-                                            <input class="text-right" type="text" id="anoCorrente" autofocus>
+                                            <input class="text-right" type="text" id="anoCorrente"
+                                            autofocus>
                                         </div>
                                     
                                 </div>
@@ -227,8 +228,9 @@
     <script src="../../vendors/charts/Chart.min.js"></script>
 
 <!-- JS de Página -->
+    <script>document.getElementById("anoCorrente").value = new Date().getFullYear();</script>    
     <script src="js/main.js"></script>
-    <script>document.getElementById("anoCorrente").placeholder = new Date().getFullYear();</script>
+    
 
 
 </body>

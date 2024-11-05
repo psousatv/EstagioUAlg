@@ -12,7 +12,7 @@ function avisos(){
 
 };
 
-// Procurar por Mome do Processo
+// Procurar por Nome do Processo
 function procuraNomeProcesso(nomeProcesso) {
   var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {

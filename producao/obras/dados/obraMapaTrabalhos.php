@@ -19,7 +19,7 @@ $mapaTrabalhos = "SELECT
                     mt_val_obra AS valor_empreiteiro
                     FROM mapa_trabalhos
                     WHERE mt_check = '" .$codigoProcesso. "'
-                    ORDER BY ordem ASC" ;
+                    ORDER BY ordem ASC " ;
 
 $stmt = $myConn->query($mapaTrabalhos);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
