@@ -35,7 +35,7 @@ echo "
     <col span='2' style='background-color: pink'>
   </colgroup>
   <tr style='text-align: center'>
-    <th>Ordem</th>  
+    <th>Ordem</th>
     <th>Conta</th>
     <th>Item</th>
     <th>Designação</th>
