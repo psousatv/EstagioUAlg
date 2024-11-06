@@ -2,7 +2,11 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$anoCorrente = 2024; //$_GET['anoCorrente'];
+if(isset($_GET['anoCorrente'])){
+      $anoCorrente = $_GET['anoCorrente'];
+} else {
+      $anoCorrente = date('Y');
+};
 
 // dados para dashCandidaturas sem interações - Search ou outras
 $orcamento = "SELECT
@@ -37,7 +41,7 @@ $orcamento = "SELECT
               AND orc_rub_cod <> 100
               AND orc_rub_cod <> 999
               GROUP BY orc_ano, r1.rub_tipo, r1.rub_rubrica, r1.rub_item
-              ORDER BY r1.rub_tipo DESC, r1.rub_rubrica ASC, r1.rub_item ASC";
+              ORDER BY r1.rub_cod, r1.rub_tipo DESC, r1.rub_rubrica ASC, r1.rub_item ASC";
 
 $stmt = $myConn->query($orcamento);
 $orcamentoAnual = $stmt->fetchAll(PDO::FETCH_ASSOC);

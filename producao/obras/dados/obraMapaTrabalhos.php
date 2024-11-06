@@ -24,9 +24,11 @@ $mapaTrabalhos = "SELECT
 $stmt = $myConn->query($mapaTrabalhos);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$valorTrabalhos = array_sum(array_column($data, "valor_empreiteiro"));
+
 //Mapa Trabalhos
 echo "
-<b>Mapa de Trabalhos</b>
+<b>Mapa de Trabalhos » ".number_format($valorTrabalhos, 2, ",", ".")."€</b>
 <table class='table table-responsive table-hover small'>
   <tr style='text-align: center'>
   <colgroup>

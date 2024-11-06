@@ -27,9 +27,11 @@ $mapaAutos = "SELECT
 $stmt = $myConn->query($mapaAutos);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$valorAutos = array_sum(array_column($data, "valor_executado"));
+
 //Mapa Trabalhos
 echo "
-<b>Mapa de Situação</b>
+<b>Mapa de Situação » ".number_format($valorAutos, 2, ",", ".")."€</b>
 <table class='table table-responsive table-hover small'>
 <tr style='text-align: center'>
   <colgroup>

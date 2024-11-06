@@ -5,7 +5,12 @@ include "../../../global/config/dbConn.php";
 $logo = "../../global/imagens/LogotipoTVerde.jpg";
 
 $orcamentoItem = $_GET['orcamentoItem'];
-$anoCorrente = 2024; // $_GET['anoCorrente'];
+
+if(isset($_GET['anoCorrente'])){
+  $anoCorrente = $_GET['anoCorrente'];
+} else {
+  $anoCorrente = date('Y');
+};
 
 // Processos na Rúbrica
 $sqlProcessosItemRubrica = "SELECT  
@@ -50,10 +55,10 @@ echo '
     <div class="d-flex align-items-center justify-content-between">
       <table class="table table-responsive table-striped">
         <tr>
+          <td class="bg-secondary text-white">Processos Adjudicados ('.$rows.')</td>
+          <td class="bg-secondary text-white">'.number_format($totalProcessosAdjudicado, 2, ",", ".").'€</td>  
           <td class="bg-primary text-white">Orçamento Previsto</td>
           <td class="bg-primary text-white">'.number_format($totalOrcamentoItemRubrica, 2, ",", ".").'€</td>
-          <td class="bg-secondary text-white">Processos Adjudicados ('.$rows.')</td>
-          <td class="bg-secondary text-white">'.number_format($totalProcessosAdjudicado, 2, ",", ".").'€</td>
           <td class="bg-success text-white">Valor Faturado</td>
           <td class="bg-success text-white">'.number_format($totalProcessosFaturado, 2, ",", ".").'€</td>
         </tr>
@@ -70,8 +75,8 @@ echo '
             <th>DEP</th>
             <th>PADM</th>
             <th>Processo</th>
-            <th>Previsto</th>
             <th>Adjudicado</th>
+            <th>Previsto</th>
             <th>Faturado</th>
           </tr>';
           foreach($processosItemRubrica as $row) {
@@ -82,13 +87,13 @@ echo '
                   <td>'.$row["proces_nome"].'</td>';
                   if($row["faturado"] == 0){
             echo '
+                  <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>      
                   <td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>
-                  <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>
                   <td class="bg-warning text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
                   } else {
             echo '
-                  <td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>
                   <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>
+                  <td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>
                   <td class="bg-success text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
                   }
           };

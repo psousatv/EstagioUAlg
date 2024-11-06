@@ -6,6 +6,9 @@
 // Cores a atribuir aos Gráficos
 //var cores = ['red', 'blue', 'green', 'purple', 'orange'];
 
+
+  console.log("anoCorrente: ", anoCorrente);
+
 $.ajax(
     {
     url: "dados/main.php",
