@@ -32,7 +32,7 @@ $valorAutos = array_sum(array_column($data, "valor_executado"));
 //Mapa Trabalhos
 echo "
 <b>Mapa de Situação » ".number_format($valorAutos, 2, ",", ".")."€</b>
-<table class='table table-responsive table-hover small'>
+<table class='table table-hover small'>
 <tr style='text-align: center'>
   <colgroup>
     <col span='4'>  
@@ -70,24 +70,24 @@ foreach($data as $row){
       <td style='text-align:left'>" .$row['ordem']. "</td>
       <td style='text-align:left'>" .$row['tipo_conta']. "</td>
       <td style='text-align:left'>" .$row['item']. "</td>
-      <td style='text-align:left'>" .$row['designacao']. "</td>
-      </tr>";
+      <td colspan='10' style='text-align:left'>" .$row['designacao']. "</td>
+    </tr>";
     } elseif ($row['tipo_conta'] == 'T'){
-      echo "
-        <tr class='bg-info text-white'>
-          <td style='text-align:left'>" .$row['ordem']. "</td>
-          <td style='text-align:left'>" .$row['tipo_conta']. "</td>
-          <td style='text-align:left'>" .$row['item']. "</td>
-          <td style='text-align:left'>" .$row['designacao']. "</td>
-          </tr>";
+    echo "
+    <tr class='bg-info text-white'>
+      <td style='text-align:left'>" .$row['ordem']. "</td>
+      <td style='text-align:left'>" .$row['tipo_conta']. "</td>
+      <td style='text-align:left'>" .$row['item']. "</td>
+      <td colspan='10' style='text-align:left'>" .$row['designacao']. "</td>
+    </tr>";
     } elseif ($row['tipo_conta'] == 'I'){
-      echo "
-        <tr class='bg-secondary text-white'>
-          <td style='text-align:left'>" .$row['ordem']. "</td>
-          <td style='text-align:left'>" .$row['tipo_conta']. "</td>
-          <td style='text-align:left'>" .$row['item']. "</td>
-          <td style='text-align:left'>" .$row['designacao']. "</td>
-          </tr>";
+    echo "
+      <tr class='bg-secondary text-white'>
+        <td style='text-align:left'>" .$row['ordem']. "</td>
+        <td style='text-align:left'>" .$row['tipo_conta']. "</td>
+        <td style='text-align:left'>" .$row['item']. "</td>
+        <td colspan='10' style='text-align:left'>" .$row['designacao']. "</td>
+      </tr>";
     } else {
       echo "
         <tr>

@@ -29,7 +29,7 @@ $valorTrabalhos = array_sum(array_column($data, "valor_empreiteiro"));
 //Mapa Trabalhos
 echo "
 <b>Mapa de Trabalhos » ".number_format($valorTrabalhos, 2, ",", ".")."€</b>
-<table class='table table-responsive table-hover small'>
+<table class='table table-hover small'>
   <tr style='text-align: center'>
   <colgroup>
     <col span='5'>  
@@ -64,7 +64,7 @@ foreach($data as $row){
       <td style='text-align:left'>" .$row['ordem']. "</td>
       <td style='text-align:left'>" .$row['tipo_conta']. "</td>
       <td style='text-align:left'>" .$row['item']. "</td>
-      <td style='text-align:left'>" .$row['designacao']. "</td>
+      <td colspan='7' style='text-align:left'>" .$row['designacao']. "</td>
       </tr>";
     } elseif ($row['tipo_conta'] == 'T'){
       echo "
@@ -72,7 +72,7 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
-          <td style='text-align:left'>" .$row['designacao']. "</td>
+          <td colspan='7' style='text-align:left'>" .$row['designacao']. "</td>
           </tr>";
     } elseif ($row['tipo_conta'] == 'I'){
       echo "
@@ -80,7 +80,7 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
-          <td style='text-align:left'>" .$row['designacao']. "</td>
+          <td colspan='7'  style='text-align:left'>" .$row['designacao']. "</td>
           </tr>";
     } else {
       echo "
