@@ -53,7 +53,9 @@ echo '
   <div class="row">
     <div class="card">
       <div class="card-body">
-      <div class="card-header bg-warning text-black" >Empreitadas Finalizadas - Não Encerradas</div>
+      <div class="card-header bg-warning text-black">Empreitadas Finalizadas - Sem Recepção Provisória Emitida
+        <span class="badge bg-primary text-white"> Ajuste Direto Simplificado Excluído</span>
+      </div>
       <h1 class="mt-2"></h1>
     
         <div class="tab-content">
@@ -61,7 +63,8 @@ echo '
             <div id="processosFinalizadas">
               <table class="table table-striped small">';
               foreach($data as $row) {
-                if($row['proces_cpv_sigla'] === 'EMP' AND $row['proces_estado'] == '219' AND $row['proces_rp'] == null){
+                if($row['proces_cpv_sigla'] === 'EMP' AND $row['proces_estado'] == '219' 
+                AND $row['proces_rp'] == null AND $row['proces_proced_cod'] != '30'){
                   echo  '
                     <tr onclick="redirectProcesso('.$row["proces_check"].')">
                       <td>'
