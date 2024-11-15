@@ -7,7 +7,7 @@
 //var cores = ['red', 'blue', 'green', 'purple', 'orange'];
 
 
-  console.log("anoCorrente: ", anoCorrente);
+  //console.log("anoCorrente: ", anoCorrente);
 
 $.ajax(
     {
@@ -25,12 +25,11 @@ $.ajax(
                     { mDataProp: 'rubrica'},
                     { mDataProp: 'item'},
                     { mDataProp: 'previsto', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'realizado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
+                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') }
                 ]
             })
 
-           
+            
             // ** Investimentos
             var containerInvestimentos = document.getElementById('cartoesInvestimentos');
             containerInvestimentos.innerHTML = "";
@@ -39,13 +38,25 @@ $.ajax(
             var classeCartao = ''
             var iconeCartao = ''
 
-            if (result["realizado"] < 10) {
+
+            var realizado = 0
+
+            if(result["faturado"] != 0 && result["previsto"] != 0 ){
+                realizado = (result["faturado"] / result["previsto"]) * 100;
+            } else if(result["previsto"] == 0) {
+                realizado = result["faturado"] * 100;
+            } else {
+                realizado = 0;
+            };
+
+
+            if (realizado < 10) {
                 var classeCartao = 'bg-danger';
                 var iconeCartao = 'fa-thumbs-down'
-            } else if (result["realizado"] >= 10 & result["realizado"]< 35){
+            } else if (realizado >= 10 & realizado < 35){
                 var classeCartao = 'bg-warning';
                 var iconeCartao = 'fa-warning'
-            } else if (result["realizado"] >= 35 & result["realizado"] < 75){
+            } else if (realizado >= 35 & realizado < 75){
                 var classeCartao = 'bg-primary';
                 var iconeCartao = 'fa-cogs'
             } else {
@@ -63,7 +74,7 @@ $.ajax(
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["realizado"]}%</span></h3>
+                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
                                 <h6 class="text-white">${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                             </div>
@@ -77,7 +88,7 @@ $.ajax(
             containerInvestimentos.innerHTML += cartoesIvestimentos;
             }});
 
-            // ** Investimentos
+            // ** Gastos
             var containerInvestimentos = document.getElementById('cartoesGastos');
             containerInvestimentos.innerHTML = "";
             data.forEach((result) => {
@@ -85,13 +96,23 @@ $.ajax(
             var classeCartao = ''
             var iconeCartao = ''
 
-            if (result["realizado"] < 10) {
+            var realizado = 0
+
+            if(result["faturado"] != 0 && result["previsto"] != 0 ){
+                realizado = (result["faturado"] / result["previsto"]) * 100;
+            } else if(result["previsto"] == 0) {
+                realizado = result["faturado"] * 100;
+            } else {
+                realizado = 0;
+            };
+
+            if (realizado < 10) {
                 var classeCartao = 'bg-danger';
                 var iconeCartao = 'fa-thumbs-down'
-            } else if (result["realizado"] >= 10 & result["realizado"]< 35){
+            } else if (realizado >= 10 & realizado< 35){
                 var classeCartao = 'bg-warning';
                 var iconeCartao = 'fa-warning'
-            } else if (result["realizado"] >= 35 & result["realizado"] < 75){
+            } else if (realizado >= 35 & realizado < 75){
                 var classeCartao = 'bg-primary';
                 var iconeCartao = 'fa-cogs'
             } else {
@@ -109,7 +130,7 @@ $.ajax(
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["realizado"]}%</span></h3>
+                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
                                 <h6 class="text-white">${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                             </div>

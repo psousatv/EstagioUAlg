@@ -15,26 +15,13 @@ $orcamento = "SELECT
               r1.rub_tipo AS tipo,
               r1.rub_rubrica AS rubrica,
               r1.rub_item AS item,
-              (SELECT DISTINCT
-              ROUND(SUM(fact_valor), 2)
-              FROM factura
+              (SELECT DISTINCT (CASE WHEN fact_valor IS NULL THEN 0 ELSE SUM(fact_valor) END) FROM factura
               LEFT JOIN processo ON proces_check = fact_proces_check
               LEFT JOIN rubricas r2 ON r2.rub_cod = proces_rub_cod
-              WHERE YEAR(fact_auto_data) = YEAR(NOW()) 
-              AND r2.rub_tipo = r1.rub_tipo 
+              WHERE YEAR(fact_auto_data) = '".$anoCorrente."' AND r2.rub_tipo = r1.rub_tipo 
               AND r2.rub_rubrica = r1.rub_rubrica 
               AND r2.rub_item = r1.rub_item) AS faturado,
-              ROUND(SUM(orc_valor_previsto), 2) AS previsto,
-              ROUND((
-                    (SELECT DISTINCT
-              ROUND(SUM(fact_valor), 2)
-              FROM factura
-              LEFT JOIN processo ON proces_check = fact_proces_check
-              LEFT JOIN rubricas r2 ON r2.rub_cod = proces_rub_cod
-              WHERE YEAR(fact_auto_data) = YEAR(NOW()) 
-              AND r2.rub_tipo = r1.rub_tipo 
-              AND r2.rub_rubrica = r1.rub_rubrica 
-              AND r2.rub_item = r1.rub_item) / ROUND(SUM(orc_valor_previsto), 2)*100),2) AS realizado
+              CASE WHEN SUM(orc_valor_previsto) = 0 THEN 0 ELSE ROUND(SUM(orc_valor_previsto), 2) END AS previsto
               FROM orcamento
               LEFT JOIN rubricas r1 ON r1.rub_cod = orc_rub_cod
               WHERE orc_ano = '".$anoCorrente."'
