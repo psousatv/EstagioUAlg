@@ -105,7 +105,7 @@ echo '
           </tr>';
           foreach($orcamentoItemRubrica as $row) {
             $soma = 0;
-            echo '<tr class="bg-primary text-white">';
+            echo '<tr>';
             echo '<td>'.$row["tipo"].'</td>';
             echo '<td>'.$row["linha"].'</td>';
             echo '<td>'.$row["descritivo"].'</td>';
@@ -116,10 +116,6 @@ echo '
                 $soma += $key['adjudicado'];
                 
                 if($soma > $row['previsto']){
-                  //echo '<tr>';
-                  //  echo '<th colspan="3">Processo</th>';
-                  //  echo '<th>Adjudicado</th>';
-                  //echo '</tr>';
                   echo '<tr class="bg-danger text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td colspan="2">'.$key['designacao'].'</td>';
