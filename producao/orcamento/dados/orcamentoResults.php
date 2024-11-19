@@ -12,41 +12,66 @@ if(isset($_GET['anoCorrente'])){
   $anoCorrente = date('Y');
 };
 
-// Processos na Rúbrica
-$sqlProcessosItemRubrica = "SELECT  
-                          proces_check,
-                          proces_padm,
-                          proces_estado_nome AS estado, 
-                          dep_sigla AS departamento, 
-                          proces_nome,
-                          proces_val_max AS previsto,
-                          proces_val_adjudicacoes AS adjudicado,
-                          (SELECT DISTINCT ROUND(SUM(fact_valor),2)
-                          FROM factura
-                          WHERE fact_proces_check = proces_check) AS faturado
-                          FROM processo
-                          LEFT JOIN departamento ON dep_cod = proces_departamento
-                          WHERE proces_rub_cod = '".$orcamentoItem."'
-                          AND proces_report_valores = 1 AND proces_orc_ano='".$anoCorrente."'
-                          ORDER BY estado, dep_sigla, proces_nome ASC";
+// Valores do Orçamento na Rúbrica
+$sqlOrcamentoItemRubrica = "SELECT  
+                          orc_check AS controle,
+                          orc_tipo AS tipo,
+                          orc_linha AS linha,
+                          orc_descritivo AS descritivo,
+                          orc_valor_previsto AS previsto
+                          FROM orcamento
+                          WHERE orc_rub_cod = '".$orcamentoItem."'
+                          AND orc_ano='".$anoCorrente."'
+                          ORDER BY orc_linha";
 
-$stmt = $myConn->query($sqlProcessosItemRubrica);
-$processosItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$rows = count($processosItemRubrica);
+$stmt1 = $myConn->query($sqlOrcamentoItemRubrica);
+$orcamentoItemRubrica = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
-// Valor do Orçamento na Rúbrica
-$sqlOrcamentoItemRubrica = "SELECT
-                        SUM(orc_valor_previsto) AS previsto
-                        FROM orcamento
-                        WHERE orc_rub_cod = '".$orcamentoItem."'
-                        AND orc_ano='".$anoCorrente."'";
+//Número de processos - Orçamento' na Rúbrica
+$rows = count($orcamentoItemRubrica);
 
-$stmt = $myConn->query($sqlOrcamentoItemRubrica);
-$totaisOrcamentoItemRubrica = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$totalOrcamentoItemRubrica = array_sum(array_column($totaisOrcamentoItemRubrica, "previsto"));
-$totalProcessosAdjudicado = array_sum(array_column($processosItemRubrica, "adjudicado"));
-$totalProcessosFaturado = array_sum(array_column($processosItemRubrica, "faturado"));
+// Totais Valor do Orçamento na Rúbrica
+$sqlTotaisOrcamentoItemRubrica = "SELECT
+                                  SUM(orc_valor_previsto) AS total_previsto,
+                                  (SELECT SUM(proces_val_adjudicacoes) FROM processo
+                                  WHERE proces_rub_cod = '".$orcamentoItem."'
+                                  AND proces_orc_ano='".$anoCorrente."' ) AS total_adjudicado,
+                                  (SELECT SUM(fact_valor) FROM factura
+                                  LEFT JOIN processo ON proces_check = fact_proces_check
+                                  WHERE proces_rub_cod = '".$orcamentoItem."'
+                                  AND proces_orc_ano='".$anoCorrente."' ) AS total_faturado
+                                  FROM orcamento
+                                  WHERE orc_rub_cod = '".$orcamentoItem."'
+                                  AND orc_ano='".$anoCorrente."'";
+
+$stmt2 = $myConn->query($sqlTotaisOrcamentoItemRubrica);
+$totaisOrcamentoItemRubrica = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+$totalPrevisto = array_sum(array_column($totaisOrcamentoItemRubrica, "total_previsto"));
+$totalAdjudicado = array_sum(array_column($totaisOrcamentoItemRubrica, "total_adjudicado"));
+$totalFaturado = array_sum(array_column($totaisOrcamentoItemRubrica, "total_faturado"));
+
+// Processo indexados ao orçamento
+$sqlProcessosOrcamentoItemRubrica = "SELECT
+                                     proces_check,
+                                     proces_orcamento,
+                                     proces_padm AS padm,
+                                     proces_nome AS designacao,
+                                     proces_val_adjudicacoes AS adjudicado
+                                     FROM processo 
+                                     INNER JOIN orcamento ON orc_check = proces_orcamento
+                                     WHERE proces_orcamento = orc_check
+                                     ORDER BY designacao";
+                                     //AND orc_ano='".$anoCorrente."'
+                                     //AND orc_rub_cod = '".$orcamentoItem."'";
+
+$stmt3 = $myConn->query($sqlProcessosOrcamentoItemRubrica);
+$processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
+//Procurar pelo reduce em PHP para filtrar
+$totalAdjudicadoProcessos = array_sum(array_column($processosOrcamentoItemRubrica, "adjudicado"));
+//$soma = 0;
 
 echo '
 <div class="card col-md-12">
@@ -55,12 +80,12 @@ echo '
     <div class="d-flex align-items-center justify-content-between">
       <table class="table table-responsive table-striped">
         <tr>
-          <td class="bg-secondary text-white">Processos Adjudicados ('.$rows.')</td>
-          <td class="bg-secondary text-white">'.number_format($totalProcessosAdjudicado, 2, ",", ".").'€</td>  
-          <td class="bg-primary text-white">Orçamento Previsto</td>
-          <td class="bg-primary text-white">'.number_format($totalOrcamentoItemRubrica, 2, ",", ".").'€</td>
+          <td class="bg-primary text-white">Orçamento Previsto ('.$rows.')</td>
+          <td class="bg-primary text-white">'.number_format($totalPrevisto, 2, ",", ".").'€</td>
+          <td class="bg-secondary text-white">Processos Adjudicados</td>
+          <td class="bg-secondary text-white">'.number_format($totalAdjudicado, 2, ",", ".").'€</td>  
           <td class="bg-success text-white">Valor Faturado</td>
-          <td class="bg-success text-white">'.number_format($totalProcessosFaturado, 2, ",", ".").'€</td>
+          <td class="bg-success text-white">'.number_format($totalFaturado, 2, ",", ".").'€</td>
         </tr>
       </table>
       <img src="'.$logo.'" alt="2030" width="200" height="50">
@@ -71,31 +96,44 @@ echo '
       <div class="row">
         <table class="table table-responsive table-striped small">
           <tr>
-            <th>Estado</th>
-            <th>DEP</th>
-            <th>PADM</th>
+            <th>Tipo</th>
+            <th>Linha</th>
             <th>Processo</th>
-            <th>Adjudicado</th>
+            <!--th>Adjudicado</th-->
             <th>Previsto</th>
-            <th>Faturado</th>
+            <!--th>Faturado</th-->
           </tr>';
-          foreach($processosItemRubrica as $row) {
-          echo '<tr onclick="redirectProcesso('.$row["proces_check"].')">
-                  <td class=" bg-primary text-white">'.$row["estado"].'</td>
-                  <td class=" bg-secondary text-white">'.$row["departamento"].'</td>
-                  <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
-                  <td>'.$row["proces_nome"].'</td>';
-                  if($row["faturado"] == 0){
-            echo '
-                  <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>      
-                  <td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>
-                  <td class="bg-warning text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-                  } else {
-            echo '
-                  <td class="bg-secondary text-white text-right">'.number_format($row["adjudicado"], 2, ",", ".").'€</td>
-                  <td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>
-                  <td class="bg-success text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-                  }
+          foreach($orcamentoItemRubrica as $row) {
+            $soma = 0;
+            echo '<tr>';
+            echo '<td class="bg-primary text-white">'.$row["tipo"].'</td>';
+            echo '<td class="bg-secondary text-white">'.$row["linha"].'</td>';
+            echo '<td>'.$row["descritivo"].'</td>';
+            echo '<td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+            foreach($processosOrcamentoItemRubrica as $key) {     
+              
+              if($row['controle'] == $key['proces_orcamento']){
+                $soma += $key['adjudicado'];
+                
+                if($soma > $row['previsto']){
+                  //echo '<tr>';
+                  //  echo '<th colspan="3">Processo</th>';
+                  //  echo '<th>Adjudicado</th>';
+                  //echo '</tr>';
+                  echo '<tr class="bg-danger text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
+                    echo '<td>'.$key['padm'].'</td>';
+                    echo '<td colspan="2">'.$key['designacao'].'</td>';
+                    echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
+                  echo '</tr>';       
+                } else {
+                  echo '<tr class="bg-success text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
+                    echo '<td>'.$key['padm'].'</td>';
+                    echo '<td colspan="2">'.$key['designacao'].'</td>';
+                    echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
+                  echo '</tr>';       
+                }
+              }
+            }
           };
           echo '
           </tr>
@@ -104,4 +142,14 @@ echo '
     </div>
   </div>
 </div>';
+
+//foreach($orcamentoItemRubrica as $row) {
+//  foreach($processosOrcamentoItemRubrica as $key) {
+//    if($row['controle'] == $key['proces_orcamento']){
+//      echo $key['designacao'];
+//      echo '<br>';
+//    }
+//  }
+//};
+
 
