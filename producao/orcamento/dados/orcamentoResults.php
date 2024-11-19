@@ -105,11 +105,11 @@ echo '
           </tr>';
           foreach($orcamentoItemRubrica as $row) {
             $soma = 0;
-            echo '<tr>';
-            echo '<td class="bg-primary text-white">'.$row["tipo"].'</td>';
-            echo '<td class="bg-secondary text-white">'.$row["linha"].'</td>';
+            echo '<tr class="bg-primary text-white">';
+            echo '<td>'.$row["tipo"].'</td>';
+            echo '<td>'.$row["linha"].'</td>';
             echo '<td>'.$row["descritivo"].'</td>';
-            echo '<td class="bg-primary text-white text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+            echo '<td class="text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
             foreach($processosOrcamentoItemRubrica as $key) {     
               
               if($row['controle'] == $key['proces_orcamento']){
