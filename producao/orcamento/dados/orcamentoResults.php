@@ -49,7 +49,11 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      proces_padm AS padm,
                                      proced_sigla AS procedimento,
                                      proces_nome AS designacao,
-                                     proces_val_adjudicacoes AS adjudicado
+                                     proces_val_adjudicacoes AS adjudicado,
+                                     (SELECT
+                                     SUM(fact_valor)
+                                     FROM factura
+                                     WHERE fact_proces_check = proces_check ) AS faturado
                                      FROM processo 
                                      INNER JOIN orcamento ON orc_check = proces_orcamento
                                      INNER JOIN procedimento ON proced_cod = proces_proced_cod
@@ -60,8 +64,10 @@ $stmt3 = $myConn->query($sqlProcessosOrcamentoItemRubrica);
 $processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 
 //Procurar pelo reduce em PHP para filtrar
-$totalAdjudicadoProcessos = array_sum(array_column($processosOrcamentoItemRubrica, "adjudicado"));
-//$soma = 0;
+
+//$totalAdjudicadoLinha = array_reduce($processosOrcamentoItemRubrica, "reduce('INV2024151',1795)");
+
+
 
 echo '
 <div class="card col-md-12">
@@ -89,9 +95,9 @@ echo '
             <th>Tipo</th>
             <th>Linha</th>
             <th>Processo</th>
-            <!--th>Adjudicado</th-->
             <th>Previsto</th>
-            <!--th>Faturado</th-->
+            <th>Adjudicado</th>
+            <th>Faturado</th>
           </tr>';
           foreach($orcamentoItemRubrica as $row) {
             $soma = 0;
@@ -99,7 +105,8 @@ echo '
             echo '<td>'.$row["tipo"].'</td>';
             echo '<td>'.$row["linha"].'</td>';
             echo '<td>'.$row["descritivo"].'</td>';
-            echo '<td class="text-right">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+            echo '<td colspan="3" class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+            
             foreach($processosOrcamentoItemRubrica as $key) {     
               if($row['controle'] == $key['proces_orcamento']){
                 $soma += $key['adjudicado'];
@@ -107,15 +114,17 @@ echo '
                   echo '<tr class="bg-danger text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td>'.$key['procedimento'].'</td>';
-                    echo '<td>'.$key['designacao'].'</td>';
+                    echo '<td colspan="2">'.$key['designacao'].'</td>';
                     echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
+                    echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
                   echo '</tr>';       
                 } else {
                   echo '<tr class="bg-success text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td>'.$key['procedimento'].'</td>';
-                    echo '<td>'.$key['designacao'].'</td>';
+                    echo '<td colspan="2">'.$key['designacao'].'</td>';
                     echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
+                    echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
                   echo '</tr>';       
                 }
               }
