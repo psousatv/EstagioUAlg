@@ -3,7 +3,11 @@
 include "../../../global/config/dbConn.php";
 
 $orcamentoItem = $_GET['orcamentoItem'];
-$anoCorrente = 2024; // $_GET['anoCorrente'];
+if(isset($_GET['anoCorrente'])){
+  $anoCorrente = $_GET['anoCorrente'];
+} else {
+  $anoCorrente = date('Y');
+};
 
 //Histórico Processos
 $orcamentoFaturacao = "SELECT

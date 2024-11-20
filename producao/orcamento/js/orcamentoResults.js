@@ -37,11 +37,11 @@ function orcamentoFinanceiro(orcamentoItem) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFinanceiro").innerHTML = this.responseText;
+      document.getElementById("lstFaturacaoPADM").innerHTML = this.responseText;
     }
   }
 
-  xmlhttp.open("GET","dados/orcamentoFinanceiro.php?orcamentoItem="+orcamentoItem,true);
+  xmlhttp.open("GET","dados/orcamentorFaturacaoPADM.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
  
 };
