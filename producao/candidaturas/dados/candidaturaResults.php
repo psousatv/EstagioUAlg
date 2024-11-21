@@ -3,46 +3,54 @@
 include "../../../global/config/dbConn.php";
 
 $nomeCandidatura = $_GET['nomeCandidatura'];
-
-$sqlCandidatura = "SELECT  *, ca.cand_logo as logo
-          FROM processo
-          LEFT JOIN candidaturas_submetidas cs on  cs.candoper_codigo = proces_cand
-          LEFT JOIN candidaturas_avisos ca on ca.cand_aviso = cs.candsubm_aviso
-          LEFT JOIN departamento ON dep_cod = proces_departamento
-          WHERE proces_cand LIKE '%".$nomeCandidatura."%'
-          AND proces_report_valores = 1
-          ORDER BY proces_estado_nome ASC";
-
-$stmt = $myConn->query($sqlCandidatura);
-$procesosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-foreach($procesosCandidatura as $key) {
-  $logoCandidatura[] = $key["logo"];
-}
-
 $pathImagens = "../../global/imagens/";
+$numProcessosAdjudicados = 0;
+
+$sqlCandidaturas = "SELECT
+                    cand_logo as logotipo,
+                    candoper_max_elegivel as max_elegivel
+                    FROM candidaturas_submetidas
+                    LEFT JOIN candidaturas_avisos ON cand_aviso = candsubm_aviso
+                    WHERE candoper_codigo LIKE '%".$nomeCandidatura."%'";
+
+$stmt = $myConn->query($sqlCandidaturas);
+$Candidaturas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Logotipo da Candidatura
+foreach($Candidaturas as $key) {
+  $logoCandidatura[] = $key["logotipo"];
+};
+
 $logo = $pathImagens . $logoCandidatura[0];
 
 
-$rows = count($procesosCandidatura);
+$sqlProcessosCandidatura = "SELECT *,
+                            dep_sigla,
+                            (SELECT
+                            SUM(fact_valor)
+                            FROM factura
+                            WHERE fact_proces_check = proces_check ) AS faturado
+                            FROM processo
+                            INNER JOIN departamento ON dep_cod = proces_departamento
+                            WHERE proces_cand LIKE '%".$nomeCandidatura."%'
+                            AND proces_report_valores = 1
+                            ORDER BY proces_estado_nome ASC";
 
-$sqlTotaisCandidatura = "SELECT
-          proces_path_imagens,
-          SUM(proces_cand_elegivel) AS previsto,
-          SUM(proces_val_max) AS valor_previsto_liquido_iva
-          FROM processo
-          WHERE proces_cand LIKE '%".$nomeCandidatura."%'
-          AND proces_report_valores = 1";
+$stmt = $myConn->query($sqlProcessosCandidatura);
+$procesosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt = $myConn->query($sqlTotaisCandidatura);
-$totaisCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Totais para o cabeçalho
+// Processos incluídos na Candidatura
+$totalAprovado = array_sum(array_column($Candidaturas, "max_elegivel"));
+$numProcessosAprovados = count($procesosCandidatura); // Quantidade de Ações Aprovadas
 
-
-foreach($totaisCandidatura as $key) {
-  $totalCandidatura[] = $key["previsto"];
-  $totalCandidatura[] = $key["valor_previsto_liquido_iva"];
-  $logoCandidatura[] = $key["proces_path_imagens"];
-}
+// Quantidade de Processos adjudicados
+foreach($procesosCandidatura as $key) {
+  if($key["proces_val_adjudicacoes"] > 0){
+    $numProcessosAdjudicados += 1; //count($key["proces_check"]);
+  }
+};
+$totalAdjudicado = array_sum(array_column($procesosCandidatura, "proces_val_adjudicacoes"));
 
 
 echo '
@@ -52,10 +60,10 @@ echo '
     <div class="d-flex align-items-center justify-content-between">
       <table class="table table-responsive table-striped">
         <tr>
-          <td class="bg-primary text-white">Processos ('.$rows.')</td> 
-          <td class="bg-primary text-white">'.number_format($totalCandidatura[1], 2, ",", ".").'€</td>
-          <td class="bg-secondary text-white">Candidatura ('.$rows.')</td>
-          <td class="bg-secondary text-white">'.number_format($totalCandidatura[0], 2, ",", ".").'€</td>
+          <td class="bg-primary text-white">Ações Aprovadas ('.$numProcessosAprovados.')</td> 
+          <td class="bg-primary text-white">'.number_format($totalAprovado, 2, ",", ".").'€</td>
+          <td class="bg-secondary text-white">Adjudicados ('.$numProcessosAdjudicados.')</td>
+          <td class="bg-secondary text-white">'.number_format($totalAdjudicado, 2, ",", ".").'€</td>
         </tr>
       </table>
       <img src="'.$logo.'" alt="2030" width="200" height="50">
@@ -69,7 +77,7 @@ echo '
           <th>DEP</th>
           <th>PADM</th>
           <th>Processo</th>
-          <th>Orçamento</th>
+          <th!-->Orçamento</th-->
           <th>Adjudicado</th>
           <th>Faturado</th>
           <th>Financiado</th>
@@ -82,14 +90,14 @@ echo '
           <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
           <td>'.$row["proces_nome"].'</td>';
           if($row["proces_val_faturacao"] == 0){
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
+    echo '<!--td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td-->';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
           } else {
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
+    echo '<!--td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td-->';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_faturacao"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
           }
     };
