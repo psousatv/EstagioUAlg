@@ -35,27 +35,27 @@ echo "
     <col span='5'>  
     <col span='3' style='background-color: #D6EEEE'>
     <col span='2' style='background-color: pink'>
+    <col span='3' style='background-color: #D6EEEE'>
   </colgroup>
   <tr style='text-align: center'>
-    <th>Ordem</th>
-    <th>Conta</th>
-    <th>Item</th>
-    <th>Designação</th>
-    <th>un</th>
+    <th colspan='5'></th>
     <th colspan='3'>Orçamento</th>
     <th colspan='2'>Proposto</th>
+    <th colspan='3'>Variação</th>
    </tr>
    <tr style='text-align: center'>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Ordem</td>
+    <td>Conta</td>
+    <td>Item</td>
+    <td>Designação</td>
+    <td>un</td>
     <td>Qt</td>
     <td>PUnit</td>
     <td>Valor</td>
     <td>PUnit</td>
     <td>Valor</td>
+    <td colspan='2'>€</td>
+    <td>%</td>
    </tr>";
 foreach($data as $row){
   if($row['tipo_conta'] == 'R'){
@@ -64,7 +64,7 @@ foreach($data as $row){
       <td style='text-align:left'>" .$row['ordem']. "</td>
       <td style='text-align:left'>" .$row['tipo_conta']. "</td>
       <td style='text-align:left'>" .$row['item']. "</td>
-      <td colspan='7' style='text-align:left'>" .$row['designacao']. "</td>
+      <td colspan='10' style='text-align:left'>" .$row['designacao']. "</td>
       </tr>";
     } elseif ($row['tipo_conta'] == 'T'){
       echo "
@@ -72,7 +72,7 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
-          <td colspan='7' style='text-align:left'>" .$row['designacao']. "</td>
+          <td colspan='10' style='text-align:left'>" .$row['designacao']. "</td>
           </tr>";
     } elseif ($row['tipo_conta'] == 'I'){
       echo "
@@ -80,7 +80,7 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['ordem']. "</td>
           <td style='text-align:left'>" .$row['tipo_conta']. "</td>
           <td style='text-align:left'>" .$row['item']. "</td>
-          <td colspan='7'  style='text-align:left'>" .$row['designacao']. "</td>
+          <td colspan='10'  style='text-align:left'>" .$row['designacao']. "</td>
           </tr>";
     } else {
       echo "
@@ -91,10 +91,13 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['designacao']. "</td>
           <td style='text-align:left'>" .$row['unidades']. "</td>
           <td style='text-align:right'>" .number_format($row['quantidade'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_orcamento'], 3, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['valor_orcamento'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'], 3, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['valor_empreiteiro'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_orcamento'], 3, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['valor_orcamento'], 2, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'], 3, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['valor_empreiteiro'], 2, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'] - $row['preco_unitario_orcamento'], 3, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['valor_empreiteiro'] - $row['valor_orcamento'], 2, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format((($row['valor_empreiteiro'] / $row['valor_orcamento'])-1)*100, 2, ',', '.'). "%</td>
         </tr>";
       } 
   };

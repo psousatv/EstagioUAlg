@@ -12,8 +12,8 @@ $mapaAutos = "SELECT
                 mt_item AS item,
                 mt_designacao AS designacao,
                 mt_indexador AS indexador,
-                CASE WHEN auto_indexador = mt_indexador THEN mt_qt ELSE 0 END AS quantidade_proposto,
-                CASE WHEN auto_indexador = mt_indexador THEN mt_pu_obra ELSE 0 END AS preco_unitario_proposto,
+                CASE WHEN auto_indexador = mt_indexador THEN mt_qt ELSE mt_qt END AS quantidade_proposto,
+                CASE WHEN auto_indexador = mt_indexador THEN mt_pu_obra ELSE mt_pu_obra END AS preco_unitario_proposto,
                 CASE WHEN auto_indexador = mt_indexador THEN mt_val_obra ELSE 0 END AS valor_proposto,
                 SUM(CASE WHEN auto_indexador = mt_indexador THEN auto_qt ELSE 0 END) AS quantidade_executado,
                 CASE WHEN auto_indexador = mt_indexador THEN auto_punit ELSE 0 END AS preco_unitario_executado,
@@ -36,23 +36,23 @@ echo "
 <tr style='text-align: center'>
   <colgroup>
     <col span='4'>  
-    <col span='2' style='background-color: #D6EEEE'>
+    <col span='3' style='background-color: #D6EEEE'>
     <col span='3' style='background-color: pink'>
   </colgroup>
   <tr style='text-align: center'>
-    <th>Ordem</th>
-    <th>Conta</th>
-    <th>Item</th>
-    <th>Designação</th>
-    <th colspan='2'>Proposto</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th colspan='3'>Proposto</th>
     <th colspan='3'>Executado</th>
-    <th colspan='3'>Saldo</th>
+    <th colspan='4'>Saldo</th>
   </tr> 
   <tr style='text-align: center'>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Ordem</td>
+    <td>Conta</td>
+    <td>Item</td>
+    <td>Designação</td>
     <td>Qt</td>
     <td>PUnit</td>
     <td>Valor</td>
@@ -61,6 +61,7 @@ echo "
     <td>Valor</td>
     <td>Qt</td>
     <td>Valor</td>
+    <td>%</td>
   </tr>
 </tr>";
 foreach($data as $row){
@@ -96,14 +97,20 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['item']. "</td>
           <td style='text-align:left'>" .$row['designacao']. "</td>
           <td style='text-align:right'>" .number_format($row['quantidade_proposto'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_proposto'], 3, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['valor_proposto'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_proposto'], 2, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['valor_proposto'], 2, ',', '.'). "€</td>
           <td style='text-align:right'>" .number_format($row['quantidade_executado'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_executado'], 3, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['valor_executado'], 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_executado'], 2, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['valor_executado'], 2, ',', '.'). "€</td>
           <td style='text-align:right'>" .number_format(($row['quantidade_proposto']-$row['quantidade_executado']), 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format(($row['valor_proposto']-$row['valor_executado']), 2, ',', '.'). "</td>
+          <td style='text-align:right'>" .number_format(($row['valor_proposto']-$row['valor_executado']), 2, ',', '.'). "€</td>";
+          if($row['valor_executado'] == 0 ){
+            echo "<td style='text-align:right'>" .number_format(100, 2, ',', '.'). "%</td>";
+          } else if ($row['valor_proposto'] == 0 ) {
+            echo "<td style='text-align:right'>" .number_format(-100, 2, ',', '.'). "%</td>";
+          } else {
+          echo "<td style='text-align:right'>" .number_format((1-($row['valor_executado']/$row['valor_proposto']))*100, 2, ',', '.'). "%</td>
         </tr>";
-      } 
+      }};
   };
 echo "</table>";
