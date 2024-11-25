@@ -13,9 +13,7 @@ function obraSelected() {
       document.getElementById("obraSelected").innerHTML = this.responseText;
     }
   }
-
-  //console.log("Código passa do Search: ", codigo);
-
+  
   xmlhttp.open("GET","dados/obraTitulo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 
@@ -24,7 +22,7 @@ function obraSelected() {
           mapaAutos(codigo);
           faturasProcesso(codigo);
           garantiasProcesso(codigo);
- 
+
 };
 
 // Resumo
@@ -61,7 +59,6 @@ function mapaAutos(codigo) {
       document.getElementById("lstMapaSituacao").innerHTML = this.responseText;
       
     }
-    console.log("Resposta: ", this.responseText);
   }
 
   xmlhttp.open("GET","dados/obraMapaSituacao.php?codigoProcesso="+codigo,true);
@@ -75,8 +72,6 @@ function faturasProcesso(codigo) {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstFaturas").innerHTML = this.responseText;
     }
-
-    
   }
   
   xmlhttp.open("GET","../processos/dados/processoFaturas.php?codigoProcesso="+codigo,true);
@@ -90,8 +85,6 @@ function garantiasProcesso(codigo) {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("lstGarantias").innerHTML = this.responseText;
     }
-
-    
   }
   
   xmlhttp.open("GET","../processos/dados/processoGarantias.php?codigoProcesso="+codigo,true);
