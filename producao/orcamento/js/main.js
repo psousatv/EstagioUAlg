@@ -1,17 +1,9 @@
-// Configuração e iniciação do Dashboard Candidaturas
-// Configura, atribui os dados e inicia os elementos da página - DataTable, Graph e Progress Bars
-// Esta página não tem as iterações Online com o Server
-// Para isso terá que se configurar as funções fetch_data. o PHP e DataTables (processing e server side)
 
-// Cores a atribuir aos Gráficos
-//var cores = ['red', 'blue', 'green', 'purple', 'orange'];
-
-
-  //console.log("anoCorrente: ", anoCorrente);
+var anoCorrente = document.getElementById("anoCorrente").value;
 
 $.ajax(
     {
-    url: "dados/main.php",
+    url: 'dados/main.php?anoCorrente=' + anoCorrente,
     method: 'GET',
     contentType: 'application/json'
     }).done(
@@ -145,6 +137,10 @@ $.ajax(
             }});
         }
     );
+
+    
+//});
+
 
 // Os resultados da Seleção é redirecionado para a orcamentoResults.html
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"

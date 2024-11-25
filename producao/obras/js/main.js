@@ -8,7 +8,7 @@ $.ajax(
     }).done(
         function(data)
         {
-            var grafico;
+            //var grafico;
             var dataTable = $('#tabela').DataTable({
                 aaData: data,
                 aoColumns:[
@@ -19,63 +19,8 @@ $.ajax(
                 ]
             })
 
-            // Conversões dos dados do DataTable para os Gráficos e Progress Bar
-            var allData = [];
-            var dadosGrafico = [];
-            var titulo_colunas = [];
-
-            dataTable.rows().every(
-                function(){
-                    var rowData = this.data();
-                    // Todos os dados de Datatable (data) para array local
-                    allData.push(rowData);
-                    // Títulos para x do gráfico
-                    titulo_colunas = Object.keys(rowData);
-                    // Valores recebidos - para o Gráfico
-                    dadosGrafico.push([rowData["contrato"], rowData["adjudicado"], rowData["faturado"]]);
-                }
-            );
-
-            
-            console.log("AllData", allData);
-            console.log("Data", data);
-            console.log("Colunas", titulo_colunas);
-            console.log("Grafico", dadosGrafico);
-
-            
-            // Gráfico
-            var chart_data = {
-                labels: data.map(row => row.contrato),
-                datasets:[
-                    {
-                    label : 'Adjudicado',
-                    backgroundColor : 'rgba(178, 34, 34, .3)',
-                    //color : '#fff',
-                    data: data.map(row => row.adjudicado)
-                    },
-                    {
-                    label : 'Faturado',
-                    backgroundColor : 'rgba(3, 100, 255, .3)',
-                    //color : '#fff',
-                    data: data.map(row => row.faturado)
-                    }
-                ]
-                };
-
-                var group_chart = $('#grafico');
-
-                if(grafico)
-                {
-                    grafico.destroy();
-                }
-                grafico = new Chart(group_chart,
-                {
-                type: 'bar',
-                data: chart_data
-                });
-
             // ** Cartões
-            var container = document.getElementById('cartoesEsquerdaGrafico');
+            var container = document.getElementById('cartoes');
             container.innerHTML = "";
             data.forEach((result, idx) => {
             // Create card element
