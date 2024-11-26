@@ -11,7 +11,6 @@ function processoSelected() {
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("processoSelected").innerHTML = this.responseText;
-
       processoCodigo.push(codigo);
     }
   }
@@ -140,8 +139,8 @@ function garantiasProcesso(codigo) {
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada
 function redirectButtons(){
   var obrasURL = "../../producao/obras/obraResults.html?codigoProcesso=" + processoCodigo;
-  //window.open(obrasURL, "_blank");
-  window.location.href = obrasURL;
+  window.open(obrasURL, "_blank");
+ // window.location.href = obrasURL;
 };
 
 function returnToOrigin(){
@@ -159,10 +158,9 @@ function redirectProcesso(codigo) {
       //document.getElementById("Avisos").style.display = "none";
 
       var params = codigo;
-
       var URL = "processoResults.html?codigoProcesso=" + params;
-      window.open(URL, "_blank");
-      //window.location.href = URL;
+      //window.open(URL, "_blank");
+      window.location.href = URL;
     }
   }
 

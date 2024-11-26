@@ -67,8 +67,8 @@ function redirectProcesso(codigo) {
       var params = codigo;
 
       var URL = "processoResults.html?codigoProcesso=" + params;
-      window.open(URL, "_blank");
-      //window.location.href = URL;
+      //window.open(URL, "_blank");
+      window.location.href = URL;
     }
   }
 
