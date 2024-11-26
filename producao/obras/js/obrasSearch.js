@@ -65,7 +65,6 @@ function redirectProcesso(codigo) {
       document.getElementById("Avisos").style.display = "none";
 
       var params = codigo;
-
       var URL = "../processos/processoResults.html?codigoProcesso=" + params;
       window.open(URL, "_blank");
       //window.location.href = URL;
@@ -84,7 +83,6 @@ function redirectObra(codigo) {
       document.getElementById("Avisos").style.display = "none";
 
       var params = codigo;
-
       var URL = "obraResults.html?codigoProcesso=" + params;
       //window.open(URL, "_blank");
       window.location.href = URL;

@@ -18,6 +18,7 @@ function obraSelected() {
   xmlhttp.send();
 
           obraResults(codigo);
+          //obraCartoes(codigo);
           mapaTrabalhos(codigo);
           mapaAutos(codigo);
           faturasProcesso(codigo);
@@ -37,6 +38,19 @@ function obraResults(codigo) {
   xmlhttp.open("GET","dados/obraResults.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
+
+// Cartoes
+//function obraCartoes(codigo) {
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.onload = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      document.getElementById("lstObraCartoes").innerHTML = this.responseText;
+//    }
+//  }
+//  
+//  xmlhttp.open("GET","dados/obraAutos.php?codigoProcesso="+codigo,true);
+//  xmlhttp.send();
+//};
 
 // Mapa de Trabalhos
 function mapaTrabalhos(codigo) {

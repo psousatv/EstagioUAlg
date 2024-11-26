@@ -85,10 +85,9 @@ $.ajax(
             containerInvestimentos.innerHTML = "";
             data.forEach((result) => {
             
-            var classeCartao = ''
-            var iconeCartao = ''
-
-            var realizado = 0
+            var classeCartao = '';
+            var iconeCartao = '';
+            var realizado = 0;
 
             if(result["faturado"] != 0 && result["previsto"] != 0 ){
                 realizado = (result["faturado"] / result["previsto"]) * 100;
@@ -99,20 +98,20 @@ $.ajax(
             };
 
             if (realizado < 10) {
-                var classeCartao = 'bg-danger';
-                var iconeCartao = 'fa-thumbs-down'
+                classeCartao = 'bg-danger';
+                iconeCartao = 'fa-thumbs-down';
             } else if (realizado >= 10 & realizado< 35){
-                var classeCartao = 'bg-warning';
-                var iconeCartao = 'fa-warning'
+                classeCartao = 'bg-warning';
+                iconeCartao = 'fa-warning';
             } else if (realizado >= 35 & realizado < 75){
-                var classeCartao = 'bg-primary';
-                var iconeCartao = 'fa-cogs'
+                classeCartao = 'bg-primary';
+                iconeCartao = 'fa-cogs';
             } else {
-                var classeCartao = 'bg-success';
-                var iconeCartao = 'fa-smile'
+                classeCartao = 'bg-success';
+                iconeCartao = 'fa-smile';
             };
 
-            const card = document.createElement('div');
+            var card = document.createElement('div');
             card.classList = 'card-body';
             
             if(result["tipo"] == 'Gastos'){

@@ -37,8 +37,6 @@ foreach($data as $row)
     <div class="col-md-10 text-primary">'.$row["proces_csgn"].'</div>
     <div class="col-md-2"><b>Prazo de Execução: </b></div>
     <div class="col-md-10">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
-    
   </div> 
   <hr>';
-
 };

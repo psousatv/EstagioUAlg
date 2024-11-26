@@ -29,7 +29,7 @@ $valorTrabalhos = array_sum(array_column($data, "valor_empreiteiro"));
 //Mapa Trabalhos
 echo "
 <b>Mapa de Trabalhos » ".number_format($valorTrabalhos, 2, ",", ".")."€</b>
-<table class='table table-hover small'>
+<table class='table table-responsive table-hover small'>
   <tr style='text-align: center'>
   <colgroup>
     <col span='5'>  
@@ -82,7 +82,7 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['item']. "</td>
           <td colspan='10'  style='text-align:left'>" .$row['designacao']. "</td>
           </tr>";
-    } else {
+    } elseif ($row['tipo_conta'] == 'M') {
       echo "
         <tr> <!-- Adicionar rotina para abrir o artigo com os autos em que foi faturado-->
           <td style='text-align:left'>" .$row['ordem']. "</td>
@@ -91,14 +91,22 @@ foreach($data as $row){
           <td style='text-align:left'>" .$row['designacao']. "</td>
           <td style='text-align:left'>" .$row['unidades']. "</td>
           <td style='text-align:right'>" .number_format($row['quantidade'], 2, ',', '.'). "</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_orcamento'], 3, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_orcamento'], 2, ',', '.'). "€</td>
           <td style='text-align:right'>" .number_format($row['valor_orcamento'], 2, ',', '.'). "€</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'], 3, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'], 2, ',', '.'). "€</td>
           <td style='text-align:right'>" .number_format($row['valor_empreiteiro'], 2, ',', '.'). "€</td>
-          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'] - $row['preco_unitario_orcamento'], 3, ',', '.'). "€</td>
+          <td style='text-align:right'>" .number_format($row['preco_unitario_empreiteiro'] - $row['preco_unitario_orcamento'], 2, ',', '.'). "€</td>
           <td style='text-align:right'>" .number_format($row['valor_empreiteiro'] - $row['valor_orcamento'], 2, ',', '.'). "€</td>
           <td style='text-align:right'>" .number_format((($row['valor_empreiteiro'] / $row['valor_orcamento'])-1)*100, 2, ',', '.'). "%</td>
         </tr>";
-      } 
+      } else {
+        echo "
+        <tr>
+          <td style='text-align:left'>" .$row['ordem']. "</td>
+          <td style='text-align:left'>" .$row['tipo_conta']. "</td>
+          <td style='text-align:left'>" .$row['item']. "</td>
+          <td style='text-align:left'>" .$row['designacao']. "</td>
+        </tr>";
+      }
   };
 echo "</table>";
