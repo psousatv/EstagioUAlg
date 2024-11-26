@@ -54,18 +54,7 @@ $.ajax(
                 }
                 
             );
-
             
-
-            // Siglas das Candidaturas para os últimas 5 letras da Designação
-            //var sigla_candidatura = []
-            //for (var i = 0; i < nome_candidatura.length; i++) {
-            //    var originalString = nome_candidatura[i];
-            //    var lasttFiveLetters = originalString.slice(-6);
-            //    sigla_candidatura.push(lasttFiveLetters);
-            //}
-
-           
             // ** Cartões
             var container = document.getElementById('cartoesEsquerdaGrafico');
             container.innerHTML = "";
@@ -74,19 +63,20 @@ $.ajax(
             
             var classeCartao = ''
             var iconeCartao = ''
+            
             //Se taxa do valor recebido for menor que 15% que o valor previsto
             if (result["recebido_percent"] <= result["percent"]- 15) {
-                var classeCartao = 'bg-danger';
-                var iconeCartao = 'fa-thumbs-down'
+                var classeCartao = 'bg-danger text-white';
+                var iconeCartao = 'fa fa-thumbs-down'
             } else if (result["recebido_percent"] <= result["percent"]- 10){
-                var classeCartao = 'bg-warning';
-                var iconeCartao = 'fa-warning'
+                var classeCartao = 'bg-warning text-black';
+                var iconeCartao = 'fa fa-warning'
             } else if (result["recebido_percent"] <= result["percent"] - 5){
-                var classeCartao = 'bg-primary';
-                var iconeCartao = 'fa-cogs'
+                var classeCartao = 'bg-primary text-white';
+                var iconeCartao = 'fa fa-cog fa-spin'
             } else {
-                var classeCartao = 'bg-success';
-                var iconeCartao = 'fa-smile'
+                var classeCartao = 'bg-success text-white';
+                var iconeCartao = 'fa fa-smile'
             };
 
             const card = document.createElement('div');
@@ -99,9 +89,9 @@ $.ajax(
                         <div class="text-end">
                             <p class="mb-0 small text-white">${result["candidatura"]}</p>
                             <!--Reembolsos-->
-                            <h3 class="text-white">${Number(result["recebido"]).toLocaleString('pt')}€<span class="h6">- ${result["recebido_percent"]}%</span></h3>
+                            <h6>${Number(result["recebido"]).toLocaleString('pt')}€<span class="h6">- ${result["recebido_percent"]}%</span></h3>
                             <!--Elegível-->
-                            <h6 class="text-white">${Number(result["elegivel"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                            <h6>${Number(result["elegivel"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                         </div>
                         <div class="align-self-center">
                             <i class="fas ${iconeCartao} text-white fa-3x"></i>

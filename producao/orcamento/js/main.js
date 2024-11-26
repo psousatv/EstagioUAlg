@@ -43,17 +43,17 @@ $.ajax(
 
 
             if (realizado < 10) {
-                var classeCartao = 'bg-danger';
-                var iconeCartao = 'fa-thumbs-down'
+                var classeCartao = 'bg-danger text-white';
+                var iconeCartao = 'fa fa-thumbs-down'
             } else if (realizado >= 10 & realizado < 35){
-                var classeCartao = 'bg-warning';
-                var iconeCartao = 'fa-warning'
+                var classeCartao = 'bg-warning text-black';
+                var iconeCartao = 'fa fa-warning'
             } else if (realizado >= 35 & realizado < 75){
-                var classeCartao = 'bg-primary';
-                var iconeCartao = 'fa-cogs'
+                var classeCartao = 'bg-primary text-white';
+                var iconeCartao = 'fa fa-cog fa-spin'
             } else {
-                var classeCartao = 'bg-success';
-                var iconeCartao = 'fa-smile'
+                var classeCartao = 'bg-success text-white';
+                var iconeCartao = 'fa fa-smile'
             };
 
             const card = document.createElement('div');
@@ -66,9 +66,9 @@ $.ajax(
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
+                                <h6>${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
-                                <h6 class="text-white">${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                                <h6>${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas ${iconeCartao} text-white fa-3x"></i>

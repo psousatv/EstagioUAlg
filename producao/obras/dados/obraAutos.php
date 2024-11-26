@@ -14,7 +14,11 @@ $sqlAutos = "SELECT
              pp_valor
              FROM plano_pagamento pp
              WHERE pp.pp_proces_check = fact_proces_check
-             AND pp.pp_auto_num = fact_auto_num) AS auto_previsto
+             AND pp.pp_auto_num = fact_auto_num) AS auto_previsto,
+             (SELECT
+             proces_val_adjudicacoes
+             FROM processo
+             WHERE proces_check = fact_proces_check) AS valor_adjudicado
              FROM factura
              WHERE fact_tipo = 'FTN' 
              AND fact_proces_check = '" .$codigoProcesso. "'";

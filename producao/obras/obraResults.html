@@ -73,8 +73,8 @@
       </div>
       <!-- Mostra o progresso do processo -->
       <h1 class="mt-2"></h1>
-      <div class="row col-md-12 col-lg-12" id="stepProgresso">
-        <b class="small">Uma linha de progresso é mostrada aqui ...</b>
+      <!--div class="row col-md-12 col-lg-12" id="stepProgresso">
+        <b class="small">Uma linha de progresso é mostrada aqui ...</b-->
         <div class="col-md-12 col-lg-12 small text-white" id="buttonsProcesso">
           <div class="col col-lg-12 text-right">
             <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-folder-open"></i></div>
@@ -86,7 +86,7 @@
             <h1 class="mt-2"></h1>
           </div>
         </div>
-      </div>
+      <!--/div-->
     </div>
     
     <div class="container-fluid">
@@ -141,7 +141,9 @@
                         </div>
                         <div class="card-body">
                           <div class="row" id="lstObraGauge">
-                            <b>Ponto de Situação da Obra - Gauge -</b>
+                            <div class="justify-content-between" >
+                              <!--b>Ponto de Situação da Obra - Gauge -</b-->
+                            </div>
                           </div>
                         </div>
                         <div class="card-body">
@@ -222,6 +224,8 @@
 <script src="../../vendors/datatables/datatables.min.js"></script>
 <!-- Charts -->
 <script src="../../vendors/charts/Chart.min.js"></script>
+<!-- Gauge -->
+<script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@10.3.3/dist/umd/ag-charts-enterprise.js?t=1731495898171"></script>
 
 <script src="js/obraResults.js"></script>
 <script src="js/obraAutos.js"></script>
