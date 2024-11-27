@@ -7,7 +7,7 @@ var codigoProcesso = params.get("codigoProcesso");
 var obraAutos = [];
 
 // Fetch JSON data from the PHP script
-fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
+fetch('../obras/dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
     .then(response => response.json())  // Parse the JSON response
     .then(data => {
         // Append the fetched data to the existing array
@@ -56,20 +56,20 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
             {
             value: percentPrevisto,
             text: "Previsto: " + totalPrevisto.toLocaleString('pt'),
-            placement: "outside",
+            placement: "inside",
             shape: "triangle",
             fill: "yellow",
             strokeWidth: 2,
-            spacing: 15,
+            spacing: 35,
             },
             {
             value: percentRealizado,
-            text: "Faturado: " + totalRealizado.toLocaleString('pt'),
-            placement: "outside",
+            text: "Faturado", // + totalRealizado.toLocaleString('pt'),
+            placement: "inside",
             shape: "triangle",
             fill: "green",
             strokeWidth: 2,
-            spacing: 40,
+            spacing: 5,
             },
         ],
         };
