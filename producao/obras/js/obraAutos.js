@@ -84,30 +84,28 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         totalPrevisto += obraAutos[i]['auto_previsto'];
     }
     
-    var valoObra = obraAutos[0]['valor_adjudicado'];
-    var percentRealizado = (totalRealizado / valoObra) * 100;
-    var percentPrevisto = (totalPrevisto / valoObra) * 100;
+    var valorObra = obraAutos[0]['valor_adjudicado'];
+    var percentRealizado = (totalRealizado / valorObra) * 100;
+    var percentPrevisto = (totalPrevisto / valorObra) * 100;
     var percentAutos = (totalRealizado /totalPrevisto) * 100;
 
     var containerGauge = document.getElementById('lstObraGauge');
     containerGauge.innerHTML = "";
 
+    //console.log("Dados: ", obraAutos);
+    //console.log("Valor Obra: ", valorObra);
+    //console.log("Realizado: ", totalRealizado);
+    //console.log("Previsto: ", totalPrevisto);
+    //console.log("PercentR: ", percentRealizado);
+    //console.log("PercentP: ", percentPrevisto);
+    //console.log("PercentAutos: ", percentAutos);
     
-    
-            console.log("Dados: ", obraAutos);
-            console.log("Valor Obra: ", valoObra);
-            console.log("Realizado: ", totalRealizado);
-            console.log("Previsto: ", totalPrevisto);
-            console.log("PercentR: ", percentRealizado);
-            console.log("PercentP: ", percentPrevisto);
-            console.log("PercentAutos: ", percentAutos);
-    
-
     const { AgCharts } = agCharts;
 
     const options = {
     type: "radial-gauge",
     container: containerGauge, //document.getElementById("lstObraGauge"),
+    placement: "middle",
     value: percentRealizado,
     scale: {
         min: 0,
@@ -119,18 +117,18 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         text: "Previsto: " + totalPrevisto.toLocaleString('pt'),
         placement: "outside",
         shape: "triangle",
-        fill: "green",
+        fill: "yellow",
         strokeWidth: 2,
-        spacing: 8,
+        spacing: 15,
         },
         {
         value: percentRealizado,
         text: "Faturado: " + totalRealizado.toLocaleString('pt'),
-        placement: "inside",
+        placement: "outside",
         shape: "triangle",
-        fill: "black",
+        fill: "green",
         strokeWidth: 2,
-        spacing: 8,
+        spacing: 40,
         },
     ],
     };
