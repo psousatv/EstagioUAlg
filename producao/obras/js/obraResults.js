@@ -2,7 +2,7 @@ var processoCodigo = []
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
-function obraSelected() { 
+function obraSelected(codigo) { 
 
   var params = new URLSearchParams(window.location.search);
   var codigo = params.get("codigoProcesso"); 
@@ -37,6 +37,7 @@ function obraResults(codigo) {
   xmlhttp.open("GET","dados/obraResults.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
+
 
 // Mapa de Trabalhos
 function mapaTrabalhos(codigo) {
@@ -89,4 +90,12 @@ function garantiasProcesso(codigo) {
   
   xmlhttp.open("GET","../processos/dados/processoGarantias.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
+};
+
+// Botões
+// Ao clicar nos botões, redireciona para a página ou rotina selecionada
+function redirectButtons(processoCodigo){
+  var obrasURL = "../../producao/obras/obraResults.html?codigoProcesso=" + processoCodigo;
+  //window.open(obrasURL, "_blank");
+  window.location.href = obrasURL;
 };

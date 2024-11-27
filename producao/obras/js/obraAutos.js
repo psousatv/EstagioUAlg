@@ -76,7 +76,6 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
     );
 
     // Gauge
-
     var totalRealizado = 0;
     var totalPrevisto = 0;
     
@@ -89,6 +88,9 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
     var percentRealizado = (totalRealizado / valoObra) * 100;
     var percentPrevisto = (totalPrevisto / valoObra) * 100;
     var percentAutos = (totalRealizado /totalPrevisto) * 100;
+
+    var containerGauge = document.getElementById('lstObraGauge');
+    containerGauge.innerHTML = "";
 
     
     
@@ -105,7 +107,7 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
 
     const options = {
     type: "radial-gauge",
-    container: document.getElementById("lstObraGauge"),
+    container: containerGauge, //document.getElementById("lstObraGauge"),
     value: percentRealizado,
     scale: {
         min: 0,
