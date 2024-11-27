@@ -11,6 +11,7 @@ function obraSelected(codigo) {
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("obraSelected").innerHTML = this.responseText;
+      processoCodigo.push(codigo);
     }
   }
   
@@ -94,8 +95,14 @@ function garantiasProcesso(codigo) {
 
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada
-function redirectButtons(processoCodigo){
+function redirectObras(){
   var obrasURL = "../../producao/obras/obraResults.html?codigoProcesso=" + processoCodigo;
+  //window.open(obrasURL, "_blank");
+  window.location.href = obrasURL;
+};
+
+function redirectHome(){
+  var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso="+processoCodigo;
   //window.open(obrasURL, "_blank");
   window.location.href = obrasURL;
 };
