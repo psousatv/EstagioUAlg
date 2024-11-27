@@ -1,3 +1,4 @@
+
 var processoCodigo = []
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
@@ -23,6 +24,7 @@ function processoSelected() {
         relacoesProcesso(codigo);
         pagamentosProcesso(codigo); // Plano de Pagamentos
         faturacaoProcesso(codigo); // Facturação
+        //obrasGauge(codigo);
         //orcamentoProcesso(codigo); // Orçamento
         faturasProcesso(codigo); // Detalhes daas Faturas
         garantiasProcesso(codigo);
@@ -93,19 +95,6 @@ function pagamentosProcesso(codigo) {
   xmlhttp.send();
 };
 
-// Orçamento
-//function orcamentoProcesso(codigo) {
-//  var xmlhttp = new XMLHttpRequest();
-//  xmlhttp.onreadystatechange = function() {
-//    if (this.readyState == 4 && this.status == 200) {
-//      document.getElementById("lstOrcamento").innerHTML = this.responseText;
-//    }
-//  }
-//
-//  xmlhttp.open("GET","dados/processoFinanceiro3.php?codigoProcesso="+codigo,true);
-//  xmlhttp.send();
-//};
-
 // Facturas
 function faturasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
@@ -119,8 +108,7 @@ function faturasProcesso(codigo) {
   xmlhttp.send();
 };
 
-
-// Facturas
+// Garantias
 function garantiasProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -134,6 +122,15 @@ function garantiasProcesso(codigo) {
   xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
+
+// Gauge
+//function obrasGauge(codigo){
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.open("GET","../../producao/obras/js/obraAutos.js?codigoProcesso="+codigo,true);
+//  xmlhttp.send();
+//};
+
+
 
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada

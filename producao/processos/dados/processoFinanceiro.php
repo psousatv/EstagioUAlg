@@ -71,7 +71,3 @@ foreach($data as $row){
     </tr>";
   };
 echo "</table>";
-
-echo "<a class='hidden'>";
-json_encode($data);
-echo "</a>";
