@@ -126,7 +126,10 @@ function garantiasProcesso(codigo) {
 // Gauge
 //function obrasGauge(codigo){
 //  var xmlhttp = new XMLHttpRequest();
-//  xmlhttp.open("GET","../../producao/obras/js/obraAutos.js?codigoProcesso="+codigo,true);
+//  if (this.readyState == 4 && this.status == 200) {
+//    document.getElementById("lstObraGauge").innerHTML = this.responseText;
+//  }
+//  xmlhttp.open("GET","../../producao/obras/dados/obraAutos.php?codigoProcesso="+codigo,true);
 //  xmlhttp.send();
 //};
 
