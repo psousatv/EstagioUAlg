@@ -139,8 +139,8 @@ function garantiasProcesso(codigo) {
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada
 function redirectObras(){
   var obrasURL = "../../producao/obras/obraResults.html?codigoProcesso=" + processoCodigo;
-  window.open(obrasURL, "_blank");
- // window.location.href = obrasURL;
+  //window.open(obrasURL, "_blank");
+  window.location.href = obrasURL;
 };
 
 function redirectHome(){

@@ -125,7 +125,7 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         },
         {
         value: percentRealizado,
-        text: totalRealizado.toLocaleString('pt'),
+        text: "Faturado: " + totalRealizado.toLocaleString('pt'),
         placement: "inside",
         shape: "triangle",
         fill: "black",
