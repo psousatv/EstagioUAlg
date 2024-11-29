@@ -13,10 +13,7 @@ fetch('../obras/dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         // Append the fetched data to the existing array
         obraAutos = obraAutos.concat(data);
 
-        
     // Gauge
-    gauge();
-    function gauge(){
         var totalRealizado = 0;
         var totalPrevisto = 0;
         
@@ -33,10 +30,10 @@ fetch('../obras/dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         var containerGauge = document.getElementById('lstObraGauge');
         containerGauge.innerHTML = "";
 
-        //console.log("Dados: ", obraAutos);
+        console.log("Dados: ", obraAutos);
         console.log("Valor Obra: ", valorObra);
-        //console.log("Realizado: ", totalRealizado);
-        //console.log("Previsto: ", totalPrevisto);
+        console.log("Realizado: ", totalRealizado);
+        console.log("Previsto: ", totalPrevisto);
         //console.log("PercentR: ", percentRealizado);
         //console.log("PercentP: ", percentPrevisto);
         //console.log("PercentAutos: ", percentAutos);
@@ -50,7 +47,7 @@ fetch('../obras/dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         value: percentRealizado,
         scale: {
             min: 0,
-            max: 100,
+            max: 1000,
         },
         targets: [
             {
@@ -75,8 +72,6 @@ fetch('../obras/dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         };
 
         AgCharts.createGauge(options);
-    };
-
     })
     .catch(error => {
         console.error("Error fetching the data:", error);
