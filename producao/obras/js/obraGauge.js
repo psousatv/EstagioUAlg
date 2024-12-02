@@ -18,11 +18,11 @@ fetch('../obras/dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
         var totalPrevisto = 0;
         
         for(var i=0; i<obraAutos.length; i++){
-            totalRealizado += obraAutos[i]['auto_realizado'];
-            totalPrevisto += obraAutos[i]['auto_previsto'];
+            totalRealizado += obraAutos[i]['fact_valor_realizado'];
+            totalPrevisto += obraAutos[i]['auto_valor_previsto'];
         }
         
-        var valorObra = obraAutos[0]['valor_adjudicado'];
+        var valorObra = obraAutos[0]['processo_valor_adjudicado'];
         var percentRealizado = (totalRealizado / valorObra) * 100;
         var percentPrevisto = (totalPrevisto / valorObra) * 100;
         var percentAutos = (totalRealizado /totalPrevisto) * 100;

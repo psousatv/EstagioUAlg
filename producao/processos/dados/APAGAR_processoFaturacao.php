@@ -8,7 +8,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 //Histórico Processos
 $processoFaturacao = "SELECT
                     year(fact_auto_data) AS 'Ano',
-                    sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'Acum',
+                    sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'Acumulado',
                     sum(if((month(fact_auto_data) = 1),round(fact_valor,2),0)) AS 'Jan',
                     sum(if((month(fact_auto_data) = 2),round(fact_valor,2),0)) AS 'Fev',
                     sum(if((month(fact_auto_data) = 3),round(fact_valor,2),0)) AS 'Mar',
@@ -29,11 +29,11 @@ $processoFaturacao = "SELECT
 $stmt = $myConn->query($processoFaturacao);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$processoFaturacaoAcumulado = array_sum(array_column($data, "Acum"));
+$processoFaturacaoAcumulado = array_sum(array_column($data, "Acumulado"));
 
 //Faturação
 echo "
-<b>Faturação » ".number_format($processoFaturacaoAcumulado, 2, ",", ".")."€</b>
+<b>Realizado » ".number_format($processoFaturacaoAcumulado, 2, ",", ".")."€</b>
 <table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
@@ -55,7 +55,7 @@ foreach($data as $row){
   echo "
     <tr>
       <td style='text-align:center'>" .$row['Ano']. "</td>
-      <td style='text-align:right'>" .number_format($row['Acum'], 2, ',', '.'). "</td>
+      <td style='text-align:right'>" .number_format($row['Acumulado'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['Jan'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['Fev'], 2, ',', '.'). "</td>
       <td style='text-align:right'>" .number_format($row['Mar'], 2, ',', '.'). "</td>

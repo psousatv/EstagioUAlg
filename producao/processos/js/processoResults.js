@@ -23,7 +23,7 @@ function processoSelected() {
         historicoProcesso(codigo);
         relacoesProcesso(codigo);
         pagamentosProcesso(codigo); // Plano de Pagamentos
-        faturacaoProcesso(codigo); // Facturação
+        //faturacaoProcesso(codigo); // Facturação
         //obrasGauge(codigo);
         //orcamentoProcesso(codigo); // Orçamento
         faturasProcesso(codigo); // Detalhes daas Faturas
@@ -69,19 +69,6 @@ function relacoesProcesso(codigo) {
   xmlhttp.send();
 };
 
-// Facturação
-function faturacaoProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstFaturacao").innerHTML = this.responseText;
-    }
-  }
-
-  xmlhttp.open("GET","dados/processoFinanceiro.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
-
 // Plano de Pagamentos
 function pagamentosProcesso(codigo) {
   var xmlhttp = new XMLHttpRequest();
@@ -91,7 +78,7 @@ function pagamentosProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processoFinanceiro2.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
@@ -130,6 +117,19 @@ function garantiasProcesso(codigo) {
 //    document.getElementById("lstObraGauge").innerHTML = this.responseText;
 //  }
 //  xmlhttp.open("GET","../../producao/obras/dados/obraAutos.php?codigoProcesso="+codigo,true);
+//  xmlhttp.send();
+//};
+
+// Facturação
+//function faturacaoProcesso(codigo) {
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.onreadystatechange = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      document.getElementById("lstFaturacao").innerHTML = this.responseText;
+//    }
+//  }
+//
+//  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
 //  xmlhttp.send();
 //};
 

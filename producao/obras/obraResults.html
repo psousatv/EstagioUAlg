@@ -129,27 +129,22 @@
                 </li>
               </ul>
 
-               <div class="tab-content tabcontent-border">
-                <div class="tab-pane p-20 active" id="obraResults" role="tabpanel" >
-                  <div class="row ">
-                    <div class="col col-md-8">
-                      <div id="lstObraResults">
-                        <b>O Resumo do Proceso é listado aqui...</b>
-                      </div>
-                    </div>
-                    <div class="col col-md-4 text-center">
-                      <div id="lstObraGauge">
-                        <b>O Ponto de situação da Obra - Gauge -</b>
-                      </div>
-                    </div>
-                  </div>
+              <div class="tab-content tabcontent-border">
+                <div class="tab-pane p-20 active" id="obraResults" role="tabpanel">
                   <div class="row">
-                    <div class="col col-lg-12">
-                      <div class="card-body row" id="lstObraCartoes">
-                        <b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b>
-                      </div>
+                    <div class="col col-lg-8">
+                      <div id="lstObraResults"><b>O Resumo do Proceso é listado aqui...</b></div>
+                    </div>
+                    <div class="col col-lg-4">
+                      <div class="text-center" id="lstObraGrafico"><b>Gráfico do Ponto de situação da Obra</b></div>
                     </div>
                   </div>
+                    <div class="card">
+                      <h1 class="mt-2"></h1> 
+                      <div class="card-body">
+                        <div class="row" id="lstObraCartoes"><b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b></div>
+                      </div>
+                    </div>
                 </div>
                 <div class="tab-pane p-20" id="orcamento" role="tabpanel" >
                   <div class="row">
@@ -208,11 +203,12 @@
 <!-- Charts -->
 <script src="../../vendors/charts/Chart.min.js"></script>
 <!-- Gauge -->
-<script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@10.3.3/dist/umd/ag-charts-enterprise.js?t=1731495898171"></script>
+<!--script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@10.3.3/dist/umd/ag-charts-enterprise.js?t=1731495898171"></script-->
 
 <script src="js/obraResults.js"></script>
 <script src="js/obraCartoes.js"></script>
-<script src="js/obraGauge.js"></script>
+<script src="js/obraGraficos.js"></script>
+<!--script src="js/obraGauge.js"></script-->
 
 </body>
 
