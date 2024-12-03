@@ -69,14 +69,12 @@ $(document).ready(
                 // Investimentos
                 var chart_data = {
                     labels: inv_item,
-                    datasets:[
-                        {
+                    datasets:[{
                         label : 'Orçamento',
                         backgroundColor : 'rgba(178, 34, 34, .3)',
                         //color : '#fff',
                         data: inv_y1
-                        },
-                        {
+                        },{
                         label : 'Adjudicado',
                         backgroundColor : 'rgba(3, 100, 255, .3)',
                         //color : '#fff',

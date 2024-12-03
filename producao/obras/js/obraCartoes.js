@@ -1,36 +1,37 @@
 
 var params = new URLSearchParams(window.location.search);
 var codigoProcesso = params.get("codigoProcesso"); 
+var url = '../obras/dados/obraPlanoPagamentosAutos.php?codigoProcesso=' + codigoProcesso;
 
-// Array para absorver os dados Totais dos autos
-// Existing JavaScript array
-var obraAutos = [];
+var resultados = [];
 
 // Fetch JSON data from the PHP script
-fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
+fetch(url)
     .then(response => response.json())  // Parse the JSON response
-    .then(data => {
+    .then(returnedData => {
         // Append the fetched data to the existing array
-        obraAutos = obraAutos.concat(data);
+        resultados = resultados.concat(returnedData);
 
         // Cartões
         var containerCartoesAutos = document.getElementById('lstObraCartoes');
         containerCartoesAutos.innerHTML = "";
 
-        obraAutos.forEach((resultado) => {
+        resultados.forEach((resultado) => {
         var classeCartao = '';
         var iconeCartao = '';
         var realizado = 0;
           
-        if(resultado["auto_valor_previsto"] == null){
+        //Calculo de percentagem
+        if(resultado["valor_previsto"] == null){
             realizado == 0;
-        } else if (resultado["fact_valor_realizado"] != 0 && resultado["auto_valor_previsto"] != 0 ){
-            realizado = (resultado["fact_valor_realizado"] / resultado["auto_valor_previsto"]) * 100;
+        } else if (resultado["valor_realizado"] != 0 && resultado["valor_previsto"] != 0 ){
+            realizado = (resultado["valor_realizado"] / resultado["valor_previsto"]) * 100;
         }  else {
             realizado == 0;
         };
         
-        if (resultado["auto_valor_previsto"] == null){
+        //Formata o cartão de acordo com a percentagem de realização
+        if (resultado["valor_previsto"] == null){
             classeCartao = 'bg-secondary text-white';
             iconeCartao = 'fa fa-refresh fa-spin';
         } else if (realizado < 40){
@@ -46,9 +47,6 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
             classeCartao = 'bg-success text-white';
             iconeCartao = 'fa fa-smile';
         };
-
-        //var card = document.createElement('div');
-        //card.classList = 'card-body';
        
         var obraAutosCartoes = `     
             <div onclick="obraAuto('${resultado["auto_num"]}')" 
@@ -56,14 +54,12 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
                 <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
                         <p class="mb-0 small text-white">
-                            ${resultado["auto_fatura"]} de 
-                            ${resultado["auto_data"].toLocaleString('pt')} 
-                            do auto ${resultado["auto_num"]}
+                            ${resultado["justificativo"]}
                         </p>
                         <!--Faturado-->
-                        <h6>${Number(resultado["fact_valor_realizado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
+                        <h6>${Number(resultado["valor_realizado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                         <!--Plano de Pagamenos-->
-                        <h6>${Number(resultado["auto_valor_previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                        <h6>${Number(resultado["valor_previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                     </div>
                     <div class="align-self-center">
                         <i class="fas ${iconeCartao} text-white fa-3x"></i>
@@ -72,13 +68,16 @@ fetch('dados/obraAutos.php?codigoProcesso=' + codigoProcesso)
             </div>
         `;
         // Append newyly created card element to the container
-        containerCartoesAutos.innerHTML += obraAutosCartoes;
+        if(resultado["valor_realizado"] > 0){
+            containerCartoesAutos.innerHTML += obraAutosCartoes;
+        }
       }
     );
 
     })
     .catch(error => {
-        console.error("Error fetching the data:", error);
+        document.getElementById('lstObraGrafico').innerHTML = error;
+        //console.error("Error fetching the data:", error);
     });
 
 
