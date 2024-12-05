@@ -7,7 +7,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 $sqlPlanoPagamentosAutos = "SELECT
             pp_ano AS ano,
             pp_mes_previsto AS mes_previsto,
-            pp_auto_previsto AS auto_num,
+            pp_auto_num AS auto_num,
             pp_valor_previsto AS valor_previsto,
             pp_mes_realizado AS mes_realizado,
             pp_valor_realizado AS valor_realizado,

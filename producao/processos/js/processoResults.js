@@ -23,9 +23,6 @@ function processoSelected() {
         historicoProcesso(codigo);
         relacoesProcesso(codigo);
         pagamentosProcesso(codigo); // Plano de Pagamentos
-        //faturacaoProcesso(codigo); // Facturação
-        //obrasGauge(codigo);
-        //orcamentoProcesso(codigo); // Orçamento
         faturasProcesso(codigo); // Detalhes daas Faturas
         garantiasProcesso(codigo);
 
@@ -109,31 +106,6 @@ function garantiasProcesso(codigo) {
   xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
-
-// Gauge
-//function obrasGauge(codigo){
-//  var xmlhttp = new XMLHttpRequest();
-//  if (this.readyState == 4 && this.status == 200) {
-//    document.getElementById("lstObraGauge").innerHTML = this.responseText;
-//  }
-//  xmlhttp.open("GET","../../producao/obras/dados/obraAutos.php?codigoProcesso="+codigo,true);
-//  xmlhttp.send();
-//};
-
-// Facturação
-//function faturacaoProcesso(codigo) {
-//  var xmlhttp = new XMLHttpRequest();
-//  xmlhttp.onreadystatechange = function() {
-//    if (this.readyState == 4 && this.status == 200) {
-//      document.getElementById("lstFaturacao").innerHTML = this.responseText;
-//    }
-//  }
-//
-//  xmlhttp.open("GET","dados/processoFaturacao.php?codigoProcesso="+codigo,true);
-//  xmlhttp.send();
-//};
-
-
 
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada

@@ -23,7 +23,7 @@ $processoPlanoPagamentosPrevisto = "SELECT
                       FROM plano_pagamentos
                       WHERE pp_proces_check = '" .$codigoProcesso. "'
                       GROUP BY pp_ano
-                      ORDER BY pp_ano, pp_auto_previsto" ;
+                      ORDER BY pp_ano, pp_auto_num" ;
 
 $stmt = $myConn->query($processoPlanoPagamentosPrevisto);
 $previsao = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -99,7 +99,6 @@ echo "</table>";
 //Plano de Pagamentos Realizado
 echo "
 <b>Realizado » ".number_format($processoRealizadoAcumulado, 2, ",", ".")."€</b>
-<b> - Diferencial para termo » ".number_format($processoPrevistoAcumulado-$processoRealizadoAcumulado, 2, ",", ".")."€</b>
 <table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>

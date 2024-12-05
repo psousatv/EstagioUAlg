@@ -7,7 +7,6 @@ var resultado = [];
 var labelsGrafico = [];
 var xPrevisto = [];
 var xRealizado = [];
-//var obraGrafico;
 
 //Funcção
 fetchData();
@@ -22,12 +21,7 @@ fetch(url)
     return response.json();
 })
 .then(data => {
-    //resultado = resultado.concat(data);
     resultado.push(...data);
-    //Dados dentro da Função
-    //resultado.forEach(function(dados){
-    //    document.getElementById('lstObraGrafico').innerHTML += dados;
-    //});
 
     for(var i = 0; i < resultado.length; i++){
         
@@ -73,10 +67,6 @@ fetch(url)
                 }
             }
         });
-        //console.log('Dataset gráfico;  x, y (previsto):', resultado[i].mes_previsto, resultado[i]['valor_previsto'], resultado[i]['valor_realizado']);
-        console.log('Dataset gráfico; labelsGrafico:', labelsGrafico);
-        console.log('Dataset gráfico; xPrevisto:', xPrevisto);
-        console.log('Dataset gráfico; xRealizado:', xRealizado);
 
     };
 })
