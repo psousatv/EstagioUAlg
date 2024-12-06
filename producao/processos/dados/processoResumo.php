@@ -30,11 +30,10 @@ foreach($data as $row)
     <div class="col-md-2"><b>Descrição: </b></div>
     <div class="col-md-10">'.$row['proces_obs']. '</div>
     <div class="col-md-2"><b>Adjudicatária: </b></div>
-    <div class="col-md-10 text-primary">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].'] - ['.$row["ent_alvara"].']</div>
-    <div class="col-md-2"><b>Estado: </b></div>
-    <div class="col-md-10">('.$row["proces_estado_data"].'): '.$row["proces_estado_nome"].'</div>
-    <div class="col-md-2"><b>Consignação: </b></div>
-    <div class="col-md-10 text-primary">'.$row["proces_csgn"].'</div>
+    <div class="col-md-10 text-primary">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].'] - ['.$row["ent_alvara"].']</div><div class="col-md-2"><mark class="bg-warning"><b>Estado: </b></mark></div>
+    <div class="col-md-10"><mark class="bg-warning">('.$row["proces_estado_data"].'): '.$row["proces_estado_nome"].'</mark></div>
+    <div class="col-md-2"><mark class="bg-warning"><b>Consignação: </b></mark></div>
+    <div class="col-md-10 text-primary"><mark class="bg-warning">'.$row["proces_csgn"].'</mark></div>
     <div class="col-md-2"><b>Prazo de Execução: </b></div>
     <div class="col-md-10">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
     
@@ -83,11 +82,11 @@ foreach($data as $row)
     <div class="col-md-2"><b>Reembolsável: </b></div>
     <div class="col-md-10">'.number_format($row['proces_cand_fundo'], 2, ',', '.').'€</div>
     <div class="col-md-2"><b>Adjudicado: </b></div>
-    <div class="col-md-10">('.$row["proces_data_adjudicacao"].'): '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
-    <div class="col-md-2"><b>Faturado: </b></div>
-    <div class="col-md-10 text-primary">'.number_format($row['proces_val_faturacao'], 2, ',', '.').'€</div>
-    <div class="col-md-2"><b>Reembolsado: </b></div>
-    <div class="col-md-10">'.number_format($row['proces_cand_recebido'], 2, ',', '.').'€</div>
+    <div class="col-md-10 text-primary">('.$row["proces_data_adjudicacao"].'): '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
+    <div class="col-md-2"><mark class="bg-warning"><b>Faturado: </b></div>
+    <div class="col-md-10"><mark class="bg-warning">'.number_format($row['proces_val_faturacao'], 2, ',', '.').'€</div>
+    <div class="col-md-2"><mark class="bg-warning"><b>Reembolsado: </b></div>
+    <div class="col-md-10"><mark class="bg-warning">'.number_format($row['proces_cand_recebido'], 2, ',', '.').'€</div>
   </div>
   <hr>';
 

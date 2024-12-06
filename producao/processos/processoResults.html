@@ -163,15 +163,16 @@
                 <div class="tab-pane p-20" id="financeiro" role="tabpanel" >
                   <div class="row">
                     <div class="col col-md-8">
-                      <div class="d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
-                      <!--div class="p-20" id="lstOrcamento"><b>Os dados do Orçamento são listado aqui...</b></div>-->
                       <div class="p-20" id="lstPagamentos"><b>Os dados do Plano de Pagamentos são listado aqui...</b></div>
-                      <!--div class="p-20" id="lstFaturacao"><b>Os dados de Faturação são listado aqui...</b></div-->
                     </div>
-                    <canvas class="col col-md-4 text-center" id="lstObraGrafico">
-                      <b >Um gráfico é representada aqui...</b>
+                    <canvas class="col col-md-4 text-center" id="lstObraGrafico"><b >Um gráfico é representada aqui...</b>
                       <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
                     </canvas>
+                  </div>
+                  <div class="card-body">
+                    <div class="row d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
+                    <h1 class="mt-2"></h1>
+                    <div class="row" id="lstObraCartoes"><b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b></div>
                   </div>
                   
                 </div>
@@ -181,8 +182,7 @@
                       <div class="p-20" id="lstGarantias"><b>Os valores cativos são listados aqui...</b></div>
                       <div class="p-20" id="lstFaturas"><b>As Faturas são listadas aqui...</b></div>
                     </div>
-                    <div class="col col-md-4 text-center" id="grafFaturacao">
-                      <b >Um gráfico é representada aqui...</b>
+                    <div class="col col-md-4 text-center" id="grafFaturacao"><b >Um gráfico é representada aqui...</b>
                       <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
                     </div>
                   </div>
@@ -205,11 +205,10 @@
   <script src="../../vendors/datatables/datatables.min.js"></script>
   <!-- Charts -->
   <script src="../../vendors/charts/Chart.min.js"></script>
-  <!-- Gauge-->
-  <!--script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@10.3.3/dist/umd/ag-charts-enterprise.js?t=1731495898171"></script-->
-
+  
   <script src="js/processoResults.js"></script>
   <script src="../../producao/obras/js/obraGraficos.js"></script>
+  <script src="../../producao/obras/js/obraCartoes.js"></script>
 
 
 </body>
