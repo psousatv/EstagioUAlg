@@ -72,42 +72,18 @@ console.log("Vistorias Vencidas", vistoriasVencidas);
             <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${programado['data_registo']}</h5>
-                <small class="badge badge-info">${programado['tipo']}</small>
+                <span class="badge badge-success">${programado['tipo']} - ${programado['actividade']}</span>
                 </div>
                 <li class="mb-1 small">${programado['designacao']}</li>
                 <ul>
-                    <li class="small"><b>Recepção Provisória em ${programado['recepcao']} </b></li>
+                    <li class="small"><b>Entidade: ${programado['entidade']}</b></li>
+                    <li class="small"><b>Recepção Provisória: ${programado['recepcao']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ </b></li>
                 </ul>
             </a>`;
             
         if(programado["mes"] > 0){
             containerProgramado.innerHTML += listaProgramado;
-
-        }
-    });
-
-    //Agendados
-    var containerAgendado = document.getElementById('agendado');
-    containerAgendado.innerHTML = "";
- 
-    vistoriasAgendadas.forEach((agendado) => {
-
-        var listaAgendado = `
-            <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">${agendado['data_registo']}</h5>
-                <small class="badge badge-info">${agendado['tipo']}</small>
-                </div>
-                <li class="mb-1 small">${agendado['designacao']}</li>
-                <ul>
-                    <li class="small"><b>Recepção Provisória em ${agendado['recepcao']} </b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ </b></li>
-                </ul>
-            </a>`;
-            
-        if(agendado["mes"] > 0){
-            containerAgendado.innerHTML += listaAgendado;
 
         }
     });
@@ -122,17 +98,44 @@ console.log("Vistorias Vencidas", vistoriasVencidas);
             <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${vencido['data_registo']}</h5>
-                <small class="badge badge-info">${vencido['tipo']}</small>
+                <small class="badge badge-danger">${vencido['tipo']} - ${vencido['actividade']}</small>
                 </div>
                 <li class="mb-1 small">${vencido['designacao']}</li>
                 <ul>
-                    <li class="small"><b>Recepção Provisória em ${vencido['recepcao']} </b></li>
+                    <li class="small"><b>Entidade: ${vencido['entidade']} </b></li>
+                    <li class="small"><b>Recepção Provisória: ${vencido['recepcao']} </b></li>
                     <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ </b></li>
                 </ul>
             </a>`;
             
         if(vencido["mes"] > 0){
             containerVencido.innerHTML += listaVencido;
+
+        }
+    });
+
+    //Agendados
+    var containerAgendado = document.getElementById('agendado');
+    containerAgendado.innerHTML = "";
+ 
+    vistoriasAgendadas.forEach((agendado) => {
+
+        var listaAgendado = `
+            <a class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${agendado['data_registo']}</h5>
+                <small class="badge badge-primary">${agendado['tipo']} - ${agendado['actividade']}</small>
+                </div>
+                <li class="mb-1 small">${agendado['designacao']}</li>
+                <ul>
+                    <li class="small"><b>Entidade: ${agendado['entidade']}</b></li>
+                    <li class="small"><b>Recepção Provisória: ${agendado['recepcao']}</b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ </b></li>
+                </ul>
+            </a>`;
+            
+        if(agendado["mes"] > 0){
+            containerAgendado.innerHTML += listaAgendado;
 
         }
     });

@@ -9,6 +9,7 @@ $sqlVistorias = "SELECT
 				historico_datamov AS data_registo,
 				MONTH(historico_datamov) AS mes,
 				historico_descr_nome AS tipo,
+				proces_orc_actividade AS actividade,
 				(SELECT historico_datamov FROM historico
 				WHERE historico_proces_check = proces_check AND historico_descr_cod = 26 LIMIT 1) as recepcao,
 				(SELECT historico_datamov FROM historico
