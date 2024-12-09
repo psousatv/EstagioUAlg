@@ -4,7 +4,9 @@
 var url = "dados/main.php";
 
 var resultados = [];
-var vistoriasNoAno = [];
+var vistoriasProgramadas = [];
+var vistoriasAgendadas = [];
+var vistoriasVencidas = [];
 
 
 //Funcção
@@ -15,33 +17,128 @@ function fetchData(){
 fetch(url)
 .then(response => {
     if(!response.ok){
-        throw new Error (document.getElementById('vistorias').innerHTML = response.statusText);    
+        throw new Error (document.getElementById('alerta').innerHTML = response.statusText);    
     }
     return response.json();
 })
-.then(data => {
-    resultados.push(...data);
+.then(returnedData => {
+    //resultados.push(...data);
 
-    //for(var i = 0; i < resultados.length; i++){
-    //    vistoriasNoAno.push(resultados[i].data);
-    //};
+    resultados = resultados.concat(returnedData);
 
-    resultados.forEach((resultado) =>{
-        data = new Date(resultado["data"]);
-        
+    var date = new Date();
+    var dia = date.getDate();
+    //var mes = date.getMonth();
 
-        if(data.getFullYear() == 2024){
-            vistoriasNoAno.push(resultado["data"]);
+    console.log("Dia: ", dia);
+
+    var mes = date.getMonth(); 
+
+   resultados.forEach((resultado) =>{
+        if(
+            mes == resultado["mes"] &&
+            resultado["doc"] == 'Programado' && 
+            resultado["obs"] == 'Programado') {
+                //vistoriasProgramadas.push(resultado["data_registo"]);
+                vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
+        } else if (
+            resultado["doc"] == 'Agendado' && 
+            resultado["obs"] == 'Agendado') {
+                //vistoriasAgendadas.push(resultado["data_registo"]);
+                vistoriasAgendadas = vistoriasAgendadas.concat(resultado);
+        }else if (
+            mes + 1 >= resultado["mes"] &&
+            resultado["doc"] == 'Programado' && 
+            resultado["obs"] == 'Programado') {
+                //vistoriasVencidas.push(resultado["data_registo"]);
+                vistoriasVencidas = vistoriasVencidas.concat(resultado);
+        };
+    });
+
+    console.log("Mês: ", mes);
+console.log("Vistorias Programadas", vistoriasProgramadas);
+console.log("Vistorias Agendadas", vistoriasAgendadas);
+console.log("Vistorias Vencidas", vistoriasVencidas);
+
+
+     // Envia os resultados para o Container correspondente
+     //Programados
+     var containerProgramado = document.getElementById('programado');
+     containerProgramado.innerHTML = "";
+ 
+    vistoriasProgramadas.forEach((programado) => {
+
+        var listaProgramado = `
+            <a class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${programado['data_registo']}</h5>
+                <small class="badge badge-info">${programado['tipo']}</small>
+                </div>
+                <li class="mb-1 small">${programado['designacao']}</li>
+                <ul>
+                    <li class="small"><b>Recepção Provisória em ${programado['recepcao']} </b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ </b></li>
+                </ul>
+            </a>`;
+            
+        if(programado["mes"] > 0){
+            containerProgramado.innerHTML += listaProgramado;
+
         }
     });
 
-    document.getElementById('vistorias').innerHTML = vistoriasNoAno;
+    //Agendados
+    var containerAgendado = document.getElementById('agendado');
+    containerAgendado.innerHTML = "";
+ 
+    vistoriasAgendadas.forEach((agendado) => {
 
+        var listaAgendado = `
+            <a class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${agendado['data_registo']}</h5>
+                <small class="badge badge-info">${agendado['tipo']}</small>
+                </div>
+                <li class="mb-1 small">${agendado['designacao']}</li>
+                <ul>
+                    <li class="small"><b>Recepção Provisória em ${agendado['recepcao']} </b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ </b></li>
+                </ul>
+            </a>`;
+            
+        if(agendado["mes"] > 0){
+            containerAgendado.innerHTML += listaAgendado;
 
-    //console.log("vistoriasNoAno: ",resultados);
+        }
+    });
+
+    //Vencidos
+    var containerVencido = document.getElementById('vencido');
+    containerVencido.innerHTML = "";
+ 
+    vistoriasVencidas.forEach((vencido) => {
+
+        var listaVencido = `
+            <a class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${vencido['data_registo']}</h5>
+                <small class="badge badge-info">${vencido['tipo']}</small>
+                </div>
+                <li class="mb-1 small">${vencido['designacao']}</li>
+                <ul>
+                    <li class="small"><b>Recepção Provisória em ${vencido['recepcao']} </b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ </b></li>
+                </ul>
+            </a>`;
+            
+        if(vencido["mes"] > 0){
+            containerVencido.innerHTML += listaVencido;
+
+        }
+    });
 
 })
     .catch(error => {
-        document.getElementById('vistorias').innerHTML = error;
+        document.getElementById('alerta').innerHTML = error;
     });
 };
