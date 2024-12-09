@@ -133,26 +133,29 @@
             <main>
                 <div class="container-fluid">
                     <h1 class="mt-2"></h1>
-                    <div class="breadcrumb d-flex justify-content-center">Vistorias</div>
+                    <span class="d-flex justify-content-center badge badge-pill badge-primary text-white"><h6>Vistorias</h6></span>
+                    <h1 class="mt-2"></h1>
+                    <!--div class="breadcrumb d-flex justify-content-center">Vistorias</div-->
                     <div id="alerta"></div>
                     <div class="row">
                         <!-- Coluna -->
                         <div class="card col-lg-4" >
-                            <mark class="d-flex justify-content-center bg-success text-white">Programado</mark>
+                            <span class="d-flex justify-content-center badge badge-success text-white"><h6>Programado</h6></span>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="programado"></ul>
                             </div>
                         </div>
                         <!-- Coluna -->
                         <div class="card col-lg-4">
-                            <mark class="d-flex justify-content-center bg-danger text-white">Em Atraso</mark>
+                            <span class="d-flex justify-content-center badge badge-danger text-white"><h6>Em Atraso</h6></span>
+                            
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="vencido"></ul>
                             </div>
                         </div>
                         <!-- Coluna -->
                         <div class="card col-lg-4" >
-                            <mark class="d-flex justify-content-center bg-primary text-white">Agendado</mark>
+                            <span class="d-flex justify-content-center badge badge-primary text-white"><h6>Agendado</h6></span>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="agendado"></ul>
                             </div>
@@ -180,8 +183,8 @@
     <script src="../../vendors/charts/Chart.min.js"></script>
 
 <!-- JS de Página -->
-    <!--script>document.getElementById("anoCorrente").value = new Date().getFullYear();</script-->    
-    <script src="js/main.js"></script>
+    <!--script src="js/main.js"></script-->
+    <script src="js/vistorias.js"></script>
     
 </body>
 </html>
