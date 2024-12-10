@@ -2,18 +2,16 @@
 //var params = new URLSearchParams(window.location.search);
 //var codigoProcesso = params.get("codigoProcesso"); 
 var url = "dados/main.php";
-
 var resultados = [];
 var vistoriasProgramadas = [];
 var vistoriasAgendadas = [];
 var vistoriasVencidas = [];
 
-
 //Funcção
-fetchData();
+vistorias();
 
 // Fetch JSON data from the PHP script
-function fetchData(){
+function vistorias(){
 fetch(url)
 .then(response => {
     if(!response.ok){
@@ -23,6 +21,7 @@ fetch(url)
 })
 .then(returnedData => {
     //resultados.push(...data);
+    document.getElementById("alerta").style.display = "none";
 
     resultados = resultados.concat(returnedData);
 
@@ -42,7 +41,7 @@ fetch(url)
                 //vistoriasProgramadas.push(resultado["data_registo"]);
                 vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
         } else if (
-            resultado["doc"] == 'Agendado' && 
+            resultado["doc"] != 'Programado' && 
             resultado["obs"] == 'Agendado') {
                 //vistoriasAgendadas.push(resultado["data_registo"]);
                 vistoriasAgendadas = vistoriasAgendadas.concat(resultado);

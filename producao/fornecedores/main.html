@@ -130,48 +130,71 @@
         </div>
 
         <div id="layoutSidenav_content">
-            <main>
-                <div class="container-fluid">
-                    <h1 class="mt-2"></h1>
-                    <span class="d-flex justify-content-center badge badge-pill badge-primary text-white"><h6>Vistorias</h6></span>
-                    <h1 class="mt-2"></h1>
-                    <!--div class="breadcrumb d-flex justify-content-center">Vistorias</div-->
-                    <div id="alerta"></div>
-                    <div class="row">
-                        <!-- Coluna -->
-                        <div class="card col-lg-4" >
+            <div class="container-fluid">
+                <h1 class="mt-2"></h1>
+                <div class="alert alert-warning" id="alerta"></div>
+                <!-- Garantias-->
+                <h1 class="mt-2"></h1>
+                <span class="d-flex justify-content-center badge badge-pill badge-warning"><h6>Valores Retidos</h6></span>
+                <h1 class="mt-2"></h1>
+                
+                <div class="row"><!-- Linha -->
+                    <div class="col col-lg-12"><!-- Coluna -->
+                        <div class="card">
+                            <!--div class="col-sm-12"-->
+                                <div class="d-flex">
+                                    <div class="mr-auto p-1 bg-primary text-white">(158) Barra & Apolo, Lda [513895230] - [81641-PUB]<!--/div-->
+                                        <span class="ml-auto p-0 bg-primary text-white">
+                                            <span class="badge badge-light">16</span>
+                                            Processos
+                                        </span>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div><!-- Fim Linha -->
+                <!-- Vistorias-->
+                <h1 class="mt-2"></h1>
+                <span class="d-flex justify-content-center badge badge-pill badge-warning"><h6>Vistorias</h6></span>
+                <h1 class="mt-2"></h1>
+                
+                <div class="row"><!-- Linha -->
+                    <div class="col col-lg-4"><!-- Coluna -->
+                        <div class="card" >
                             <span class="d-flex justify-content-center badge badge-success text-white"><h6>Programado</h6></span>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="programado"></ul>
                             </div>
                         </div>
-                        <!-- Coluna -->
-                        <div class="card col-lg-4">
+                    </div>
+                    <div class="col col-lg-4"><!-- Coluna -->
+                        <div class="card" >
                             <span class="d-flex justify-content-center badge badge-danger text-white"><h6>Em Atraso</h6></span>
                             
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="vencido"></ul>
                             </div>
                         </div>
-                        <!-- Coluna -->
-                        <div class="card col-lg-4" >
+                    </div>
+                    <div class="col col-lg-4"><!-- Coluna -->
+                        <div class="card" >
                             <span class="d-flex justify-content-center badge badge-primary text-white"><h6>Agendado</h6></span>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="agendado"></ul>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Fim Container -->
-            </main>
-        </div>
-    </div>
+                </div><!-- Fim Linha -->
+            </div><!-- Fim Container Fluid -->
+        </div><!-- Fim Sidenav Content -->
+    </div><!-- Fim Sidenav Lateral -->
+</div><!-- Fim Sidenav -->
 
     <!-- Global -->
     <script src="../../global/js/scripts.js"></script>
     <!-- JQuery -->
     <!--script src="../../vendors/jquery/jquery-3.7.0.js"></script-->
-    <script src="../../vendors/jquery/jquery.min.js"></script>
+    <script src="../../vendors/jquery/jquery370.js"></script>
     <!-- Bootstrap -->
     <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
     <!-- Fontawesome -->
