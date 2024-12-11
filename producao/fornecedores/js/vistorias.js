@@ -1,7 +1,7 @@
 
 //var params = new URLSearchParams(window.location.search);
 //var codigoProcesso = params.get("codigoProcesso"); 
-var url = "dados/main.php";
+var url = "dados/fornVistorias.php";
 var resultados = [];
 var vistoriasProgramadas = [];
 var vistoriasAgendadas = [];
@@ -62,10 +62,13 @@ fetch(url)
     vistoriasProgramadas.forEach((programado) => {
 
         var listaProgramado = `
-            <a class="list-group-item flex-column align-items-start" onclick="redirectProcesso(${programado['processo']})">
+            <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">${programado['data_registo']}</h5>
-                <span class="badge badge-success">${programado['tipo']} - ${programado['actividade']}</span>
+                    <h5 class="mb-1">${programado['data_registo']}</h5>
+                    <span class="badge badge-success">${programado['tipo']} - ${programado['actividade']}</span>
+                    <span>
+                    <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
+                    </span>
                 </div>
                 <li class="mb-1 small">[${programado['processo']}] ${programado['designacao']}</li>
                 <ul>
@@ -92,6 +95,9 @@ fetch(url)
                 <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${vencido['data_registo']}</h5>
                 <small class="badge badge-danger">${vencido['tipo']} - ${vencido['actividade']}</small>
+                <span>
+                    <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
+                    </span>
                 </div>
                 <li class="mb-1 small">[${vencido['processo']}] ${vencido['designacao']}</li>
                 <ul>
@@ -118,6 +124,9 @@ fetch(url)
                 <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${agendado['data_registo']}</h5>
                 <small class="badge badge-primary">${agendado['tipo']} - ${agendado['actividade']}</small>
+                <span>
+                    <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
+                    </span>
                 </div>
                 <li class="mb-1 small">[${agendado['processo']}] ${agendado['designacao']}</li>
                 <ul>
