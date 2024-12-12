@@ -74,7 +74,7 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${programado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${programado['recepcao']}</b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ </b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ [${programado['doc_num']}]</b></li>
                 </ul>
             </a>`;
             
@@ -91,19 +91,19 @@ fetch(url)
     vistoriasVencidas.forEach((vencido) => {
 
         var listaVencido = `
-            <a class="list-group-item flex-column align-items-start" onclick="redirectProcesso(${vencido['processo']})">
+            <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${vencido['data_registo']}</h5>
                 <small class="badge badge-danger">${vencido['tipo']} - ${vencido['actividade']}</small>
                 <span>
-                    <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
+                    <i class="fa fa-binoculars" onclick="redirectProcesso(${vencido['processo']})"></i>
                     </span>
                 </div>
                 <li class="mb-1 small">[${vencido['processo']}] ${vencido['designacao']}</li>
                 <ul>
                     <li class="small"><b>Entidade: ${vencido['entidade']} </b></li>
                     <li class="small"><b>Recepção Provisória: ${vencido['recepcao']} </b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ </b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ [${vencido['doc_num']}] </b></li>
                 </ul>
             </a>`;
             
@@ -120,19 +120,19 @@ fetch(url)
     vistoriasAgendadas.forEach((agendado) => {
 
         var listaAgendado = `
-            <a class="list-group-item flex-column align-items-start" onclick="redirectProcesso(${agendado['processo']})">
+            <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${agendado['data_registo']}</h5>
                 <small class="badge badge-primary">${agendado['tipo']} - ${agendado['actividade']}</small>
                 <span>
-                    <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
+                    <i class="fa fa-binoculars" onclick="redirectProcesso(${agendado['processo']})"></i>
                     </span>
                 </div>
                 <li class="mb-1 small">[${agendado['processo']}] ${agendado['designacao']}</li>
                 <ul>
                     <li class="small"><b>Entidade: ${agendado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${agendado['recepcao']}</b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ </b></li>
+                    <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ [${agendado['doc_num']}] </b></li>
                 </ul>
             </a>`;
             

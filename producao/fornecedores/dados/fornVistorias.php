@@ -16,6 +16,7 @@ $sqlVistorias = "SELECT
 				WHERE historico_proces_check = proces_check AND historico_descr_cod = 25 LIMIT 1) as vistoria,
 				historico_valor AS valor,
 				historico_doc AS doc,
+				historico_num AS doc_num,
 				historico_obs AS obs
 				FROM historico
 				INNER JOIN processo ON proces_check = historico_proces_check
