@@ -11,9 +11,11 @@ $sqlVistorias = "SELECT
 				historico_descr_nome AS tipo,
 				proces_orc_actividade AS actividade,
 				(SELECT historico_datamov FROM historico
-				WHERE historico_proces_check = proces_check AND historico_descr_cod = 26 LIMIT 1) as recepcao,
+				WHERE historico_proces_check = proces_check AND historico_descr_cod = 26 
+				ORDER BY historico_datamov DESC LIMIT 1) AS recepcao,
 				(SELECT historico_datamov fROM historico
-				WHERE historico_proces_check = proces_check AND historico_descr_cod = 25 LIMIT 1) as vistoria,
+				WHERE historico_proces_check = proces_check AND historico_descr_cod = 25 
+				ORDER BY historico_datamov DESC LIMIT 1) AS vistoria,
 				historico_valor AS valor,
 				historico_doc AS doc,
 				historico_num AS doc_num,
