@@ -15,42 +15,57 @@ function vistorias(){
 fetch(url)
 .then(response => {
     if(!response.ok){
-        throw new Error (document.getElementById('alerta').innerHTML = response.statusText);    
+        throw new Error (document.getElementById('lstErros').innerHTML = response.statusText);    
     }
     return response.json();
 })
 .then(returnedData => {
     //resultados.push(...data);
-    document.getElementById("alerta").style.display = "none";
+    document.getElementById("lstErros").style.display = "none";
 
     resultados = resultados.concat(returnedData);
 
     var date = new Date();
     var dia = date.getDate();
-    //var mes = date.getMonth();
+    var mes = parseInt(date.getMonth());
 
-    console.log("Dia: ", dia);
+    //console.log("Mês: ", mes);
 
-    var mes = date.getMonth(); 
 
    resultados.forEach((resultado) =>{
+    //Programado - se o mês registado é o mês atual
         if(
-            mes == resultado["mes"] &&
+            parseInt(resultado["mes"]) == mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
+                if(resultado["recepcao"] == null) {
+                    resultado["recepcao"] == 'n.a.'
+                };
                 //vistoriasProgramadas.push(resultado["data_registo"]);
                 vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
+                //console.log("Programadas", resultado);
         } else if (
-            resultado["doc"] != 'Programado' && 
+        // Agendadas - Se o mês registado é superior ao mês atual
+            //parseInt(resultado["mes"]) >= mes &&
+            resultado["doc"] == 'Agendado' && 
             resultado["obs"] == 'Agendado') {
+                if(resultado["recepcao"] == null) {
+                    resultado["recepcao"] == 'n.a.'
+                };
                 //vistoriasAgendadas.push(resultado["data_registo"]);
                 vistoriasAgendadas = vistoriasAgendadas.concat(resultado);
+                //console.log("Agendadas", resultado);
         }else if (
-            mes + 1 >= resultado["mes"] &&
+        // Vencidas - Se o mes registado é inferior ao mês atual
+            parseInt(resultado["mes"]) <= mes + 1 &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
+                if(resultado["recepcao"] === null) {
+                    resultado["recepcao"] == 'n.a.'
+                };
                 //vistoriasVencidas.push(resultado["data_registo"]);
                 vistoriasVencidas = vistoriasVencidas.concat(resultado);
+                //console.log("Vencidas", resultado);
         };
     });
 
@@ -144,7 +159,7 @@ fetch(url)
 
 })
     .catch(error => {
-        document.getElementById('alerta').innerHTML = error;
+        document.getElementById('lstErros').innerHTML = error;
     });
 };
 
