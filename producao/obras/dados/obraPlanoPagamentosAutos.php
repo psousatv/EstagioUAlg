@@ -10,8 +10,9 @@ $sqlPlanoPagamentosAutos = "SELECT
             pp_auto_num AS auto_num,
             pp_valor_previsto AS valor_previsto,
             pp_mes_realizado AS mes_realizado,
-            pp_valor_realizado AS valor_realizado,
-            pp_doc_realizado AS justificativo
+            pp_valor_auto AS valor_auto,
+            pp_valor_faturado AS valor_faturado,
+            pp_doc_gerado AS documento
             FROM plano_pagamentos
             WHERE  pp_proces_check = '" .$codigoProcesso. "'";
 

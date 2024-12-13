@@ -31,8 +31,8 @@ fetch(url)
         //Calculo de percentagem por Auto
         if(resultado["valor_previsto"] == null){
             realizado == 0;
-        } else if (resultado["valor_realizado"] != 0 && resultado["valor_previsto"] != 0 ){
-            realizado = (resultado["valor_realizado"] / resultado["valor_previsto"]) * 100;
+        } else if (resultado["valor_faturado"] != 0 && resultado["valor_previsto"] != 0 ){
+            realizado = (resultado["valor_faturado"] / resultado["valor_previsto"]) * 100;
         }  else {
             realizado == 0;
         };
@@ -62,10 +62,10 @@ fetch(url)
                 <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
                         <p class="mb-0 small text-white">
-                            ${resultado["justificativo"]}
+                            ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
                         </p>
                         <!--Faturado-->
-                        <h6>${Number(resultado["valor_realizado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h6>
+                        <h6>${Number(resultado["valor_faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h6>
                         <!--Plano de Pagamenos-->
                         <h6>${Number(resultado["valor_previsto"]).toLocaleString('pt')}€</h6>
                     </div>
@@ -77,14 +77,14 @@ fetch(url)
         `;
 
         // Append newyly created card element to the container
-        if(resultado["valor_realizado"] > 0){
+        if(resultado["valor_faturado"] > 0){
             containerCartoesAutos.innerHTML += obraAutosCartoes;
         }});
 
     
         for(var i=0; i<resultados.length; i++){
-            if(resultados[i]['valor_realizado'] > 0){
-                faturado.push(resultados[i]["valor_realizado"]);
+            if(resultados[i]['valor_faturado'] > 0){
+                faturado.push(resultados[i]["valor_faturado"]);
                 previsto.push(resultados[i]["valor_previsto"]);
         }
         };
@@ -135,7 +135,7 @@ fetch(url)
                 
     })
     .catch(error => {
-        document.getElementById('lstObraGrafico').innerHTML = error;
+        document.getElementById('lstErros').innerHTML = error;
         //console.error("Error fetching the data:", error);
     });
 

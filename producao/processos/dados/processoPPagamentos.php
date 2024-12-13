@@ -31,21 +31,21 @@ $previsao = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //Realização
 $processoPlanoPagamentosRealizado = "SELECT
                       pp_ano AS 'Ano',
-                      sum(if((pp_proces_check = pp_proces_check), round(pp_valor_realizado,2),0)) AS 'Acumulado',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 1),round(pp_valor_realizado,2),0)) AS 'Jan',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 2),round(pp_valor_realizado,2),0)) AS 'Fev',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 3),round(pp_valor_realizado,2),0)) AS 'Mar',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 4),round(pp_valor_realizado,2),0)) AS 'Abr',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 5),round(pp_valor_realizado,2),0)) AS 'Mai',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 6),round(pp_valor_realizado,2),0)) AS 'Jun',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 7),round(pp_valor_realizado,2),0)) AS 'Jul',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 8),round(pp_valor_realizado,2),0)) AS 'Ago',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 9),round(pp_valor_realizado,2),0)) AS 'Set',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 10),round(pp_valor_realizado,2),0)) AS 'Out',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 11),round(pp_valor_realizado,2),0)) AS 'Nov',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 12),round(pp_valor_realizado,2),0)) AS 'Dez'
+                      sum(if((pp_proces_check = pp_proces_check), round(pp_valor_faturado,2),0)) AS 'Acumulado',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 1),round(pp_valor_faturado,2),0)) AS 'Jan',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 2),round(pp_valor_faturado,2),0)) AS 'Fev',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 3),round(pp_valor_faturado,2),0)) AS 'Mar',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 4),round(pp_valor_faturado,2),0)) AS 'Abr',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 5),round(pp_valor_faturado,2),0)) AS 'Mai',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 6),round(pp_valor_faturado,2),0)) AS 'Jun',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 7),round(pp_valor_faturado,2),0)) AS 'Jul',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 8),round(pp_valor_faturado,2),0)) AS 'Ago',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 9),round(pp_valor_faturado,2),0)) AS 'Set',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 10),round(pp_valor_faturado,2),0)) AS 'Out',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 11),round(pp_valor_faturado,2),0)) AS 'Nov',
+                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 12),round(pp_valor_faturado,2),0)) AS 'Dez'
                       FROM plano_pagamentos
-                      WHERE pp_valor_realizado > 0  AND pp_proces_check = '" .$codigoProcesso. "'
+                      WHERE pp_valor_faturado > 0  AND pp_proces_check = '" .$codigoProcesso. "'
                       GROUP BY pp_ano
                       ORDER BY pp_ano, pp_auto_realizado" ;
 

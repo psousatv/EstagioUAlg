@@ -16,7 +16,7 @@ function fetchData(){
 fetch(url)
 .then(response => {
     if(!response.ok){
-        throw new Error (document.getElementById('lstObraGrafico').innerHTML = response.statusText);    
+        throw new Error (document.getElementById('lstErros').innerHTML = response.statusText);    
     }
     return response.json();
 })
@@ -27,7 +27,7 @@ fetch(url)
         
         labelsGrafico.push(resultado[i].mes_previsto);
         xPrevisto.push(resultado[i]['valor_previsto']);
-        xRealizado.push(resultado[i]['valor_realizado']);
+        xRealizado.push(resultado[i]['valor_faturado']);
 
         //Gráfico
         var ctx = document.getElementById('lstObraGrafico').getContext('2d');
@@ -71,7 +71,7 @@ fetch(url)
     };
 })
     .catch(error => {
-        document.getElementById('lstObraGrafico').innerHTML = error;
+        document.getElementById('lstErros').innerHTML = error;
     });
 };
 
