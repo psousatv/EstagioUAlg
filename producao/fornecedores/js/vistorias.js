@@ -27,15 +27,18 @@ fetch(url)
 
     var date = new Date();
     var dia = date.getDate();
-    var ano = date.getFullYear().toString();
-    var mes = date.getMonth().toString();
+    var ano = date.getFullYear();
+    var mes = date.getMonth();
+
+    console.log("Ano", ano);
+    console.log("Mes", mes);   
     
 
    resultados.forEach((resultado) =>{
     //Programado - se o mês registado é o mês atual
         if(
             resultado["ano"] >= ano &&
-            resultado["mes"] >= mes &&
+            resultado["mes"] > mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
                 if(resultado["recepcao"] == null) {
@@ -58,7 +61,7 @@ fetch(url)
         }else if (
         // Vencidas - Se o mes registado é inferior ao mês atual
             resultado["ano"] <= ano &&
-            resultado["mes"] < mes &&
+            resultado["mes"] <= mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
                 if(resultado["recepcao"] == null) {
