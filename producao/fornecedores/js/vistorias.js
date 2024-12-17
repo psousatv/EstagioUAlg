@@ -99,6 +99,7 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${programado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${programado['recepcao']}</b></li>
+                    <li class="small"><b>Pedido: ${programado['doc']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ [${programado['doc_num']}]</b></li>
                 </ul>
             </a>`;
@@ -128,6 +129,7 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${vencido['entidade']} </b></li>
                     <li class="small"><b>Recepção Provisória: ${vencido['recepcao']} </b></li>
+                    <li class="small"><b>Pedido: ${vencido['doc']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ [${vencido['doc_num']}] </b></li>
                 </ul>
             </a>`;
@@ -158,6 +160,7 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${agendado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${agendado['recepcao']}</b></li>
+                    <li class="small"><b>Pedido: ${agendado['doc']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ [${agendado['doc_num']}] </b></li>
                 </ul>
             </a>`;
