@@ -66,7 +66,11 @@ fetch(url)
                 //vistoriasVencidas.push(resultado["data_registo"]);
                 vistoriasVencidas = vistoriasVencidas.concat(resultado);
                 //console.log("Vencidas", resultado);
-        };
+        } else {
+            //vistoriasVencidas.push(resultado["data_registo"]);
+            vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
+            //console.log("Vencidas", resultado);
+            };
     });
 
      // Envia os resultados para o Container correspondente
