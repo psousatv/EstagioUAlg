@@ -1,7 +1,7 @@
 
 //var params = new URLSearchParams(window.location.search);
 //var codigoProcesso = params.get("codigoProcesso"); 
-var url = "dados/fornVistorias.php";
+var url = "dados/fornecedoresVistorias.php";
 var resultados = [];
 var vistoriasProgramadas = [];
 var vistoriasAgendadas = [];
@@ -27,15 +27,15 @@ fetch(url)
 
     var date = new Date();
     var dia = date.getDate();
-    var mes = parseInt(date.getMonth());
-
-    //console.log("Mês: ", mes);
-
+    var ano = date.getFullYear().toString();
+    var mes = date.getMonth().toString();
+    
 
    resultados.forEach((resultado) =>{
     //Programado - se o mês registado é o mês atual
         if(
-            parseInt(resultado["mes"]) == mes &&
+            resultado["ano"] >= ano &&
+            resultado["mes"] >= mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
                 if(resultado["recepcao"] == null) {
@@ -57,29 +57,32 @@ fetch(url)
                 //console.log("Agendadas", resultado);
         }else if (
         // Vencidas - Se o mes registado é inferior ao mês atual
-            parseInt(resultado["mes"]) <= mes + 1 &&
+            resultado["ano"] <= ano &&
+            resultado["mes"] < mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
-                if(resultado["recepcao"] === null) {
+                if(resultado["recepcao"] == null) {
                     resultado["recepcao"] == 'n.a.'
                 };
-                //vistoriasVencidas.push(resultado["data_registo"]);
                 vistoriasVencidas = vistoriasVencidas.concat(resultado);
-                //console.log("Vencidas", resultado);
         } else {
-            //vistoriasVencidas.push(resultado["data_registo"]);
+                 
             vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
-            //console.log("Vencidas", resultado);
             };
     });
+
+
+    console.log("Programadas", vistoriasProgramadas);
+    console.log("Agendados", vistoriasAgendadas);
+    console.log("Vencidas", vistoriasVencidas);
 
      // Envia os resultados para o Container correspondente
      //Programados
      var containerProgramado = document.getElementById('programado');
      containerProgramado.innerHTML = "";
- 
-    vistoriasProgramadas.forEach((programado) => {
+     var vistoriasProgramadasNum = vistoriasProgramadas.length;
 
+    vistoriasProgramadas.forEach((programado) => {
         var listaProgramado = `
             <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
@@ -97,15 +100,15 @@ fetch(url)
                 </ul>
             </a>`;
             
-        if(programado["mes"] > 0){
+        if(parseInt(programado["ano"]) > 0){
             containerProgramado.innerHTML += listaProgramado;
-
         }
     });
 
     //Vencidos
     var containerVencido = document.getElementById('vencido');
     containerVencido.innerHTML = "";
+    var vistoriasVencidasNum = vistoriasVencidas.length;
  
     vistoriasVencidas.forEach((vencido) => {
 
@@ -126,7 +129,7 @@ fetch(url)
                 </ul>
             </a>`;
             
-        if(vencido["mes"] > 0){
+        if(vencido["ano"] > 0){
             containerVencido.innerHTML += listaVencido;
 
         }
@@ -135,6 +138,7 @@ fetch(url)
     //Agendados
     var containerAgendado = document.getElementById('agendado');
     containerAgendado.innerHTML = "";
+    var vistoriasAgendadasNum = vistoriasAgendadas.length;
  
     vistoriasAgendadas.forEach((agendado) => {
 
@@ -155,9 +159,8 @@ fetch(url)
                 </ul>
             </a>`;
             
-        if(agendado["mes"] > 0){
+        if(agendado["ano"] > 0){
             containerAgendado.innerHTML += listaAgendado;
-
         }
     });
 
