@@ -50,7 +50,7 @@ fetch(url)
         } else if (
         // Agendadas - Se o mês registado é superior ao mês atual
             //parseInt(resultado["mes"]) >= mes &&
-            resultado["doc"] == 'Agendado' && 
+            resultado["doc"] != 'Programado' && 
             resultado["obs"] == 'Agendado') {
                 if(resultado["recepcao"] == null) {
                     resultado["recepcao"] == 'n.a.'

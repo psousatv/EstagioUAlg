@@ -71,13 +71,13 @@ echo '
   <h1 class="mt-2"></h1>
     <div class="col col-md-12">
       <div class="row">
-        <table class="table table-responsive table-striped small">
+        <table class="table table-responsive table-striped small text-center">
         <tr>
           <th>Estado</th>
           <th>DEP</th>
           <th>PADM</th>
           <th>Processo</th>
-          <th!-->Orçamento</th-->
+          <th>Base</th>
           <th>Adjudicado</th>
           <th>Faturado</th>
           <th>Financiado</th>
@@ -90,12 +90,12 @@ echo '
           <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
           <td>'.$row["proces_nome"].'</td>';
           if($row["proces_val_faturacao"] == 0){
-    echo '<!--td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td-->';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
     echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
           } else {
-    echo '<!--td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td-->';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
     echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
