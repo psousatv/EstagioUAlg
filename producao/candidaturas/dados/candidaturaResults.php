@@ -71,7 +71,7 @@ echo '
   <h1 class="mt-2"></h1>
     <div class="col col-md-12">
       <div class="row">
-        <table class="table table-responsive table-striped small text-center">
+        <table class="table table-responsive table-striped small">
         <tr>
           <th>Estado</th>
           <th>DEP</th>
