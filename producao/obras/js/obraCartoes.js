@@ -9,7 +9,6 @@ var faturado = [];
 var previsto = []; //regista a previsão até ao último auto
 var previstoGlobal = []; //regista a previsão total
 
-
 // Fetch JSON data from the PHP script
 fetch(url)
     .then(response => response.json())  // Parse the JSON response
@@ -57,7 +56,7 @@ fetch(url)
         };
        
         var obraAutosCartoes = `     
-            <div onclick="obraAuto('${resultado["auto_num"]}')" 
+            <div onclick="obraAuto('${codigoProcesso}','${resultado["auto_num"]}')" 
             class="card col-md-3 ${classeCartao}">
                 <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
@@ -96,7 +95,7 @@ fetch(url)
         var grauExecucaoGlobal = 0;
 
 
-        //Calculo de percentagem da obra
+    //Calculo de percentagem da obra
     if(totalPrevisto == null){
         grauExecucaoRealizado == 0;
         grauExecucaoGlobal == 0;
@@ -105,6 +104,7 @@ fetch(url)
         grauExecucaoGlobal = ((totalFaturado / totalObra) * 100).toFixed(2);
     };
 
+    var autos = faturado.length; 
     
     var containerGrauExecucao = document.getElementById('cartaoGrauExecucao');
     containerGrauExecucao.innerHTML = "";
@@ -122,7 +122,7 @@ fetch(url)
         <div class="d-flex justify-content-center col-sm-4 bg-primary text-white ">
             <div class="d-flex justify-content-between px-md-1">
                 <div class="text-center">
-                    <p class="mb-0 small">Grau de Execução</p>
+                    <p class="mb-0 small">Grau de Execução até ao auto n.º ${autos}</p>
                     <h3>${Number(grauExecucaoRealizado).toLocaleString('pt')}%</h3>
                     <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalPrevisto).toLocaleString('pt')}€</h6>
                 </div>
@@ -140,3 +140,18 @@ fetch(url)
     });
 
 
+//var auto = 10
+
+function obraAuto(codigoProcesso,auto){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("lstOutros").innerHTML = this.responseText;
+      }
+    }
+    
+    url = "dados/obraMapaSituacaoAuto.php" + "?codigoProcesso=" + codigoProcesso + "&auto=" + auto;
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+};

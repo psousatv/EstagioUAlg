@@ -31,7 +31,6 @@ $valorAutos = array_sum(array_column($data, "valor_executado"));
 
 //Mapa Trabalhos
 echo "
-<b>Mapa de Situação » ".number_format($valorAutos, 2, ",", ".")."€</b>
 <table class='table table-hover small'>
 <tr style='text-align: center'>
   <colgroup>
@@ -40,7 +39,9 @@ echo "
     <col span='2' style='background-color: pink'>
   </colgroup>
   <tr style='text-align: center'>
-    <th colspan='4'></th>
+    <th colspan='4' style='text-align: left'>
+      <b>Mapa de Situação » ".number_format($valorAutos, 2, ",", ".")."€</b>
+    </th>
     <th colspan='3'>Proposto</th>
     <th colspan='2'>Executado</th>
     <th colspan='4'>Não Executado</th>

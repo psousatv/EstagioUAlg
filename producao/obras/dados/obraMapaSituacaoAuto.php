@@ -3,9 +3,9 @@
 include "../../../global/config/dbConn.php";
 
 $codigoProcesso = intval($_GET['codigoProcesso']);
-//$q = $_GET['q'];
+$auto = intval($_GET['auto']);
 
-//Mapa de Trabalhos
+//Mapa de Trabalhos - Auto n.º
 $mapaAutos = "SELECT
                 mt_linha AS ordem,
                 mt_conta AS tipo_conta,
@@ -15,13 +15,13 @@ $mapaAutos = "SELECT
                 mt_qt AS quantidade_proposto,
                 mt_pu_obra AS preco_unitario_proposto,
                 mt_val_obra AS valor_proposto,
-                SUM(CASE WHEN mt_indexador = auto_indexador THEN auto_qt ELSE 0 END) AS quantidade_executado,
+                CASE WHEN mt_indexador = auto_indexador THEN auto_qt ELSE 0 END AS quantidade_executado,
                 auto_punit AS preco_unitario_executado,
-                SUM(CASE WHEN mt_indexador = auto_indexador THEN auto_valor ELSE 0 END) AS valor_executado
+                CASE WHEN mt_indexador = auto_indexador THEN auto_valor ELSE 0 END AS valor_executado
                 FROM mapa_trabalhos
                 LEFT JOIN obra_autos ON auto_indexador = mt_indexador
-                WHERE mt_check = '" .$codigoProcesso. "'
-                GROUP BY mt_item, mt_indexador 
+                WHERE mt_check = '" .$codigoProcesso. "' AND auto_num = '" .$auto. "'
+                 
                 ORDER BY ordem" ;
 
 $stmt = $myConn->query($mapaAutos);
@@ -31,16 +31,17 @@ $valorAutos = array_sum(array_column($data, "valor_executado"));
 
 //Mapa Trabalhos
 echo "
-<b>Mapa de Situação » ".number_format($valorAutos, 2, ",", ".")."€</b>
 <table class='table table-hover small'>
 <tr style='text-align: center'>
   <colgroup>
-    <col span='4'>  
+    <col span='4'>
     <col span='3' style='background-color: #D6EEEE'>
     <col span='2' style='background-color: pink'>
   </colgroup>
   <tr style='text-align: center'>
-    <th colspan='4'></th>
+    <th colspan='4' style='text-align: left'>
+    <b>Valor do Auto n.º ".$auto." » ".number_format($valorAutos, 2, ",", ".")."€</b>
+    </th>
     <th colspan='3'>Proposto</th>
     <th colspan='2'>Executado</th>
     <th colspan='4'>Não Executado</th>

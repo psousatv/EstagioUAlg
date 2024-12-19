@@ -28,7 +28,7 @@ $valorTrabalhos = array_sum(array_column($data, "valor_empreiteiro"));
 
 //Mapa Trabalhos
 echo "
-<b>Mapa de Trabalhos » ".number_format($valorTrabalhos, 2, ",", ".")."€</b>
+
 <table class='table table-responsive table-hover small'>
   <tr style='text-align: center'>
   <colgroup>
@@ -38,7 +38,9 @@ echo "
     <col span='3' style='background-color: #D6EEEE'>
   </colgroup>
   <tr style='text-align: center'>
-    <th colspan='5'></th>
+    <th colspan='5' style='text-align: left'>
+    <b>Mapa de Trabalhos » ".number_format($valorTrabalhos, 2, ",", ".")."€</b>
+    </th>
     <th colspan='3'>Orçamento</th>
     <th colspan='2'>Proposto</th>
     <th colspan='3'>Variação</th>
