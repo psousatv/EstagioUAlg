@@ -1,6 +1,6 @@
 
 
-function candidaturaSelected() { 
+function candidaturaSelected(nomeCandidatura) { 
 
   var params = new URLSearchParams(window.location.search);
   var nomeCandidatura = params.get("nomeCandidatura"); 
