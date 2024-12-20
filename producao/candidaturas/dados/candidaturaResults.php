@@ -29,7 +29,17 @@ $sqlProcessosCandidatura = "SELECT *,
                             (SELECT
                             SUM(fact_valor)
                             FROM factura
-                            WHERE fact_proces_check = proces_check ) AS faturado
+                            WHERE fact_proces_check = proces_check ) AS faturado,
+                            (SELECT
+                            SUM(fact_finan_fundo)
+                            FROM factura
+                            WHERE fact_proces_check = proces_check AND
+                            fact_finan_pp LIKE 'PP%') AS pedido,
+                            (SELECT
+                            SUM(fact_finan_pago)
+                            FROM factura
+                            WHERE fact_proces_check = proces_check AND
+                            fact_finan_pp LIKE 'PP%') AS pago
                             FROM processo
                             INNER JOIN departamento ON dep_cod = proces_departamento
                             WHERE proces_cand LIKE '%".$nomeCandidatura."%'
@@ -80,7 +90,8 @@ echo '
           <th>Base</th>
           <th>Adjudicado</th>
           <th>Faturado</th>
-          <th>Financiado</th>
+          <th>Pedido</th>
+          <th>Reembolsado</th>
         </tr>';
   foreach($procesosCandidatura as $row) {
   echo '
@@ -93,12 +104,14 @@ echo '
     echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
     echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["pago"], 2, ",", ".").'€</td>';
           } else {
     echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
     echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
     echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_cand_recebido"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
+    echo '<td class="bg-primary text-white text-right">'.number_format($row["pago"], 2, ",", ".").'€</td>';
           }
     };
   echo '
