@@ -30,8 +30,8 @@ fetch(url)
     var ano = date.getFullYear();
     var mes = date.getMonth();
 
-    console.log("Ano", ano);
-    console.log("Mes", mes);   
+    //console.log("Ano", ano);
+    //console.log("Mes", mes);   
     
 
    resultados.forEach((resultado) =>{

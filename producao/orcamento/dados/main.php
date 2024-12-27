@@ -5,7 +5,7 @@ include "../../../global/config/dbConn.php";
 if(isset($_GET['anoCorrente'])){
       $anoCorrente = intval($_GET['anoCorrente']);
 } else {
-      $anoCorrente = date('Y');
+      $anoCorrente = date('Y')+1;
 };
 
 // dados para dashCandidaturas sem interações - Search ou outras
