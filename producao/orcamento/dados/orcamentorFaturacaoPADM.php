@@ -6,7 +6,7 @@ $orcamentoItem = $_GET['orcamentoItem'];
 if(isset($_GET['anoCorrente'])){
   $anoCorrente = $_GET['anoCorrente'];
 } else {
-  $anoCorrente = date('Y');
+  $anoCorrente = date('Y') + 1;
 };
 
 //Histórico Processos

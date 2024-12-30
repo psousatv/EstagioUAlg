@@ -1,4 +1,4 @@
-
+var nomeCandidatura = String(nomeCandidatura)
 
 function candidaturaSelected(nomeCandidatura) { 
 

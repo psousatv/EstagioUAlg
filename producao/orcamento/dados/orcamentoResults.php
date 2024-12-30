@@ -9,14 +9,15 @@ $orcamentoItem = $_GET['orcamentoItem'];
 if(isset($_GET['anoCorrente'])){
   $anoCorrente = $_GET['anoCorrente'];
 } else {
-  $anoCorrente = date('Y');
+  $anoCorrente = date('Y') + 1;
 };
 
 // Valores do Orçamento na Rúbrica
 $sqlOrcamentoItemRubrica = "SELECT  
                           orc_check AS controle,
                           orc_tipo AS tipo,
-                          orc_linha AS linha,
+                          orc_linha AS linhaO,
+                          orc_linha_SE AS linhaSE,
                           orc_descritivo AS descritivo,
                           orc_valor_previsto AS previsto,
                           SUM(orc_valor_previsto) AS total_previsto,
@@ -28,8 +29,8 @@ $sqlOrcamentoItemRubrica = "SELECT
                           FROM orcamento
                           WHERE orc_rub_cod = '".$orcamentoItem."'
                           AND orc_ano='".$anoCorrente."'
-                          GROUP BY linha
-                          ORDER BY orc_linha";
+                          GROUP BY linhaO
+                          ORDER BY linhaO";
 
 $stmt1 = $myConn->query($sqlOrcamentoItemRubrica);
 $orcamentoItemRubrica = $stmt1->fetchAll(PDO::FETCH_ASSOC);
@@ -93,7 +94,8 @@ echo '
         <table class="table table-responsive table-striped small">
           <tr>
             <th>Tipo</th>
-            <th>Linha</th>
+            <th>O</th>
+            <th>SE</th>
             <th>Processo</th>
             <th>Previsto</th>
             <th>Adjudicado</th>
@@ -103,7 +105,8 @@ echo '
             $soma = 0;
             echo '<tr>';
             echo '<td>'.$row["tipo"].'</td>';
-            echo '<td>'.$row["linha"].'</td>';
+            echo '<td>'.$row["linhaO"].'</td>';
+            echo '<td>'.$row["linhaSE"].'</td>';
             echo '<td>'.$row["descritivo"].'</td>';
             echo '<td colspan="3" class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
             
@@ -112,6 +115,7 @@ echo '
                 $soma += $key['adjudicado'];
                 if($soma > $row['previsto']){
                   echo '<tr class="bg-danger text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
+                    echo '<td><i class="fas fa-binoculars text-white fa-2x"></i></td>';
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td>'.$key['procedimento'].'</td>';
                     echo '<td colspan="2">'.$key['designacao'].'</td>';
@@ -120,6 +124,7 @@ echo '
                   echo '</tr>';       
                 } else {
                   echo '<tr class="bg-success text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
+                    echo '<td><i class="fas fa-binoculars text-white fa-2x"></i></td>';
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td>'.$key['procedimento'].'</td>';
                     echo '<td colspan="2">'.$key['designacao'].'</td>';
