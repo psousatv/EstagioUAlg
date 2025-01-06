@@ -9,7 +9,7 @@ $orcamentoItem = $_GET['orcamentoItem'];
 if(isset($_GET['anoCorrente'])){
   $anoCorrente = $_GET['anoCorrente'];
 } else {
-  $anoCorrente = date('Y') + 1;
+  $anoCorrente = date('Y');
 };
 
 // Valores do Orçamento na Rúbrica

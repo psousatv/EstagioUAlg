@@ -1,9 +1,13 @@
 
-var anoCorrente = document.getElementById("anoCorrente").value;
+//var anoDefault = mudaAno(); //document.getElementById("anoCorrente").value;
 
+
+mudaAno();
+
+function cartoes(anoDefault){
 $.ajax(
     {
-    url: 'dados/main.php?anoCorrente=' + anoCorrente,
+    url: 'dados/main.php?anoCorrente=' + anoDefault,
     method: 'GET',
     contentType: 'application/json'
     }).done(
@@ -135,7 +139,8 @@ $.ajax(
             containerInvestimentos.innerHTML += cartoesGastos;
             }});
         }
-    );
+    )
+};
 
     
 //});
@@ -148,7 +153,33 @@ function orcamentoRedirected(orcamentoItem) {
     //var params = new URLSearchParams(window.location.search);
     //var anoCorrente = params.get("anoCorrente");
 
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem;// + "&anoCorrente=" + anoCorrente;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoAtual;
     window.location.href = URL;
     
+    };
+
+
+    
+
+    function mudaAno(){
+
+        var data = new Date();
+        var ano = data.getFullYear();
+        var anoDefault = document.getElementById("anoCorrente").value;
+        
+
+        if(anoDefault != ano){
+            //anoDefault == ano;
+            document.getElementById('anoCorrente').value = anoDefault;
+            console.log("esteAno", ano);
+            console.log("anoDefault", anoDefault);
+        } else {
+            anoDefault === ano;
+            document.getElementById('anoCorrente').value = anoDefault;
+            console.log("esteAno", ano);
+            console.log("anoDefault", anoDefault);
+        };
+
+        cartoes(anoDefault);
+
     };
