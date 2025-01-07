@@ -1,31 +1,35 @@
 
-//var anoDefault = mudaAno(); //document.getElementById("anoCorrente").value;
+document.getElementById("anoCorrente").value = 2024;
+//var anoDefault = document.getElementById("anoCorrente").value;
+//document.getElementById('anoCorrente').value = anoDefault;
 
 
-mudaAno();
 
-function cartoes(anoDefault){
+function cartoes(){
+    
+    var anoFormulario = document.getElementById('anoCorrente').value;
+    var endereco = 'dados/main.php?anoCorrente=' + anoFormulario;
+
 $.ajax(
     {
-    url: 'dados/main.php?anoCorrente=' + anoDefault,
+    url: endereco,
     method: 'GET',
     contentType: 'application/json'
     }).done(
         function(data)
         {
-            var dataTable = $('#tabela').DataTable({
-                aaData: data,
-                aoColumns:[
-                    { mDataProp: 'ano'},
-                    { mDataProp: 'tipo'},
-                    { mDataProp: 'rubrica'},
-                    { mDataProp: 'item'},
-                    { mDataProp: 'previsto', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') }
-                ]
-            })
+            //var dataTable = $('#tabela').DataTable({
+            //    aaData: data,
+            //    aoColumns:[
+            //        { mDataProp: 'ano'},
+            //        { mDataProp: 'tipo'},
+            //        { mDataProp: 'rubrica'},
+            //        { mDataProp: 'item'},
+            //        { mDataProp: 'previsto', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+            //        { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') }
+            //    ]
+            //})
 
-            
             // ** Investimentos
             var containerInvestimentos = document.getElementById('cartoesInvestimentos');
             containerInvestimentos.innerHTML = "";
@@ -159,27 +163,17 @@ function orcamentoRedirected(orcamentoItem) {
     };
 
 
-    
-
     function mudaAno(){
 
         var data = new Date();
-        var ano = data.getFullYear();
-        var anoDefault = document.getElementById("anoCorrente").value;
+        var anoAtual = data.getFullYear();
+
+        var anoFormulario = document.getElementById('anoCorrente').value;
+        var url = 'dados/main.php?anoCorrente=' + anoFormulario;
+
+        cartoes(url);
         
-
-        if(anoDefault != ano){
-            //anoDefault == ano;
-            document.getElementById('anoCorrente').value = anoDefault;
-            console.log("esteAno", ano);
-            console.log("anoDefault", anoDefault);
-        } else {
-            anoDefault === ano;
-            document.getElementById('anoCorrente').value = anoDefault;
-            console.log("esteAno", ano);
-            console.log("anoDefault", anoDefault);
-        };
-
-        cartoes(anoDefault);
-
+        console.log("anoCorrente", anoAtual);
+        console.log("anoFormulario", anoFormulario);
+    
     };

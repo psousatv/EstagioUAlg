@@ -35,7 +35,7 @@
 
 </head>
 
-<body>
+<body onload="cartoes()">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="../../index.html">Orçamento</a>
     
@@ -141,7 +141,7 @@
                                 <div class="col-sm-4">
                                     <form>
                                         <label style="float: right; text-align: right" for="anoCorrente">Ano:
-                                            <input style="text-align: right" type="text" id="anoCorrente" value="2024" autofocus>
+                                            <input style="text-align: right" type="text" value="" id="anoCorrente" autofocus>
                                             <button class="btn btn-warning" onclick="mudaAno()">Alterar</button>
                                         </label>
                                     </form>
