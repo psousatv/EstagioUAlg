@@ -1,14 +1,6 @@
 
-document.getElementById("anoCorrente").value = 2024;
-//var anoDefault = document.getElementById("anoCorrente").value;
-//document.getElementById('anoCorrente').value = anoDefault;
 
-
-
-function cartoes(){
-    
-    var anoFormulario = document.getElementById('anoCorrente').value;
-    var endereco = 'dados/main.php?anoCorrente=' + anoFormulario;
+function cartoes(endereco){
 
 $.ajax(
     {
@@ -162,18 +154,34 @@ function orcamentoRedirected(orcamentoItem) {
     
     };
 
+function anoDefault(){
+    var data = new Date();
+    var anoAtual = data.getFullYear();   
+    var endereco = 'dados/main.php?anoCorrente='
 
-    function mudaAno(){
-
-        var data = new Date();
-        var anoAtual = data.getFullYear();
-
-        var anoFormulario = document.getElementById('anoCorrente').value;
-        var url = 'dados/main.php?anoCorrente=' + anoFormulario;
-
-        cartoes(url);
-        
-        console.log("anoCorrente", anoAtual);
-        console.log("anoFormulario", anoFormulario);
+    document.getElementById('anoCorrente').value = 2025;
     
+    var anoFormulario = document.getElementById('anoCorrente').value;
+
+    if(anoFormulario == anoAtual){
+
+        var url = endereco + anoAtual;
+        cartoes(url);
+
+        console.log("anoInicio", anoAtual);
+        
     };
+};
+
+
+
+function mudaAno(){
+
+    var anoFormulario = document.getElementById('anoCorrente').value;
+    var endereco = 'dados/main.php?anoCorrente=' + anoFormulario;
+
+    cartoes(endereco);
+        
+    console.log("anoFormularioMudaAno", anoFormulario);
+
+};
