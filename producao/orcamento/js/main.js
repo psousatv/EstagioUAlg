@@ -149,7 +149,7 @@ function orcamentoRedirected(orcamentoItem) {
     //var params = new URLSearchParams(window.location.search);
     //var anoCorrente = params.get("anoCorrente");
 
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoAtual;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2024; //anoAtual;
     window.location.href = URL;
     
     };
@@ -159,18 +159,15 @@ function anoDefault(){
     var anoAtual = data.getFullYear();   
     var endereco = 'dados/main.php?anoCorrente='
 
-    document.getElementById('anoCorrente').value = 2025;
+    document.getElementById('anoCorrente').value = 2024;
     
     var anoFormulario = document.getElementById('anoCorrente').value;
 
-    if(anoFormulario == anoAtual){
-
-        var url = endereco + anoAtual;
+    var url = endereco + anoFormulario;
         cartoes(url);
 
         console.log("anoInicio", anoAtual);
-        
-    };
+        console.log("anoInicio", anoAtual);
 };
 
 

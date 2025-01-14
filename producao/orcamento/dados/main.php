@@ -2,13 +2,13 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-///if(isset($_GET['anoCorrente'])){
-//      $anoCorrente = intval($_GET['anoCorrente']);
-//} else {
-//      $anoCorrente = date('Y');
-//};
+if(isset($_GET['anoCorrente'])){
+      $anoCorrente = intval($_GET['anoCorrente']);
+} else {
+      $anoCorrente = date('Y') -1 ;
+};
 
-$anoCorrente = intval($_GET['anoCorrente']);
+//$anoCorrente = intval($_GET['anoCorrente']);
 
 // dados para dashCandidaturas sem interações - Search ou outras
 $orcamento = "SELECT
