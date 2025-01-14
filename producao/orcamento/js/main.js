@@ -42,18 +42,15 @@ $.ajax(
             };
 
 
-            if (realizado < 10) {
-                var classeCartao = 'bg-danger text-white';
-                var iconeCartao = 'fa fa-thumbs-down'
-            } else if (realizado >= 10 & realizado < 35){
-                var classeCartao = 'bg-warning text-black';
-                var iconeCartao = 'fa fa-warning'
+            if (realizado < 35) {
+                classeCartao = 'bg-success';
+                iconeCartao = 'fa-smile';
             } else if (realizado >= 35 & realizado < 75){
-                var classeCartao = 'bg-primary text-white';
-                var iconeCartao = 'fa fa-cog fa-spin'
+                classeCartao = 'bg-warning';
+                iconeCartao = 'fa-warning';
             } else {
-                var classeCartao = 'bg-success text-white';
-                var iconeCartao = 'fa fa-smile'
+                classeCartao = 'bg-danger';
+                iconeCartao = 'fa-thumbs-down';
             };
 
             const card = document.createElement('div');
@@ -97,18 +94,15 @@ $.ajax(
                 realizado = 0;
             };
 
-            if (realizado < 10) {
-                classeCartao = 'bg-danger';
-                iconeCartao = 'fa-thumbs-down';
-            } else if (realizado >= 10 & realizado< 35){
-                classeCartao = 'bg-warning';
-                iconeCartao = 'fa-warning';
-            } else if (realizado >= 35 & realizado < 75){
-                classeCartao = 'bg-primary';
-                iconeCartao = 'fa-cogs';
-            } else {
+            if (realizado < 35) {
                 classeCartao = 'bg-success';
                 iconeCartao = 'fa-smile';
+            } else if (realizado >= 35 & realizado < 75){
+                classeCartao = 'bg-warning';
+                iconeCartao = 'fa-warning';
+            } else {
+                classeCartao = 'bg-danger';
+                iconeCartao = 'fa-thumbs-down';
             };
 
             var card = document.createElement('div');
@@ -149,7 +143,7 @@ function orcamentoRedirected(orcamentoItem) {
     //var params = new URLSearchParams(window.location.search);
     //var anoCorrente = params.get("anoCorrente");
 
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoAtual;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
     window.location.href = URL;
     
     };

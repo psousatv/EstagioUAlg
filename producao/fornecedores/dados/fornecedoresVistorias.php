@@ -24,7 +24,7 @@ $sqlVistorias = "SELECT
 				FROM historico
 				INNER JOIN processo ON proces_check = historico_proces_check
 				INNER JOIN entidade ON ent_cod = proces_ent_cod
-				WHERE YEAR(historico_dataemissao) = YEAR(NOW())
+				WHERE YEAR(historico_dataemissao) <= YEAR(NOW())
 				AND historico_obs = 'Programado'
 				OR historico_obs = 'Agendado'
 				ORDER BY historico_datamov, ent_nome";
