@@ -143,11 +143,7 @@ function orcamentoRedirected(orcamentoItem) {
     //var params = new URLSearchParams(window.location.search);
     //var anoCorrente = params.get("anoCorrente");
 
-<<<<<<< HEAD
     var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2024; //anoAtual;
-=======
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
->>>>>>> b346ccfdf1c3638d87e71cb3279a7d647a048994
     window.location.href = URL;
     
     };
