@@ -28,10 +28,13 @@ fetch(url)
     var date = new Date();
     var dia = date.getDate();
     var ano = date.getFullYear();
-    var mes = date.getMonth();
+    var mes = date.getMonth()+1;
 
-    //console.log("Ano", ano);
-    //console.log("Mes", mes);   
+    console.log("Date", date);
+    console.log("Ano", ano);
+    console.log("Mes", mes); 
+
+
     
 
    resultados.forEach((resultado) =>{
@@ -44,9 +47,7 @@ fetch(url)
                 if(resultado["recepcao"] == null) {
                     resultado["recepcao"] == 'n.a.'
                 };
-                //vistoriasProgramadas.push(resultado["data_registo"]);
                 vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
-                //console.log("Programadas", resultado);
         } else if (
         // Agendadas - Se o mês registado é superior ao mês atual
             //parseInt(resultado["mes"]) >= mes &&
@@ -61,7 +62,6 @@ fetch(url)
         }else if (
         // Vencidas - Se o mes registado é inferior ao mês atual
             resultado["ano"] <= ano &&
-            resultado["mes"] <= mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
                 if(resultado["recepcao"] == null) {
