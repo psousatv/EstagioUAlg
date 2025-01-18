@@ -147,9 +147,7 @@ function obraAuto(codigoProcesso,auto){
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         document.getElementById("lstOutros").innerHTML = this.responseText;
-        //$(document).ready(function(){
-        //    $('#lstOutros').show();
-        //});
+        window.open("","lstOutros");
       }
     }
     
@@ -157,4 +155,6 @@ function obraAuto(codigoProcesso,auto){
 
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
+
+    
 };

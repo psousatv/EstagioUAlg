@@ -6,11 +6,11 @@ $logo = "../../global/imagens/LogotipoTVerde.jpg";
 
 $orcamentoItem = $_GET['orcamentoItem'];
 
-//if(isset($_GET['anoCorrente'])){
-  $anoCorrente = 2024; //$_GET['anoCorrente'] ;
-//} else {
-//  $anoCorrente = date('Y') -1 ;
-//};
+if(isset($_GET['anoCorrente'])){
+  $anoCorrente = $_GET['anoCorrente'] ;
+} else {
+  $anoCorrente = date('Y') ;
+};
 
 // Valores do Orçamento na Rúbrica
 $sqlOrcamentoItemRubrica = "SELECT  
