@@ -22,7 +22,7 @@ $sqlOrcamentoItemRubrica = "SELECT
                           orc_valor_previsto AS previsto,
                           SUM(orc_valor_previsto) AS total_previsto,
                           (SELECT SUM(proces_val_adjudicacoes) FROM processo
-                          WHERE proces_orcamento = controle ) AS total_adjudicado,
+                          WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_adjudicado,
                           (SELECT SUM(fact_valor) FROM factura
                           LEFT JOIN processo ON proces_check = fact_proces_check
                           WHERE proces_orcamento = controle) AS total_faturado
@@ -59,6 +59,7 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      INNER JOIN orcamento ON orc_check = proces_orcamento
                                      INNER JOIN procedimento ON proced_cod = proces_proced_cod
                                      WHERE proces_orcamento = orc_check
+                                     AND proces_report_valores = 1
                                      ORDER BY designacao";
 
 $stmt3 = $myConn->query($sqlProcessosOrcamentoItemRubrica);
