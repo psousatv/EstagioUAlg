@@ -123,7 +123,7 @@ $.ajax(
 // Os resultados da Seleção é redirecionado para a página pretendida
 function redirectTipoProcesso(tipoProcesso) {
 
-    console.log("Tipo de Processo", tipoProcesso);
+    //console.log("Tipo de Processo", tipoProcesso);
 
     if(tipoProcesso == 'Empreitada'){
         var URL = "../obras/obrasSearch.html";

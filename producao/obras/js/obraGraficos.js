@@ -25,7 +25,8 @@ fetch(url)
 
     for(var i = 0; i < resultado.length; i++){
         
-        labelsGrafico.push(resultado[i].mes_previsto);
+        //labelsGrafico.push(resultado[i].mes_previsto);
+        labelsGrafico.push(resultado[i].auto_num);
         xPrevisto.push(resultado[i]['valor_previsto']);
         xRealizado.push(resultado[i]['valor_faturado']);
 

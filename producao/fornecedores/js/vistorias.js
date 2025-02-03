@@ -1,7 +1,7 @@
 
 //var params = new URLSearchParams(window.location.search);
 //var codigoProcesso = params.get("codigoProcesso"); 
-var url = "dados/fornVistorias.php";
+var url = "dados/fornecedoresVistorias.php";
 var resultados = [];
 var vistoriasProgramadas = [];
 var vistoriasAgendadas = [];
@@ -27,27 +27,31 @@ fetch(url)
 
     var date = new Date();
     var dia = date.getDate();
-    var mes = parseInt(date.getMonth());
+    var ano = date.getFullYear();
+    var mes = date.getMonth()+1;
 
-    //console.log("Mês: ", mes);
+    console.log("Date", date);
+    console.log("Ano", ano);
+    console.log("Mes", mes); 
 
+
+    
 
    resultados.forEach((resultado) =>{
     //Programado - se o mês registado é o mês atual
         if(
-            parseInt(resultado["mes"]) == mes &&
+            resultado["ano"] >= ano &&
+            resultado["mes"] > mes &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
                 if(resultado["recepcao"] == null) {
                     resultado["recepcao"] == 'n.a.'
                 };
-                //vistoriasProgramadas.push(resultado["data_registo"]);
                 vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
-                //console.log("Programadas", resultado);
         } else if (
         // Agendadas - Se o mês registado é superior ao mês atual
             //parseInt(resultado["mes"]) >= mes &&
-            resultado["doc"] == 'Agendado' && 
+            resultado["doc"] != 'Programado' && 
             resultado["obs"] == 'Agendado') {
                 if(resultado["recepcao"] == null) {
                     resultado["recepcao"] == 'n.a.'
@@ -57,29 +61,31 @@ fetch(url)
                 //console.log("Agendadas", resultado);
         }else if (
         // Vencidas - Se o mes registado é inferior ao mês atual
-            parseInt(resultado["mes"]) <= mes + 1 &&
+            resultado["ano"] <= ano &&
             resultado["doc"] == 'Programado' && 
             resultado["obs"] == 'Programado') {
-                if(resultado["recepcao"] === null) {
+                if(resultado["recepcao"] == null) {
                     resultado["recepcao"] == 'n.a.'
                 };
-                //vistoriasVencidas.push(resultado["data_registo"]);
                 vistoriasVencidas = vistoriasVencidas.concat(resultado);
-                //console.log("Vencidas", resultado);
         } else {
-            //vistoriasVencidas.push(resultado["data_registo"]);
+                 
             vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
-            //console.log("Vencidas", resultado);
             };
     });
+
+
+    console.log("Programadas", vistoriasProgramadas);
+    console.log("Agendados", vistoriasAgendadas);
+    console.log("Vencidas", vistoriasVencidas);
 
      // Envia os resultados para o Container correspondente
      //Programados
      var containerProgramado = document.getElementById('programado');
      containerProgramado.innerHTML = "";
- 
-    vistoriasProgramadas.forEach((programado) => {
+     var vistoriasProgramadasNum = vistoriasProgramadas.length;
 
+    vistoriasProgramadas.forEach((programado) => {
         var listaProgramado = `
             <a class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
@@ -93,19 +99,20 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${programado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${programado['recepcao']}</b></li>
+                    <li class="small"><b>Pedido: ${programado['doc']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ [${programado['doc_num']}]</b></li>
                 </ul>
             </a>`;
             
-        if(programado["mes"] > 0){
+        if(parseInt(programado["ano"]) > 0){
             containerProgramado.innerHTML += listaProgramado;
-
         }
     });
 
     //Vencidos
     var containerVencido = document.getElementById('vencido');
     containerVencido.innerHTML = "";
+    var vistoriasVencidasNum = vistoriasVencidas.length;
  
     vistoriasVencidas.forEach((vencido) => {
 
@@ -122,11 +129,12 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${vencido['entidade']} </b></li>
                     <li class="small"><b>Recepção Provisória: ${vencido['recepcao']} </b></li>
+                    <li class="small"><b>Pedido: ${vencido['doc']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ [${vencido['doc_num']}] </b></li>
                 </ul>
             </a>`;
             
-        if(vencido["mes"] > 0){
+        if(vencido["ano"] > 0){
             containerVencido.innerHTML += listaVencido;
 
         }
@@ -135,6 +143,7 @@ fetch(url)
     //Agendados
     var containerAgendado = document.getElementById('agendado');
     containerAgendado.innerHTML = "";
+    var vistoriasAgendadasNum = vistoriasAgendadas.length;
  
     vistoriasAgendadas.forEach((agendado) => {
 
@@ -151,13 +160,13 @@ fetch(url)
                 <ul>
                     <li class="small"><b>Entidade: ${agendado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${agendado['recepcao']}</b></li>
+                    <li class="small"><b>Pedido: ${agendado['doc']}</b></li>
                     <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ [${agendado['doc_num']}] </b></li>
                 </ul>
             </a>`;
             
-        if(agendado["mes"] > 0){
+        if(agendado["ano"] > 0){
             containerAgendado.innerHTML += listaAgendado;
-
         }
     });
 

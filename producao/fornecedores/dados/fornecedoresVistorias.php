@@ -7,6 +7,7 @@ $sqlVistorias = "SELECT
 				proces_check AS processo,
 				proces_nome AS designacao,
 				historico_datamov AS data_registo,
+				YEAR(historico_datamov) AS ano, 
 				MONTH(historico_datamov) AS mes,
 				historico_descr_nome AS tipo,
 				proces_orc_actividade AS actividade,
@@ -23,7 +24,7 @@ $sqlVistorias = "SELECT
 				FROM historico
 				INNER JOIN processo ON proces_check = historico_proces_check
 				INNER JOIN entidade ON ent_cod = proces_ent_cod
-				WHERE YEAR(historico_datamov) = YEAR(NOW())
+				WHERE YEAR(historico_dataemissao) <= YEAR(NOW())
 				AND historico_obs = 'Programado'
 				OR historico_obs = 'Agendado'
 				ORDER BY historico_datamov, ent_nome";
