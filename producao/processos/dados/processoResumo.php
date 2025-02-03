@@ -60,7 +60,10 @@ foreach($data as $row)
     <div class="col-md-2"><b>Rubrica: </b></div> 
     <div class="col-md-10">['.$row['proces_rub_cod'].'] - '.$row['proces_orc_rubrica'].'</div>
     <div class="col-md-2"><b>CPV Principal: </b></div> 
-    <div class="col-md-10 text-primary">'.$row['proces_18cpv1'].' - '.$row['cpv1_nome'].' - ['.$row['cpv1_referencia'].']</div>
+    <div class="col-md-10 text-primary">
+      <i class="fa-solid fa-binoculars" onclick="redirectProcesso('.$row['proces_check'].')"> </i>
+      '.$row['proces_18cpv1'].' - '.$row['cpv1_nome'].' - ['.$row['cpv1_referencia'].']
+    </div>
     <div class="col-md-2"><b>CPV Secundário: </b></div> 
     <div class="col-md-10">'.$row['proces_18cpv2'].' - '.$row['cpv2_nome'].'</div>
     <div class="col-md-2"><b>Valor Base: </b></div>
