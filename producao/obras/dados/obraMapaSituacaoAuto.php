@@ -15,13 +15,11 @@ $mapaAutos = "SELECT
                 mt_qt AS quantidade_proposto,
                 mt_pu_obra AS preco_unitario_proposto,
                 mt_val_obra AS valor_proposto,
-                CASE WHEN mt_indexador = auto_indexador THEN auto_qt ELSE 0 END AS quantidade_executado,
-                auto_punit AS preco_unitario_executado,
-                CASE WHEN mt_indexador = auto_indexador THEN auto_valor ELSE 0 END AS valor_executado
+                (SELECT auto_qt FROM obra_autos WHERE auto_indexador = mt_indexador AND auto_num = '" .$auto. "') AS quantidade_executado,
+                (SELECT auto_punit FROM obra_autos WHERE auto_indexador = mt_indexador AND auto_num = '" .$auto. "') AS preco_unitario_executado,
+                (SELECT auto_valor FROM obra_autos WHERE auto_indexador = mt_indexador AND auto_num = '" .$auto. "') AS valor_executado
                 FROM mapa_trabalhos
-                LEFT JOIN obra_autos ON auto_indexador = mt_indexador
-                WHERE mt_check = '" .$codigoProcesso. "' AND auto_num = '" .$auto. "'
-                 
+                WHERE mt_check = '" .$codigoProcesso. "'
                 ORDER BY ordem" ;
 
 $stmt = $myConn->query($mapaAutos);
@@ -40,11 +38,12 @@ echo "
   </colgroup>
   <tr style='text-align: center'>
     <th colspan='4' style='text-align: left'>
-    <b>Valor do Auto n.º ".$auto." » ".number_format($valorAutos, 2, ",", ".")."€</b>
+      <mark class='bg-warning'>
+        <b>Valor do Auto n.º ".$auto." » ".number_format($valorAutos, 2, ",", ".")."€</b>
+      </mark>
     </th>
     <th colspan='3'>Proposto</th>
     <th colspan='2'>Executado</th>
-    <th colspan='4'>Não Executado</th>
   </tr> 
   <tr style='text-align: center'>
     <td>Ordem</td>
@@ -57,9 +56,6 @@ echo "
     <td>Qt</td>
     <!--td>PUnit</td-->
     <td>Valor</td>
-    <td>Qt</td>
-    <td>Valor</td>
-    <td>%</td>
   </tr>
 </tr>";
 foreach($data as $row){
@@ -102,17 +98,6 @@ foreach($data as $row){
           <td style='text-align:right'>" .number_format($row['valor_executado'], 2, ',', '.'). "€</td>
           
           ";
-          if($row['valor_executado'] == 0 ){
-            echo "
-            <td style='text-align:right'>" .number_format($row['quantidade_proposto'], 2, ',', '.')."</td>
-            <td style='text-align:right'>" .number_format($row['valor_proposto'], 2, ',', '.'). "€</td>
-            <td style='text-align:right'>" .number_format(100, 2, ',', '.'). "%</td>";
-          }  else {
-          echo "
-          <td style='text-align:right'>" .number_format(($row['quantidade_proposto']-$row['quantidade_executado']), 2, ',', '.')."</td>
-          <td style='text-align:right'>" .number_format(($row['valor_proposto']-$row['valor_executado']), 2, ',', '.'). "€</td>
-            <td style='text-align:right'>" .number_format((1-($row['valor_executado']/$row['valor_proposto']))*100, 2, ',', '.'). "%</td>
-        </tr>";
-      }};
+      };
   };
 echo "</table>";

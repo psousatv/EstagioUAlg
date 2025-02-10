@@ -22,55 +22,120 @@ foreach($data as $row)
   <div class="badge bg-primary text-white">Dados Genéricos do Processo</div>
   <div class="row small text-justify">
     <div class="col-md-2"><b>Enquadramento/Aprovado: </b></div>
-    <div class="col-md-10 text-primary">'.$row["proces_enquadramento"].'/'.$row["proces_data_aprovacao"].'</div>  
+    <div class="col-md-10 text-primary">
+      '.$row["proces_enquadramento"].'/
+      '.$row["proces_data_aprovacao"].'
+    </div>  
     <div class="col-md-2"><b>Processo Administrativo: </b></div>
-    <div class="col-md-10">'.$row['proces_padm'].'</div>
+    <div class="col-md-10">
+      '.$row['proces_padm'].'
+    </div>
     <div class="col-md-2"><b>Identificação: </b></div>
-    <div class="col-md-10 text-primary">('.$row['proces_check'].') - '.$row['proces_nome'].'</div>
+    <div class="col-md-10 text-primary">
+      ('.$row['proces_check'].') - 
+      '.$row['proces_nome'].'
+    </div>
     <div class="col-md-2"><b>Descrição: </b></div>
-    <div class="col-md-10">'.$row['proces_obs']. '</div>
+    <div class="col-md-10">
+      '.$row['proces_obs']. '
+    </div>
     <div class="col-md-2"><b>Adjudicatária: </b></div>
-    <div class="col-md-10 text-primary">('.$row["ent_cod"].') '.$row["ent_nome"].' ['.$row["ent_nif"].'] - ['.$row["ent_alvara"].']</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Estado: </b></mark></div>
-    <div class="col-md-10">('.$row["proces_estado_data"].'): '.$row["proces_estado_nome"].'</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Consignação: </b></mark></div>
-    <div class="col-md-10 text-primary">'.$row["proces_csgn"].'</div>
+    <div class="col-md-10 text-primary">
+      <mark class="bg-warning">
+        ('.$row["ent_cod"].') 
+        '.$row["ent_nome"].' [
+        '.$row["ent_nif"].'] - [
+        '.$row["ent_alvara"].']
+      </mark>
+    </div>
+    <div class="col-md-2"><b>Estado: </b></div>
+    <div class="col-md-10">
+      <mark class="bg-warning">
+        '.$row["proces_estado_nome"].': 
+        '.$row["proces_data_adjudicacao"].' - 
+        '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€
+      </mark>
+    </div>
+    <div class="col-md-2"><b>Consignação: </b></div>
+    <div class="col-md-10 text-primary">
+      <mark class="bg-warning">
+        '.$row["proces_csgn"].'
+      </mark>
+    </div>
     <div class="col-md-2"><b>Prazo de Execução: </b></div>
-    <div class="col-md-10">'.$row["proces_prz_exec"].' dias - '.($row["proces_prz_exec"]/30).' mes(es)</div>
-    
+    <div class="col-md-10">
+      '.$row["proces_prz_exec"].' dias - 
+      '.($row["proces_prz_exec"]/30).' mes(es)
+    </div>
   </div> 
   <hr>';
   //Enquadramento Legal e Orçamento
   echo '
   <div class="badge bg-info text-white">Enquadramento Legal e Orçamento</div>
   <div class="row small text-justify">
-    <div class="col-md-2"><mark class="bg-warning"><b>Regime: </b></mark></div>
-    <div class="col-md-10 text-primary">'.$row['proced_regime'].'</div>
-    <div class="col-md-2"><b>Publicado em: </b></div>
-    <div class="col-md-10">'.$row['proces_data_pub_se'].'</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Contrato: </b></mark></div>
-    <div class="col-md-10 text-primary">'.$row['proced_contrato'].'</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Procedimento: </b></mark></div>
-    <div class="col-md-10">('.$row['proces_proced_cod'].') - '.$row['proced_escolha'].'</div>
+    <div class="col-md-2"><b>Regime: </b></div>
+    <div class="col-md-10 text-primary">
+      <mark class="bg-warning">
+        '.$row['proces_data_pub_se'].': 
+        '.$row['proced_regime'].' [
+        '.$row['proces_conta_imob'].']
+      </mark>
+    </div>
+    <div class="col-md-2"><b>Contrato: </b></div>
+    <div class="col-md-10 text-primary">
+      <mark class="bg-warning">
+        '.$row['proced_contrato'].'
+      </mark>
+    </div>
+    <div class="col-md-2"><b>Procedimento: </b></div>
+    <div class="col-md-10">(
+      '.$row['proces_proced_cod'].') - 
+      '.$row['proced_escolha'].'
+    </div>
     <div class="col-md-2""><b>Limite: </b></div>
-    <div class="col-md-10 text-primary">'.number_format($row['proced_limite'], 2, ',', '.').'€</div>
-    <div class="col-md-2""><mark class="bg-warning"><b>Orçamentos: </b></mark></div>
-    <div class="col-md-10">'.$row['proces_orc_ano'].' ['.$row['proces_conta_imob'].']</div>
+    <div class="col-md-10 text-primary">
+      '.number_format($row['proced_limite'], 2, ',', '.').'€
+    </div>
+    <div class="col-md-2""><b>Orçamentos: </b></div>
+    <div class="col-md-10">
+      <mark class="bg-warning">
+        '.$row['proces_orc_ano'].' [
+        '.$row['proces_conta_imob'].']
+      </mark>
+    </div>
     <div class="col-md-2"><b>Área de Atuação: </b></div>
-    <div class="col-md-10 text-primary">'.$row['proces_orc_actividade'].'</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Rubrica: </b></mark></div> 
-    <div class="col-md-10">['.$row['proces_rub_cod'].'] - '.$row['proces_orc_rubrica'].'</div>
+    <div class="col-md-10 text-primary">
+      '.$row['proces_orc_actividade'].'
+    </div>
+    <div class="col-md-2"><b>Rubrica: </b></div> 
+    <div class="col-md-10">
+      <mark class="bg-warning">
+        ['.$row['proces_rub_cod'].'] - 
+        '.$row['proces_orc_rubrica'].'
+      </mark>
+    </div>
     <div class="col-md-2"><b>CPV Principal: </b></div> 
     <div class="col-md-10 text-primary">
-      <i class="fa-solid fa-binoculars" onclick="redirectProcesso('.$row['proces_check'].')"> </i>
-      '.$row['proces_18cpv1'].' - '.$row['cpv1_nome'].' - ['.$row['cpv1_referencia'].']
+      <i class="fa-solid fa-binoculars" 
+        onclick="redirectProcesso('.$row['proces_check'].')"> 
+      </i>
+      '.$row['proces_18cpv1'].' - 
+      '.$row['cpv1_nome'].' - [
+      '.$row['cpv1_referencia'].']
     </div>
     <div class="col-md-2"><b>CPV Secundário: </b></div> 
-    <div class="col-md-10">'.$row['proces_18cpv2'].' - '.$row['cpv2_nome'].'</div>
+    <div class="col-md-10">
+      '.$row['proces_18cpv2'].' - 
+      '.$row['cpv2_nome'].'
+    </div>
     <div class="col-md-2"><b>Valor Base: </b></div>
-    <div class="col-md-10 text-primary">'.number_format($row['proces_val_base'], 2, ',', '.').'€</div>
+    <div class="col-md-10 text-primary">
+      '.number_format($row['proces_val_base'], 2, ',', '.').'€
+    </div>
     <div class="col-md-2"><b>Valor Máximo: </b></div>
-    <div class="col-md-10">'.number_format($row['proces_val_max'], 2, ',', '.').'€</div>
+    <div class="col-md-10">
+      '.number_format($row['proces_val_max'], 2, ',', '.').'€
+    </div>
   </div>
   <hr>';
   //Valores
@@ -78,19 +143,35 @@ foreach($data as $row)
   <div class="badge bg-success text-white">Valores</div>
   <div class="row small text-justify">
     <div class="col-md-2"><b>Financiado: </b></div>
-    <div class="col-md-10 text-primary">'.$row['proces_cand'].' </div>
+    <div class="col-md-10 text-primary">
+     <mark class="bg-warning">
+        '.$row['proces_cand'].' 
+      </mark>
+    </div>
     <div class="col-md-2"><b>Aprovado: </b></div>
-    <div class="col-md-10">'.number_format($row['proces_cand_elegivel'], 2, ',', '.').'€</div>
+    <div class="col-md-10">
+      '.number_format($row['proces_cand_elegivel'], 2, ',', '.').'€
+    </div>
     <div class="col-md-2"><b>AutoFinanciamento: </b></div>
-    <div class="col-md-10 text-primary">'.number_format($row['proces_cand_nao_elegivel'], 2, ',', '.').'€</div>
-    <div class="col-md-2"><b>Reembolsável: </b></div>
-    <div class="col-md-10">'.number_format($row['proces_cand_fundo'], 2, ',', '.').'€</div>
-    <div class="col-md-2"><b>Adjudicado: </b></div>
-    <div class="col-md-10 text-primary">('.$row["proces_data_adjudicacao"].'): '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Faturado: </b></mark></div>
-    <div class="col-md-10">'.number_format($row['proces_val_faturacao'], 2, ',', '.').'€</div>
-    <div class="col-md-2"><mark class="bg-warning"><b>Reembolsado: </b></mark></div>
-    <div class="col-md-10">'.number_format($row['proces_cand_recebido'], 2, ',', '.').'€</div>
+    <div class="col-md-10 text-primary">
+      '.number_format($row['proces_cand_nao_elegivel'], 2, ',', '.').'€
+    </div>
+    <div class="col-md-2"><b>Reembolsável</b></div>
+    <div class="col-md-10">
+      '.number_format($row['proces_cand_fundo'], 2, ',', '.').'€
+    </div>
+    <div class="col-md-2"><b>Faturado: </b></div>
+    <div class="col-md-10">
+      <mark class="bg-warning">
+        '.number_format($row['proces_val_faturacao'], 2, ',', '.').'€
+      </mark>
+    </div>
+    <div class="col-md-2"><b>Reembolsado: </b></div>
+    <div class="col-md-10">
+      <mark class="bg-warning">
+        '.number_format($row['proces_cand_recebido'], 2, ',', '.').'€
+      </mark>
+    </div>
   </div>
   <hr>';
 

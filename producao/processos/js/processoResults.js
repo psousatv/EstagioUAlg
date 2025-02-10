@@ -133,6 +133,8 @@ function redirectProcesso(codigo) {
       var URL = "processoResults.html?codigoProcesso=" + params;
       //window.open(URL, "_blank");
       window.location.href = URL;
+
+      window.alert("Futuramente listará as Aquisições da mesma natureza");
     }
   }
 
