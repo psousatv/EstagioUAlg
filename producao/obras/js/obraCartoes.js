@@ -147,12 +147,8 @@ function obraAuto(codigoProcesso,auto){
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
 
-        //var gotoTab = window.open("obraResults.html", "lstOutros");
-        //document.getElementById("lstOutros").focus;
-        //gotoTab.focus();
-        //document.activeElement("lstOutros");
-        //document.getElementById("lstOutros").focus();
-        document.getElementById("lstOutros").innerHTML = this.responseText;
+        document.getElementById("lstAuto").innerHTML = this.responseText;
+        
         //window.open("","lstOutros");
       }
     }
