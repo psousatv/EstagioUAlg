@@ -25,7 +25,7 @@ $sqlOrcamentoItemRubrica = "SELECT
                           WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_adjudicado,
                           (SELECT SUM(fact_valor) FROM factura
                           LEFT JOIN processo ON proces_check = fact_proces_check
-                          WHERE proces_orcamento = controle) AS total_faturado
+                          WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_faturado
                           FROM orcamento
                           WHERE orc_rub_cod = '".$orcamentoItem."'
                           AND orc_ano='".$anoCorrente."'

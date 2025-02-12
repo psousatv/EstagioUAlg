@@ -78,7 +78,7 @@ foreach($data as $row)
       <mark class="bg-warning">
         '.$row['proces_data_pub_se'].': 
         '.$row['proced_regime'].' [
-        '.$row['proces_conta_imob'].']
+        '.$row['proces_ficha_imob'].']
       </mark>
     </div>
     <div class="col-md-2"><b>Contrato: </b></div>
