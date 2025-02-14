@@ -117,7 +117,7 @@ foreach($data as $row)
     <div class="col-md-2"><b>CPV Principal: </b></div> 
     <div class="col-md-10 text-primary">
       <i class="fa-solid fa-binoculars" 
-        onclick="redirectProcesso('.$row['proces_check'].')"> 
+        onclick="redirectInformacoesCPV('.$row['proces_check'].')"> 
       </i>
       '.$row['proces_18cpv1'].' - 
       '.$row['cpv1_nome'].' - [

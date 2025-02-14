@@ -6,7 +6,7 @@ $orcamentoItem = $_GET['orcamentoItem'];
 if(isset($_GET['anoCorrente'])){
   $anoCorrente = $_GET['anoCorrente'];
 } else {
-  $anoCorrente >= date('Y') -2  ;
+  $anoCorrente = date('Y') ;
 };
 
 //Histórico Processos
@@ -29,9 +29,9 @@ $orcamentoFaturacao = "SELECT
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
                     LEFT JOIN processo ON proces_check = fact_proces_check
-                    
-                    WHERE proces_rub_cod = '" .$orcamentoItem. "'
-                    AND proces_report_valores = 1 AND proces_orc_ano='".$anoCorrente."'
+                    WHERE proces_orc_ano = '".$anoCorrente."'
+                    AND proces_rub_cod = '" .$orcamentoItem. "'
+                    AND proces_report_valores = 1
                     GROUP BY proces_rub_cod, proces_padm, year(fact_auto_data)
                     ORDER BY proces_padm ASC" ;
 

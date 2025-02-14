@@ -133,12 +133,14 @@ function redirectProcesso(codigo) {
       var URL = "processoResults.html?codigoProcesso=" + params;
       //window.open(URL, "_blank");
       window.location.href = URL;
-
-      window.alert("Futuramente listará as Aquisições da mesma natureza");
     }
   }
 
   xmlhttp.open("GET","../_search/searchEngine.php?codigoProcesso="+ codigo, true);
   xmlhttp.send();
 
+};
+
+function redirectInformacoesCPV(){
+  window.alert("Futuramente listará as Aquisições da mesma natureza");
 };

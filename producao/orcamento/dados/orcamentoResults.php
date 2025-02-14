@@ -51,10 +51,11 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      proced_sigla AS procedimento,
                                      proces_nome AS designacao,
                                      proces_val_adjudicacoes AS adjudicado,
-                                     (SELECT
-                                     SUM(fact_valor)
-                                     FROM factura
-                                     WHERE fact_proces_check = proces_check ) AS faturado
+                                     (SELECT SUM(historico_valor) FROM historico
+                                     WHERE historico_proces_check = proces_check 
+                                     AND historico_descr_cod = 3) AS consulta,
+                                     (SELECT SUM(fact_valor) FROM factura
+                                     WHERE fact_proces_check = proces_check) AS faturado
                                      FROM processo 
                                      INNER JOIN orcamento ON orc_check = proces_orcamento
                                      INNER JOIN procedimento ON proced_cod = proces_proced_cod
@@ -64,12 +65,6 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
 
 $stmt3 = $myConn->query($sqlProcessosOrcamentoItemRubrica);
 $processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
-
-//Procurar pelo reduce em PHP para filtrar
-
-//$totalAdjudicadoLinha = array_reduce($processosOrcamentoItemRubrica, "reduce('INV2024151',1795)");
-
-
 
 echo '
 <div class="card col-md-12">
@@ -99,6 +94,7 @@ echo '
             <th>SE</th>
             <th>Processo</th>
             <th>Previsto</th>
+            <th>Consulta</th>
             <th>Adjudicado</th>
             <th>Faturado</th>
           </tr>';
@@ -120,6 +116,7 @@ echo '
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td>'.$key['procedimento'].'</td>';
                     echo '<td colspan="2">'.$key['designacao'].'</td>';
+                    echo '<td class="text-right">'.number_format($key["consulta"], 2, ",", ".").'€</td>';
                     echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
                     echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
                   echo '</tr>';       
@@ -129,6 +126,7 @@ echo '
                     echo '<td>'.$key['padm'].'</td>';
                     echo '<td>'.$key['procedimento'].'</td>';
                     echo '<td colspan="2">'.$key['designacao'].'</td>';
+                    echo '<td class="text-right">'.number_format($key["consulta"], 2, ",", ".").'€</td>';
                     echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
                     echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
                   echo '</tr>';       
