@@ -153,15 +153,15 @@ function anoDefault(){
     var anoAtual = data.getFullYear();   
     var endereco = 'dados/main.php?anoCorrente='
 
-    document.getElementById('anoCorrente').value = 2025;
+    //document.getElementById('anoCorrente').value = 2024;
     
     var anoFormulario = document.getElementById('anoCorrente').value;
 
     var url = endereco + anoFormulario;
         cartoes(url);
 
-        console.log("anoInicio", anoAtual);
-        console.log("anoInicio", anoAtual);
+        console.log("anoAtual: ", anoAtual);
+        console.log("anoFormulario: ", anoFormulario);
 };
 
 
