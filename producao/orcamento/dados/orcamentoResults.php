@@ -69,8 +69,7 @@ $processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 echo '
 <div class="card col-md-12">
   <div class="card-body">
-  <a class="small">Os valores de orçamento são ajustados para os valores de adjudicação </a>
-    <div class="d-flex align-items-center justify-content-between">
+    <a class="small">Os valores de orçamento são ajustados para os valores de adjudicação </a>
       <table class="table table-responsive table-striped">
         <tr>
           <td class="bg-primary text-white">Orçamento Previsto ('.$rows.')</td>
@@ -81,9 +80,7 @@ echo '
           <td class="bg-success text-white">'.number_format($totalFaturado, 2, ",", ".").'€</td>
         </tr>
       </table>
-      <img src="'.$logo.'" alt="2030" width="200" height="50">
-    </div>
-    
+        
     <h1 class="mt-2"></h1>
     <div class="col col-md-12">
       <div class="row">
@@ -105,7 +102,10 @@ echo '
             echo '<td>'.$row["linhaO"].'</td>';
             echo '<td>'.$row["linhaSE"].'</td>';
             echo '<td>'.$row["descritivo"].'</td>';
-            echo '<td colspan="3" class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+            echo '<td colspan="2" class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+            
+            echo '<td class="text-left">'.number_format($row["total_adjudicado"], 2, ",", ".").'€</td>';
+            echo '<td class="text-left">'.number_format($row["total_faturado"], 2, ",", ".").'€</td>';
             
             foreach($processosOrcamentoItemRubrica as $key) {     
               if($row['controle'] == $key['proces_orcamento']){

@@ -41,7 +41,7 @@ function orcamentoFinanceiro(orcamentoItem) {
     }
   }
 
-  xmlhttp.open("GET","dados/orcamentoFaturacaoPADM.php?orcamentoItem="+orcamentoItem,true);
+  xmlhttp.open("GET","dados/orcamentoFaturacaoPADM.php?orcamentoItem="+ orcamentoItem + "&anoCorrente=" + 2025,true);
   xmlhttp.send();
  
 };
