@@ -42,25 +42,24 @@ foreach($data as $row)
     <div class="col-md-2"><b>Adjudicatária: </b></div>
     <div class="col-md-10 text-primary">
       <mark class="bg-warning">
+        <i class="fa-solid fa-binoculars"
+          onclick="redirectInformacoesCPV('.$row['proces_check'].')">
+        </i>
+      </mark>
         ('.$row["ent_cod"].') 
         '.$row["ent_nome"].' [
         '.$row["ent_nif"].'] - [
         '.$row["ent_alvara"].']
-      </mark>
     </div>
     <div class="col-md-2"><b>Estado: </b></div>
     <div class="col-md-10">
-      <mark class="bg-warning">
         '.$row["proces_estado_nome"].': 
         '.$row["proces_data_adjudicacao"].' - 
         '.number_format($row['proces_val_adjudicacoes'], 2, ',', '.').'€
-      </mark>
     </div>
     <div class="col-md-2"><b>Consignação: </b></div>
     <div class="col-md-10 text-primary">
-      <mark class="bg-warning">
         '.$row["proces_csgn"].'
-      </mark>
     </div>
     <div class="col-md-2"><b>Prazo de Execução: </b></div>
     <div class="col-md-10">
@@ -75,21 +74,22 @@ foreach($data as $row)
   <div class="row small text-justify">
     <div class="col-md-2"><b>Regime: </b></div>
     <div class="col-md-10 text-primary">
-      <mark class="bg-warning">
         '.$row['proces_data_pub_se'].': 
         '.$row['proced_regime'].' [
         '.$row['proces_ficha_imob'].']
-      </mark>
     </div>
     <div class="col-md-2"><b>Contrato: </b></div>
     <div class="col-md-10 text-primary">
-      <mark class="bg-warning">
         '.$row['proced_contrato'].'
-      </mark>
     </div>
     <div class="col-md-2"><b>Procedimento: </b></div>
-    <div class="col-md-10">(
-      '.$row['proces_proced_cod'].') - 
+    <div class="col-md-10">
+      <mark class="bg-warning">
+        <i class="fa-solid fa-binoculars"
+          onclick="redirectInformacoesCPV('.$row['proces_proced_cod'].')">
+        </i>
+      </mark>
+      ('.$row['proces_proced_cod'].') - 
       '.$row['proced_escolha'].'
     </div>
     <div class="col-md-2""><b>Limite: </b></div>
@@ -98,10 +98,8 @@ foreach($data as $row)
     </div>
     <div class="col-md-2""><b>Orçamentos: </b></div>
     <div class="col-md-10">
-      <mark class="bg-warning">
         '.$row['proces_orc_ano'].' [
         '.$row['proces_conta_imob'].']
-      </mark>
     </div>
     <div class="col-md-2"><b>Área de Atuação: </b></div>
     <div class="col-md-10 text-primary">
@@ -110,15 +108,20 @@ foreach($data as $row)
     <div class="col-md-2"><b>Rubrica: </b></div> 
     <div class="col-md-10">
       <mark class="bg-warning">
+        <i class="fa-solid fa-binoculars"
+          onclick="redirectInformacoesCPV('.$row['proces_rub_cod'].')">
+        </i>
+      </mark>
         ['.$row['proces_rub_cod'].'] - 
         '.$row['proces_orc_rubrica'].'
-      </mark>
     </div>
     <div class="col-md-2"><b>CPV Principal: </b></div> 
     <div class="col-md-10 text-primary">
-      <i class="fa-solid fa-binoculars" 
-        onclick="redirectInformacoesCPV('.$row['proces_check'].')"> 
-      </i>
+      <mark class="bg-warning">
+        <i class="fa-solid fa-binoculars"
+          onclick="redirectInformacoesCPV('.$row['proces_18cpv1'].')">
+        </i>
+      </mark>
       '.$row['proces_18cpv1'].' - 
       '.$row['cpv1_nome'].' - [
       '.$row['cpv1_referencia'].']
@@ -144,9 +147,7 @@ foreach($data as $row)
   <div class="row small text-justify">
     <div class="col-md-2"><b>Financiado: </b></div>
     <div class="col-md-10 text-primary">
-     <mark class="bg-warning">
-        '.$row['proces_cand'].' 
-      </mark>
+        '.$row['proces_cand'].'
     </div>
     <div class="col-md-2"><b>Aprovado: </b></div>
     <div class="col-md-10">
@@ -162,15 +163,11 @@ foreach($data as $row)
     </div>
     <div class="col-md-2"><b>Faturado: </b></div>
     <div class="col-md-10">
-      <mark class="bg-warning">
         '.number_format($row['proces_val_faturacao'], 2, ',', '.').'€
-      </mark>
     </div>
     <div class="col-md-2"><b>Reembolsado: </b></div>
     <div class="col-md-10">
-      <mark class="bg-warning">
         '.number_format($row['proces_cand_recebido'], 2, ',', '.').'€
-      </mark>
     </div>
   </div>
   <hr>';
