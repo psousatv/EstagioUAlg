@@ -19,12 +19,12 @@ $.ajax(
                 aoColumns:[
                     { mDataProp: 'candidatura'},
                     { mDataProp: 'percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
-                    { mDataProp: 'faturado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
-                    { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
-                    { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') }
+                    { mDataProp: 'elegivel_faturado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'faturado_recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                 ],
                 order: {
                     mDataProp: 'inicio',
@@ -48,7 +48,7 @@ $.ajax(
                     // Designação das Candidaturas
                     nome_candidatura.push(rowData["candidatura"]);
                     // Dados para a barra de progresso - etiquetas e valores - array
-                    dadosProgresso.push([rowData["candidatura"], rowData["recebido"], rowData["recebido_percent"]]);
+                    dadosProgresso.push([rowData["candidatura"], rowData["recebido"], rowData["elegivel_faturado_percent"]]);
                     // Valores recebidos - para o Gráfico
                     dadosGrafico.push(rowData["recebido"]);
                 }
@@ -65,13 +65,13 @@ $.ajax(
             var iconeCartao = ''
             
             //Se taxa do valor recebido for menor que 15% que o valor previsto
-            if (result["recebido_percent"] <= result["percent"]- 15) {
+            if (result["elegivel_faturado_percent"] <= result["percent"]- 15) {
                 var classeCartao = 'bg-danger text-white';
                 var iconeCartao = 'fa fa-thumbs-down'
-            } else if (result["recebido_percent"] <= result["percent"]- 10){
+            } else if (result["elegivel_faturado_percent"] <= result["percent"]- 10){
                 var classeCartao = 'bg-warning text-black';
                 var iconeCartao = 'fa fa-warning'
-            } else if (result["recebido_percent"] <= result["percent"] - 5){
+            } else if (result["elegivel_faturado_percent"] <= result["percent"] - 5){
                 var classeCartao = 'bg-primary text-white';
                 var iconeCartao = 'fa fa-cog fa-spin'
             } else {
@@ -89,7 +89,7 @@ $.ajax(
                         <div class="text-end">
                             <p class="mb-0 small text-white">${result["candidatura"]}</p>
                             <!--Reembolsos-->
-                            <h6>${Number(result["recebido"]).toLocaleString('pt')}€<span class="h6">- ${result["recebido_percent"]}%</span></h3>
+                            <h6>${Number(result["recebido"]).toLocaleString('pt')}€<span class="h6">- ${result["elegivel_faturado_percent"]}%</span></h3>
                             <!--Elegível-->
                             <h6>${Number(result["elegivel"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                         </div>
