@@ -36,9 +36,15 @@ foreach($data as $row)
       <td>".$row['historico_num']."</td>
       <td>".$row['historico_obs']."</td>
       <td class='text-right'>".number_format($row['historico_valor'], 2, ',', '.')."</td>
-      <td>".$row['historico_notas']."</td>
-    </tr>";
+      <td>".$row['historico_notas']."</td>";
+      if($row['historico_ficheiro'] != null){
+        echo "
+        <td>
+          <a href='file:".trim($row['historico_ficheiro'],'#')."' target='_blank'>
+          <i class='fas fa-file' style='font-size:25px; '></i>
+          </a>
+        </td>";};
+    echo "</tr>";
 };
 echo "
   </table>";
-

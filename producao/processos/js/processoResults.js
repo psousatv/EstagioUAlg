@@ -88,7 +88,7 @@ function faturasProcesso(codigo) {
     }
   }
   
-  xmlhttp.open("GET","dados/processoFaturas.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoFaturas.php?codigoProcesso=" + codigo,true);
   xmlhttp.send();
 };
 
