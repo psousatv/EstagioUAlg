@@ -110,21 +110,22 @@ fetch(url)
     containerGrauExecucao.innerHTML = "";
 
     var grauExecucaoCartao = `
-        <div class="d-flex justify-content-center col-sm-4 bg-secondary text-white ">
-            <div class="d-flex justify-content-between px-md-1">
+        <div class="d-flex justify-content-center col-sm-4 bg-primary text-white ">
+            <div class="px-md-1 text-center">
                 <div>
-                    <p class="mb-0 small text-center">Grau de Execução Global</p>
-                    <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('pt')}%</h3>
-                    <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalObra).toLocaleString('pt')}€</span></h6>
+                    <p class="mb-0 small text-center">Grau de Execução até ao auto n.º ${autos}</p>
+                    <h3 >${Number(grauExecucaoRealizado).toLocaleString('pt')}%</h3>
+                    <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalPrevisto).toLocaleString('pt')}€</h6>
                 </div>
+                
             </div>
         </div>
-        <div class="d-flex justify-content-center col-sm-4 bg-primary text-white ">
-            <div class="d-flex justify-content-between px-md-1">
-                <div class="text-center">
-                    <p class="mb-0 small">Grau de Execução até ao auto n.º ${autos}</p>
-                    <h3>${Number(grauExecucaoRealizado).toLocaleString('pt')}%</h3>
-                    <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalPrevisto).toLocaleString('pt')}€</h6>
+        <div class="d-flex justify-content-center col-sm-4 bg-secondary text-white ">
+            <div class="px-md-1 text-center">
+                <div>
+                    <p class="mb-0 small">Grau de Execução Global</p>
+                    <h3>${Number(grauExecucaoGlobal).toLocaleString('pt')}%</h3>
+                    <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalObra).toLocaleString('pt')}€</span></h6>
                 </div>
             </div>
         </div>
