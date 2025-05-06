@@ -19,7 +19,7 @@ $processoFaturasAcumulado = array_sum(array_column($data, "fact_valor"));
 //Faturação
 echo "
 <b>Faturação » ".number_format($processoFaturasAcumulado, 2, ",", ".")."€</b>
-<table class='table table-striped table-hover small'>
+<table class='table table-responsive table-striped table-hover small'>
 <tr style='text-align: center'>
   <th class='bg-secondary text-white' colspan='6'>Faturas</th>
   <th colspan='3'>Duodécimos</th>
@@ -41,9 +41,13 @@ echo "
   </tr>";
 foreach($data as $row)
 {
+  $tipo = substr($row['fact_expediente'], 0, 1);
+  $numero = substr($row['fact_expediente'], 1, 5);
+  $ano = substr($row['fact_expediente'], 6, 7);
+  $expediente = $tipo. "." .$numero. "." .$ano;
   echo "
     <tr>
-      <td style='text-align:left'>".$row['fact_expediente']."</td>
+      <td style='text-align:left'>".$expediente."</td>
       <td style='text-align:left'>".$row['fact_tipo'].'_'.$row['fact_num']."</td>
       <td style='text-align:right'>".$row['fact_data']."</td>
       <td style='text-align:right'>".$row['fact_auto_num']."</td>
