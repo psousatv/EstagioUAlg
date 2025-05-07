@@ -88,15 +88,15 @@ fetch(url)
     vistoriasProgramadas.forEach((programado) => {
         var listaProgramado = `
             <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">${programado['data_registo']}</h5>
-                    <span class="badge badge-success">${programado['tipo']} - ${programado['actividade']}</span>
-                    <span>
+                <div class="d-flex w-120 justify-content-between">
+                <h5 class="mb-1">${programado['data_registo']}</h5>
+                <small class="badge badge-success">
                     <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
-                    </span>
+                </small>
                 </div>
                 <li class="mb-1 small">[${programado['processo']}] ${programado['designacao']}</li>
                 <ul>
+                    <li class="small"><b>Area: ${programado['actividade']}</b></li>
                     <li class="small"><b>Entidade: ${programado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${programado['recepcao']}</b></li>
                     <li class="small"><b>Pedido: ${programado['doc']}</b></li>
@@ -118,15 +118,15 @@ fetch(url)
 
         var listaVencido = `
             <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
+                <div class="d-flex w-120 justify-content-between">
                 <h5 class="mb-1">${vencido['data_registo']}</h5>
-                <small class="badge badge-danger">${vencido['tipo']} - ${vencido['actividade']}</small>
-                <span>
+                <small class="badge badge-danger">
                     <i class="fa fa-binoculars" onclick="redirectProcesso(${vencido['processo']})"></i>
-                    </span>
+                </small>
                 </div>
                 <li class="mb-1 small">[${vencido['processo']}] ${vencido['designacao']}</li>
                 <ul>
+                    <li class="small"><b>Area: ${vencido['actividade']}</b></li>
                     <li class="small"><b>Entidade: ${vencido['entidade']} </b></li>
                     <li class="small"><b>Recepção Provisória: ${vencido['recepcao']} </b></li>
                     <li class="small"><b>Pedido: ${vencido['doc']}</b></li>
@@ -149,15 +149,16 @@ fetch(url)
 
         var listaAgendado = `
             <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
+                <div class="d-flex w-120 justify-content-between">
                 <h5 class="mb-1">${agendado['data_registo']}</h5>
-                <small class="badge badge-primary">${agendado['tipo']} - ${agendado['actividade']}</small>
-                <span>
+                <small class="badge badge-primary">
                     <i class="fa fa-binoculars" onclick="redirectProcesso(${agendado['processo']})"></i>
-                    </span>
+                </small>
                 </div>
                 <li class="mb-1 small">[${agendado['processo']}] ${agendado['designacao']}</li>
                 <ul>
+                    <li class="small"><b>Area: ${agendado['actividade']}</b></li>
+                    <li class="small"><b>Area: ${agendado['tipo']} - ${agendado['actividade']}</b></li>
                     <li class="small"><b>Entidade: ${agendado['entidade']}</b></li>
                     <li class="small"><b>Recepção Provisória: ${agendado['recepcao']}</b></li>
                     <li class="small"><b>Pedido: ${agendado['doc']}</b></li>
