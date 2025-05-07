@@ -19,7 +19,7 @@ $processoFaturasAcumulado = array_sum(array_column($data, "fact_valor"));
 //Faturação
 echo "
 <b>Faturação » ".number_format($processoFaturasAcumulado, 2, ",", ".")."€</b>
-<table class='table table-responsive table-striped table-hover small'>
+<table class='table table-bordered table-striped table-hover small'>
 <tr style='text-align: center'>
   <th class='bg-secondary text-white' colspan='6'>Faturas</th>
   <th colspan='3'>Duodécimos</th>

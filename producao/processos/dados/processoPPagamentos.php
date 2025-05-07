@@ -58,7 +58,7 @@ $processoRealizadoAcumulado = array_sum(array_column($realizacao, "Acumulado"));
 //Plano de Pagamentos Previsto
 echo "
 <b>Plano de Pagamentos » ".number_format($processoPrevistoAcumulado, 2, ",", ".")."€</b>
-<table class='table table-responsive table-bordered table-striped table-hover small'>
+<table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
     <th>Acumulado</th>
@@ -99,7 +99,7 @@ echo "</table>";
 //Plano de Pagamentos Realizado
 echo "
 <b>Realizado » ".number_format($processoRealizadoAcumulado, 2, ",", ".")."€</b>
-<table class='table table-responsive table-bordered table-striped table-hover small'>
+<table class='table table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Ano</th>
     <th>Acumulado</th>
