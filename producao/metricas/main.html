@@ -105,76 +105,106 @@
         <div class="container-fluid">
           <h1 class="mt-2"></h1>
 
-    <!-- Template do Matrix a partir daqui-->
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-md-flex align-items-center">
-              <div>
-                <h4 class="card-title">Obras e Serviços - Ano Corrente</h4>
-                <h5 class="card-subtitle">Plano de Pagamentos vs Faturação</h5>
-              </div>
-            </div>
-            <div class="row">
-              <!-- 1nd Column -->
-              <div class="col-lg-9">
-                <canvas class="text-center" id="lstGraficoMetrica"><b>Gráfico do Ponto de situação da Obra</b></canvas>
-              </div>
-              <!-- 1nd Column End -->
-              <!-- 2nd Column -->
-              <div class="col-lg-3">
-                <div class="row">
-                  <div class="col-6" id="lstCartaoMetricas">
-                    <div class="bg-primary p-10 text-white text-center">
-                      <i class="fa fa-person"></i>
-                      <h5 class="mb-0 mt-1">0.000</h5>
-                      <small class="font-light">Previsto</small>
+          <!-- Template do Matrix a partir daqui-->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header"><i class="fas fa-area-chart mr-1"></i>Plano de Pagamentos vs Facturação</div>
+                <div class="card-body">
+                  <div class="d-md-flex align-items-center">
+                    <div class="col-lg-6">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <div value="EMP" onclick="htmlContrato(this.value)" class="btn btn-dark text-white text-center">
+                            <small class="font-light">Obras</small>
+                          </div>
+                        <!--
+                        </div>
+                        <div class="col-sm-3">
+                        -->
+                          <div value="SF" onclick="contrato(this.value)" class="btn btn-dark text-white text-center">
+                            <small class="font-light">Serviços</small>
+                          </div>
+                        </div>
+                        <div class="col-sm-3">
+                          <div class="btn btn-primary text-white text-center">
+                            <small class="font-light">Mensal</small>
+                          </div>
+                        <!--
+                        </div>
+                        <div class="col-sm-3">
+                        -->
+                          <div class="btn btn-primary text-white text-center">
+                            <small class="font-light">Acumulado</small>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="bg-primary p-10 text-white text-center">
-                      <i class="fa fa-person"></i>
-                      <h5 class="mb-0 mt-1">0.000</h5>
-                      <small class="font-light">Realizado</small>
+                    <!--
+                    <div class="col-md-4">
+                      <h4 class="card-title">Obras e Serviços - Ano Corrente</h4>
+                      <h5 class="card-subtitle">Plano de Pagamentos vs Faturação</h5>
                     </div>
+                    -->
                   </div>
-                  <div class="col-6 mt-3">
-                    <div class="bg-warning p-10 text-center">
-                      <i class="fa fa-person"></i>
-                      <h5 class="mb-0 mt-1">0.000</h5>
-                      <small class="font-light">Previsto</small>
+                  <div class="row">
+                    <div class="col-lg-9">
+                      <canvas class="text-center" id="lstGraficoMetrica"><b>Gráfico do Ponto de situação da Obra</b></canvas>
                     </div>
-                  </div>
-                  <div class="col-6 mt-3">
-                    <div class="bg-warning p-10 text-center">
-                      <i class="fa fa-euro"></i>
-                      <h5 class="mb-0 mt-1">0.000</h5>
-                      <small class="font-light">Realizado</small>
+                    <!-- 1nd Column End -->
+                    <!-- 2nd Column -->
+                    <div class="col-lg-3">
+                      <div class="row">
+                        <div class="col-6" id="lstCartaoMetricas">
+                          <div class="bg-primary p-10 text-white text-center">
+                            <i class="fa fa-person"></i>
+                            <h5 class="mb-0 mt-1">0.000</h5>
+                            <small class="font-light">Previsto</small>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="bg-primary p-10 text-white text-center">
+                            <i class="fa fa-person"></i>
+                            <h5 class="mb-0 mt-1">0.000</h5>
+                            <small class="font-light">Realizado</small>
+                          </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                          <div class="bg-warning p-10 text-center">
+                            <i class="fa fa-person"></i>
+                            <h5 class="mb-0 mt-1">0.000</h5>
+                            <small class="font-light">Previsto</small>
+                          </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                          <div class="bg-warning p-10 text-center">
+                            <i class="fa fa-euro"></i>
+                            <h5 class="mb-0 mt-1">0.000</h5>
+                            <small class="font-light">Realizado</small>
+                          </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                          <div class="bg-dark p-10 text-white text-center">
+                            <i class="fa fa-euro"></i>
+                            <h5 class="mb-0 mt-1">0.000</h5>
+                            <small class="font-light">Previsto</small>
+                          </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                          <div class="bg-dark p-10 text-white text-center">
+                            <i class="fa fa-euro"></i>
+                            <h5 class="mb-0 mt-1">0.000</h5>
+                            <small class="font-light">Realizado</small>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-6 mt-3">
-                    <div class="bg-dark p-10 text-white text-center">
-                      <i class="fa fa-euro"></i>
-                      <h5 class="mb-0 mt-1">0.000</h5>
-                      <small class="font-light">Previsto</small>
-                    </div>
-                  </div>
-                  <div class="col-6 mt-3">
-                    <div class="bg-dark p-10 text-white text-center">
-                      <i class="fa fa-euro"></i>
-                      <h5 class="mb-0 mt-1">0.000</h5>
-                      <small class="font-light">Realizado</small>
+                    <!-- 2nd Column End -->
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- 2nd Column End -->
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
           <h1 class="mt-2"></h1>
 
@@ -182,7 +212,7 @@
           <!-- Tabela -->
           <div class="row">
             <div class="col-md-12">
-              <div class="card mb-4">
+              <div class="card">
                 <div class="card-header"><i class="fas fa-table mr-1"></i>Obras em Curso</div>
                 <div class="card-body">
                   <div class="table-responsive">
@@ -201,7 +231,8 @@
                 </div>
               </div>
             </div>
-          </div>           
+          </div>  
+
         </div>
       </main>
     </div>

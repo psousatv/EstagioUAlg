@@ -1,7 +1,16 @@
 
 var params = new URLSearchParams(window.location.search);
+
+function htmlContrato(){
+
+};
+
 var anoIndicador = 2025; 
-var url = '../metricas/dados/metricasPPagamento.php?anoIndicador=' + anoIndicador;
+var contrato = 'EMP'; //document.getElementById("obra").value;
+
+console.log("Contrato", contrato);
+
+var url = '../metricas/dados/metricasPPagamento.php?anoIndicador=' + anoIndicador + "?contrato=" + contrato;
 
 var resultado = [];
 var labelsGrafico = [];
