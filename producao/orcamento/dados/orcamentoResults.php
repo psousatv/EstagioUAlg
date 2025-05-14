@@ -51,7 +51,7 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      proced_sigla AS procedimento,
                                      proces_nome AS designacao,
                                      proces_val_adjudicacoes AS adjudicado,
-                                     (SELECT SUM(historico_valor) FROM historico
+                                     (SELECT MIN(historico_valor) FROM historico
                                      WHERE historico_proces_check = proces_check 
                                      AND historico_descr_cod = 3) AS consulta,
                                      (SELECT SUM(fact_valor) FROM factura
