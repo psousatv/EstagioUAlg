@@ -14,7 +14,7 @@ $sqlPlanoPagamentosAutos = "SELECT
             pp_valor_faturado AS valor_faturado,
             pp_doc_gerado AS documento
             FROM plano_pagamentos
-            WHERE  pp_proces_check = '" .$codigoProcesso. "'";
+            WHERE pp_proces_check = '" .$codigoProcesso. "'";
 
 
 $stmt = $myConn->query($sqlPlanoPagamentosAutos);
@@ -22,4 +22,3 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 header('Content-Type: application/json');
 echo json_encode($data);
-
