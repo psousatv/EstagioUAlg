@@ -87,8 +87,11 @@ $.ajax(
                     <div class="d-flex justify-content-between px-md-1">
                         <div class="text-end">
                             <p class="mb-0 small text-white">${result["candidatura"]}</p>
-                            <!--Reembolsos-->
-                            <h6>${Number(result["recebido"]).toLocaleString('pt')}€<span class="h6">- ${result["faturado_recebido_percent"]}%</span></h3>
+                            <!--Faturado vs Reembolsos vs % -->
+                            <span class="h6">${Number(result["faturado"]).toLocaleString('pt')}€(F)</span>
+                            <span class="h6">- ${Number(result["recebido"]).toLocaleString('pt')}€(R)</span>
+                            <span class="h6">- ${result["faturado_recebido_percent"]}%</span>
+                            
                             <!--Elegível-->
                             <h6>${Number(result["elegivel"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
                         </div>
