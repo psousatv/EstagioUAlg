@@ -134,32 +134,27 @@
                 <div class="container-fluid">
                     <!-- Formulario para escolha do ano do Orçamento - Default = Ano Corrente -->
                     <h1 class="mt-2"></h1>
-                    <div class="card">
-                        <div class="badge badge-pill badge-primary">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <h6 style="float: left; text-align: left">Orçamento Corrente [Faturação vs Previsto]</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <h1 class="mt-2"></h1>
-                        <!--div class="badge badge-pill badge-primary"-->
-                            <div class="row">
-                                <div class="col-sm-12">
+                    <div class="row">
+                        
+                        <div class="col-md-12 d-grid small">
+                            <div class="card">
+                                
+                                <div class="btn btn-primary text-white text-left">
                                     <form>
-                                        <label style="float: right; text-align: left" for="anoCorrente">Ano:
+                                        <label style="text-align: left" for="anoCorrente">Orçamento do Ano:
                                             <input 
-                                            onclick="mudaAno()" 
                                             style="text-align: right" 
                                             type="text" 
                                             value="2025" 
                                             id="anoCorrente" 
                                             autofocus>
                                         </label>
+                                        <button type="button" class="btn btn-dark" onclick="mudaAno()" >Submit</button>
+                                
                                     </form>
                                 </div>
                             </div>
-                        <!--/div-->
+                        </div>
                     </div>
 
                     <h1 class="mt-2"></h1>

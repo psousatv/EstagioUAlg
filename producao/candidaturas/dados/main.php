@@ -6,22 +6,23 @@ include "../../../global/config/dbConn.php";
 // dados para dashCandidaturas sem interações - Search ou outras
 $query = "SELECT
           proces_cand AS candidatura,
-          cs.candoper_programa AS programa,
-          cs.candoper_fundo_coesao * 100 AS percent,
-          YEAR(cs.candoper_dt_inicio) AS inicio,
+          cs.candsub_estado AS estado,
+          cs.candsub_programa AS programa,
+          cs.candsub_fundo * 100 AS percent,
+          YEAR(cs.candsub_dt_inicio) AS inicio,
           ROUND(SUM(proces_val_adjudicacoes), 2) AS adjudicado,
           ROUND(SUM(proces_cand_elegivel), 2) AS elegivel,
           ROUND(SUM(proces_val_faturacao), 2) AS faturado,
           ROUND(SUM(proces_cand_recebido), 2) AS recebido,
-          IF(SUM(proces_val_faturacao) = 0 OR SUM(proces_cand_elegivel) = 0, 0,
-          ROUND((SUM(proces_val_faturacao) / SUM(proces_cand_elegivel))*100, 2)) AS elegivel_faturado_percent,
-          IF(SUM(proces_cand_recebido) = 0 OR SUM(proces_val_faturacao) = 0, 0,
-          ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao))*100, 2)) AS faturado_recebido_percent
+          IF(SUM(proces_val_faturacao) = 0 OR SUM(proces_cand_recebido) = 0, 0,
+          ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao))*100, 2)) AS faturado_recebido_percent,
+          IF(SUM(proces_cand_elegivel) = 0 OR SUM(proces_cand_recebido) = 0, 0,
+          ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel))*100, 2)) AS elegivel_recebido_percent
           FROM processo
-          INNER JOIN candidaturas_submetidas cs ON cs.candoper_codigo = proces_cand
+          INNER JOIN candidaturas_submetidas cs ON cs.candsub_codigo = proces_cand
           WHERE proces_cand <> 'n.a.' AND proces_report_valores = 1
           GROUP BY proces_cand
-          ORDER BY YEAR(cs.candoper_dt_inicio) DESC ";
+          ORDER BY YEAR(cs.candsub_dt_inicio) DESC ";
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

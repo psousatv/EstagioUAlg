@@ -15,14 +15,14 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 echo "
-<table class='table table-bordered table-striped table-hover small'>
+<table class='table table-fixed table-bordered table-striped table-hover small'>
   <tr style='text-align: center'>
     <th>Data</th>
     <th>Aprovado</th>
     <th>Assunto</th>
     <th colspan='2'>Documento</th>
-    <th>Observações</th>
     <th>Valor</th>
+    <th>Observações</th>
     <th>Notas</th>
   </tr>";
 foreach($data as $row)
@@ -34,8 +34,8 @@ foreach($data as $row)
       <td>".$row['historico_descr_nome']."</td>
       <td>".$row['historico_doc']."</td>
       <td>".$row['historico_num']."</td>
-      <td>".$row['historico_obs']."</td>
       <td class='text-right'>".number_format($row['historico_valor'], 2, ',', '.')."</td>
+      <td>".$row['historico_obs']."</td>
       <td>".$row['historico_notas']."</td>";
       if($row['historico_ficheiro'] != null){
         echo "

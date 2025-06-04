@@ -7,11 +7,12 @@ $pathImagens = "../../global/imagens/";
 $numProcessosAdjudicados = 0;
 
 $sqlCandidaturas = "SELECT
-                    cand_logo as logotipo,
-                    candoper_max_elegivel as max_elegivel
-                    FROM candidaturas_submetidas
-                    LEFT JOIN candidaturas_avisos ON cand_aviso = candsubm_aviso
-                    WHERE candoper_codigo LIKE '%".$nomeCandidatura."%'";
+                    ca.cand_logo as logotipo,
+                    cs.candsub_estado as estado,
+                    cs.candoper_max_elegivel as max_elegivel
+                    FROM candidaturas_submetidas cs
+                    LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.cand_aviso
+                    WHERE cs.candoper_codigo LIKE '%".$nomeCandidatura."%'";
 
 $stmt = $myConn->query($sqlCandidaturas);
 $Candidaturas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -47,20 +48,20 @@ $sqlProcessosCandidatura = "SELECT *,
                             ORDER BY proces_estado_nome ASC";
 
 $stmt = $myConn->query($sqlProcessosCandidatura);
-$procesosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$processosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Totais para o cabeçalho
 // Processos incluídos na Candidatura
 $totalAprovado = array_sum(array_column($Candidaturas, "max_elegivel"));
-$numProcessosAprovados = count($procesosCandidatura); // Quantidade de Ações Aprovadas
+$numProcessosAprovados = count($processosCandidatura); // Quantidade de Ações Aprovadas
 
 // Quantidade de Processos adjudicados
-foreach($procesosCandidatura as $key) {
+foreach($procesossCandidatura as $key) {
   if($key["proces_val_adjudicacoes"] > 0){
     $numProcessosAdjudicados += 1; //count($key["proces_check"]);
   }
 };
-$totalAdjudicado = array_sum(array_column($procesosCandidatura, "proces_val_adjudicacoes"));
+$totalAdjudicado = array_sum(array_column($processosCandidatura, "proces_val_adjudicacoes"));
 
 
 echo '

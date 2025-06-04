@@ -22,8 +22,8 @@ $.ajax(
                     { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },{ mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'elegivel_faturado_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'faturado_recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
+                    { mDataProp: 'elegivel_recebido_percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                 ],
                 order: {
                     mDataProp: 'inicio',
@@ -55,8 +55,11 @@ $.ajax(
             );
             
             // ** Cartões
-            var container = document.getElementById('cartoesEsquerdaGrafico');
-            container.innerHTML = "";
+            var containerCurso = document.getElementById('cartoesCandidaturaEmCurso');
+            var containerEncerrada = document.getElementById('cartoesCandidaturaEncerrada');
+            containerCurso.innerHTML = "";
+            containerEncerrada.innerHTML = "";
+
             data.forEach((result, idx) => {
             // Create card element
             
@@ -64,13 +67,13 @@ $.ajax(
             var iconeCartao = ''
             
             //Se taxa do valor recebido for menor que 15% que o valor previsto
-            if (result["faturado_recebido_percent"] <= result["percent"]- 15) {
+            if (result["faturado_recebido_percent"] <= result["percent"]- 15.01) {
                 var classeCartao = 'bg-danger text-white';
                 var iconeCartao = 'fa fa-thumbs-down'
-            } else if (result["faturado_recebido_percent"] <= result["percent"]- 10){
+            } else if (result["faturado_recebido_percent"] <= result["percent"]- 10.01){
                 var classeCartao = 'bg-warning text-black';
                 var iconeCartao = 'fa fa-warning'
-            } else if (result["faturado_recebido_percent"] <= result["percent"] - 5){
+            } else if (result["faturado_recebido_percent"] <= result["percent"] - 5.01){
                 var classeCartao = 'bg-primary text-white';
                 var iconeCartao = 'fa fa-cog fa-spin'
             } else {
@@ -78,8 +81,8 @@ $.ajax(
                 var iconeCartao = 'fa fa-smile'
             };
 
-            const card = document.createElement('div');
-            card.classList = 'card-body';
+            var cartao = document.createElement('div');
+            cartao.classList = 'card-body';
             
             var cartoes = `
             
@@ -93,7 +96,10 @@ $.ajax(
                             <span class="h6">- ${result["faturado_recebido_percent"]}%</span>
                             
                             <!--Elegível-->
-                            <h6>${Number(result["elegivel"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                            <h6>
+                                ${Number(result["elegivel"]).toLocaleString('pt')}€(E)
+                            <span class="h6"> - ${result["elegivel_recebido_percent"]}%</span>
+                            </h6>
                         </div>
                         <div class="align-self-center">
                             <i class="fas ${iconeCartao} text-white fa-3x"></i>
@@ -101,8 +107,13 @@ $.ajax(
                     </div>
                 </div>
             `;
-            // Append newyly created card element to the container
-            container.innerHTML += cartoes;
+            // Acrescenta o cartão ao container
+            if(result["estado"] == 'Em Curso'){
+                containerCurso.innerHTML += cartoes;
+            } else {
+                containerEncerrada.innerHTML += cartoes;
+            };
+
             });
         }
     );
