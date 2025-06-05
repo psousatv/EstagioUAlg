@@ -104,15 +104,21 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#orcamento" role="tab" aria-selected="false">
+                  <a class="nav-link" data-toggle="tab" href="#mapa_trabalhos" role="tab" aria-selected="false">
                     <span class="hidden-sm-up"></span>
                     <span class="hidden-xs-down">Mapa de Trabalhos</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#situacao" role="tab" aria-selected="false">
+                  <a class="nav-link" data-toggle="tab" href="#mapa_situacao" role="tab" aria-selected="false">
                     <span class="hidden-sm-up"></span>
                     <span class="hidden-xs-down">Mapa de Situação</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#metricas" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Métricas</span>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -125,12 +131,6 @@
                   <a class="nav-link" data-toggle="tab" href="#auto" role="tab" aria-selected="false">
                     <span class="hidden-sm-up"></span>
                     <span class="hidden-xs-down">Auto</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#componenetes" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Componentes</span>
                   </a>
                 </li>
               </ul>
@@ -153,13 +153,15 @@
                     <div class="card-body">
                       <div class="d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
                       <h1 class="mt-2"></h1>
-                      <div class="row" id="lstObraCartoes"><b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b></div>
+                      <div class="row" id="lstObraCartoes">
+                        <b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b>
+                      </div>
                     </div>
                   </div>
 
                 </div>
 
-                <div class="tab-pane p-20" id="orcamento" role="tabpanel" >
+                <div class="tab-pane p-20" id="mapa_trabalhos" role="tabpanel" >
                   <div class="row">
                     <div class="col col-lg-12">
                       <div class="p-20" id="lstMapaTrabalhos">
@@ -168,11 +170,24 @@
                     </div>
                   </div>
                 </div>
-                <div class="tab-pane p-20 " id="situacao" role="tabpanel" >
+                <div class="tab-pane p-20 " id="mapa_situacao" role="tabpanel" >
                   <div class="row">
                     <div class="col col-lg-12">
                       <div class="p-20" id="lstMapaSituacao">
                         <b>O Mapa de Situação é listado aqui...</b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane p-20 " id="metricas" role="tabpanel" >
+                  
+                    <div class="col col-lg-12">
+                      <div class="row">
+                      <div class="col col-md-8 p-20" id="lstMetricasProgress">
+                        <b>Area para disponibilizar as Componentes da Obra - ProgressBar ...</b>
+                      </div>
+                      <div class="col col-md-4 p-20" id="lstMetricasGrafico">
+                        <b>Area para disponibilizar as Componentes da Obra - Gráficos ...</b>
                       </div>
                     </div>
                   </div>
@@ -192,11 +207,6 @@
                 <div class="tab-pane p-20 " id="auto" role="tabpanel" >
                   <div class="p-20" id="lstAuto">
                     <b>Deverá selecionar em "Dados Gerais" o auto que pretende consultar...</b>
-                  </div>
-                </div>
-                <div class="tab-pane p-20 " id="componenetes" role="tabpanel" >
-                  <div class="p-20" id="lstComponentes">
-                    <b>Area para disponibilizar as Componentes da Obra ...</b>
                   </div>
                 </div>
               </div>
@@ -224,7 +234,7 @@
 <script src="js/obraResults.js"></script>
 <script src="js/obraCartoes.js"></script>
 <script src="js/obraGraficos.js"></script>
-<script src="js/obraComponentes.js"></script>
+<script src="js/obraMetricas.js"></script>
 <!--script src="js/obraGauge.js"></script-->
 
 </body>
