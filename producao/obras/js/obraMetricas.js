@@ -41,6 +41,8 @@ fetch(url)
         var oldCanvas = document.getElementById('lstObraGrafico');
         var newCanvas = document.getElementById('lstMetricasGrafico');
         var contexto = newCanvas.getContext('2d');
+        newCanvas.width = oldCanvas.width;
+        newCanvas.height = oldCanvas.height;
         contexto.drawImage(oldCanvas, 0, 0);
          
 
