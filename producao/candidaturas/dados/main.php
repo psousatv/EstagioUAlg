@@ -8,7 +8,7 @@ $query = "SELECT
           proces_cand AS candidatura,
           cs.candsub_estado AS estado,
           cs.candsub_programa AS programa,
-          cs.candsub_fundo * 100 AS percent,
+          cs.candsub_fundo * 100 AS taxa,
           YEAR(cs.candsub_dt_inicio) AS inicio,
           ROUND(SUM(proces_val_adjudicacoes), 2) AS adjudicado,
           ROUND(SUM(proces_cand_elegivel), 2) AS elegivel,

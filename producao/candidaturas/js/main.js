@@ -18,7 +18,7 @@ $.ajax(
                 aaData: data,
                 aoColumns:[
                     { mDataProp: 'candidatura'},
-                    { mDataProp: 'percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { mDataProp: 'taxa', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'elegivel', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
                     { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },{ mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')},
                     { mDataProp: 'recebido', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
@@ -47,7 +47,7 @@ $.ajax(
                     // Designação das Candidaturas
                     nome_candidatura.push(rowData["candidatura"]);
                     // Dados para a barra de progresso - etiquetas e valores - array
-                    dadosProgresso.push([rowData["candidatura"], rowData["recebido"], rowData["faturado_recebido_percent"]]);
+                    dadosProgresso.push([rowData["candidatura"], rowData["recebido"], rowData["elegivel_recebido_percent"]]);
                     // Valores recebidos - para o Gráfico
                     dadosGrafico.push(rowData["recebido"]);
                 }
@@ -60,22 +60,26 @@ $.ajax(
             containerCurso.innerHTML = "";
             containerEncerrada.innerHTML = "";
 
-            data.forEach((result, idx) => {
+            data.forEach((result) => {
             // Create card element
             
             var classeCartao = ''
             var iconeCartao = ''
             
-            //Se taxa do valor recebido for menor que 15% que o valor previsto
-            if (result["faturado_recebido_percent"] <= result["percent"]- 15.01) {
+            //Se taxa Cores dos Cartões conforme o montante recebido (Elegível)
+            // Até 65%
+            if (result["elegivel_recebido_percent"] <= result["taxa"] - 35.01) {
                 var classeCartao = 'bg-danger text-white';
                 var iconeCartao = 'fa fa-thumbs-down'
-            } else if (result["faturado_recebido_percent"] <= result["percent"]- 10.01){
+            // Até 75% - 
+            } else if (result["elegivel_recebido_percent"] <= result["taxa"]- 25.01){
                 var classeCartao = 'bg-warning text-black';
                 var iconeCartao = 'fa fa-warning'
-            } else if (result["faturado_recebido_percent"] <= result["percent"] - 5.01){
+            // Até 85% - Melhorar
+            } else if (result["elegivel_recebido_percent"] <= result["taxa"] - 15.01){
                 var classeCartao = 'bg-primary text-white';
                 var iconeCartao = 'fa fa-cog fa-spin'
+            // Mais de 95% - Sucesso
             } else {
                 var classeCartao = 'bg-success text-white';
                 var iconeCartao = 'fa fa-smile'
