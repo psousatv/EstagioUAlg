@@ -10,6 +10,7 @@ $sql = "SELECT
         mt_componente_area AS area,
         mt_componente_infraestrutura AS infraestrutura,
         mt_componente_intervencao AS intervencao,
+        o.objecto_grupo AS grupo,
         mt_objecto AS objeto,
         ROUND(SUM(mt_val_obra),2) AS valor_proposto,
         (SELECT 
@@ -21,9 +22,14 @@ $sql = "SELECT
                 ROUND(SUM(mt_val_obra),2) * 100),2) AS percentagem
         
         FROM mapa_trabalhos
+        INNER JOIN projecto_objectos o ON o.objecto_descr = mt_objecto
         WHERE mt_check = '".$codigoProcesso."' AND length(mt_objecto) > 0
         GROUP BY mt_check, 
-        mt_componente_area, mt_componente_infraestrutura, mt_componente_intervencao, mt_objecto";
+        mt_componente_area, 
+        mt_componente_infraestrutura, 
+        mt_componente_intervencao, 
+        o.objecto_grupo, mt_objecto
+        ORDER BY o.objecto_grupo";
 
 $stmt = $myConn->query($sql);
 $dadosEnviar = $stmt->fetchAll(PDO::FETCH_ASSOC);

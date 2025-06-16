@@ -10,7 +10,7 @@ var barraProgresso = [];
 fetch(url)
     .then(response => {
         if(!response.ok){
-            throw new Error (document.getElementById("lstMetricasProgress").innerHTML = response.statusText);    
+            throw new Error (document.getElementById("lstMetricasProgressInstalacao").innerHTML = response.statusText);    
         }
         return response.json();
     })
@@ -23,19 +23,26 @@ fetch(url)
         //    Math.round((obraMetricas[0]['valor_trabalhos'] / obraMetricas[0]['valor_proposto'])* 100, 2)
         //]);
         for(var i = 0; i < obraMetricas.length; i++){
-            if(
-                obraMetricas[i]['infraestrutura'].match('AA_Condutas')
+            //if(
+            //    obraMetricas[i]['infraestrutura'].match('AA_Condutas')
             //    obraMetricas[i]['objeto'] == 'Pavimentações' || 
             //    obraMetricas[i]['objeto'] == 'Movimento Terras' || 
             //    obraMetricas[i]['objeto'] == 'Tubagens' || 
             //    obraMetricas[i]['objeto'] == 'Acessórios' || 
             //    obraMetricas[i]['objeto'] == 'Ramais'
-            ){
-            barraProgresso.push([obraMetricas[i]['objeto'], obraMetricas[i]['valor_proposto'], obraMetricas[i]['valor_trabalhos'],
-                obraMetricas[i]['percentagem']]);
+            //)
+            {
+            barraProgresso.push([
+                obraMetricas[i]['grupo'], 
+                obraMetricas[i]['objeto'], 
+                obraMetricas[i]['valor_proposto'], 
+                obraMetricas[i]['valor_trabalhos'],
+                obraMetricas[i]['percentagem']
+            ]);
             }
         };
 
+        //console.log("Barra Progresso:", barraProgresso);
         
         // Replica o Gráfico de Dados Gerias - DOM
         var oldCanvas = document.getElementById('lstObraGrafico');
@@ -48,7 +55,7 @@ fetch(url)
 
         // Progress Bar
         // Contentores para agregar as barras de progresso
-        const progressBarsContainer = document.getElementById('lstMetricasProgress');
+        const progressBarsContainer = document.getElementById('lstMetricasProgressInstalacao');
         progressBarsContainer.innerHTML = "";
         // Função para crear una barra de progresso
         
@@ -83,37 +90,32 @@ fetch(url)
             var width = 0;
             const interval = setInterval(function()
             {
-                if (width >= value[3]) {
+                if (width >= value[4]) {
                     clearInterval(interval);
                 } else {
                     width++;
                     progressBar.style.width = width + '%';
                     //progressSpan.textContent = value[0] + ' - ' + value[1] + ' - ' + value[2];
-                    progressSpan.textContent = value[0];
-                    progressSpanBar.textContent = value[3] + '%';
+                    progressSpan.textContent = value[1];
+                    progressSpanBar.textContent = value[4] + '%';
                 }
+
             }, 1);
         }
 
         // Atribuir os dados às barras de progresso
-        
-        barraProgresso.forEach(function(value)
-        {
-            createProgressBar(value);
-        });
+        // Atribui ao conotainer Pavimentações os valores do grupo
+        barraProgresso.forEach(function(value){
+            if(value[0] == 'Instalação'){ 
+                createProgressBar(value);
+            }    
+        }
+        );
     
-        // Iniciar as barras de progresso quando se acede à Página
-        //window.addEventListener('load', function(){
-        //    createProgressBar();
-        //});
-       
-        //console.log("Fetched Data: ", fetchedData);
-        console.log("obraMetricas: ", obraMetricas);
-        //console.log("Dados barra Progresso: ", barraProgresso);
 
     })
     .catch(error => {
-        document.getElementById("lstMetricasProgress").innerHTML = error;
+        document.getElementById("lstMetricasProgressInstalacao").innerHTML = error;
         //console.error("Error fetching the data:", error);
     });
 
