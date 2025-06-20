@@ -40,7 +40,7 @@
 
 </head>
 
-<body onload="avisos()">
+<body>
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="../../index.html">Processos</a>
 
@@ -86,8 +86,9 @@
                         aria-label="Search1" aria-describedby="basic-addon1"
                         id="nomeProcesso"
                         autofocus
+                        onfocus="avisos()"
                         oninput="procuraNomeProcesso(this.value)">
-                      
+            
                         <h1 class="mt-2"></h1>
 
                         <label>Fornecedor</label>
