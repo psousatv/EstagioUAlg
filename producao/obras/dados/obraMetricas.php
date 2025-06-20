@@ -1,18 +1,43 @@
 <?php
 
 include "../../../global/config/dbConn.php";
+$codigoProcesso = intval($_GET['codigoProcesso']);
 
-$codigoProcesso = $_GET['codigoProcesso'];
+//$data = [];
 
-$sqlComponentes = "SELECT * FROM 
-                  mapa_trabalhos
-                  WHERE mt_conta = 'R' AND 
-                        mt_check = '" . $codigoProcesso . "'";
+$sql = "SELECT
+        mt_check AS obra,
+        mt_componente_area AS area,
+        mt_componente_infraestrutura AS infraestrutura,
+        mt_componente_intervencao AS intervencao,
+        o.objecto_grupo AS grupo,
+        mt_objecto AS objeto,
+        ROUND(SUM(mt_val_obra),2) AS valor_proposto,
+        (SELECT 
+            COALESCE(ROUND(SUM(auto_valor),2),1)
+            FROM obra_autos WHERE auto_check = mt_check AND auto_objecto= mt_objecto) AS valor_trabalhos,
+        ROUND(((SELECT 
+                COALESCE(ROUND(SUM(auto_valor),2),1)
+                FROM obra_autos WHERE auto_check = mt_check AND auto_objecto= mt_objecto) /
+                ROUND(SUM(mt_val_obra),2) * 100),2) AS percentagem
+        
+        FROM mapa_trabalhos
+        INNER JOIN projecto_objectos o ON o.objecto_descr = mt_objecto
+        WHERE mt_check = '".$codigoProcesso."' AND length(mt_objecto) > 0
+        GROUP BY mt_check, 
+        mt_componente_area, 
+        mt_componente_infraestrutura, 
+        mt_componente_intervencao, 
+        o.objecto_grupo, mt_objecto
+        ORDER BY o.objecto_grupo";
 
-$stmt = $myConn->query($sqlComponentes);
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $myConn->query($sql);
+$dadosEnviar = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//$stmt2 = $myConn->query($sqlComponentesValores);
+//$dados2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+//$dadosEnviar = array_merge($dados1, $dados2)
 
 header('Content-Type: application/json');
-echo json_encode($data);
-
-printf($data);
+echo json_encode($dadosEnviar);

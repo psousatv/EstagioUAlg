@@ -4,7 +4,7 @@
 var allData = [];
 var dadosGrafico = [];
 
-console.log("AllData: ", allData);
+//console.log("AllData: ", allData);
 
 $.ajax(
     {

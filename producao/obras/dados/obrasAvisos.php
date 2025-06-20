@@ -29,7 +29,7 @@ echo '
         <div class="tab-content">
           <div class="tab-pane fade show active" id="curso" role="tabpanel" aria-labelledby="emCurso_tab">
             <div id="processosFaseCurso">
-              <table class="table table-striped small">';
+              <table class="table table-striped">';
               foreach($data as $row) {
                 if($row['proces_cpv_sigla'] === 'EMP' AND $row['proces_estado'] == '208'){
                   echo  '
@@ -61,7 +61,7 @@ echo '
         </div>
         <h1 class="mt-2"></h1>
         <div id="processosFinalizadosComRP">
-          <table class="table table-striped small">';
+          <table class="table table-striped">';
           foreach($data as $row) {
             if($row['proces_cpv_sigla'] == "EMP" AND $row['proces_estado'] == "220" 
             AND date('Y', strtotime($row['proces_rp'])) >= $yearNow - 1){
@@ -88,7 +88,7 @@ echo '
         </div>
       <h1 class="mt-2"></h1>
         <div id="processosFinalizadosSemRP">
-          <table class="table table-striped small">';
+          <table class="table table-striped">';
           foreach($data as $row) {
             if($row['proces_cpv_sigla'] === "EMP" AND $row['proces_estado'] == "219" 
             AND $row['proces_rp'] == null AND $row['proces_proced_cod'] != "30"){

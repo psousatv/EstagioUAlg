@@ -21,6 +21,7 @@ function processoSelected() {
 
         resumoProcesso(codigo);
         historicoProcesso(codigo);
+        fasesProcesso(codigo); // Milestones
         relacoesProcesso(codigo);
         pagamentosProcesso(codigo); // Plano de Pagamentos
         faturasProcesso(codigo); // Detalhes daas Faturas
@@ -37,6 +38,20 @@ function resumoProcesso(codigo) {
     }
   }
   xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
+  xmlhttp.send();
+};
+
+// Fases do Processo - Milestones
+function fasesProcesso(codigo) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("lstFasesProcesso").innerHTML = this.responseText;
+
+      //console.log("Milestones: ", this.responseText);
+    }
+  }
+  xmlhttp.open("GET","dados/processoMilestones.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 

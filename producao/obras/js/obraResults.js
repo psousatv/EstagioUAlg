@@ -93,6 +93,7 @@ function garantiasProcesso(codigo) {
   xmlhttp.send();
 };
 
+
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada
 function redirectObras(){
