@@ -9,10 +9,10 @@ $numProcessosAdjudicados = 0;
 $sqlCandidaturas = "SELECT
                     ca.cand_logo as logotipo,
                     cs.candsub_estado as estado,
-                    cs.candoper_max_elegivel as max_elegivel
+                    cs.candsub_max_elegivel as max_elegivel
                     FROM candidaturas_submetidas cs
-                    LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.cand_aviso
-                    WHERE cs.candoper_codigo LIKE '%".$nomeCandidatura."%'";
+                    LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.candsub_aviso
+                    WHERE cs.candsub_codigo LIKE '%".$nomeCandidatura."%'";
 
 $stmt = $myConn->query($sqlCandidaturas);
 $Candidaturas = $stmt->fetchAll(PDO::FETCH_ASSOC);

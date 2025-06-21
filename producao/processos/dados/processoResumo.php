@@ -23,7 +23,7 @@ foreach($data as $row)
   <div class="row small text-justify">
     <div class="col-md-2"><b>Enquadramento/Aprovado: </b></div>
     <div class="col-md-10 text-primary">
-      '.$row["proces_enquadramento"].'/
+      '.$row["proces_data_enquadramento"].'/
       '.$row["proces_data_aprovacao"].'
     </div>  
     <div class="col-md-2"><b>Processo Administrativo: </b></div>
@@ -59,7 +59,7 @@ foreach($data as $row)
     </div>
     <div class="col-md-2"><b>Consignação: </b></div>
     <div class="col-md-10 text-primary">
-        '.$row["proces_csgn"].'
+        '.$row["proces_data_csgn"].'
     </div>
     <div class="col-md-2"><b>Prazo de Execução: </b></div>
     <div class="col-md-10">

@@ -5,7 +5,7 @@ include "../../../global/config/dbConn.php";
 $query = 'SELECT *
           FROM processo
           INNER JOIN entidade ent ON ent_cod = proces_ent_cod
-          ORDER BY proces_cod, proces_estado_data, proces_estado';
+          ORDER BY proces_cod, proces_data_estado, proces_estado';
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

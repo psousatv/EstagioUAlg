@@ -8,7 +8,7 @@ $query = 'SELECT *
           FROM processo
           INNER JOIN entidade ent ON ent_cod = proces_ent_cod
           WHERE proces_report_valores > 0
-          ORDER BY proces_cod, proces_estado_data, proces_estado';
+          ORDER BY proces_cod, proces_data_estado, proces_estado';
 
 //WHERE descr_fase_processo ="'.$faseProcessos.'"
 
