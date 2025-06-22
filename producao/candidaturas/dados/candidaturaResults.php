@@ -56,7 +56,7 @@ $totalAprovado = array_sum(array_column($Candidaturas, "max_elegivel"));
 $numProcessosAprovados = count($processosCandidatura); // Quantidade de Ações Aprovadas
 
 // Quantidade de Processos adjudicados
-foreach($procesossCandidatura as $key) {
+foreach($processosCandidatura as $key) {
   if($key["proces_val_adjudicacoes"] > 0){
     $numProcessosAdjudicados += 1; //count($key["proces_check"]);
   }
@@ -94,7 +94,7 @@ echo '
           <th>Pedido</th>
           <th>Reembolsado</th>
         </tr>';
-  foreach($procesosCandidatura as $row) {
+  foreach($processosCandidatura as $row) {
   echo '
         <tr onclick="redirectProcesso('.$row["proces_check"].')">
           <td class="bg-primary text-white">'.$row["proces_estado_nome"].'</td>
