@@ -12,6 +12,7 @@ $processoMilestones = "SELECT
                       COALESCE(proces_data_entrega, 0) AS Proposta,
                       COALESCE(proces_data_adjudicacao, 0) AS Adjudicacao,
                       COALESCE(proces_data_contrato, 0) AS Contrato,
+                      COALESCE(proces_data_basegov, 0) AS BaseGov,
                       COALESCE(proces_data_csgn, 0) AS Consignacao,
                       COALESCE(proces_data_rp, 0) AS RP,
                       COALESCE(proces_data_fim, 0) AS Contas,
