@@ -32,11 +32,6 @@ $sqlProcessosCandidatura = "SELECT *,
                             FROM factura
                             WHERE fact_proces_check = proces_check ) AS faturado,
                             (SELECT
-                            SUM(fact_finan_fundo)
-                            FROM factura
-                            WHERE fact_proces_check = proces_check AND
-                            fact_finan_pp LIKE 'PP%') AS pedido,
-                            (SELECT
                             SUM(fact_finan_pago)
                             FROM factura
                             WHERE fact_proces_check = proces_check AND
@@ -52,6 +47,7 @@ $processosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $sqlValoresCandidatura = "SELECT 
                           historico_proces_check AS processo,
+                          MAX(CASE WHEN historico_descr_cod = 92 THEN historico_doc ELSE 0 END) AS expediente,
                           historico_num AS numero,
                           MAX(historico_dataemissao) AS registo,
                           SUM(CASE WHEN historico_descr_cod = 91 THEN historico_valor ELSE 0 END) AS valor1,
@@ -98,8 +94,6 @@ echo '
         <table class="table table-responsive table-striped small">
         <tr>
           <th>Estado</th>
-          <th>DEP</th>
-          <th>PADM</th>
           <th>Processo</th>
           <th>Base</th>
           <th>Adjudicado</th>
@@ -111,29 +105,26 @@ echo '
   echo '
         <tr onclick="redirectProcesso('.$row["proces_check"].')">
           <td class="bg-primary text-white">'.$row["proces_estado_nome"].'</td>
-          <td class=" bg-secondary text-white">'.$row["dep_sigla"].'</td>
-          <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
           <td>'.$row["proces_nome"].'</td>';
           if($row["proces_val_faturacao"] == 0){
             echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
             echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-            //echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-            //echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
-            //echo '<td class="bg-primary text-white text-right">'.number_format($row["pago"], 2, ",", ".").'€</td>';
+            echo '<td colspan="3"></td>';
           } else {
             echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
             echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
             echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-            //echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
-            //echo '<td class="bg-primary text-white text-right">'.number_format($row["reembolsado"], 2, ",", ".").'€</td>';           
+            echo '<td class="table-warning small">facturas</td>';
+            echo '<td class="bg-primary text-white text-right">'.number_format($row["reembolsado"], 2, ",", ".").'€</td>';
             foreach($valoresCandidatura as $valores ){
               if($valores["processo"] == $row["proces_check"]){
-                echo '<tr>';
-                //echo '<td class="bg-secondary text-white text-right">'.$valores["descritivo"].'</td>';
-                echo '<td colspan="6" class="bg-warning text-right">'.$valores["registo"].'</td>';
-                echo '<td class="bg-warning">'.$valores["numero"].'</td>';
-                echo '<td class="bg-warning text-right">'.number_format($valores["valor1"], 2, ",", ".").'€</td>';
-                echo '<td class="bg-success text-right">'.number_format($valores["valor2"], 2, ",", ".").'€</td>';
+                echo '<tr class="table-sm table-info">';
+                echo '<td colspan="2"></td>';
+                echo '<td>'.$valores["expediente"].'</td>';
+                echo '<td>'.$valores["registo"].'</td>';
+                echo '<td>'.$valores["numero"].'</td>';
+                echo '<td class="text-right">'.number_format($valores["valor1"], 2, ",", ".").'€</td>';
+                echo '<td class="text-right">'.number_format($valores["valor2"], 2, ",", ".").'€</td>';
                 echo '</tr>';
                 }
             }
