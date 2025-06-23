@@ -40,7 +40,7 @@ $sqlProcessosCandidatura = "SELECT *,
                             SUM(fact_finan_pago)
                             FROM factura
                             WHERE fact_proces_check = proces_check AND
-                            fact_finan_pp LIKE 'PP%') AS pago
+                            fact_finan_pp LIKE 'PP%') AS reembolsado
                             FROM processo
                             INNER JOIN departamento ON dep_cod = proces_departamento
                             WHERE proces_cand LIKE '%".$nomeCandidatura."%'
@@ -49,6 +49,19 @@ $sqlProcessosCandidatura = "SELECT *,
 
 $stmt = $myConn->query($sqlProcessosCandidatura);
 $processosCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$sqlValoresCandidatura = "SELECT 
+                          historico_proces_check AS processo,
+                          historico_num AS numero,
+                          MAX(historico_dataemissao) AS registo,
+                          SUM(CASE WHEN historico_descr_cod = 91 THEN historico_valor ELSE 0 END) AS valor1,
+                          SUM(CASE WHEN historico_descr_cod = 92 THEN historico_valor ELSE 0 END) AS valor2
+                          FROM historico 
+                          WHERE historico_descr_cod IN (91, 92)
+                          GROUP BY historico_proces_check, historico_num";
+
+$stmt = $myConn->query($sqlValoresCandidatura);
+$valoresCandidatura = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Totais para o cabeçalho
 // Processos incluídos na Candidatura
@@ -102,17 +115,28 @@ echo '
           <td class=" bg-info text-white">'.$row["proces_padm"].'</td>
           <td>'.$row["proces_nome"].'</td>';
           if($row["proces_val_faturacao"] == 0){
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["pago"], 2, ",", ".").'€</td>';
+            echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
+            echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
+            //echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
+            //echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
+            //echo '<td class="bg-primary text-white text-right">'.number_format($row["pago"], 2, ",", ".").'€</td>';
           } else {
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
-    echo '<td class="bg-primary text-white text-right">'.number_format($row["pago"], 2, ",", ".").'€</td>';
+            echo '<td class="bg-primary text-white text-right">'.number_format($row["proces_val_max"], 2, ",", ".").'€</td>';
+            echo '<td class="bg-secondary text-white text-right">'.number_format($row["proces_val_adjudicacoes"], 2, ",", ".").'€</td>';
+            echo '<td class="bg-primary text-white text-right">'.number_format($row["faturado"], 2, ",", ".").'€</td>';
+            //echo '<td class="bg-secondary text-white text-right">'.number_format($row["pedido"], 2, ",", ".").'€</td>';
+            //echo '<td class="bg-primary text-white text-right">'.number_format($row["reembolsado"], 2, ",", ".").'€</td>';           
+            foreach($valoresCandidatura as $valores ){
+              if($valores["processo"] == $row["proces_check"]){
+                echo '<tr>';
+                //echo '<td class="bg-secondary text-white text-right">'.$valores["descritivo"].'</td>';
+                echo '<td colspan="6" class="bg-warning text-right">'.$valores["registo"].'</td>';
+                echo '<td class="bg-warning">'.$valores["numero"].'</td>';
+                echo '<td class="bg-warning text-right">'.number_format($valores["valor1"], 2, ",", ".").'€</td>';
+                echo '<td class="bg-success text-right">'.number_format($valores["valor2"], 2, ",", ".").'€</td>';
+                echo '</tr>';
+                }
+            }
           }
     };
   echo '

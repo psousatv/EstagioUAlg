@@ -103,7 +103,6 @@ echo '
             echo '<td>'.$row["linhaSE"].'</td>';
             echo '<td>'.$row["descritivo"].'</td>';
             echo '<td colspan="2" class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
-            
             echo '<td class="text-left">'.number_format($row["total_adjudicado"], 2, ",", ".").'€</td>';
             echo '<td class="text-left">'.number_format($row["total_faturado"], 2, ",", ".").'€</td>';
             
