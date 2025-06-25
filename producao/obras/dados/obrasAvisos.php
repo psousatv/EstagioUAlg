@@ -29,11 +29,11 @@ echo '
         <div class="tab-content">
           <div class="tab-pane fade show active" id="curso" role="tabpanel" aria-labelledby="emCurso_tab">
             <div id="processosFaseCurso">
-              <table class="table-sm table-striped">';
+              <table class="table table-striped table-sm">';
               foreach($data as $row) {
                 if($row['proces_cpv_sigla'] === 'EMP' AND $row['proces_estado'] == '208'){
                   echo  '
-                    <tr onclick="redirectObra('.$row["proces_check"].')">
+                    <tr class="table-sm" onclick="redirectObra('.$row["proces_check"].')">
                       <td>'
                       .$row["proces_estado_nome"].'</td> <td>'
                       .$row["proces_nome"].'</td> <td>'
