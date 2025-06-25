@@ -16,11 +16,8 @@ foreach($data as $row) {
 echo  '
 <div class="col col-md-12 d-grid small">
   <div class="btn btn-primary col-md-8 d-grid small text-white text-left">'.$row["proces_padm"].'_'.$row["proces_nome"].'</div>
-  <span style="position: absolute; right: 180px;">
     <div class="btn btn-warning" onclick="redirectObras()"><i class="fa fa-solid fa-refresh"></i></div>  
     <div class="btn btn-primary"><a class="text-white" href="obrasSearch.html"><i class="fa fa-solid fa-search"></i></a></div>
-    
-  </span>
 </div>
 '
 
