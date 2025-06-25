@@ -118,7 +118,7 @@ echo '
             echo '<td class="bg-primary text-white text-right">'.number_format($row["reembolsado"], 2, ",", ".").'€</td>';
             foreach($valoresCandidatura as $valores ){
               if($valores["processo"] == $row["proces_check"]){
-                echo '<tr class="table-sm table-info">';
+                echo '<tr class="table table-sm table-info">';
                 echo '<td colspan="2"></td>';
                 echo '<td>'.$valores["expediente"].'</td>';
                 echo '<td>'.$valores["registo"].'</td>';
