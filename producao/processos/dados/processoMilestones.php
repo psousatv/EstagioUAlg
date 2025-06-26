@@ -24,11 +24,18 @@ $stmt = $myConn->query($processoMilestones);
 $milestones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $incremento = 0;
 
+
+
 echo "
   
   <div class='progress small' style='height: 30px;' >";
 
   foreach($milestones as $milestone){
+
+    $data_Consignacao = (int) date('Ymd',strtotime($milestone['Consignacao']));
+    $data_RP = (int) date('Ynd',strtotime($milestone['RP']));
+    $data_BaseGov = (int) date('Ymd',strtotime($milestone['BaseGov']));
+
     foreach($milestone as $key => $valor){
       if($valor == 0){
         echo "<div class='progress-bar bg-info' role='progressbar' style='width: 25%;' 
@@ -36,15 +43,43 @@ echo "
           aria-valuemin='0' aria-valuemax='100'>$key
       </div>";
       } else{
-      echo "
-      <div class='progress-bar bg-success' role='progressbar' style='width: 25%;' 
-          aria-valuenow='$incremento' 
-          aria-valuemin='0' aria-valuemax='100'>$valor
-          <div style='display: flex; justify-content: center; margin-top: 15px;'>$key</div>
-      </div>";
-      //Oito etapas
-      $incremento += 12.50;
-    }}
-  };
+        if($key == 'BaseGov' && ($data_BaseGov > $data_Consignacao && $data_BaseGov > $data_RP)){
+          echo "
+          <div class='progress-bar bg-danger' role='progressbar' style='width: 25%;' 
+            aria-valuenow='$incremento'
+            aria-valuemin='0' aria-valuemax='100'>$valor
+            <div style='display: flex; justify-content: center; margin-top: 15px;'>$key</div>
+          </div>";
+          //Oito etapas
+          $incremento += 12.50;
+          } else {
+            echo "
+              <div class='progress-bar bg-success' role='progressbar' style='width: 25%;' 
+                  aria-valuenow='$incremento'
+                  aria-valuemin='0' aria-valuemax='100'>$valor
+                  <div style='display: flex; justify-content: center; margin-top: 15px;'>$key</div>
+              </div>";
+              //Oito etapas
+              $incremento += 12.50;
+            }
+          }
+        }};
   
 echo "</div>";
+
+
+//echo strtotime($milestone['Consignacao'])+20;
+//echo $data_Consignacao;
+//echo'<br>';
+//echo strtotime($milestone['RP'])+20;
+//echo $data_RP;
+//echo'<br>';
+//echo strtotime($milestone['BaseGov']);
+//echo $data_BaseGov;
+//echo'<br>';
+//if($data_BaseGov > $data_Consignacao && $data_BaseGov > $data_RP){
+//  echo 'A Data de pubicação BaseGov é superior À de inicio dos Trabalhos';
+//} else {
+//  echo 'Ok';
+//};
+
