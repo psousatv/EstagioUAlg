@@ -38,7 +38,7 @@ $stmt->execute($params);
 // Buscar tudo
 $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Localizar o tipo de contrato
+// Localizar o tipo de contratog
 for($i = 0; $i < count($resultados); $i++){
   if($resultados[$i]['data_documento'] != 0){
     $atributoNaoNulo = $i;
