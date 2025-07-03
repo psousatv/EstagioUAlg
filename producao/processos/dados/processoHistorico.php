@@ -23,7 +23,7 @@ echo "
     <th colspan='2'>Documento</th>
     <th>Valor</th>
     <th>Observações</th>
-    <th>Notas</th>
+    <!--th>Notas</th-->
   </tr>";
 foreach($data as $row)
 {
@@ -35,8 +35,14 @@ foreach($data as $row)
       <td>".$row['historico_doc']."</td>
       <td>".$row['historico_num']."</td>
       <td class='text-right'>".number_format($row['historico_valor'], 2, ',', '.')."</td>
-      <td>".$row['historico_obs']."</td>
-      <td>".$row['historico_notas']."</td>";
+      <td tabindex='0'
+          role='button'
+          data-bs-toggle='popover'
+          data-bs-trigger='focus'
+          data-bs-placement='top'
+          title='".$row['historico_notas']."'
+          data-bs-content='".$row['historico_notas']."'>".$row['historico_obs']."</td>";
+      //<td >".$row['historico_notas']."</td>";
       if($row['historico_ficheiro'] != null){
         echo "
         <td>

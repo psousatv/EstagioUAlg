@@ -35,5 +35,25 @@ echo '
       </div>
     </div>
   </div>
-</div>
-';
+</div>';
+echo '<h1 class="mt-4"></h1>';
+echo '
+<div class="card col-md-12">
+  <div class="card-body">
+  <div class="card-header bg-secondary text-white" >Processos Relacionados ('.$rows.')</div>
+  <h1 class="mt-2"></h1>
+    <div class="col col-md-12">
+      <div class="row">
+        <table class="table table-striped small">';
+        foreach($data as $row) {
+            echo  '
+              <tr>
+                <td onclick="redirectProcesso('.$row["proces_rel_sec"].')">'.$row["proces_estado_nome"].'_'.$row["proces_nome"].'</td>
+              </tr>';
+          };
+            echo '
+        </table>
+      </div>
+    </div>
+  </div>
+</div>';

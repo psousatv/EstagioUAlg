@@ -16,7 +16,8 @@ $sql = "SELECT
         p2.proced_escolha AS procedimento,
         d.descr_cod AS movimento,
         d.descr_nome AS documento,
-        MAX(COALESCE(h1.historico_dataemissao, 0)) AS data_documento
+        MIN(COALESCE(h1.historico_dataemissao, 0)) AS data_documento,
+        MIN(COALESCE(h1.historico_notas, 'Sem anotações registadas')) AS notas
         FROM descritivos d
         LEFT JOIN historico h1 ON h1.historico_descr_cod = d.descr_cod AND h1.historico_proces_check = ?
         LEFT JOIN processo p1 ON p1.proces_check = h1.historico_proces_check AND p1.proces_check = ?
@@ -58,21 +59,21 @@ if (
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControle = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 } elseif (
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' && 
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' && 
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControle = [11, 12, 19, 26, 27, 29, 30];
 } elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControle = [11, 12, 19, 26, 28, 29, 30];
 } elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -94,17 +95,17 @@ foreach($resultados as $resultado){
     if (in_array($resultado['movimento'], $dispensaControle)) {
       continue;
     }
-    $pontosControle[] = [$resultado['documento'], $resultado['data_documento']];
+    $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } elseif($tipoContrato == 'Aquisição de Bens'){
     if (in_array($resultado['movimento'], $dispensaControle)) {
       continue;
     }
-    $pontosControle[] = [$resultado['documento'], $resultado['data_documento']];
+    $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } elseif($tipoContrato == 'Empreitada') {
     if (in_array($resultado['movimento'], $dispensaControle)) {
       continue;
     }
-    $pontosControle[] = [$resultado['documento'], $resultado['data_documento']];
+    $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   }
 };
 
@@ -118,12 +119,14 @@ $data_Adjudicacao = [];
 $quantidadePontosControle = count($pontosControle);
 $incremento = 0;
 
+//echo $data_Adjudicacao[0] . "<br>";
 //echo $pontosControle[0][0];
 
 for($i = 0; $i < count($pontosControle); $i++){
-  // atribui, se exitir, o valor da data a BaseGov
+  // atribui, se exitir, o valor da data a BaseGov e acrescenta 20 dias
   if($pontosControle[$i][0] == 'BaseGov'){
-    $data_BaseGov = $pontosControle[$i][1];
+    $data = $pontosControle[$i][1];
+    $data_BaseGov = $fata; //date('Y-m-d', strtotime($data, '+20 days'));
     //echo "Data de publicação BseGov: " . $data_BaseGov . "<br>";
   };
   // atribui, se exitir, o valor da data a Contrato
@@ -137,8 +140,6 @@ for($i = 0; $i < count($pontosControle); $i++){
     //echo "Data de Adjudicação: " . $data_Adjudicacao  . "<br>";
   };
 };
-
-
 
 //echo "Pontos de Controle para o Procedimento de " . $tipoProcedimento 
 //      . "para o contrato de " . $tipoContrato 
@@ -154,6 +155,7 @@ echo "
   //foreach($fases as $fase){
     for($i = 0; $i < count($pontosControle); $i++){
       if($pontosControle[$i][1] == 0){
+        // Se a fase não estiver registada, lista apenas o nome da fase
         echo "<div class='progress-bar bg-info' role='progressbar' style='width: 45%;' 
           aria-valuenow='0' 
           aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
@@ -163,20 +165,36 @@ echo "
           $data_BaseGov > $data_Contrato || 
           $data_BaseGov > $data_Adjudicacao ||
           $data_BaseGov == 0)){
+          // Se a data de registo em BaseGov ultrapassar em 20 dias as
+          //datas de Adjudicação ou de Contrato - Fica a vermelho 
           echo "
-          <div class='progress-bar bg-danger' role='progressbar' style='width: 45%;' 
-            aria-valuenow='$incremento'
+          <div class='progress-bar bg-danger' role='progressbar' style='width: 45%;' aria-valuenow='$incremento'
             aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
-            <div style='display: flex; justify-content: center; margin-top: 15px;'>".$pontosControle[$i][1]."</div>
+            <div style='display: flex; justify-content: center; margin-top: 15px;'
+              tabindex='0'
+              role='button'
+              data-bs-toggle='popover'
+              data-bs-trigger='focus'
+              data-bs-placement='top'
+              title='".$pontosControle[$i][2]."'
+              data-bs-content='".$pontosControle[$i][2]."'>".$pontosControle[$i][1]."</div>
           </div>";
           //Oito etapas
           $incremento += 20;
           } else {
             echo "
               <div class='progress-bar bg-success' role='progressbar' style='width: 45%;' 
-                  aria-valuenow='$incremento'
-                  aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
-                  <div style='display: flex; justify-content: center; margin-top: 15px;'>".$pontosControle[$i][1]."</div>
+                aria-valuenow='$incremento'
+                aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
+                <div style='display: flex; justify-content: center; margin-top: 15px;'
+                tabindex='0'
+                role='button'
+                data-bs-toggle='popover'
+                data-bs-trigger='focus'
+                data-bs-placement='top'
+                title='".$pontosControle[$i][2]."'
+                data-bs-content='".$pontosControle[$i][2]."'
+                  >".$pontosControle[$i][1]."</div>
               </div>";
               //Oito etapas
               $incremento += 20;
