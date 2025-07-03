@@ -16,7 +16,7 @@ $sql = "SELECT
         p2.proced_escolha AS procedimento,
         d.descr_cod AS movimento,
         d.descr_nome AS documento,
-        COALESCE(h1.historico_dataemissao, 'Sem registos') AS data_documento
+        MAX(COALESCE(h1.historico_dataemissao, 0)) AS data_documento
         FROM descritivos d
         LEFT JOIN historico h1 ON h1.historico_descr_cod = d.descr_cod AND h1.historico_proces_check = ?
         LEFT JOIN processo p1 ON p1.proces_check = h1.historico_proces_check AND p1.proces_check = ?
@@ -38,57 +38,69 @@ $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Localizar o tipo de contrato
 for($i = 0; $i < count($resultados); $i++){
-  if($resultados[$i]['data_documento'] != 'Sem registos'){
-    echo "<pre>";
+  if($resultados[$i]['data_documento'] != 0){
     $atributoNaoNulo = $i;
-    echo "</pre>";
   } 
 };
 
+// ************************************************ 
 // Filtrar os descritivos por tipo de procedimento
-$dispensaControle = [];
+// para atribuição de valores às variáveis
+$tipoRegime = [];
 $tipoProcedimento = [];
 $tipoContrato = [];
+$dispensaControle = [];
 
-if ($resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto Simplificado'){
-  $dispensaControle = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
-  $tipoProcedimento = [$resultados[$atributoNaoNulo]['procedimento']];
-  $tipoContrato = [$resultados[$atributoNaoNulo]['contrato']];
-} elseif ($resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
-  $dispensaControle = [19, 26, 27, 29, 30];
-  $tipoProcedimento = [$resultados[$atributoNaoNulo]['procedimento']];
-  $tipoContrato = [$resultados[$atributoNaoNulo]['contrato']];
-} elseif($resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
-  $dispensaControle = [19, 26, 28, 29, 30];
-  $tipoProcedimento = [$resultados[$atributoNaoNulo]['procedimento']];
-  $tipoContrato = [$resultados[$atributoNaoNulo]['contrato']];
-} elseif($resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
-  $dispensaControle = [27, 28];
-  $tipoProcedimento = [$resultados[$atributoNaoNulo]['procedimento']];
-  $tipoContrato = [$resultados[$atributoNaoNulo]['contrato']];
+if (
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto Simplificado'){
+    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
+    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
+    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
+    $dispensaControle = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+} elseif (
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' && 
+  $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
+    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
+    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
+    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
+    $dispensaControle = [11, 12, 19, 26, 27, 29, 30];
+} elseif(
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
+    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
+    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
+    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
+    $dispensaControle = [11, 12, 19, 26, 28, 29, 30];
+} elseif(
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
+    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
+    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
+    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
+    $dispensaControle = [11, 12, 27, 28];
 } else {
-  $dispensaControle = [];
-  $tipoProcedimento[] = [];
-  $tipoContrato[] = [];
+    $tipoRegime = null;
+    $tipoProcedimento = null;
+    $tipoContrato = null;
+    $dispensaControle = null;
 };
 
 $pontosControle = [];
-$quantidadePontosControle = count($pontosControle);
 
 // Interagir nos resultados da query e descartar os pontos de controle
 // que não pertencem ao procedimento
 foreach($resultados as $resultado){
-  if ($tipoContrato[0] == 'Aquisição de Serviços') {
+  if ($tipoContrato == 'Aquisição de Serviços') {
     if (in_array($resultado['movimento'], $dispensaControle)) {
       continue;
     }
-    $pontosControle = [$resultado['documento'], $resultado['data_documento']];
-  } elseif($tipoContrato[0] == 'Aquisição de Bens'){
+    $pontosControle[] = [$resultado['documento'], $resultado['data_documento']];
+  } elseif($tipoContrato == 'Aquisição de Bens'){
     if (in_array($resultado['movimento'], $dispensaControle)) {
       continue;
     }
-    $pontosControle = [$resultado['documento'], $resultado['data_documento']];
-  } elseif($tipoContrato[0] == 'Empreitada') {
+    $pontosControle[] = [$resultado['documento'], $resultado['data_documento']];
+  } elseif($tipoContrato == 'Empreitada') {
     if (in_array($resultado['movimento'], $dispensaControle)) {
       continue;
     }
@@ -96,21 +108,53 @@ foreach($resultados as $resultado){
   }
 };
 
-echo var_dump($pontosControle);
-$data_BaseGov = date("Y-m-d");
-$data_Contrato = date("Y-m-d");
-$data_Adjudicacao = date("Y-m-d");
+
+// ************************************************ 
+// Filtrar os pontos de controle para atribuição
+// às variáveis de controle de datas
+$data_BaseGov = [];
+$data_Contrato = [];
+$data_Adjudicacao = [];
 $quantidadePontosControle = count($pontosControle);
 $incremento = 0;
+
+//echo $pontosControle[0][0];
+
+for($i = 0; $i < count($pontosControle); $i++){
+  // atribui, se exitir, o valor da data a BaseGov
+  if($pontosControle[$i][0] == 'BaseGov'){
+    $data_BaseGov = $pontosControle[$i][1];
+    //echo "Data de publicação BseGov: " . $data_BaseGov . "<br>";
+  };
+  // atribui, se exitir, o valor da data a Contrato
+  if($pontosControle[$i][0] == 'Contrato'){
+    $data_Contrato = $pontosControle[$i][1];
+    //echo "Data de Contrato: " . $data_Contrato . "<br>";
+  };
+  // atribui, se exitir, o valor da data a BaseGov
+  if($pontosControle[$i][0] == 'Adjudicação'){
+    $data_Adjudicacao = $pontosControle[$i][1];
+    //echo "Data de Adjudicação: " . $data_Adjudicacao  . "<br>";
+  };
+};
+
+
+
+//echo "Pontos de Controle para o Procedimento de " . $tipoProcedimento 
+//      . "para o contrato de " . $tipoContrato 
+//      . "em Regime de " . $tipoRegime  . " -- " 
+//      . $quantidadePontosControle . "<br>";
+//
+
 
 //Enviar os resultados para html
 
 echo " 
-  <div class='progress small' style='height: 30px;' >";
+  <div class='progress small' style='height: 40px;' >";
   //foreach($fases as $fase){
     for($i = 0; $i < count($pontosControle); $i++){
       if($pontosControle[$i][1] == 0){
-        echo "<div class='progress-bar bg-info' role='progressbar' style='width: 25%;' 
+        echo "<div class='progress-bar bg-info' role='progressbar' style='width: 45%;' 
           aria-valuenow='0' 
           aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
       </div>";
@@ -120,22 +164,22 @@ echo "
           $data_BaseGov > $data_Adjudicacao ||
           $data_BaseGov == 0)){
           echo "
-          <div class='progress-bar bg-danger' role='progressbar' style='width: 25%;' 
+          <div class='progress-bar bg-danger' role='progressbar' style='width: 45%;' 
             aria-valuenow='$incremento'
-            aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][1]."
-            <div style='display: flex; justify-content: center; margin-top: 15px;'>".$pontosControle[$i][0]."</div>
+            aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
+            <div style='display: flex; justify-content: center; margin-top: 15px;'>".$pontosControle[$i][1]."</div>
           </div>";
           //Oito etapas
-          $incremento += 12.50;
+          $incremento += 20;
           } else {
             echo "
-              <div class='progress-bar bg-success' role='progressbar' style='width: 25%;' 
+              <div class='progress-bar bg-success' role='progressbar' style='width: 45%;' 
                   aria-valuenow='$incremento'
-                  aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][1]."
-                  <div style='display: flex; justify-content: center; margin-top: 15px;'>".$pontosControle[$i][0]."</div>
+                  aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
+                  <div style='display: flex; justify-content: center; margin-top: 15px;'>".$pontosControle[$i][1]."</div>
               </div>";
               //Oito etapas
-              $incremento += 12.50;
+              $incremento += 20;
             }
           }
         };
