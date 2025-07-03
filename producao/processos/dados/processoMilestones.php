@@ -3,8 +3,9 @@
 include "../../../global/config/dbConn.php";
 
 // Array de códigos
-$descritivos = [4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+$descritivos = [1, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
+$atributoNaoNulo = 0;
 
 // Gerar placeholders dinâmicos
 $placeholders = implode(',', array_fill(0, count($descritivos), '?'));
@@ -41,49 +42,55 @@ $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 for($i = 0; $i < count($resultados); $i++){
   if($resultados[$i]['data_documento'] != 0){
     $atributoNaoNulo = $i;
-  } 
+  }
 };
 
-// ************************************************ 
+// ************************************************
 // Filtrar os descritivos por tipo de procedimento
 // para atribuição de valores às variáveis
 $tipoRegime = [];
 $tipoProcedimento = [];
 $tipoContrato = [];
-$dispensaControle = [];
+$dispensaControlar = [];
+$fasesControlar = [];
 
 if (
   $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto Simplificado'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControle = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+    $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+    $fasesControlar = [4, 10, 14];
 } elseif (
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' && 
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControle = [11, 12, 19, 26, 27, 29, 30];
+    $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 28];
 } elseif(
   $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControle = [11, 12, 19, 26, 28, 29, 30];
+    $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 27];
 } elseif(
   $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControle = [11, 12, 27, 28];
+    $dispensaControlar = [11, 12, 27, 28];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 19, 26, 29, 30];
 } else {
     $tipoRegime = null;
     $tipoProcedimento = null;
     $tipoContrato = null;
-    $dispensaControle = null;
+    $dispensaControlar = null;
+    $fasesControlar = null;
 };
 
 $pontosControle = [];
@@ -92,25 +99,30 @@ $pontosControle = [];
 // que não pertencem ao procedimento
 foreach($resultados as $resultado){
   if ($tipoContrato == 'Aquisição de Serviços') {
-    if (in_array($resultado['movimento'], $dispensaControle)) {
-      continue;
+    if (in_array($resultado['movimento'], $fasesControlar)) {
+      //continue;
+      $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
     }
-    $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+    //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } elseif($tipoContrato == 'Aquisição de Bens'){
-    if (in_array($resultado['movimento'], $dispensaControle)) {
-      continue;
+    if (in_array($resultado['movimento'], $fasesControlar)) {
+      //continue;
+      $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
     }
-    $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+    //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } elseif($tipoContrato == 'Empreitada') {
-    if (in_array($resultado['movimento'], $dispensaControle)) {
-      continue;
+    if (in_array($resultado['movimento'], $fasesControlar)) {
+      //continue;
+      $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
     }
-    $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+    //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+  } else {
+    $pontosControle[] = ['Não Iniciado', 'Não Iniciado', 'Não Iniciado'];
   }
 };
 
 
-// ************************************************ 
+// ************************************************
 // Filtrar os pontos de controle para atribuição
 // às variáveis de controle de datas
 $data_BaseGov = [];
@@ -126,7 +138,7 @@ for($i = 0; $i < count($pontosControle); $i++){
   // atribui, se exitir, o valor da data a BaseGov e acrescenta 20 dias
   if($pontosControle[$i][0] == 'BaseGov'){
     $data = $pontosControle[$i][1];
-    $data_BaseGov = $fata; //date('Y-m-d', strtotime($data, '+20 days'));
+    $data_BaseGov = $data; //date('Y-m-d', strtotime($data, '+20 days'));
     //echo "Data de publicação BseGov: " . $data_BaseGov . "<br>";
   };
   // atribui, se exitir, o valor da data a Contrato
@@ -141,32 +153,32 @@ for($i = 0; $i < count($pontosControle); $i++){
   };
 };
 
-//echo "Pontos de Controle para o Procedimento de " . $tipoProcedimento 
-//      . "para o contrato de " . $tipoContrato 
-//      . "em Regime de " . $tipoRegime  . " -- " 
+//echo "Pontos de Controle para o Procedimento de " . $tipoProcedimento
+//      . "para o contrato de " . $tipoContrato
+//      . "em Regime de " . $tipoRegime  . " -- "
 //      . $quantidadePontosControle . "<br>";
 //
 
 
 //Enviar os resultados para html
 
-echo " 
+echo "
   <div class='progress small' style='height: 40px;' >";
   //foreach($fases as $fase){
     for($i = 0; $i < count($pontosControle); $i++){
       if($pontosControle[$i][1] == 0){
         // Se a fase não estiver registada, lista apenas o nome da fase
-        echo "<div class='progress-bar bg-info' role='progressbar' style='width: 45%;' 
-          aria-valuenow='0' 
+        echo "<div class='progress-bar bg-info' role='progressbar' style='width: 45%;'
+          aria-valuenow='0'
           aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
       </div>";
       } else{
         if($pontosControle[$i][0] == 'BaseGov' && (
-          $data_BaseGov > $data_Contrato || 
+          $data_BaseGov > $data_Contrato ||
           $data_BaseGov > $data_Adjudicacao ||
           $data_BaseGov == 0)){
           // Se a data de registo em BaseGov ultrapassar em 20 dias as
-          //datas de Adjudicação ou de Contrato - Fica a vermelho 
+          //datas de Adjudicação ou de Contrato - Fica a vermelho
           echo "
           <div class='progress-bar bg-danger' role='progressbar' style='width: 45%;' aria-valuenow='$incremento'
             aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
@@ -183,7 +195,7 @@ echo "
           $incremento += 20;
           } else {
             echo "
-              <div class='progress-bar bg-success' role='progressbar' style='width: 45%;' 
+              <div class='progress-bar bg-success' role='progressbar' style='width: 45%;'
                 aria-valuenow='$incremento'
                 aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
                 <div style='display: flex; justify-content: center; margin-top: 15px;'
