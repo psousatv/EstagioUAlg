@@ -62,7 +62,7 @@ if (
     $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
     $fasesControlar = [4, 10, 14];
 } elseif (
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -70,7 +70,7 @@ if (
     $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
     $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 28];
 } elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -78,7 +78,7 @@ if (
     $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
     $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 27];
 } elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
+  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -117,7 +117,7 @@ foreach($resultados as $resultado){
     }
     //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } else {
-    $pontosControle[] = ['Não Iniciado', 'Não Iniciado', 'Não Iniciado'];
+    $pontosControle[] = ['Não Iniciado', '' ,''];
   }
 };
 
@@ -204,7 +204,7 @@ echo "
                 data-bs-toggle='popover'
                 data-bs-trigger='focus'
                 data-bs-placement='top'
-                title='".$pontosControle[$i][2]."'
+                title='".$pontosControle[$i][1]."'
                 data-bs-content='".$pontosControle[$i][2]."'
                   >".$pontosControle[$i][1]."</div>
               </div>";
