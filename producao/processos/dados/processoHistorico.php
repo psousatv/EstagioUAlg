@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$codigoProcesso = intval($_GET['codigoProcesso']);
+$codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
 
 //Histórico Processos
 $processoHistorico = 'SELECT * 
