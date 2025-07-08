@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-// Array de códigos
+// Array de códigos de documentos
 $descritivos = [1, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
 $atributoNaoNulo = 0;
@@ -24,8 +24,8 @@ $sql = "SELECT
         LEFT JOIN processo p1 ON p1.proces_check = h1.historico_proces_check AND p1.proces_check = ?
         LEFT JOIN procedimento p2 ON p2.proced_cod = p1.proces_proced_cod
         WHERE d.descr_cod IN ($placeholders)
-        GROUP BY d.descr_cod, d.descr_nome, p2.proced_regime, p2.proced_contrato, p2.proced_escolha
-        ORDER BY descr_cod ASC";
+        GROUP BY d.descr_cod, d.descr_nome, p2.proced_regime, p2.proced_contrato, p2.proced_escolha";
+        //ORDER BY descr_cod ASC";
 
 // Preparar statement
 $stmt = $myConn->prepare($sql);
@@ -62,7 +62,7 @@ if (
     $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
     $fasesControlar = [4, 10, 14];
 } elseif (
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -70,7 +70,7 @@ if (
     $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
     $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 28];
 } elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -78,7 +78,7 @@ if (
     $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
     $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 27];
 } elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto' &&
+  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
     $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
@@ -173,10 +173,8 @@ echo "
           aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
       </div>";
       } else{
-        if($pontosControle[$i][0] == 'BaseGov' && (
-          $data_BaseGov > $data_Contrato ||
-          $data_BaseGov > $data_Adjudicacao ||
-          $data_BaseGov == 0)){
+        if($pontosControle[$i][1] < $pontosControle[$i-1][1] || 
+          ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
           // Se a data de registo em BaseGov ultrapassar em 20 dias as
           //datas de Adjudicação ou de Contrato - Fica a vermelho
           echo "
