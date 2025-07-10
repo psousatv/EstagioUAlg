@@ -2,6 +2,9 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
+$orcamentoItem = $_GET['orcamentoItem'];
+$anoCorrente = $_GET['anoCorrente'];
+
 //Histórico Processos
 $orcamentoFaturacao = "SELECT
                     proces_rub_cod,
@@ -21,7 +24,7 @@ $orcamentoFaturacao = "SELECT
                     sum(if((month(fact_auto_data) = 11),round(fact_valor,2),0)) AS 'Nov',
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
-                    LEFT JOIN processo ON proces_check = fact_proces_check
+                    JOIN processo ON proces_check = fact_proces_check
                     WHERE proces_orc_ano = '".$anoCorrente."'
                     AND proces_rub_cod = '" .$orcamentoItem. "'
                     AND proces_report_valores = 1
@@ -90,3 +93,5 @@ echo "
 echo "<a class='hidden'>";
 json_encode($data);
 echo "</a>";
+
+//echo var_dump($data[0]);

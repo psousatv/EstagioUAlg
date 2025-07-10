@@ -83,12 +83,12 @@ foreach($data as $row)
     </div>
   </div>
   <hr>';
-  //Valores
+  //Candidaturas
   echo '
-  <div class="badge bg-success text-white">Valores</div>
+  <div class="badge bg-success text-white">Candidaturas</div>
   <div class="row small text-justify">
     <div class="col-md-2 text-primary"><b>Financiado: </b></div>
-    <div class="col-md-10 text-primary">'.$row['proces_cand'].'</div>
+    <div class="col-md-10 text-primary">'.$row['proces_cand'].' - Contrato: '.$row['proces_cand_cnt'].'</div>
     <div class="col-md-2 text-primary"><b>Aprovado: </b></div>
     <div class="col-md-10 text-primary">'.number_format($row['proces_cand_elegivel'], 2, ',', '.').'€</div>
     <div class="col-md-2"><b>AutoFinanciamento: </b></div>
