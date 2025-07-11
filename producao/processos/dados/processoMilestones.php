@@ -198,7 +198,7 @@ for($i = 0; $i < count($pontosControle); $i++){
         <div class="step-name">'.$pontosControle[$i][0].'</div>
       </div>';
   } else {
-      if($pontosControle[$i][1] < $pontosControle[$i-1][1] || 
+      if($pontosControle[$i][1] < $pontosControle[$i-1][1] || $pontosControle[$i-1][1] == 0 || 
         ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
           echo '
           <div class="stepper-item desconforme">
@@ -207,8 +207,8 @@ for($i = 0; $i < count($pontosControle); $i++){
               title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
               data-bs-content="'.$pontosControle[$i][2].'"
               >'.($i+1).'</div>
-              <div class="step-name">'.$pontosControle[$i][0].'</div>
-              <div class="step-name" >'.$pontosControle[$i][1].'</div>
+              <div class="step-name badge bg-danger text-white">'.$pontosControle[$i][0].'</div>
+              <div class="step-name badge bg-info text-white" >'.$pontosControle[$i][1].'</div>
         </div>';
       } else
           {
@@ -219,8 +219,8 @@ for($i = 0; $i < count($pontosControle); $i++){
               title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
               data-bs-content="'.$pontosControle[$i][2].'"
               >'.($i+1).'</div>
-              <div class="step-name">'.$pontosControle[$i][0].'</div>
-              <div class="step-name" >'.$pontosControle[$i][1].'</div>
+              <div class="step-name badge bg-success text-white">'.$pontosControle[$i][0].'</div>
+              <div class="step-name badge bg-success text-white" >'.$pontosControle[$i][1].'</div>
             </div>';            
         }
   }

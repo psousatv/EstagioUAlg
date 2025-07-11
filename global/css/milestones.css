@@ -37,12 +37,9 @@
 }
 
 .step-name {
-  background-color: black;
-  color: white;
   font-size: 11px;
   font-weight: bold;
 }
-
 
 .stepper-item .step-counter {
   position: relative;
