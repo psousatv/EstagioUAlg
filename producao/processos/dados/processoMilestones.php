@@ -18,6 +18,8 @@ $sql = "SELECT
         d.descr_cod AS movimento,
         d.descr_nome AS documento,
         MIN(COALESCE(h1.historico_dataemissao, 0)) AS data_documento,
+        MIN(COALESCE(h1.historico_datamov, 0)) AS data_validacao_documento,
+        MIN(COALESCE(h1.historico_doc, 0)) AS referencias,
         MIN(COALESCE(h1.historico_notas, 'Sem anotações registadas')) AS notas
         FROM descritivos d
         LEFT JOIN historico h1 ON h1.historico_descr_cod = d.descr_cod AND h1.historico_proces_check = ?
@@ -38,7 +40,7 @@ $stmt->execute($params);
 // Buscar tudo
 $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Localizar o tipo de contratog
+// Localizar o tipo de contrato
 for($i = 0; $i < count($resultados); $i++){
   if($resultados[$i]['data_documento'] != 0){
     $atributoNaoNulo = $i;
@@ -68,7 +70,7 @@ if (
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 28];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 28];
 } elseif(
   $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
@@ -76,7 +78,7 @@ if (
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 27];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 27];
 } elseif(
   $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
@@ -94,6 +96,13 @@ if (
 };
 
 $pontosControle = [];
+$referenciasControle = [
+                        $resultado['documento'], 
+                        $resultado['data_documento'], 
+                        $resultado['data_validacao_documento'], 
+                        $resultado['referencias'], 
+                        $resultado['notas']
+                      ];
 
 // Interagir nos resultados da query e descartar os pontos de controle
 // que não pertencem ao procedimento
@@ -101,19 +110,37 @@ foreach($resultados as $resultado){
   if ($tipoContrato == 'Aquisição de Serviços') {
     if (in_array($resultado['movimento'], $fasesControlar)) {
       //continue;
-      $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+      $pontosControle[] = [
+                            $resultado['documento'], 
+                            $resultado['data_documento'], 
+                            $resultado['data_validacao_documento'], 
+                            $resultado['referencias'], 
+                            $resultado['notas']
+                          ];
     }
     //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } elseif($tipoContrato == 'Aquisição de Bens'){
     if (in_array($resultado['movimento'], $fasesControlar)) {
       //continue;
-      $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+      $pontosControle[] = [
+                            $resultado['documento'], 
+                            $resultado['data_documento'], 
+                            $resultado['data_validacao_documento'], 
+                            $resultado['referencias'], 
+                            $resultado['notas']
+                          ];
     }
     //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } elseif($tipoContrato == 'Empreitada') {
     if (in_array($resultado['movimento'], $fasesControlar)) {
       //continue;
-      $pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
+      $pontosControle[] = [
+                            $resultado['documento'], 
+                            $resultado['data_documento'], 
+                            $resultado['data_validacao_documento'], 
+                            $resultado['referencias'], 
+                            $resultado['notas']
+                          ];
     }
     //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
   } else {
@@ -137,13 +164,13 @@ $incremento = 0;
 for($i = 0; $i < count($pontosControle); $i++){
   // atribui, se exitir, o valor da data a BaseGov e acrescenta 20 dias
   if($pontosControle[$i][0] == 'BaseGov'){
-    $data = $pontosControle[$i][1];
+    $data = $pontosControle[$i][2];
     $data_BaseGov = $data; //date('Y-m-d', strtotime($data, '+20 days'));
     //echo "Data de publicação BseGov: " . $data_BaseGov . "<br>";
   };
   // atribui, se exitir, o valor da data a Contrato
   if($pontosControle[$i][0] == 'Contrato'){
-    $data_Contrato = $pontosControle[$i][1];
+    $data_Contrato = $pontosControle[$i][2];
     //echo "Data de Contrato: " . $data_Contrato . "<br>";
   };
   // atribui, se exitir, o valor da data a BaseGov
@@ -159,9 +186,8 @@ for($i = 0; $i < count($pontosControle); $i++){
 //      . $quantidadePontosControle . "<br>";
 //
 
-
+//echo var_dump($pontosControle);
 //Enviar os resultados para html
-
 echo "
   <div class='progress small' style='height: 40px;' >";
   //foreach($fases as $fase){
@@ -186,8 +212,8 @@ echo "
               data-bs-toggle='popover'
               data-bs-trigger='focus'
               data-bs-placement='top'
-              title='".$pontosControle[$i][2]."'
-              data-bs-content='".$pontosControle[$i][2]."'>".$pontosControle[$i][1]."</div>
+              title='Emitido a ".$pontosControle[$i][3].", Registo: ".$pontosControle[$i][1]." - ".$pontosControle[$i][4]."'
+              data-bs-content='".$pontosControle[$i][2]."'>".$pontosControle[$i][2]."</div>
           </div>";
           //Oito etapas
           $incremento += 20;
@@ -202,9 +228,8 @@ echo "
                 data-bs-toggle='popover'
                 data-bs-trigger='focus'
                 data-bs-placement='top'
-                title='".$pontosControle[$i][1]."'
-                data-bs-content='".$pontosControle[$i][2]."'
-                  >".$pontosControle[$i][1]."</div>
+                title='".$pontosControle[$i][3].", Registo: ".$pontosControle[$i][1]." - ".$pontosControle[$i][4]."'
+                data-bs-content='".$pontosControle[$i][2]."'>".$pontosControle[$i][2]."</div>
               </div>";
               //Oito etapas
               $incremento += 20;
