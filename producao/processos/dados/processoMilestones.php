@@ -164,18 +164,19 @@ $incremento = 0;
 for($i = 0; $i < count($pontosControle); $i++){
   // atribui, se exitir, o valor da data a BaseGov e acrescenta 20 dias
   if($pontosControle[$i][0] == 'BaseGov'){
-    $data = $pontosControle[$i][2];
-    $data_BaseGov = $data; //date('Y-m-d', strtotime($data, '+20 days'));
+    $data_BaseGov = $pontosControle[$i][2];
     //echo "Data de publicação BseGov: " . $data_BaseGov . "<br>";
   };
   // atribui, se exitir, o valor da data a Contrato
   if($pontosControle[$i][0] == 'Contrato'){
-    $data_Contrato = $pontosControle[$i][2];
+    $data = $pontosControle[$i][2];
+    $data_Contrato = date('Y-m-d', strtotime($data . '+20 days'));
     //echo "Data de Contrato: " . $data_Contrato . "<br>";
   };
   // atribui, se exitir, o valor da data a BaseGov
   if($pontosControle[$i][0] == 'Adjudicação'){
-    $data_Adjudicacao = $pontosControle[$i][1];
+    $data = $pontosControle[$i][2];
+    $data_Adjudicacao = date('Y-m-d', strtotime($data . '+20 days'));
     //echo "Data de Adjudicação: " . $data_Adjudicacao  . "<br>";
   };
 };
@@ -186,6 +187,7 @@ for($i = 0; $i < count($pontosControle); $i++){
 //      . $quantidadePontosControle . "<br>";
 //
 
+//echo 'Adjudicação: ' .$data_Adjudicacao;
 //echo var_dump($pontosControle);
 //Enviar os resultados para html
 
@@ -197,32 +199,32 @@ for($i = 0; $i < count($pontosControle); $i++){
         <div class="step-counter">'.($i+1).'</div>
         <div class="step-name">'.$pontosControle[$i][0].'</div>
       </div>';
-  } else {
-      if($pontosControle[$i][1] < $pontosControle[$i-1][1] || $pontosControle[$i-1][1] == 0 || 
-        ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
+  } else { 
+    if($pontosControle[$i][1] < $pontosControle[$i-1][1] || ($i != 0 && $pontosControle[$i-1][1] == 0) || 
+      ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
+        echo '
+        <div class="stepper-item desconforme">
+          <div class="step-counter" 
+            tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
+            title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
+            data-bs-content="'.$pontosControle[$i][2].'"
+            >'.($i+1).'</div>
+            <div class="step-name badge bg-danger text-white">'.$pontosControle[$i][0].'</div>
+            <div class="step-name badge bg-info text-white" >'.$pontosControle[$i][1].'</div>
+      </div>';
+    } else
+        {
           echo '
-          <div class="stepper-item desconforme">
+          <div class="stepper-item conforme">
             <div class="step-counter" 
-              tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
-              title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
-              data-bs-content="'.$pontosControle[$i][2].'"
-              >'.($i+1).'</div>
-              <div class="step-name badge bg-danger text-white">'.$pontosControle[$i][0].'</div>
-              <div class="step-name badge bg-info text-white" >'.$pontosControle[$i][1].'</div>
-        </div>';
-      } else
-          {
-            echo '
-            <div class="stepper-item conforme">
-              <div class="step-counter" 
-              tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
-              title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
-              data-bs-content="'.$pontosControle[$i][2].'"
-              >'.($i+1).'</div>
-              <div class="step-name badge bg-success text-white">'.$pontosControle[$i][0].'</div>
-              <div class="step-name badge bg-success text-white" >'.$pontosControle[$i][1].'</div>
-            </div>';            
-        }
+            tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
+            title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
+            data-bs-content="'.$pontosControle[$i][2].'"
+            >'.($i+1).'</div>
+            <div class="step-name badge bg-success text-white">'.$pontosControle[$i][0].'</div>
+            <div class="step-name badge bg-success text-white" >'.$pontosControle[$i][1].'</div>
+          </div>';            
+      }
   }
 };
 
