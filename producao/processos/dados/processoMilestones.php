@@ -70,7 +70,7 @@ if (
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 28];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
 } elseif(
   $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
@@ -78,7 +78,7 @@ if (
     $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
     $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
     $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 27];
+    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
 } elseif(
   $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
   $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
