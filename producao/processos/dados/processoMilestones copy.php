@@ -188,42 +188,77 @@ for($i = 0; $i < count($pontosControle); $i++){
 
 //echo var_dump($pontosControle);
 //Enviar os resultados para html
+echo "
+  <div class='progress small' style='height: 40px;' >";
+  //foreach($fases as $fase){
+    for($i = 0; $i < count($pontosControle); $i++){
+      if($pontosControle[$i][1] == 0){
+        // Se a fase não estiver registada, lista apenas o nome da fase
+        echo "<div class='progress-bar bg-info' role='progressbar' style='width: 45%;'
+          aria-valuenow='0'
+          aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
+      </div>";
+      } else {
+        if($pontosControle[$i][1] < $pontosControle[$i-1][1] || 
+          ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
+          // Se a data de registo em BaseGov ultrapassar em 20 dias as
+          //datas de Adjudicação ou de Contrato - Fica a vermelho
+          echo "
+          <div class='progress-bar bg-danger' role='progressbar' style='width: 45%;' aria-valuenow='$incremento'
+            aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
+            <div style='display: flex; justify-content: center; margin-top: 15px;'
+              tabindex='0'
+              role='button'
+              data-bs-toggle='popover'
+              data-bs-trigger='focus'
+              data-bs-placement='top'
+              title='Emitido a ".$pontosControle[$i][3].", Registo: ".$pontosControle[$i][1]." - ".$pontosControle[$i][4]."'
+              data-bs-content='".$pontosControle[$i][2]."'>".$pontosControle[$i][2]."</div>
+          </div>";
+          //Oito etapas
+          $incremento += 20;
+          } else {
+            echo "
+              <div class='progress-bar bg-success' role='progressbar' style='width: 45%;'
+                aria-valuenow='$incremento'
+                aria-valuemin='0' aria-valuemax='100'>".$pontosControle[$i][0]."
+                <div style='display: flex; justify-content: center; margin-top: 15px;'
+                tabindex='0'
+                role='button'
+                data-bs-toggle='popover'
+                data-bs-trigger='focus'
+                data-bs-placement='top'
+                title='".$pontosControle[$i][3].", Registo: ".$pontosControle[$i][1]." - ".$pontosControle[$i][4]."'
+                data-bs-content='".$pontosControle[$i][2]."'>".$pontosControle[$i][2]."</div>
+              </div>";
+              //Oito etapas
+              $incremento += 20;
+            }
+          }
+        };
 
-echo '<div class="stepper-wrapper">';
-for($i = 0; $i < count($pontosControle); $i++){
-  if($pontosControle[$i][1] == 0){
-    echo '
-      <div class="stepper-item nulo">
-        <div class="step-counter">'.($i+1).'</div>
-        <div class="step-name">'.$pontosControle[$i][0].'</div>
-      </div>';
-  } else {
-      if($pontosControle[$i][1] < $pontosControle[$i-1][1] || 
-        ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
-          echo '
-          <div class="stepper-item desconforme">
-            <div class="step-counter" 
-              tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
-              title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
-              data-bs-content="'.$pontosControle[$i][2].'"
-              >'.($i+1).'</div>
-              <div class="step-name">'.$pontosControle[$i][0].'</div>
-              <div class="step-name" >'.$pontosControle[$i][1].'</div>
-        </div>';
-      } else
-          {
-            echo '
-            <div class="stepper-item conforme">
-              <div class="step-counter" 
-              tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
-              title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
-              data-bs-content="'.$pontosControle[$i][2].'"
-              >'.($i+1).'</div>
-              <div class="step-name">'.$pontosControle[$i][0].'</div>
-              <div class="step-name" >'.$pontosControle[$i][1].'</div>
-            </div>';            
-        }
-  }
-};
+     // };
+echo "</div>";
 
-echo '</div>';
+echo '
+
+<div class="stepper-wrapper">
+  <div class="stepper-item completed">
+    <div class="step-counter">1</div>
+    <div class="step-name">First</div>
+  </div>
+  <div class="stepper-item completed">
+    <div class="step-counter">2</div>
+    <div class="step-name">Second</div>
+  </div>
+  <div class="stepper-item active">
+    <div class="step-counter">3</div>
+    <div class="step-name">Third</div>
+  </div>
+  <div class="stepper-item">
+    <div class="step-counter">4</div>
+    <div class="step-name">Forth</div>
+  </div>
+</div
+
+';
