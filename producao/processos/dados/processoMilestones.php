@@ -5,7 +5,7 @@ include "../../../global/config/dbConn.php";
 // Array de códigos de documentos
 $descritivos = [1, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
-$atributoNaoNulo = 0;
+$i = 0;
 
 // Gerar placeholders dinâmicos
 $placeholders = implode(',', array_fill(0, count($descritivos), '?'));
@@ -19,6 +19,7 @@ $sql = "SELECT
         d.descr_nome AS documento,
         MIN(COALESCE(h1.historico_dataemissao, 0)) AS data_documento,
         MIN(COALESCE(h1.historico_datamov, 0)) AS data_validacao_documento,
+        h1.historico_valor AS valor_documento,
         MIN(COALESCE(h1.historico_doc, 0)) AS referencias,
         MIN(COALESCE(h1.historico_notas, 'Sem anotações registadas')) AS notas
         FROM descritivos d
@@ -40,60 +41,85 @@ $stmt->execute($params);
 // Buscar tudo
 $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Localizar o tipo de contrato
-for($i = 0; $i < count($resultados); $i++){
-  if($resultados[$i]['data_documento'] != 0){
-    $atributoNaoNulo = $i;
-  }
-};
 
 // ************************************************
 // Filtrar os descritivos por tipo de procedimento
 // para atribuição de valores às variáveis
+// Localizar o tipo de contrato
+
 $tipoRegime = [];
 $tipoProcedimento = [];
 $tipoContrato = [];
 $dispensaControlar = [];
 $fasesControlar = [];
 
-if (
-  $resultados[$atributoNaoNulo]['procedimento'] == 'Ajuste Direto Simplificado'){
-    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
-    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
-    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
-    $fasesControlar = [4, 10, 14];
-} elseif (
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
-  $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Serviços'){
-    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
-    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
-    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
-} elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
-  $resultados[$atributoNaoNulo]['contrato'] == 'Aquisição de Bens'){
-    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
-    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
-    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
-} elseif(
-  $resultados[$atributoNaoNulo]['procedimento'] != 'Ajuste Direto Simplificado' &&
-  $resultados[$atributoNaoNulo]['contrato'] == 'Empreitada'){
-    $tipoRegime = $resultados[$atributoNaoNulo]['regime'];
-    $tipoContrato = $resultados[$atributoNaoNulo]['contrato'];
-    $tipoProcedimento = $resultados[$atributoNaoNulo]['procedimento'];
-    $dispensaControlar = [11, 12, 27, 28];
-    $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 19, 26, 29, 30];
-} else {
-    $tipoRegime = null;
-    $tipoProcedimento = null;
-    $tipoContrato = null;
-    $dispensaControlar = null;
-    $fasesControlar = null;
+
+for($i = 0; $i < count($resultados); $i++){
+  if($resultados[$i]['data_documento'] != 0){
+    if (
+      $resultados[$i]['procedimento'] == 'Ajuste Direto Simplificado' &&
+      $resultados[$i]['valor_documento'] >= 10000){
+      // Procedimento por Ajuste Direto Simplificado de valor >= 10.000 [inclui contrato]
+      // Deve vir primeiro que o genérico, senão não é executado
+        $tipoRegime = $resultados[$i]['regime'];
+        $tipoContrato = $resultados[$i]['contrato'];
+        $tipoProcedimento = $resultados[$i]['procedimento'];
+        $dispensaControlar = [5, 11, 12, 13, 15, 16, 18, 19, 26, 27, 28, 29, 30];
+        $fasesControlar = [4, 14, 17];
+        break; // Pára o ciclo ao encontrar a condição
+    } elseif (
+      // Procedimento por Ajuste Direto Simplificado
+      $resultados[$i]['procedimento'] == 'Ajuste Direto Simplificado' &&
+      $resultados[$i]['valor_documento'] < 10000){
+        $tipoRegime = $resultados[$i]['regime'];
+        $tipoContrato = $resultados[$i]['contrato'];
+        $tipoProcedimento = $resultados[$i]['procedimento'];
+        $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+        $fasesControlar = [4, 14];
+        break; // Pára o ciclo ao encontrar a condição
+    } elseif (
+    // Qualquer Procedimento, excepto, ADs - Serviços
+      $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
+      $resultados[$i]['contrato'] == 'Aquisição de Serviços'){
+        $tipoRegime = $resultados[$i]['regime'];
+        $tipoContrato = $resultados[$i]['contrato'];
+        $tipoProcedimento = $resultados[$i]['procedimento'];
+        $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
+        $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
+        break; // Pára o ciclo ao encontrar a condição
+    } elseif(
+      // Qualquer Procedimento, excepto, ADs - Bens
+      $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
+      $resultados[$i]['contrato'] == 'Aquisição de Bens'){
+        $tipoRegime = $resultados[$i]['regime'];
+        $tipoContrato = $resultados[$i]['contrato'];
+        $tipoProcedimento = $resultados[$i]['procedimento'];
+        $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
+        $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
+        break; // Pára o ciclo ao encontrar a condição
+    } elseif(
+      // Qualquer Procedimento, excepto, ADs - Empreitadas
+      $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
+      $resultados[$i]['contrato'] == 'Empreitada'){
+        $tipoRegime = $resultados[$i]['regime'];
+        $tipoContrato = $resultados[$i]['contrato'];
+        $tipoProcedimento = $resultados[$i]['procedimento'];
+        $dispensaControlar = [11, 12, 27, 28];
+        $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 19, 26, 29, 30];
+        break; // Pára o ciclo ao encontrar a condição
+    } else {
+        $tipoRegime = null;
+        $tipoProcedimento = null;
+        $tipoContrato = null;
+        $dispensaControlar = null;
+        $fasesControlar = null;
+    };
+  } else {
+    continue;
+  };
+  
 };
+
 
 $pontosControle = [];
 $referenciasControle = [
