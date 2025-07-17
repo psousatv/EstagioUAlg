@@ -71,10 +71,10 @@ $processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 echo '
 <div class="card col-md-12">
   <div class="card-body">
-    <a class="small">Os valores de orçamento são ajustados para os valores de adjudicação </a>
+    <a class="badge bg-info text-white small">Os valores de orçamento são ajustados para os valores de adjudicação </a>
       <table class="table table-responsive table-striped">
         <tr>
-          <td class="bg-primary text-white">Orçamento Previsto ('.$rows.')</td>
+          <td class="bg-primary text-white">Items no Orçamento <span class="badge bg-secondary">('.$rows.')</span></td>
           <td class="bg-primary text-white">'.number_format($totalPrevisto, 2, ",", ".").'€</td>
           <td class="bg-secondary text-white">Processos Adjudicados</td>
           <td class="bg-secondary text-white">'.number_format($totalAdjudicado, 2, ",", ".").'€</td>  

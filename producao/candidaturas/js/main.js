@@ -15,6 +15,8 @@ $.ajax(
         function(data)
         {
             var dataTable = $('#tabela').DataTable({
+                searching: false, // desativa a paginação
+                lengthChange: false, // remove o texto "Enntradas x de y"
                 aaData: data,
                 aoColumns:[
                     { mDataProp: 'candidatura'},
@@ -85,8 +87,8 @@ $.ajax(
                 var iconeCartao = 'fa fa-smile'
             };
 
-            var cartao = document.createElement('div');
-            cartao.classList = 'card-body';
+            //var cartao = document.createElement('div');
+            //cartao.classList = 'card-body';
             
             var cartoes = `
             
