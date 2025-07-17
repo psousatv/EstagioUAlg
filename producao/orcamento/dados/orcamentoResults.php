@@ -80,6 +80,8 @@ echo '
           <td class="bg-secondary text-white">'.number_format($totalAdjudicado, 2, ",", ".").'€</td>  
           <td class="bg-success text-white">Valor Faturado</td>
           <td class="bg-success text-white">'.number_format($totalFaturado, 2, ",", ".").'€</td>
+          <td class="bg-info text-white">Saldo</td>
+          <td class="bg-info text-white">'.number_format($totalPrevisto-$totalFaturado, 2, ",", ".").'€</td>
         </tr>
       </table>
         
@@ -88,55 +90,57 @@ echo '
       <div class="row">
         <table class="table table-responsive table-striped small">
           <tr>
-            <th>Tipo</th>
-            <th>O</th>
-            <th>SE</th>
-            <th>Processo</th>
-            <th>Previsto</th>
-            <th>Consulta</th>
-            <th>Adjudicado</th>
-            <th>Faturado</th>
+            <th class="text-center">Tipo</th>
+            <th class="text-center">Orc.</th>
+            <th class="text-center">SE</th>
+            <th class="text-center">Processo</th>
+            <th class="text-center">Previsto</th>
+            <th class="text-center">Adjudicado</th>
+            <th class="text-center">Faturado</th>
+            <th class="text-center">Saldo</th>
           </tr>';
           foreach($orcamentoItemRubrica as $row) {
             $soma = 0;
             echo '<tr>';
-            echo '<td>'.$row["tipo"].'</td>';
-            echo '<td>'.$row["linhaO"].'</td>';
-            echo '<td>'.$row["linhaSE"].'</td>';
-            echo '<td>'.$row["descritivo"].'</td>';
-            echo '<td colspan="2" class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
-            echo '<td class="text-left">'.number_format($row["total_adjudicado"], 2, ",", ".").'€</td>';
-            echo '<td class="text-left">'.number_format($row["total_faturado"], 2, ",", ".").'€</td>';
+              echo '<td class="text-left">'.$row["tipo"].'</td>';
+              echo '<td class="text-left">'.$row["linhaO"].'</td>';
+              echo '<td class="text-left">'.$row["linhaSE"].'</td>';
+              echo '<td class="text-left">'.$row["descritivo"].'</td>';
+              echo '<td class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
+              echo '<td class="text-right">'.number_format($row["total_adjudicado"], 2, ",", ".").'€</td>';
+              echo '<td class="text-right">'.number_format($row["total_faturado"], 2, ",", ".").'€</td>';
+              echo '<td class="text-right">' . number_format(($row["previsto"] - $row["total_faturado"]), 2, ",", ".") . '€</td>';
+            echo '<tr>';
             
             foreach($processosOrcamentoItemRubrica as $key) {     
               if($row['controle'] == $key['proces_orcamento']){
                 $soma += $key['adjudicado'];
                 if($soma > $row['previsto']){
                   echo '<tr class="bg-danger text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
-                    echo '<td><i class="fas fa-binoculars text-white fa-2x"></i></td>';
-                    echo '<td>'.$key['padm'].'</td>';
-                    echo '<td>'.$key['procedimento'].'</td>';
-                    echo '<td colspan="2">'.$key['designacao'].'</td>';
-                    echo '<td class="text-right">'.number_format($key["consulta"], 2, ",", ".").'€</td>';
+                    echo '<td class="text-left"><i class="fas fa-binoculars text-white fa-2x"></i></td>';
+                    echo '<td class="text-left">'.$key['padm'].'</td>';
+                    echo '<td class="text-left">'.$key['procedimento'].'</td>';
+                    echo '<td colspan="2" class="text-left">'.$key['designacao'].'</td>';
+                    
                     echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
                     echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
+                    echo '<td class="text-right">' . number_format(($key["adjudicado"] - $key["faturado"]), 2, ",", ".") . '€</td>';
                   echo '</tr>';       
                 } else {
                   echo '<tr class="bg-success text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
-                    echo '<td><i class="fas fa-binoculars text-white fa-2x"></i></td>';
-                    echo '<td>'.$key['padm'].'</td>';
-                    echo '<td>'.$key['procedimento'].'</td>';
-                    echo '<td colspan="2">'.$key['designacao'].'</td>';
-                    echo '<td class="text-right">'.number_format($key["consulta"], 2, ",", ".").'€</td>';
+                    echo '<td class="text-left"><i class="fas fa-binoculars text-white fa-2x"></i></td>';
+                    echo '<td class="text-left">'.$key['padm'].'</td>';
+                    echo '<td class="text-left">'.$key['procedimento'].'</td>';
+                    echo '<td colspan="2" class="text-left">'.$key['designacao'].'</td>';
                     echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
                     echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
+                    echo '<td class="text-right">' . number_format(($key["adjudicado"] - $key["faturado"]), 2, ",", ".") . '€</td>';
                   echo '</tr>';       
                 }
               }
             }
           };
           echo '
-          </tr>
         </table>
       </div>
     </div>
