@@ -49,12 +49,14 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      proces_orcamento,
                                      proces_padm AS padm,
                                      proced_sigla AS procedimento,
-                                     proces_nome AS designacao,
-                                     proces_val_adjudicacoes AS adjudicado,
-                                     (SELECT MIN(historico_valor) FROM historico
+                                     proces_nome AS designacao,                                    
+                                     (SELECT SUM(COALESCE(historico_valor, 0)) FROM historico
                                      WHERE historico_proces_check = proces_check 
                                      AND historico_descr_cod = 3) AS consulta,
-                                     (SELECT SUM(fact_valor) FROM factura
+                                     (SELECT SUM(COALESCE(historico_valor, 0)) FROM historico
+                                     WHERE historico_proces_check = proces_check 
+                                     AND historico_descr_cod = 14) AS adjudicado,
+                                     (SELECT SUM(COALESCE(fact_valor, 0)) FROM factura
                                      WHERE fact_proces_check = proces_check) AS faturado
                                      FROM processo 
                                      INNER JOIN orcamento ON orc_check = proces_orcamento

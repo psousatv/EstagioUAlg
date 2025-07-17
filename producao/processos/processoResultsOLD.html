@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Results Processos</title>
+
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="../../templates/favicon.png"/>
+
+<!-- CSS -->
+<!-- Materials /*Cards de Teste 2 */ -->
+<link href="../../vendors/fonts/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+<!-- Milestones -->
+<link href="../../global/css/milestones.css" rel="stylesheet" type="text/css">
+
+<style>
+  /* Adiciona uma imagem em 'background' a toda a página */
+  body  {
+    background-image: url('../../global/imagens/bgPages.jpg');
+    background-size: cover;
+  }
+</style>
+
+</head>
+
+<body onload="processoSelected()">
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="processosSearch.html">Processos</a>
+    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+
+    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+      <div class="d-flex align-items-center justify-content-between small">
+        <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
+      </div>
+    </div>
+
+    <!-- Logged -->
+    <ul class="navbar-nav ml-auto ml-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+            <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Login</a>
+            <a class="dropdown-item" href="#">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="page_wrapper">
+    <!-- Page Content-->
+    <h1 class="mt-2"></h1>
+
+    <div class="container-fluid">
+      <!-- Nome do Processo -->
+      <h1 class="mt-2"></h1>
+      <div class="row" id="processoSelected">
+        <b>O nome do Processo é listado aqui...</b>
+      </div>
+      <h1 class="mt-2"></h1>
+    </div>
+    
+    <div class="container-fluid">
+      <!-- Linha 3 -->
+      <!-- Mostra os dados do processo selecionado -->
+      <div class="row" id="detailsWrapper">
+        
+        <!--h1 class="mt-2"></h1>-->
+        <!-- Opções -->
+        <div class="row col sm-12">
+          <div class="col col-lg-10 text-left" id="lstFasesProcesso">
+            <b class="small">AS fases de controle são listadas aqui ...</b>
+          </div>
+          <!--div class="col col-lg-12 text-right"-->
+          <div class="col col-lg-2 text-right">
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-folder-open"></i></div>
+            <div class="btn btn-success" onclick="redirectObras()"><i class="fa-sharp-duotone fa-solid fa-person-digging"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-print"></i></div>
+            <!--div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-excel"></i></div>
+            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-word"></i></div>
+            <div class="btn btn-secondary"><i class="fas fa-globe"></i></div-->
+            <h1 class="mt-2"></h1>
+          </div>
+          
+        </div>
+                
+        <!-- Detalhes do processo -->
+        <div class="row col-sm-12">
+          <div class="col col-lg-12 text-left">
+            <div class="card">
+              <ul class="nav nav-pills" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#resumo" role="tab" aria-selected="true">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Resumo</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#historico" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Histórico</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#financeiro" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Financeiro</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#faturas" role="tab" aria-selected="false">
+                    <span class="hidden-sm-up"></span>
+                    <span class="hidden-xs-down">Faturas</span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="tab-content tabcontent-border">
+                <div class="tab-pane active" id="resumo" role="tabpanel" >
+                  <div class="row">
+                    <div class="col col-md-8">
+                      <div id="lstResumo"><b>O Resumo do Proceso é listado aqui...</b></div>
+                    </div>
+                    <div class="col col-md-4">
+                      <div class="small" id="lstRelacoes"><b>Os Processos Relacionados são listados aqui...</b></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane p-20" id="historico" role="tabpanel" >
+                  <div class="row">
+                    <div class="col col-md-12">
+                      <div class="p-20" id="lstHistorico"><b>O Histórico é listado aqui...</b></div>
+                    </div>
+                    <!--div class="col col-md-2 text-center">
+                      <b >A área de influência é representada aqui...</b>
+                      <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
+                    </div-->
+                  </div>
+                </div>
+                <div class="tab-pane p-20" id="financeiro" role="tabpanel" >
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col col-md-8">
+                        <div class="p-20" id="lstPagamentos"><b>Os dados do Plano de Pagamentos são listado aqui...</b></div>
+                      </div>
+                      <div class="col col-md-4">
+                        <canvas class="text-center" id="lstObraGrafico"><b>Gráfico do Ponto de situação da Obra</b></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
+                    <h1 class="mt-2"></h1>
+                    <div class="row" id="lstObraCartoes"><b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b></div>
+                  </div>
+                  
+                </div>
+                <div class="tab-pane p-20" id="faturas" role="tabpanel" >
+                  <div class="row">
+                    <div class="col col-md-8">
+                      <!--div class="p-20" id="lstGarantias"><b>Os valores cativos são listados aqui...</b></div-->
+                      <div class="p-20" id="lstFaturas"><b>As Faturas são listadas aqui...</b></div>
+                    </div>
+                    <div class="col col-md-4" id="lstGarantias"><b>Os valores cativos são listado aqui...</b></div>
+                    <!--div class="col col-md-4 text-center" id="grafFaturacao"><b >Um gráfico é representada aqui...</b>
+                      <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
+                    </div-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global -->
+  <script src="../../global/js/scripts.js"></script>
+  <!-- JQuery -->
+  <script src="../../vendors/jquery/jquery370.js"></script>
+  <!-- Bootstrap -->
+  i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+  <!-- PopOver -->
+  <script src="../../global/js/popover.js"></script>
+  <!-- Fontawesome -->
+  <script src="../../vendors/fonts/all.min.js"></script>
+  <!-- Datatables -->
+  <script src="../../vendors/datatables/datatables.min.js"></script>
+  <!-- Charts -->
+  <script src="../../vendors/charts/Chart.min.js"></script>
+  
+  <script src="js/processoResults.js"></script>
+  <script src="../../producao/obras/js/obraGraficos.js"></script>
+  <script src="../../producao/obras/js/obraCartoes.js"></script>
+  
+
+
+</body>
+
+</html>
+

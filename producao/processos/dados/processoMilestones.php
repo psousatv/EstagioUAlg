@@ -3,7 +3,7 @@
 include "../../../global/config/dbConn.php";
 
 // Array de códigos de documentos
-$descritivos = [1, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+$descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
 $i = 0;
 
@@ -236,7 +236,7 @@ for($i = 0; $i < count($pontosControle); $i++){
             data-bs-content="'.$pontosControle[$i][2].'"
             >'.($i+1).'</div>
             <div class="step-name badge bg-danger text-white">'.$pontosControle[$i][0].'</div>
-            <div class="step-name badge bg-info text-white" >'.$pontosControle[$i][1].'</div>
+            <div class="step-name badge bg-danger text-white" >'.$pontosControle[$i][2].'</div>
       </div>';
     } else
         {
@@ -248,7 +248,7 @@ for($i = 0; $i < count($pontosControle); $i++){
             data-bs-content="'.$pontosControle[$i][2].'"
             >'.($i+1).'</div>
             <div class="step-name badge bg-success text-white">'.$pontosControle[$i][0].'</div>
-            <div class="step-name badge bg-success text-white" >'.$pontosControle[$i][1].'</div>
+            <div class="step-name badge bg-success text-white" >'.$pontosControle[$i][2].'</div>
           </div>';            
       }
   }

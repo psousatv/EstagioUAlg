@@ -64,141 +64,151 @@
     </ul>
   </nav>
 
-  <div class="page_wrapper">
-    <!-- Page Content-->
-    <h1 class="mt-2"></h1>
+  <div class="container-fluid mt-2">
 
-    <div class="container-fluid">
-      <!-- Nome do Processo -->
-      <h1 class="mt-2"></h1>
-      <div class="row" id="processoSelected">
-        <b>O nome do Processo é listado aqui...</b>
-      </div>
-      <h1 class="mt-2"></h1>
+    <!-- Nome do Processo -->
+    <div class="row" id="processoSelected">
+      <strong>O nome do Processo é listado aqui...</strong>
     </div>
-    
-    <div class="container-fluid">
-      <!-- Linha 3 -->
-      <!-- Mostra os dados do processo selecionado -->
-      <div class="row" id="detailsWrapper">
-        
-        <!--h1 class="mt-2"></h1>-->
-        <!-- Opções -->
-        <div class="row col sm-12">
-          <div class="col col-lg-10 text-left" id="lstFasesProcesso">
-            <b class="small">AS fases de controle são listadas aqui ...</b>
+  
+    <!-- Resumo e Fases -->
+    <div class="row mt-2" id="detailsWrapper">
+      <div class="col-sm-2 text-start" id="lstResumoCCP">
+        <strong class="small">Resumo CCP ...</strong>
+      </div>
+      <div class="col-md-10 text-start" id="lstFasesProcesso">
+        <strong class="small">As fases de controle são listadas aqui ...</strong>
+      </div>
+    </div>
+  
+    <!-- Card com Abas e Conteúdo -->
+    <div class="row mt-2">
+      <div class="col-lg-12">
+        <div class="card p-3">
+  
+          <!-- Navegação de Abas e Botões -->
+          <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
+            
+            <!-- Abas -->
+            <ul class="nav nav-pills" id="tabMenu" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="resumo-tab" data-bs-toggle="tab" data-bs-target="#resumo" type="button" role="tab" aria-controls="resumo" aria-selected="true">
+                  Resumo
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab" aria-controls="historico" aria-selected="false">
+                  Histórico
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="financeiro-tab" data-bs-toggle="tab" data-bs-target="#financeiro" type="button" role="tab" aria-controls="financeiro" aria-selected="false">
+                  Financeiro
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="faturas-tab" data-bs-toggle="tab" data-bs-target="#faturas" type="button" role="tab" aria-controls="faturas" aria-selected="false">
+                  Faturas
+                </button>
+              </li>
+            </ul>
+  
+            <!-- Botões de Ação -->
+            <div class="btn-group" role="group" aria-label="Ações">
+              <button class="btn btn-secondary" title="Abrir Pasta">
+                <i class="fa fa-folder-open"></i>
+              </button>
+              <button class="btn btn-success" onclick="redirectObras()" title="Ir para Obras">
+                <i class="fa fa-person-digging"></i>
+              </button>
+              <button class="btn btn-secondary" title="Gerar PDF">
+                <i class="fa fa-file-pdf"></i>
+              </button>
+              <button class="btn btn-secondary" title="Imprimir">
+                <i class="fa fa-print"></i>
+              </button>
+            </div>
           </div>
-          <!--div class="col col-lg-12 text-right"-->
-          <div class="col col-lg-2 text-right">
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-folder-open"></i></div>
-            <div class="btn btn-success" onclick="redirectObras()"><i class="fa-sharp-duotone fa-solid fa-person-digging"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-print"></i></div>
-            <!--div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-excel"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-word"></i></div>
-            <div class="btn btn-secondary"><i class="fas fa-globe"></i></div-->
-            <h1 class="mt-2"></h1>
-          </div>
-          
-        </div>
-                
-        <!-- Detalhes do processo -->
-        <div class="row col-sm-12">
-          <div class="col col-lg-12 text-left">
-            <div class="card">
-              <ul class="nav nav-pills" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#resumo" role="tab" aria-selected="true">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Resumo</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#historico" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Histórico</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#financeiro" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Financeiro</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#faturas" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Faturas</span>
-                  </a>
-                </li>
-              </ul>
-
-              <div class="tab-content tabcontent-border">
-                <div class="tab-pane active" id="resumo" role="tabpanel" >
-                  <div class="row">
-                    <div class="col col-md-8">
-                      <div id="lstResumo"><b>O Resumo do Proceso é listado aqui...</b></div>
-                    </div>
-                    <div class="col col-md-4">
-                      <div class="small" id="lstRelacoes"><b>Os Processos Relacionados são listados aqui...</b></div>
-                    </div>
-                  </div>
+  
+          <!-- Conteúdo das Abas -->
+          <div class="tab-content border-top pt-3" id="tabContent">
+  
+            <!-- Aba Resumo -->
+            <div class="tab-pane fade show active" id="resumo" role="tabpanel" aria-labelledby="resumo-tab">
+              <div class="row">
+                <div class="col-md-8">
+                  <strong id="lstResumo">O resumo do processo é listado aqui...</strong>
                 </div>
-                <div class="tab-pane p-20" id="historico" role="tabpanel" >
-                  <div class="row">
-                    <div class="col col-md-12">
-                      <div class="p-20" id="lstHistorico"><b>O Histórico é listado aqui...</b></div>
-                    </div>
-                    <!--div class="col col-md-2 text-center">
-                      <b >A área de influência é representada aqui...</b>
-                      <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
-                    </div-->
-                  </div>
-                </div>
-                <div class="tab-pane p-20" id="financeiro" role="tabpanel" >
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col col-md-8">
-                        <div class="p-20" id="lstPagamentos"><b>Os dados do Plano de Pagamentos são listado aqui...</b></div>
-                      </div>
-                      <div class="col col-md-4">
-                        <canvas class="text-center" id="lstObraGrafico"><b>Gráfico do Ponto de situação da Obra</b></canvas>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="row d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
-                    <h1 class="mt-2"></h1>
-                    <div class="row" id="lstObraCartoes"><b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b></div>
-                  </div>
-                  
-                </div>
-                <div class="tab-pane p-20" id="faturas" role="tabpanel" >
-                  <div class="row">
-                    <div class="col col-md-8">
-                      <!--div class="p-20" id="lstGarantias"><b>Os valores cativos são listados aqui...</b></div-->
-                      <div class="p-20" id="lstFaturas"><b>As Faturas são listadas aqui...</b></div>
-                    </div>
-                    <div class="col col-md-4" id="lstGarantias"><b>Os valores cativos são listado aqui...</b></div>
-                    <!--div class="col col-md-4 text-center" id="grafFaturacao"><b >Um gráfico é representada aqui...</b>
-                      <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
-                    </div-->
-                  </div>
+                <div class="col-md-4">
+                  <small id="lstRelacoes"><strong>Os processos relacionados são listados aqui...</strong></small>
                 </div>
               </div>
             </div>
-          </div>          
-        </div>
+  
+            <!-- Aba Histórico -->
+            <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="historico-tab">
+              <div id="lstHistorico">
+                <strong>O histórico é listado aqui...</strong>
+              </div>
+            </div>
+  
+            <!-- Aba Financeiro -->
+            <div class="tab-pane fade" id="financeiro" role="tabpanel" aria-labelledby="financeiro-tab">
+              
+              <!-- Linha: Tabela + Gráfico -->
+              <div class="row">
+                <!-- Coluna: Tabela de Pagamentos -->
+                <div class="col col-lg-8">
+                  <div id="lstPagamentos">
+                    <!-- Conteúdo carregado via JavaScript será inserido aqui -->
+                  </div>
+                </div>
+                <!-- Coluna: Gráfico da obra -->
+                <div class="col col-lg-4">
+                  <canvas id="lstObraGrafico" ></canvas>
+                </div>
+              </div>
+
+              <!-- Segunda linha: Grau de Execução (centralizado) -->
+              <div class="row justify-content-center g-3" id="cartaoGrauExecucao">
+                <strong>Grau de Execução</strong>
+              </div>
+
+              <!-- Terceira linha: Cartões ponto de situação -->
+              <div class="row mt-2 justify-content-start" id="lstObraCartoes">
+                <strong>Cartões ponto de situação Auto a Auto vs Plano Pagamentos Previsto.</strong>
+              </div>
+
+            </div>
+
+  
+            <!-- Aba Faturas -->
+            <div class="tab-pane fade" id="faturas" role="tabpanel" aria-labelledby="faturas-tab">
+              <div class="row">
+                <div class="col-md-8">
+                  <div id="lstFaturas"><strong>As faturas são listadas aqui...</strong></div>
+                </div>
+                <div class="col-md-4">
+                  <div id="lstGarantias"><strong>Os valores cativos são listados aqui...</strong></div>
+                </div>
+              </div>
+            </div>
+  
+          </div> <!-- /tab-content -->
+  
+        </div> <!-- /card -->
       </div>
     </div>
+  
   </div>
+  
 
   <!-- Global -->
   <script src="../../global/js/scripts.js"></script>
   <!-- JQuery -->
   <script src="../../vendors/jquery/jquery370.js"></script>
   <!-- Bootstrap -->
-  <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+  <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
   <!-- PopOver -->
   <script src="../../global/js/popover.js"></script>
   <!-- Fontawesome -->

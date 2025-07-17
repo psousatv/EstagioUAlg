@@ -61,11 +61,8 @@ fetch(url)
             },
             options: {
                 responsive: true,  // Makes the chart responsive
-                scales: {
-                    y: {
-                        beginAtZero: true  // Ensures the y-axis starts at 0
-                    }
-                }
+                maintainAspectRatio: false,
+              
             }
         });
 

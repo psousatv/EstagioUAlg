@@ -56,21 +56,33 @@ fetch(url)
         };
        
         var obraAutosCartoes = `     
-            <div onclick="obraAuto('${codigoProcesso}','${resultado["auto_num"]}')" 
-            class="card col-md-3 ${classeCartao}">
-                <div class="d-flex justify-content-between px-md-1">
+             <div class="col-12 col-sm-6 col-md-3 mb-3">
+                <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
+                <div class="card-body d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                        <p class="mb-0 small text-white">
-                            ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
-                        </p>
-                        <!--Faturado-->
-                        <h6>${Number(resultado["valor_faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h6>
-                        <!--Plano de Pagamenos-->
-                        <h6>${Number(resultado["valor_previsto"]).toLocaleString('pt')}€</h6>
+                    <p class="mb-0 small">
+                        ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
+                    </p>
+                    <h6>
+                        ${resultado["valor_faturado"].toLocaleString('pt-PT', {
+                            style: 'currency',
+                            currency: 'EUR',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })};
+                        <span class="h6">- ${realizado.toFixed(2)}%</span>
+                    </h6>
+                    <h6>${resultado["valor_previsto"].toLocaleString('pt-PT', {
+                        style: 'currency',
+                        currency: 'EUR',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })};</h6>
                     </div>
                     <div class="align-self-center">
-                        <i class="fas ${iconeCartao} text-white fa-3x"></i>
+                    <i class="fas ${iconeCartao} fa-3x"></i>
                     </div>
+                </div>
                 </div>
             </div>
         `;
@@ -110,34 +122,39 @@ fetch(url)
     containerGrauExecucao.innerHTML = "";
 
     var grauExecucaoCartao = `
-        <div class="d-flex justify-content-center col-sm-4 bg-primary text-white ">
-            <div class="px-md-1 text-center">
-                <div>
-                    <p class="mb-0 small text-center">Grau de Execução até ao auto n.º ${autos}</p>
-                    <h3 >${Number(grauExecucaoRealizado).toLocaleString('pt')}%</h3>
-                    <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalPrevisto).toLocaleString('pt')}€</h6>
-                </div>
-                
+    <div class="row g-3 w-100" style="max-width: 50%;">
+        <!-- Cartão 1 -->
+        <div class="col-12 col-md-6">
+            <div class="bg-primary text-white p-4 rounded h-100">
+                <p class="mb-1 small text-center">Grau de Execução até ao auto n.º ${autos}</p>
+                <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
+                <h6 class="text-center">
+                Faturado: ${Number(totalFaturado).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€ 
+                de ${Number(totalPrevisto).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+                </h6>
             </div>
         </div>
-        <div class="d-flex justify-content-center col-sm-4 bg-secondary text-white ">
-            <div class="px-md-1 text-center">
-                <div>
-                    <p class="mb-0 small">Grau de Execução Global</p>
-                    <h3>${Number(grauExecucaoGlobal).toLocaleString('pt')}%</h3>
-                    <h6>Faturado: ${Number(totalFaturado).toLocaleString('pt')}€ de ${Number(totalObra).toLocaleString('pt')}€</span></h6>
-                </div>
+
+        <!-- Cartão 2 -->
+        <div class="col-12 col-md-6">
+            <div class="bg-secondary text-white p-4 rounded h-100">
+                <p class="mb-1 small text-center">Grau de Execução Global</p>
+                <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('pt-PT')}%</h3>
+                <h6 class="text-center">
+                Faturado: ${Number(totalFaturado).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€ 
+                de ${Number(totalObra).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+                </h6>
             </div>
         </div>
-        `;
+    </div>`;
 
         // Append newyly created card element to the container
         containerGrauExecucao.innerHTML += grauExecucaoCartao;
                 
     })
     .catch(error => {
-        document.getElementById('lstErros').innerHTML = error;
-        //console.error("Error fetching the data:", error);
+        //document.getElementById('lstErros').innerHTML = error;
+        console.error("Error fetching the data:", error);
     });
 
 
