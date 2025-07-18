@@ -108,9 +108,12 @@ $.ajax(
             var card = document.createElement('div');
             card.classList = 'card-body';
             
+// <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+
+
             if(result["tipo"] == 'Gastos'){
                 var cartoesGastos = `     
-                    <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="getQueryParams('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
@@ -140,10 +143,8 @@ $.ajax(
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
 function orcamentoRedirected(orcamentoItem) {
     
-    //var params = new URLSearchParams(window.location.search);
-    //var anoCorrente = params.get("anoCorrente");
-
     var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    //var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
     window.location.href = URL;
     
     };
@@ -176,3 +177,15 @@ function mudaAno(){
     console.log("anoFormularioMudaAno", anoFormulario);
 
 };
+
+
+function getQueryParams() {
+    const params = {};
+    const search = window.location.search;
+    const query = new URLSearchParams(search);
+    for (const [key, value] of query.entries()) {
+      params[key] = value;
+    }
+    return params;
+  }
+  
