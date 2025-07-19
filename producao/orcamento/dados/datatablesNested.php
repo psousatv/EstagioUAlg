@@ -48,7 +48,8 @@ $orcamentoList = $stmtOrc->fetchAll(PDO::FETCH_ASSOC);
 $orcIds = array_column($orcamentoList, 'controle');
 $placeholders = implode(',', array_fill(0, count($orcIds), '?'));
 
-echo $placeholders;
+printf($placeholders);
+
 
 $sqlProcessos = "
     SELECT

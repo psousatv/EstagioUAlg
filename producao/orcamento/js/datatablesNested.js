@@ -5,7 +5,7 @@ $(document).ready(function () {
 
   const table = $('#orcamentoTable').DataTable({
     ajax: {
-      url: 'orcamento-processos.php', // seu script PHP
+      url: 'dados/datatablesNested.php', // seu script PHP
       data: function (d) {
         return { ...d, ...queryParams }; // inclui os parâmetros da URL
       }
@@ -61,3 +61,14 @@ $(document).ready(function () {
     }
   });
 });
+
+
+function getQueryParams() {
+    const params = {};
+    const search = window.location.search;
+    const query = new URLSearchParams(search);
+    for (const [key, value] of query.entries()) {
+      params[key] = value;
+    }
+    return params;
+  }

@@ -113,7 +113,7 @@ $.ajax(
 
             if(result["tipo"] == 'Gastos'){
                 var cartoesGastos = `     
-                    <div onclick="getQueryParams('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
@@ -143,8 +143,9 @@ $.ajax(
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
 function orcamentoRedirected(orcamentoItem) {
     
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
-    //var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    //var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    getQueryParams();
     window.location.href = URL;
     
     };
