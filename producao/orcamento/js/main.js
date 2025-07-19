@@ -128,7 +128,7 @@ $.ajax(
                         </div>
                     </div>
                 `;
-            // Append newyly created card element to the container
+            // Append newyly created card element to the containergit add
             containerInvestimentos.innerHTML += cartoesGastos;
             }});
         }

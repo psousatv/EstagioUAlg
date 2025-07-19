@@ -48,56 +48,55 @@ $orcamentoList = $stmtOrc->fetchAll(PDO::FETCH_ASSOC);
 $orcIds = array_column($orcamentoList, 'controle');
 $placeholders = implode(',', array_fill(0, count($orcIds), '?'));
 
-printf($placeholders);
+$processos = [];
 
+if (count($orcIds) > 0) {
+    $placeholders = implode(',', array_fill(0, count($orcIds), '?'));
 
-$sqlProcessos = "
-    SELECT
-        proces_check,
-        proces_orcamento,
-        proces_padm AS padm,
-        proced_sigla AS procedimento,
-        proces_nome AS designacao,
-        (
-            SELECT SUM(COALESCE(historico_valor, 0))
-            FROM historico
-            WHERE historico_proces_check = processo.proces_check AND historico_descr_cod = 3
-        ) AS consulta,
-        (
-            SELECT SUM(COALESCE(historico_valor, 0))
-            FROM historico
-            WHERE historico_proces_check = processo.proces_check AND historico_descr_cod = 14
-        ) AS adjudicado,
-        (
-            SELECT SUM(COALESCE(fact_valor, 0))
-            FROM factura
-            WHERE fact_proces_check = processo.proces_check
-        ) AS faturado
-    FROM processo
-    INNER JOIN procedimento ON proced_cod = proces_proced_cod
-    WHERE proces_orcamento IN ($placeholders)
-    AND proces_report_valores = 1
-    ORDER BY proces_nome
-";
-$stmtProc = $myConn->prepare($sqlProcessos);
-$stmtProc->execute($orcIds);
-$processos = $stmtProc->fetchAll(PDO::FETCH_ASSOC);
-
-// Agrupar os processos por controle
-$mapProcessos = [];
-foreach ($processos as $proc) {
-    $mapProcessos[$proc['proces_orcamento']][] = $proc;
+    $sqlProcessos = "
+        SELECT
+            proces_check,
+            proces_orcamento,
+            proces_padm AS padm,
+            proced_sigla AS procedimento,
+            proces_nome AS designacao,
+            (
+                SELECT SUM(COALESCE(historico_valor, 0))
+                FROM historico
+                WHERE historico_proces_check = processo.proces_check AND historico_descr_cod = 3
+            ) AS consulta,
+            (
+                SELECT SUM(COALESCE(historico_valor, 0))
+                FROM historico
+                WHERE historico_proces_check = processo.proces_check AND historico_descr_cod = 14
+            ) AS adjudicado,
+            (
+                SELECT SUM(COALESCE(fact_valor, 0))
+                FROM factura
+                WHERE fact_proces_check = processo.proces_check
+            ) AS faturado
+        FROM processo
+        INNER JOIN procedimento ON proced_cod = proces_proced_cod
+        WHERE proces_orcamento IN ($placeholders)
+        AND proces_report_valores = 1
+        ORDER BY proces_nome
+    ";
+    $stmtProc = $myConn->prepare($sqlProcessos);
+    $stmtProc->execute($orcIds);
+    $processos = $stmtProc->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Anexar os processos ao orçamento correspondente
-$finalData = [];
-foreach ($orcamentoList as $orc) {
-    $controle = $orc['controle'];
-    $orc['processos'] = $mapProcessos[$controle] ?? [];
-    $finalData[] = $orc;
+
+// Agrupar processos por orçamento
+$mapP = [];
+foreach ($processos as $proc) {
+    $mapP[$proc['proces_orcamento']][] = $proc;
+}
+
+// Montar array final de retorno
+foreach ($orcamentoList as &$orc) {
+    $orc['processos'] = $mapP[$orc['controle']] ?? [];
 }
 
 // Enviar JSON compatível com DataTables
-echo json_encode([
-    "data" => $finalData
-]);
+  echo json_encode(["data" => $orcamentoList]);

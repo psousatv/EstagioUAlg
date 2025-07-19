@@ -13,9 +13,9 @@ $(document).ready(function () {
     columns: [
       { data: 'linhaO' },
       { data: 'descritivo' },
-      { data: 'total_previsto' },
-      { data: 'total_adjudicado' },
-      { data: 'total_faturado' },
+      { data: 'total_previsto', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+      { data: 'total_adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
+      { data: 'total_faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
       {
         data: null,
         className: 'details-control',
@@ -38,10 +38,11 @@ $(document).ready(function () {
         <td>${proc.designacao}</td>
         <td>${proc.procedimento}</td>
         <td>${proc.padm}</td>
-        <td>${proc.consulta}</td>
-        <td>${proc.adjudicado}</td>
-        <td>${proc.faturado}</td>
+        <td>${Number(proc.consulta).toLocaleString('pt-PT')}</td>
+        <td>${Number(proc.adjudicado).toLocaleString('pt-PT')}</td>
+        <td>${Number(proc.faturado).toLocaleString('pt-PT')}</td>
       </tr>`;
+
     });
 
     html += '</tbody></table>';
@@ -72,3 +73,4 @@ function getQueryParams() {
     }
     return params;
   }
+
