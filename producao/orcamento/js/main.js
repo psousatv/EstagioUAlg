@@ -58,7 +58,7 @@ $.ajax(
             
             if(result["tipo"] == 'Investimento'){
                 var cartoesIvestimentos = `     
-                    <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
@@ -113,7 +113,7 @@ $.ajax(
 
             if(result["tipo"] == 'Gastos'){
                 var cartoesGastos = `     
-                    <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="orcamentoNested('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
@@ -141,7 +141,16 @@ $.ajax(
 
 // Os resultados da Seleção é redirecionado para a orcamentoResults.html
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
-function orcamentoRedirected(orcamentoItem) {
+function orcamentoResults(orcamentoItem) {
+    
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    //var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    getQueryParams();
+    window.location.href = URL;
+    
+    };
+
+    function orcamentoNested(orcamentoItem) {
     
     //var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
     var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
