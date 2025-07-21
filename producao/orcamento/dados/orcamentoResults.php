@@ -21,8 +21,10 @@ $sqlOrcamentoItemRubrica = "SELECT
                           orc_descritivo AS descritivo,
                           orc_valor_previsto AS previsto,
                           SUM(orc_valor_previsto) AS total_previsto,
-                          (SELECT SUM(proces_val_adjudicacoes) FROM processo
-                          WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_adjudicado,
+                          (SELECT SUM(historico_valor)
+                          FROM historico
+                          LEFT JOIN processo ON proces_check = historico_proces_check
+                          WHERE proces_orcamento = orcamento.orc_check AND historico_descr_cod = 14) AS total_adjudicado,
                           (SELECT SUM(fact_valor) FROM factura
                           LEFT JOIN processo ON proces_check = fact_proces_check
                           WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_faturado
@@ -78,7 +80,7 @@ echo '
       <td class="bg-success text-white">Valor Faturado</td>
       <td class="bg-success text-white">'.number_format($totalFaturado, 2, ",", ".").'€</td>
       <td class="bg-info text-white">Saldo</td>
-      <td class="bg-info text-white">'.number_format($totalAdjudicado-$totalFaturado, 2, ",", ".").'€</td>
+      <td class="bg-info text-white">'.number_format($totalPrevisto-$totalAdjudicado, 2, ",", ".").'€</td>
     </tr>
   </table>
   

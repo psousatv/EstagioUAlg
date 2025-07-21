@@ -47,7 +47,7 @@ $(document).ready(function () {
         data: null,
         className: 'details-control dt-center align-middle',
         orderable: false,
-        defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-question"></i></button>'
+        defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-info"></i></button>'
       }
     ]
   });
