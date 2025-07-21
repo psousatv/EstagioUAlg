@@ -72,25 +72,36 @@ $(document).ready(function () {
         </thead>
         <tbody>`;
 
-    i = 0;
-    var processosAdjudicado = 0;
-    var processosFaturado = 0;
-    var processosSaldo = 0;
+    var grouped = {};
     
+    // Agrupar os processos pelo 'proces_check'
     d.processos.forEach(proc => {
-      processosAdjudicado += d.processos[i]['adjudicado'];
-      processosFaturado += d.processos[i]['faturado'];
-      processosSaldo = processosAdjudicado - processosFaturado;
-      
+      const key = proc.proces_check;
+
+      if (!grouped[key]) {
+        grouped[key] = {
+          proces_check: key,
+          designacao: proc.designacao,
+          adjudicado: 0,
+          faturado: 0
+        };
+      }
+
+      grouped[key].adjudicado += parseFloat(proc.adjudicado) || 0;
+      grouped[key].faturado += parseFloat(proc.faturado) || 0;
+    });
+
+    // Gerar HTML por grupo
+    Object.values(grouped).forEach(proc => {
+      const saldo = proc.adjudicado - proc.faturado;
+
       html += `<tr>
-        <td onclick="redirectProcesso(${d.processos[i]['proces_check']})">${proc.designacao}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", {style: "currency", currency:"EUR"}).format(processosAdjudicado)}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", {style: "currency", currency:"EUR"}).format(processosFaturado)}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", {style: "currency", currency:"EUR"}).format(processosSaldo)}</td>
+        <td onclick="redirectProcesso(${proc.proces_check})">${proc.designacao}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}</td>
       </tr>`;
-
-      i += 1
-
+    
     });
 
     html += `
