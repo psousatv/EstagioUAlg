@@ -113,7 +113,7 @@ $.ajax(
 
             if(result["tipo"] == 'Gastos'){
                 var cartoesGastos = `     
-                    <div onclick="orcamentoNested('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>

@@ -15,16 +15,16 @@ function orcamentoTitulo(orcamentoItem) {
   xmlhttp.open("GET","dados/orcamentoTitulo.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
 
-  orcamentoProcessos(orcamentoItem);
-  orcamentoFinanceiro(orcamentoItem);
+  valoresRubrica(orcamentoItem);
+  valoresPADM(orcamentoItem);
  
 };
 
-function orcamentoProcessos(orcamentoItem) {
+function valoresRubrica(orcamentoItem) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstProcessos").innerHTML = this.responseText;
+      document.getElementById("valoresRubrica").innerHTML = this.responseText;
     }
   }
 
@@ -33,7 +33,7 @@ function orcamentoProcessos(orcamentoItem) {
  
 };
 
-function orcamentoFinanceiro(orcamentoItem) {
+function valoresPADM(orcamentoItem) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
