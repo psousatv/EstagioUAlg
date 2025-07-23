@@ -78,7 +78,7 @@ for($i = 0; $i < count($resultados); $i++){
         $fasesControlar = [4, 14];
         break; // Pára o ciclo ao encontrar a condição
     } elseif (
-    // Qualquer Procedimento, excepto, ADs - Serviços
+    // Serviços - Qualquer Procedimento, excepto, ADs
       $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
       $resultados[$i]['contrato'] == 'Aquisição de Serviços'){
         $tipoRegime = $resultados[$i]['regime'];
@@ -88,7 +88,7 @@ for($i = 0; $i < count($resultados); $i++){
         $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
         break; // Pára o ciclo ao encontrar a condição
     } elseif(
-      // Qualquer Procedimento, excepto, ADs - Bens
+      // Bens - Qualquer Procedimento, excepto, ADs
       $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
       $resultados[$i]['contrato'] == 'Aquisição de Bens'){
         $tipoRegime = $resultados[$i]['regime'];
@@ -98,7 +98,7 @@ for($i = 0; $i < count($resultados); $i++){
         $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
         break; // Pára o ciclo ao encontrar a condição
     } elseif(
-      // Qualquer Procedimento, excepto, ADs - Empreitadas
+      // Empreitadas - Qualquer Procedimento, excepto, ADs
       $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
       $resultados[$i]['contrato'] == 'Empreitada'){
         $tipoRegime = $resultados[$i]['regime'];
@@ -217,6 +217,11 @@ for($i = 0; $i < count($pontosControle); $i++){
 //echo var_dump($pontosControle);
 //Enviar os resultados para html
 
+// **************************************
+
+
+
+
 echo '<div class="stepper-wrapper">';
 for($i = 0; $i < count($pontosControle); $i++){
   if($pontosControle[$i][1] == 0){
@@ -228,28 +233,69 @@ for($i = 0; $i < count($pontosControle); $i++){
   } else { 
     if($pontosControle[$i][1] < $pontosControle[$i-1][1] || ($i != 0 && $pontosControle[$i-1][1] == 0) || 
       ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
-        echo '
-        <div class="stepper-item desconforme">
-          <div class="step-counter" 
-            tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
-            title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
-            data-bs-content="'.$pontosControle[$i][2].'"
-            >'.($i+1).'</div>
-            <div class="step-name badge bg-danger text-white">'.$pontosControle[$i][0].'</div>
-            <div class="step-name badge bg-danger text-white" >'.$pontosControle[$i][2].'</div>
-      </div>';
-    } else
-        {
+      
+      if($i >0 ){
+        // Dias passados entre datas
+        $data_inicio = new DateTime($pontosControle[$i][1]);
+        $data_fim = new DateTime($pontosControle[$i-1][1]);
+
+        $intervalo = $data_inicio->diff($data_fim);
+      };
+
+      echo '
+            <div class="stepper-item desconforme">
+              <div class="step-counter position-relative" 
+                tabindex="0" 
+                role="button" 
+                data-bs-toggle="popover" 
+                data-bs-trigger="focus" 
+                data-bs-placement="top"
+                title="' . $pontosControle[$i][3] . ', Registo: ' . $pontosControle[$i][1] . ' - ' . $pontosControle[$i][4] . '"
+                data-bs-content="' . $pontosControle[$i][2] . '">
+                
+                ' . ($i + 1) . '
+
+                <span class="badge rounded-pill bg-danger text-white badge-notification"
+                      style="position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">
+                  ' . $intervalo->days . '
+                </span>
+              </div>
+
+              <div class="step-name badge bg-danger text-white">' . $pontosControle[$i][0] . '</div>
+              <div class="step-name badge bg-danger text-white">' . $pontosControle[$i][2] . '</div>
+              
+            </div>';
+    } else{
+          if($i >0 ){
+            // Dias passados entre datas
+            $data_inicio = new DateTime($pontosControle[$i][1]);
+            $data_fim = new DateTime($pontosControle[$i-1][1]);
+      
+            $intervalo = $data_inicio->diff($data_fim);
+          };
+
           echo '
-          <div class="stepper-item conforme">
-            <div class="step-counter" 
-            tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
-            title="'.$pontosControle[$i][3].', Registo: '.$pontosControle[$i][1].' - '.$pontosControle[$i][4].'"
-            data-bs-content="'.$pontosControle[$i][2].'"
-            >'.($i+1).'</div>
-            <div class="step-name badge bg-success text-white">'.$pontosControle[$i][0].'</div>
-            <div class="step-name badge bg-success text-white" >'.$pontosControle[$i][2].'</div>
-          </div>';            
+                <div class="stepper-item conforme">
+                  <div class="step-counter position-relative" 
+                    tabindex="0" 
+                    role="button" 
+                    data-bs-toggle="popover" 
+                    data-bs-trigger="focus" 
+                    data-bs-placement="top"
+                    title="' . $pontosControle[$i][3] . ', Registo: ' . $pontosControle[$i][1] . ' - ' . $pontosControle[$i][4] . '"
+                    data-bs-content="' . $pontosControle[$i][2] . '">
+                    
+                    ' . ($i + 1) . '
+
+                    <span class="badge rounded-pill bg-info text-white badge-notification"
+                          style="position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">
+                      ' . $intervalo->days . '
+                    </span>
+                  </div>
+
+                  <div class="step-name badge bg-success text-white">' . $pontosControle[$i][0] . '</div>
+                  <div class="step-name badge bg-success text-white">' . $pontosControle[$i][2] . '</div>
+                </div>';           
       }
   }
 };
