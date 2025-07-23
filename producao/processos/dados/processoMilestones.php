@@ -234,7 +234,7 @@ for($i = 0; $i < count($pontosControle); $i++){
     if($pontosControle[$i][1] < $pontosControle[$i-1][1] || ($i != 0 && $pontosControle[$i-1][1] == 0) || 
       ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
       
-      if($i >0 ){
+      if($i > 0 && $pontosControle[$i-1][1] != 0){
         // Dias passados entre datas
         $data_inicio = new DateTime($pontosControle[$i][1]);
         $data_fim = new DateTime($pontosControle[$i-1][1]);
@@ -266,7 +266,7 @@ for($i = 0; $i < count($pontosControle); $i++){
               
             </div>';
     } else{
-          if($i >0 ){
+          if($i > 0 && $pontosControle[$i-1][1] != 0){
             // Dias passados entre datas
             $data_inicio = new DateTime($pontosControle[$i][1]);
             $data_fim = new DateTime($pontosControle[$i-1][1]);
