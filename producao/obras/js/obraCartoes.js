@@ -31,7 +31,7 @@ fetch(url)
         if(resultado["valor_previsto"] == null){
             realizado == 0;
         } else if (resultado["valor_faturado"] != 0 && resultado["valor_previsto"] != 0 ){
-            realizado = (resultado["valor_faturado"] / resultado["valor_previsto"]) * 100;
+            realizado = (resultado["valor_faturado"] / resultado["valor_previsto"]);
         }  else {
             realizado == 0;
         };
@@ -64,20 +64,16 @@ fetch(url)
                         ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
                     </p>
                     <h6>
-                        ${resultado["valor_faturado"].toLocaleString('pt-PT', {
-                            style: 'currency',
-                            currency: 'EUR',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })};
-                        <span class="h6">- ${realizado.toFixed(2)}%</span>
+                        ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_faturado"])}
+                        <span class="h6">
+                            ${Intl.NumberFormat("de-DE", { style: "percent",
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2}).format(realizado)}
+                        </span>
                     </h6>
-                    <h6>${resultado["valor_previsto"].toLocaleString('pt-PT', {
-                        style: 'currency',
-                        currency: 'EUR',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })};</h6>
+                    <h6>
+                        ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_previsto"])};
+                    </h6>
                     </div>
                     <div class="align-self-center">
                     <i class="fas ${iconeCartao} fa-3x"></i>
@@ -88,13 +84,13 @@ fetch(url)
         `;
 
         // Append newyly created card element to the container
-        if(resultado["valor_faturado"] > 0){
+        if(resultado["valor_faturado"] != 0){
             containerCartoesAutos.innerHTML += obraAutosCartoes;
         }});
 
     
         for(var i=0; i<resultados.length; i++){
-            if(resultados[i]['valor_faturado'] > 0){
+            if(resultados[i]['valor_faturado'] != 0){
                 faturado.push(resultados[i]["valor_faturado"]);
                 previsto.push(resultados[i]["valor_previsto"]);
         }
@@ -121,16 +117,18 @@ fetch(url)
     var containerGrauExecucao = document.getElementById('cartaoGrauExecucao');
     containerGrauExecucao.innerHTML = "";
 
+//${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}
+
     var grauExecucaoCartao = `
     <div class="row g-3 w-100" style="max-width: 50%;">
         <!-- Cartão 1 -->
         <div class="col-12 col-md-6">
             <div class="bg-primary text-white p-4 rounded h-100">
                 <p class="mb-1 small text-center">Grau de Execução até ao auto n.º ${autos}</p>
-                <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
+                <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
                 <h6 class="text-center">
-                Faturado: ${Number(totalFaturado).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€ 
-                de ${Number(totalPrevisto).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+                Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)} 
+                de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalPrevisto)}
                 </h6>
             </div>
         </div>
@@ -139,10 +137,10 @@ fetch(url)
         <div class="col-12 col-md-6">
             <div class="bg-secondary text-white p-4 rounded h-100">
                 <p class="mb-1 small text-center">Grau de Execução Global</p>
-                <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('pt-PT')}%</h3>
+                <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('de-DE')}%</h3>
                 <h6 class="text-center">
-                Faturado: ${Number(totalFaturado).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€ 
-                de ${Number(totalObra).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+                Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)}
+                de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalPrevisto)}
                 </h6>
             </div>
         </div>

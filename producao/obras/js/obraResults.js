@@ -21,8 +21,8 @@ function obraSelected(codigo) {
           obraResults(codigo);
           mapaTrabalhos(codigo);
           mapaAutos(codigo);
-          faturasProcesso(codigo);
-          garantiasProcesso(codigo);
+          //faturasProcesso(codigo);
+          //garantiasProcesso(codigo);
 
 };
 

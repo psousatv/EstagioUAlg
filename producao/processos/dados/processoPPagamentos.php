@@ -45,7 +45,7 @@ $processoPlanoPagamentosRealizado = "SELECT
                       sum(if((pp_ano = pp_ano AND pp_mes_realizado = 11),round(pp_valor_faturado,2),0)) AS 'Nov',
                       sum(if((pp_ano = pp_ano AND pp_mes_realizado = 12),round(pp_valor_faturado,2),0)) AS 'Dez'
                       FROM plano_pagamentos
-                      WHERE pp_valor_faturado > 0  AND pp_proces_check = '" .$codigoProcesso. "'
+                      WHERE pp_proces_check = '" .$codigoProcesso. "'
                       GROUP BY pp_ano
                       ORDER BY pp_ano, pp_auto_realizado" ;
 
