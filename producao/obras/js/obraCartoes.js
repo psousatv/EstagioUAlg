@@ -36,21 +36,22 @@ fetch(url)
             realizado == 0;
         };
 
+        //console.log("Realizado", realizado);
         
         //Formata o cartão de acordo com a percentagem de realização
         if (resultado["valor_previsto"] == null){
             classeCartao = 'bg-secondary text-white';
             iconeCartao = 'fa fa-refresh fa-spin';
-        } else if (realizado < 40){
+        } else if (realizado < .40){
             classeCartao = 'bg-danger text-white';
             iconeCartao = 'fa fa-thumbs-down';
-        } else if (realizado >= 40 && realizado < 75){
+        } else if (realizado >= .40 && realizado < .75){
             classeCartao = 'bg-warning text-black';
             iconeCartao = 'fa fa-thumbs-down';
-        } else if (realizado >= 75 && realizado < 90){
+        } else if (realizado >= .75 && realizado < .90){
             classeCartao = 'bg-primary text-white';
             iconeCartao = 'fa fa-cog fa-spin';
-        } else if (realizado >= 90){
+        } else if (realizado >= .90){
             classeCartao = 'bg-success text-white';
             iconeCartao = 'fa fa-smile';
         };
@@ -118,6 +119,8 @@ fetch(url)
     containerGrauExecucao.innerHTML = "";
 
 //${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}
+
+console.log("PrevistoGlobal ", previstoGlobal);
 
     var grauExecucaoCartao = `
     <div class="row g-3 w-100" style="max-width: 50%;">
