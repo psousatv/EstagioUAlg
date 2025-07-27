@@ -21,9 +21,8 @@
 <!-- Bootstrap 462-->
 <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
 <!-- Fontawesome -->
-<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
-<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
-<!-- Datables -->
+<link href="../../vendors/fonts/fontawesome.min.css" rel="stylesheet" type="text/css">
+<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css"><!-- Datables -->
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
@@ -41,7 +40,7 @@
 <body onload="obraSelected()">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="obrasSearch.html">Obras</a>
-    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fas fa-solid fa-house"></i></a></div>
 
     <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
       <div class="d-flex align-items-center justify-content-between small">
@@ -62,193 +61,159 @@
     </ul>
   </nav>
 
-  <div class="page_wrapper">
-    <!-- Page Content-->
-    <h1 class="mt-2"></h1>
-  
-    <div class="container-fluid">
-      <!-- Nome do Processo -->
-      <h1 class="mt-2"></h1>
-      <div class="row" id="obraSelected">
-        <b>O nome do Processo é listado aqui...</b>
-      </div>
-      <!-- Mostra o progresso do processo -->
-      <h1 class="mt-2"></h1>
-      <!--div class="row col-md-12 col-lg-12" id="stepProgresso">
-        <b class="small">Uma linha de progresso é mostrada aqui ...</b-->
-        <div class="col-md-12 col-lg-12 small text-white" id="buttonsProcesso">
-          <div class="col col-lg-12 text-right">
-            <div class="btn btn-success" onclick="redirectHome()"><i class="fa-sharp-duotone fa-solid fa-home"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-            <div class="btn btn-secondary"><i class="fa-sharp-duotone fa-solid fa-file-pdf"></i></div>
-            <div class="btn btn-secondary"><i class="fas fa-globe"></i></div>
-            <h1 class="mt-2"></h1>
-          </div>
-        </div>
-      <!--/div-->
+  <div class="container-fluid mt-2">
+
+    <!-- Nome do Processo -->
+    <div class="row" id="obraSelected">
+      <strong>O nome do Processo é listado aqui...</strong>
     </div>
-    
-    <div class="container-fluid">
-      <!-- Mostra os dados da obra selecionada -->
-      <div class="col col-md-12 col-lg-12" id="detailsWrapper">        
-        <!-- Detalhes da obra -->
-        <div class="row">
-          <div class="col col-lg-12">
-            <div class="card">
-              <ul class="nav nav-pills" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#obraResults" role="tab" aria-selected="true">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Dados Gerais</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#mapa_trabalhos" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Mapa de Trabalhos</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#mapa_situacao" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Mapa de Situação</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#metricas" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Métricas</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#faturas" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Faturas</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#auto" role="tab" aria-selected="false">
-                    <span class="hidden-sm-up"></span>
-                    <span class="hidden-xs-down">Auto</span>
-                  </a>
-                </li>
-              </ul>
-
-              <div class="tab-content tabcontent-border">
-                <div class="tab-pane p-20 active" id="obraResults" role="tabpanel">
-                  <!-- Dados Gerais - Genéricos -->
-                  <div class="row">
-                    <div class="col col-lg-8">
-                      <div id="lstObraResults"><b>O Resumo do Proceso é listado aqui...</b></div>
-                    </div>
-                    <!-- Dados Gerais - Gráfico -->
-                    <div class="col col-lg-4">
-                      <canvas class="text-center" id="lstObraGrafico"><b>Gráfico do Ponto de situação da Obra</b></canvas>
-                    </div>
-                  </div>
-                  <!-- Dados Gerais - Cartões de Autos -->
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
-                      <h1 class="mt-2"></h1>
-                      <div class="row" id="lstObraCartoes">
-                        <b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b>
-                      </div>
-                    </div>
-                  </div>
+   
+    <!-- Card com Abas e Conteúdo -->
+    <div class="row mt-2">
+      <div class="col-lg-12">
+        <div class="card p-3">
+  
+          <!-- Navegação de Abas e Botões -->
+          <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
+            
+            <!-- Abas -->
+            <ul class="nav nav-pills" id="tabMenu" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="resumo-tab" data-bs-toggle="tab" data-bs-target="#resumo" type="button" role="tab" aria-controls="resumo" aria-selected="true">
+                  Resumo
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="trabahos-tab" data-bs-toggle="tab" data-bs-target="#trabalhos" type="button" role="tab" aria-controls="trabalhos" aria-selected="false">
+                  Mapa de Trabalhos
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="situacao-tab" data-bs-toggle="tab" data-bs-target="#situacao" type="button" role="tab" aria-controls="situacao" aria-selected="false">
+                  Mapa de Situação
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="metricas-tab" data-bs-toggle="tab" data-bs-target="#metricas" type="button" role="tab" aria-controls="metricas" aria-selected="false">
+                  Métricas
+                </button>
+              </li>
+            </ul>
+  
+            <!-- Botões de Ação -->
+            <div class="btn-group" role="group" aria-label="Ações">
+              <button class="btn btn-success" onclick="redirectHome()" title="Ir para Processo">
+                <i class="fas fa-house"></i>
+              </button>
+              <button class="btn btn-secondary" title="Ir para Obras">
+                <i class="fas fa-file"></i>
+              </button>
+              <button class="btn btn-secondary" title="Gerar PDF">
+                <i class="fas fa-file-pdf"></i>
+              </button>
+              <button class="btn btn-secondary" title="Imprimir">
+                <i class="fas fa-print"></i>
+              </button>
+            </div>
+          </div>
+  
+          <!-- Conteúdo das Abas -->
+          <div class="tab-content border-top pt-3" id="tabContent">
+  
+            <!-- Aba Resumo -->
+            <div class="tab-pane fade show active" id="resumo" role="tabpanel" aria-labelledby="resumo-tab">
+              <div class="row">
+                <!-- Dados Gerais - Genéricos -->
+                <div class="col-md-8">
+                  <strong id="lstObraResults">O resumo do processo é listado aqui...</strong>
                 </div>
-                <!-- Mapa de Trabalhos-->
-                <div class="tab-pane p-20" id="mapa_trabalhos" role="tabpanel" >
-                  <div class="row">
-                    <div class="col col-lg-12">
-                      <div class="p-20" id="lstMapaTrabalhos">
-                        <b>O Mapa de Trabalhos é listado aqui...</b>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Dados Gerais - Gráfico -->
+                <div class="col col-lg-4">
+                  <canvas class="text-center" id="lstObraGrafico"><b>Gráfico do Ponto de situação da Obra</b></canvas>
                 </div>
-                <!-- Mapa de Situação-->
-                <div class="tab-pane p-20 " id="mapa_situacao" role="tabpanel" >
-                  <div class="row">
-                    <div class="col col-lg-12">
-                      <div class="p-20" id="lstMapaSituacao">
-                        <b>O Mapa de Situação é listado aqui...</b>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Métricas-->
-                <div class="tab-pane p-20 " id="metricas" role="tabpanel" >
-                  <!-- Progresso -->
-                  
-                  <div class="row">
-
-                    <div class="col col-lg-6">
-                      <div class="card">
-                        <div class="card-body col-sm-6">
-                          <div id="lstMetricasProgressInstalacao"></div>
-                        </div>
-                        <div class="card-body col-sm-6">
-                          <div id="lstMetricasProgressAcessorios"></div>
-                        </div>
-                        <div class="card-body">
-                          <div id="lstMetricasProgressOutros"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Dados Gerais - Gráfico -->
-                    <div class="col col-lg-6">
-                      <div class="card">
-                        <div class="card-body col-sm-12">
-                          <canvas class="text-center" id="lstMetricasGrafico"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  </div>
-
-                </div>
-
-                <div class="tab-pane p-20" id="faturas" role="tabpanel" >
-                  <div class="row">
-                      <div class="col col-md-8">
-                        <!--div class="p-20" id="lstGarantias"><b>Os valores cativos são listados aqui...</b></div-->
-                        <div class="p-20" id="lstFaturas"><b>As Faturas são listadas aqui...</b></div>
-                      </div>
-                      <div class="col col-md-4" id="lstGarantias"><b>Os valores cativos são listado aqui...</b></div>
-                      <!--div class="col col-md-4 text-center" id="grafFaturacao"><b >Um gráfico é representada aqui...</b>
-                        <img src="../../global/imagens/LogotipoTVerde.jpg" title="Área de Influência da Obra"></img>
-                      </div-->
-                  </div>
-                </div>
-                <div class="tab-pane p-20 " id="auto" role="tabpanel" >
-                  <div class="p-20" id="lstAuto">
-                    <b>Deverá selecionar em "Dados Gerais" o auto que pretende consultar...</b>
+              </div>
+              <!-- Dados Gerais - Cartões de Autos -->
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
+                  <h1 class="mt-2"></h1>
+                  <div class="row" id="lstObraCartoes">
+                    <b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b>
                   </div>
                 </div>
               </div>
+
             </div>
-          </div>
-        </div>
+  
+            <!-- Aba Mapa de Trabalhos -->
+            <div class="tab-pane fade" id="trabalhos" role="tabpanel" aria-labelledby="trabalhos-tab">
+              <div id="lstMapaTrabalhos">
+                <strong>O histórico é listado aqui...</strong>
+              </div>
+            </div>
+  
+            <!-- Aba Mapa Situação -->
+            <div class="tab-pane fade" id="situacao" role="tabpanel" aria-labelledby="situacao-tab">
+              <div id="lstMapaSituacao">
+                <strong>O histórico é listado aqui...</strong>
+              </div>
+            </div>
+
+  
+            <!-- Aba Métricas -->
+            <div class="tab-pane fade" id="metricas" role="tabpanel" aria-labelledby="metricas-tab">
+                             
+              <div class="row">
+                <!-- Progresso -->
+                <div class="col col-lg-6">
+                  <div class="card">
+                    <div class="card-body col-sm-6">
+                      <div id="lstMetricasProgressInstalacao"></div>
+                    </div>
+                    <div class="card-body col-sm-6">
+                      <div id="lstMetricasProgressAcessorios"></div>
+                    </div>
+                    <div class="card-body">
+                      <div id="lstMetricasProgressOutros"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Gráfico -->
+                <div class="col col-lg-6">
+                  <div class="card">
+                    <div class="card-body col-sm-12">
+                      <canvas class="text-center" id="lstMetricasGrafico"></canvas>
+                    </div>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+  
+          </div> <!-- /tab-content -->
+  
+        </div> <!-- /card -->
       </div>
     </div>
+  
+  </div>
+  
 
-<!-- Global -->
-<script src="../../global/js/scripts.js"></script>
-<!-- JQuery -->
-<script src="../../vendors/jquery/jquery370.js"></script>
-<!-- Bootstrap 462-->
-<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
-<!-- Fontawesome -->
-<script src="../../vendors/fonts/all.min.js"></script>
-<!-- Datatables -->
-<script src="../../vendors/datatables/datatables.min.js"></script>
-<!-- Charts -->
-<script src="../../vendors/charts/Chart.min.js"></script>
-<!-- Gauge -->
-<!--script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@10.3.3/dist/umd/ag-charts-enterprise.js?t=1731495898171"></script-->
+  <!-- Global -->
+  <script src="../../global/js/scripts.js"></script>
+  <!-- JQuery -->
+  <script src="../../vendors/jquery/jquery.js"></script>
+  <!-- Bootstrap -->
+  <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+  <!-- PopOver -->
+  <script src="../../global/js/popover.js"></script>
+  <!-- Fontawesome -->
+  <script src="../../vendors/fonts/fontawesome.min.js"></script>
+  <script src="../../vendors/fonts/all.min.js"></script>
+  <!-- Datatables -->
+  <script src="../../vendors/datatables/datatables.min.js"></script>
+  <!-- Charts -->
+  <script src="../../vendors/charts/Chart.min.js"></script>
 
 <script src="js/obraResults.js"></script>
 <script src="js/obraCartoes.js"></script>

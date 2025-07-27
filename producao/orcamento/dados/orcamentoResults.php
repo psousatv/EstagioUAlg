@@ -21,8 +21,10 @@ $sqlOrcamentoItemRubrica = "SELECT
                           orc_descritivo AS descritivo,
                           orc_valor_previsto AS previsto,
                           SUM(orc_valor_previsto) AS total_previsto,
-                          (SELECT SUM(proces_val_adjudicacoes) FROM processo
-                          WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_adjudicado,
+                          (SELECT SUM(historico_valor)
+                          FROM historico
+                          LEFT JOIN processo ON proces_check = historico_proces_check
+                          WHERE proces_orcamento = orcamento.orc_check AND historico_descr_cod = 14) AS total_adjudicado,
                           (SELECT SUM(fact_valor) FROM factura
                           LEFT JOIN processo ON proces_check = fact_proces_check
                           WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_faturado
@@ -69,81 +71,18 @@ $stmt3 = $myConn->query($sqlProcessosOrcamentoItemRubrica);
 $processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 
 echo '
-<div class="card col-md-12">
-  <div class="card-body">
-    <a class="badge bg-info text-white small">Os valores de orçamento são ajustados para os valores de adjudicação </a>
-      <table class="table table-responsive table-striped">
-        <tr>
-          <td class="bg-primary text-white">Items no Orçamento <span class="badge bg-secondary">('.$rows.')</span></td>
-          <td class="bg-primary text-white">'.number_format($totalPrevisto, 2, ",", ".").'€</td>
-          <td class="bg-secondary text-white">Processos Adjudicados</td>
-          <td class="bg-secondary text-white">'.number_format($totalAdjudicado, 2, ",", ".").'€</td>  
-          <td class="bg-success text-white">Valor Faturado</td>
-          <td class="bg-success text-white">'.number_format($totalFaturado, 2, ",", ".").'€</td>
-          <td class="bg-info text-white">Saldo</td>
-          <td class="bg-info text-white">'.number_format($totalPrevisto-$totalFaturado, 2, ",", ".").'€</td>
-        </tr>
-      </table>
-        
-    <h1 class="mt-2"></h1>
-    <div class="col col-md-12">
-      <div class="row">
-        <table class="table table-responsive table-striped small">
-          <tr>
-            <th class="text-center">Tipo</th>
-            <th class="text-center">Orc.</th>
-            <th class="text-center">SE</th>
-            <th class="text-center">Processo</th>
-            <th class="text-center">Previsto</th>
-            <th class="text-center">Adjudicado</th>
-            <th class="text-center">Faturado</th>
-            <th class="text-center">Saldo</th>
-          </tr>';
-          foreach($orcamentoItemRubrica as $row) {
-            $soma = 0;
-            echo '<tr>';
-              echo '<td class="text-left">'.$row["tipo"].'</td>';
-              echo '<td class="text-left">'.$row["linhaO"].'</td>';
-              echo '<td class="text-left">'.$row["linhaSE"].'</td>';
-              echo '<td class="text-left">'.$row["descritivo"].'</td>';
-              echo '<td class="text-left">'.number_format($row["previsto"], 2, ",", ".").'€</td>';
-              echo '<td class="text-right">'.number_format($row["total_adjudicado"], 2, ",", ".").'€</td>';
-              echo '<td class="text-right">'.number_format($row["total_faturado"], 2, ",", ".").'€</td>';
-              echo '<td class="text-right">' . number_format(($row["previsto"] - $row["total_faturado"]), 2, ",", ".") . '€</td>';
-            echo '<tr>';
-            
-            foreach($processosOrcamentoItemRubrica as $key) {     
-              if($row['controle'] == $key['proces_orcamento']){
-                $soma += $key['adjudicado'];
-                if($soma > $row['previsto']){
-                  echo '<tr class="bg-danger text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
-                    echo '<td class="text-left"><i class="fas fa-binoculars text-white fa-2x"></i></td>';
-                    echo '<td class="text-left">'.$key['padm'].'</td>';
-                    echo '<td class="text-left">'.$key['procedimento'].'</td>';
-                    echo '<td colspan="2" class="text-left">'.$key['designacao'].'</td>';
-                    
-                    echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
-                    echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
-                    echo '<td class="text-right">' . number_format(($key["adjudicado"] - $key["faturado"]), 2, ",", ".") . '€</td>';
-                  echo '</tr>';       
-                } else {
-                  echo '<tr class="bg-success text-white" onclick="redirectProcesso('.$key["proces_check"].')">';
-                    echo '<td class="text-left"><i class="fas fa-binoculars text-white fa-2x"></i></td>';
-                    echo '<td class="text-left">'.$key['padm'].'</td>';
-                    echo '<td class="text-left">'.$key['procedimento'].'</td>';
-                    echo '<td colspan="2" class="text-left">'.$key['designacao'].'</td>';
-                    echo '<td class="text-right">'.number_format($key["adjudicado"], 2, ",", ".").'€</td>';
-                    echo '<td class="text-right">'.number_format($key["faturado"], 2, ",", ".").'€</td>';
-                    echo '<td class="text-right">' . number_format(($key["adjudicado"] - $key["faturado"]), 2, ",", ".") . '€</td>';
-                  echo '</tr>';       
-                }
-              }
-            }
-          };
-          echo '
-        </table>
-      </div>
-    </div>
-  </div>
-</div>';
+  <table class="table table-responsive table-striped">
+    <tr>
+      <td class="bg-primary text-white">Items no Orçamento <span class="badge bg-secondary">('.$rows.')</span></td>
+      <td class="bg-primary text-white">'.number_format($totalPrevisto, 2, ",", ".").'€</td>
+      <td class="bg-secondary text-white">Processos Adjudicados</td>
+      <td class="bg-secondary text-white">'.number_format($totalAdjudicado, 2, ",", ".").'€</td>  
+      <td class="bg-success text-white">Valor Faturado</td>
+      <td class="bg-success text-white">'.number_format($totalFaturado, 2, ",", ".").'€</td>
+      <td class="bg-info text-white">Saldo</td>
+      <td class="bg-info text-white">'.number_format($totalPrevisto-$totalAdjudicado, 2, ",", ".").'€</td>
+    </tr>
+  </table>
+  
+  ';
 

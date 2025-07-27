@@ -23,12 +23,13 @@ $sqlOrcamento = "
         orc_valor_previsto AS previsto,
         SUM(orc_valor_previsto) AS total_previsto,
         (
-            SELECT SUM(proces_val_adjudicacoes)
-            FROM processo
-            WHERE proces_orcamento = orcamento.orc_check AND proces_report_valores = 1
+            SELECT SUM(COALESCE(historico_valor, 0))
+            FROM historico
+            LEFT JOIN processo ON proces_check = historico_proces_check
+            WHERE proces_orcamento = orcamento.orc_check AND historico_descr_cod = 14
         ) AS total_adjudicado,
         (
-            SELECT SUM(fact_valor)
+            SELECT SUM(COALESCE(fact_valor, 0))
             FROM factura
             LEFT JOIN processo ON proces_check = fact_proces_check
             WHERE proces_orcamento = orcamento.orc_check AND proces_report_valores = 1

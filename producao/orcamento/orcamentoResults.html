@@ -21,7 +21,7 @@
 <!-- Bootstrap -->
 <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
 <!-- Fontawesome -->
-<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/fonts/fontawesome.min.css" rel="stylesheet" type="text/css">
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
 <!-- Datables -->
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
@@ -41,7 +41,7 @@
 <body onload="orcamentoTitulo()">
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="main.html">Orçamento</a>
-    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fas fa-solid fa-house"></i></a></div>
 
     <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
       <div class="d-flex align-items-center justify-content-between small">
@@ -65,22 +65,53 @@
   <div class="page_wrapper">
     <!-- Page Content-->
     <h1 class="mt-2"></h1>
-    <div class="container-fluid">
+    <div class="container-fluid">  
+          
       <!-- Nome da Rúbrica -->
-      <h1 class="mt-2"></h1>
-      <div class="row col-md-12" id="orcamentoTitulo">
-        <b>O nome da Processo é listado aqui...</b>
+      <div class="row">
+        <div class="col col-md-12">
+          <table class="table table-responsive table-striped" id="orcamentoTitulo">
+          </table>
+        </div>
       </div>
+
       <!-- Nome dos Processos na Rúbrica -->
-      <h1 class="mt-2"></h1>
-      <div class="row col-md-12" id="lstProcessos">
+      <div class="row" >
+        <div class="col col md-12" id="valoresRubrica">
         <b>Nome dos Processos na Rúbrica</b>
+        </div>
       </div>
+      
+      <!-- DataTables Nested -->
+      <div class="row">
+        <div class="col col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <table id="processosNested" class="display" style="width:100%">
+                <thead>
+                  <tr>
+                    <th>Linha</th>
+                    <th>Descritivo</th>
+                    <th>Previsto</th>
+                    <th>Adjudicado</th>
+                    <th>Faturado</th>
+                    <th>Saldo</th>
+                    <th>Detalhes</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <!-- Facturação por Processo Administrativo -->
       <h1 class="mt-2"></h1>
       <div class="row col-md-12" id="lstFaturacaoPADM">
         <b>Facturação por Processo Administrativo</b>
       </div>
+
     </div>
   </div>
 
@@ -91,6 +122,7 @@
 <!-- Bootstrap -->
 i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
 <!-- Fontawesome -->
+<script src="../../vendors/fonts/fontawesome.min.js"></script>
 <script src="../../vendors/fonts/all.min.js"></script>
 <!-- Datatables -->
 <script src="../../vendors/datatables/datatables.min.js"></script>
@@ -98,6 +130,7 @@ i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="../../vendors/charts/Chart.min.js"></script>
 
 <script src="js/orcamentoResults.js"></script>
+<script src="js/datatablesNested.js"></script>
 
 
 </body>
