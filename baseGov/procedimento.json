@@ -1,0 +1,280 @@
+[
+  {
+    "Nível": "1",
+    "Elemento": "Número",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Numérico",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "2",
+    "Elemento": "Entidade(s) Adjudicante(s)",
+    "Repetível": true,
+    "Obrigatório": true,
+    "Tipo": "-",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subníveis": [
+      {
+        "Nível": "2.1",
+        "Elemento": "NIPC",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Código",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      {
+        "Nível": "2.2",
+        "Elemento": "Descrição",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Texto",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      {
+        "Nível": "2.3",
+        "Elemento": "País",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Código",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      }
+    ]
+  },
+  {
+    "Nível": "3",
+    "Elemento": "O procedimento também é publicitado no Jornal Oficial da União Europeia?",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Indicador",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subníveis": [
+      {
+        "Nível": "3.1",
+        "Elemento": "Base Jurídica do Processo (se Sim)",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Código",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Público",
+        "Registado por PE/EA": "PE ou EA"
+      }
+    ]
+  },
+  {
+    "Nível": "4",
+    "Elemento": "Regime de contratação",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Código",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "5",
+    "Elemento": "Data de decisão de contratar",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Data",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "6",
+    "Elemento": "Valor estimado",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Numérico",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "7",
+    "Elemento": "Código CPV principal",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Código",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "8",
+    "Elemento": "Contrato principal e contratos suplementares",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Indicador",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subníveis": [
+      {
+        "Nível": "8.1",
+        "Elemento": "Valor do contrato principal",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Numérico",
+        "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      {
+        "Nível": "8.2",
+        "Elemento": "Valor dos contratos suplementares",
+        "Repetível": false,
+        "Obrigatório": false,
+        "Tipo": "Numérico",
+        "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      }
+    ]
+  },
+  {
+    "Nível": "9",
+    "Elemento": "Tipo de Procedimento",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Código",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "10",
+    "Elemento": "Número do Procedimento",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Texto",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "11",
+    "Elemento": "Número do Processo",
+    "Repetível": false,
+    "Obrigatório": false,
+    "Tipo": "Texto",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "12",
+    "Elemento": "Data da publicação do anúncio",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Data",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "13",
+    "Elemento": "Data limite para receção de propostas",
+    "Repetível": false,
+    "Obrigatório": false,
+    "Tipo": "Data",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "14",
+    "Elemento": "Adjudicatário(s)",
+    "Repetível": true,
+    "Obrigatório": false,
+    "Tipo": "-",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subníveis": [
+      {
+        "Nível": "14.1",
+        "Elemento": "NIPC",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Código",
+        "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      {
+        "Nível": "14.2",
+        "Elemento": "Nome",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Texto",
+        "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      {
+        "Nível": "14.3",
+        "Elemento": "País",
+        "Repetível": false,
+        "Obrigatório": true,
+        "Tipo": "Código",
+        "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      }
+    ]
+  },
+  {
+    "Nível": "15",
+    "Elemento": "Motivo do cancelamento do procedimento",
+    "Repetível": false,
+    "Obrigatório": false,
+    "Tipo": "Texto",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "16",
+    "Elemento": "Forma de apresentação da proposta",
+    "Repetível": false,
+    "Obrigatório": false,
+    "Tipo": "Código",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "17",
+    "Elemento": "Adjudicação de Subcontratação (se aplicável)",
+    "Repetível": false,
+    "Obrigatório": false,
+    "Tipo": "Indicador",
+    "Grupo": "Procedimentos publicados na versão 2 do portal BASE",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  {
+    "Nível": "18",
+    "Elemento": "Local de execução",
+    "Repetível": false,
+    "Obrigatório": true,
+    "Tipo": "Texto",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  }
+]

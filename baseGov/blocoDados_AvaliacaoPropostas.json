@@ -1,0 +1,129 @@
+{
+  "1": {
+    "nome": "Versão",
+    "repetível": true,
+    "obrigatório": true,
+    "tipo": "Numérico",
+    "grupo": "A que se refere a alínea h) do n.º 1 do artigo 7.º",
+    "visibilidade": "Privado",
+    "registadoPor": "PE ou EA"
+  },
+  "2": {
+    "nome": "Dados associados ao desenvolvimento do procedimento",
+    "repetível": false,
+    "obrigatório": true,
+    "tipo": "-",
+    "grupo": "A que se refere a alínea h) do n.º 1 do artigo 7.º",
+    "visibilidade": "-",
+    "registadoPor": "PE ou EA",
+    "subElementos": {
+      "2.1": {
+        "nome": "Data do termo do prazo de apresentação das propostas",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Data",
+        "grupo": "A que se refere a alínea h) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE ou EA"
+      },
+      "2.2": {
+        "nome": "Concorrente(s)",
+        "repetível": true,
+        "obrigatório": true,
+        "tipo": "-",
+        "grupo": "A que se refere a alínea h) do n.º 1 do artigo 7.º",
+        "visibilidade": "Público",
+        "registadoPor": "PE ou EA",
+        "subElementos": {
+          "2.2.1": {
+            "nome": "NIPC",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Código/Texto",
+            "visibilidade": "Público",
+            "registadoPor": "PE ou EA"
+          },
+          "2.2.2": {
+            "nome": "Descrição",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Texto",
+            "visibilidade": "Público",
+            "registadoPor": "PE ou EA"
+          },
+          "2.2.3": {
+            "nome": "Agrupamento",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Indicador",
+            "visibilidade": "Público",
+            "registadoPor": "PE ou EA"
+          },
+          "2.2.4": {
+            "nome": "Classificação",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Código",
+            "visibilidade": "Público",
+            "registadoPor": "PE ou EA"
+          },
+          "2.2.5": {
+            "nome": "Estado",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Código",
+            "visibilidade": "Privado",
+            "registadoPor": "PE ou EA"
+          },
+          "2.2.6": {
+            "nome": "Código da proposta",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Numérico",
+            "visibilidade": "Privado",
+            "registadoPor": "PE ou EA"
+          }
+        }
+      },
+      "2.3": {
+        "nome": "Detalhe do concorrente selecionado",
+        "repetível": true,
+        "obrigatório": true,
+        "tipo": "-",
+        "grupo": "A que se refere a alínea h) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE ou EA",
+        "subElementos": {
+          "2.3.1": { "nome": "Ordem do concorrente", "tipo": "Numérico", "obrigatório": true },
+          "2.3.2": { "nome": "País", "tipo": "Código", "obrigatório": true },
+          "2.3.3": { "nome": "Proposta Variante", "tipo": "Indicador", "obrigatório": true },
+          "2.3.4": { "nome": "Variante", "tipo": "Numérico", "obrigatório": true },
+          "2.3.5": { "nome": "Ordem do lote", "tipo": "Numérico", "obrigatório": true },
+          "2.3.6": { "nome": "Prazo de execução", "tipo": "Numérico", "obrigatório": true },
+          "2.3.7": { "nome": "Valor da proposta", "tipo": "Numérico", "obrigatório": true },
+          "2.3.8": { "nome": "Pontuação", "tipo": "Numérico", "obrigatório": true },
+          "2.3.9": { "nome": "Classificação das propostas", "tipo": "Numérico", "obrigatório": true },
+          "2.3.10": { "nome": "Fundamentação da exclusão de cada proposta", "tipo": "Texto", "obrigatório": true },
+          "2.3.11": { "nome": "Receitas do Utilizador da Concessão", "tipo": "Numérico", "obrigatório": true },
+          "2.3.12": { "nome": "Receita do Adquirente da Concessão", "tipo": "Numérico", "obrigatório": true },
+          "2.3.13": { "nome": "Descrição do Valor da Concessão", "tipo": "Texto", "obrigatório": true }
+        }
+      },
+      "2.4": {
+        "nome": "Apresentações Recebidas",
+        "repetível": true,
+        "obrigatório": true,
+        "tipo": "-",
+        "grupo": "A que se refere a alínea h) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE ou EA",
+        "subElementos": {
+          "2.4.1": { "nome": "Número de Apresentações Recebidas", "tipo": "Numérico", "obrigatório": true },
+          "2.4.2": { "nome": "Tipo de Apresentações Recebidas", "tipo": "Código", "obrigatório": true },
+          "2.4.3": { "nome": "Proposta com o Valor Mais Baixo", "tipo": "Numérico", "obrigatório": true },
+          "2.4.4": { "nome": "Proposta com o Valor Mais Alto", "tipo": "Numérico", "obrigatório": true }
+        }
+      }
+    }
+  }
+}

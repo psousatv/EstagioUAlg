@@ -1,0 +1,66 @@
+ async function loadFormData() {
+      try {
+        const response = await fetch('procedimento.json'); // Caminho para o seu JSON
+        if (!response.ok) throw new Error('Falha ao carregar o arquivo JSON');
+        const formSections = await response.json();
+        generateForm(formSections);
+      } catch (error) {
+        console.error('Erro:', error);
+      }
+    }
+
+    function createInputField(field) {
+      const div = document.createElement("div");
+      div.classList.add("mb-3");
+
+      const label = document.createElement("label");
+      label.classList.add("form-label");
+      label.textContent = field.label;
+      label.setAttribute("for", field.name);
+      div.appendChild(label);
+
+      let input;
+      if (field.type === "textarea") {
+        input = document.createElement("textarea");
+        input.classList.add("form-control");
+        input.rows = 3;
+      } else {
+        input = document.createElement("input");
+        input.type = field.type;
+        input.classList.add("form-control");
+      }
+
+      input.name = field.name;
+      input.id = field.name;
+      if (field.placeholder) input.placeholder = field.placeholder;
+
+      div.appendChild(input);
+
+      return div;
+    }
+
+    function generateForm(sections) {
+      const form = document.getElementById("dynamicForm");
+      form.innerHTML = ''; // Limpa caso já exista conteúdo
+
+      sections.forEach(section => {
+        const sectionTitle = document.createElement("h4");
+        sectionTitle.classList.add("mt-4", "mb-3");
+        sectionTitle.textContent = section.title;
+        form.appendChild(sectionTitle);
+
+        section.fields.forEach(field => {
+          const inputField = createInputField(field);
+          form.appendChild(inputField);
+        });
+      });
+
+      const submitBtn = document.createElement("button");
+      submitBtn.type = "submit";
+      submitBtn.classList.add("btn", "btn-primary", "mt-3");
+      submitBtn.textContent = "Enviar";
+      form.appendChild(submitBtn);
+    }
+
+    // Inicia o carregamento do JSON e geração do formulário ao carregar a página
+    window.onload = loadFormData;

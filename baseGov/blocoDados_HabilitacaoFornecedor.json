@@ -1,0 +1,143 @@
+{
+  "1": {
+    "nome": "Dados associados ao desenvolvimento do procedimento",
+    "repetível": false,
+    "obrigatório": true,
+    "tipo": "-",
+    "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+    "visibilidade": "Privado",
+    "registadoPor": "PE",
+    "subElementos": {
+      "1.1": {
+        "nome": "Data de apresentação dos documentos de habilitação pelo adjudicatário",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Data",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "1.2": {
+        "nome": "Data da decisão de adjudicação",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Data",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "1.3": {
+        "nome": "Identificação do adjudicatário ou de cada membro do agrupamento adjudicatário",
+        "repetível": true,
+        "obrigatório": true,
+        "tipo": "Numérico",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "1.4": {
+        "nome": "Código(s) da(s) proposta(s) escolhida(s)",
+        "repetível": true,
+        "obrigatório": true,
+        "tipo": "Numérico",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "1.5": {
+        "nome": "Identificação do(s) lote(s) em causa",
+        "repetível": true,
+        "obrigatório": true,
+        "tipo": "Numérico",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "1.6": {
+        "nome": "Adjudicatário corresponde à proposta adjudicada em primeiro lugar?",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Indicador",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE",
+        "subElementos": {
+          "1.6.1": {
+            "nome": "Indicação do motivo de não adjudicação à proposta qualificada em primeiro",
+            "repetível": false,
+            "obrigatório": true,
+            "tipo": "Texto",
+            "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+            "visibilidade": "Privado",
+            "registadoPor": "PE"
+          }
+        }
+      },
+      "1.7": {
+        "nome": "Informação relevante sobre habilitação do adjudicatário e sobre a prestação de caução",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Texto",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      }
+    }
+  },
+  "2": {
+    "nome": "Audiências prévias",
+    "repetível": true,
+    "obrigatório": true,
+    "tipo": "-",
+    "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+    "visibilidade": "Privado",
+    "registadoPor": "PE",
+    "subElementos": {
+      "2.1": {
+        "nome": "Número de audiências prévias",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Numérico",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "2.2": {
+        "nome": "Data da audiência prévia",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Data",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "2.3": {
+        "nome": "Fase da audiência prévia",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Código",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "2.4": {
+        "nome": "Link de acesso aos Relatórios",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "URL",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      },
+      "2.5": {
+        "nome": "Número de pronúncias da audiência prévia",
+        "repetível": false,
+        "obrigatório": true,
+        "tipo": "Numérico",
+        "grupo": "A que se refere a alínea i) do n.º 1 do artigo 7.º",
+        "visibilidade": "Privado",
+        "registadoPor": "PE"
+      }
+    }
+  }
+}

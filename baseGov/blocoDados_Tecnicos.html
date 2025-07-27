@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulário de Contratação Pública</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Registo de Contrato Público</h2>
+  <form>
+    <!-- 1. Entidade(s) Adjudicante(s) -->
+    <div class="mb-4">
+      <h4>Entidade(s) Adjudicante(s)</h4>
+      <div class="mb-3">
+        <label for="nipc" class="form-label">NIPC *</label>
+        <input type="text" class="form-control" id="nipc" required>
+      </div>
+      <div class="mb-3">
+        <label for="descricaoEntidade" class="form-label">Descrição *</label>
+        <input type="text" class="form-control" id="descricaoEntidade" required>
+      </div>
+      <div class="mb-3">
+        <label for="pais" class="form-label">País *</label>
+        <input type="text" class="form-control" id="pais" required>
+      </div>
+    </div>
+
+    <!-- 2. Identificação do contrato -->
+    <div class="mb-3">
+      <label for="idContrato" class="form-label">Identificação do contrato *</label>
+      <input type="text" class="form-control" id="idContrato" required>
+    </div>
+
+    <!-- 3. Descrição sumária do objeto do contrato -->
+    <div class="mb-3">
+      <label for="descricaoObjeto" class="form-label">Descrição sumária do objeto do contrato *</label>
+      <textarea class="form-control" id="descricaoObjeto" rows="3" required></textarea>
+    </div>
+
+    <!-- 4. Número de lotes do procedimento -->
+    <div class="mb-3">
+      <label for="numLotes" class="form-label">Número de lotes do procedimento (se aplicável) *</label>
+      <input type="number" class="form-control" id="numLotes" required>
+    </div>
+
+    <!-- 5. Tipo de infraestrutura - código -->
+    <div class="mb-3">
+      <label for="tipoInfraCodigo" class="form-label">Tipo de infraestrutura - Código *</label>
+      <input type="text" class="form-control" id="tipoInfraCodigo" required>
+    </div>
+
+    <!-- 6. Tipo de infraestrutura - designação -->
+    <div class="mb-3">
+      <label for="tipoInfraDesignacao" class="form-label">Tipo de infraestrutura - Designação *</label>
+      <input type="text" class="form-control" id="tipoInfraDesignacao" required>
+    </div>
+
+    <!-- 7. Infraestrutura específica -->
+    <div class="mb-3">
+      <label for="infraestruturaEspecifica" class="form-label">Infraestrutura específica *</label>
+      <input type="text" class="form-control" id="infraestruturaEspecifica" required>
+    </div>
+
+    <!-- 8. Componentes por membros do agrupamento -->
+    <div class="mb-3">
+      <label for="componentesAgrupamento" class="form-label">Componentes por membros do agrupamento (%) *</label>
+      <input type="number" class="form-control" id="componentesAgrupamento" required>
+    </div>
+
+    <!-- 9. Componentes de obra nova, remodelação e conservação -->
+    <div class="mb-3">
+      <label for="componentesObra" class="form-label">Componentes de obra nova / remodelação / conservação (%) *</label>
+      <input type="number" class="form-control" id="componentesObra" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submeter</button>
+  </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

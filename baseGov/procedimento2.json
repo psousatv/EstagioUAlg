@@ -1,0 +1,127 @@
+{
+  "1": {
+    "Elemento": "Número",
+    "Repetível": "Não",
+    "Obrigatório": "Sim",
+    "Tipo": "Numérico",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  "2": {
+    "Elemento": "Entidade(s) Adjudicante(s)",
+    "Repetível": "Sim",
+    "Obrigatório": "Sim",
+    "Tipo": "-",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subitens": {
+      "2.1": {
+        "Elemento": "NIPC",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Código",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      "2.2": {
+        "Elemento": "Descrição",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Texto",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      "2.3": {
+        "Elemento": "País",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Código",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      }
+    }
+  },
+  "3": {
+    "Elemento": "O procedimento também é publicitado no Jornal Oficial da União Europeia?",
+    "Repetível": "Não",
+    "Obrigatório": "Sim",
+    "Tipo": "Indicador",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subitens": {
+      "3.1": {
+        "Elemento": "(Se Sim) Base Jurídica do Processo",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Código",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Público",
+        "Registado por PE/EA": "PE ou EA"
+      }
+    }
+  },
+  "4": {
+    "Elemento": "Regime de contratação",
+    "Repetível": "Não",
+    "Obrigatório": "Sim",
+    "Tipo": "Código",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  "5": {
+    "Elemento": "Data de decisão de contratar",
+    "Repetível": "Não",
+    "Obrigatório": "Sim",
+    "Tipo": "Data",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA"
+  },
+  "6": {
+    "Elemento": "Aviso",
+    "Repetível": "Não",
+    "Obrigatório": "Sim",
+    "Tipo": "-",
+    "Grupo": "Todos os Procedimentos",
+    "Público/Privado": "Privado",
+    "Registado por PE/EA": "PE ou EA",
+    "Subitens": {
+      "6.1": {
+        "Elemento": "Identificador do Processo",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Numérico",
+        "Grupo": "Todos os Procedimentos",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      "6.2": {
+        "Elemento": "Identificador do Anúncio",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Numérico",
+        "Grupo": "Procedimentos Concursais",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      },
+      "6.3": {
+        "Elemento": "Versão do Anúncio",
+        "Repetível": "Não",
+        "Obrigatório": "Sim",
+        "Tipo": "Numérico",
+        "Grupo": "Procedimentos Concursais",
+        "Público/Privado": "Privado",
+        "Registado por PE/EA": "PE ou EA"
+      }
+      
+    }
+  }
+  
+}

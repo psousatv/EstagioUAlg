@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulário Organização</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container py-4">
+  <h1 class="mb-4">Formulário de Organização</h1>
+  <form>
+    <!-- Seção 1: Organização -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Organização</legend>
+      <div class="mb-3"><label for="id" class="form-label">ID</label><input type="number" class="form-control" id="id" required></div>
+      <div class="mb-3"><label for="nipc" class="form-label">NIPC</label><input type="text" class="form-control" id="nipc" required></div>
+      <div class="mb-3"><label for="descricao" class="form-label">Descrição</label><input type="text" class="form-control" id="descricao" required></div>
+      <div class="mb-3"><label for="pais" class="form-label">País</label><input type="text" class="form-control" id="pais" required></div>
+      <div class="mb-3"><label for="parte" class="form-label">Designação Parte</label><input type="text" class="form-control" id="parte"></div>
+      <div class="mb-3"><label for="distrito" class="form-label">Distrito</label><input type="text" class="form-control" id="distrito" required></div>
+      <div class="mb-3"><label for="concelho" class="form-label">Concelho</label><input type="text" class="form-control" id="concelho" required></div>
+      <div class="mb-3"><label for="freguesia" class="form-label">Freguesia</label><input type="text" class="form-control" id="freguesia" required></div>
+    </fieldset>
+
+    <!-- Seção 2: Detalhe da Organização -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Detalhe da Organização</legend>
+      <div class="mb-3"><label for="classificacaoI" class="form-label">Classificação Nível I</label><input type="text" class="form-control" id="classificacaoI"></div>
+      <div class="mb-3"><label for="ministerioDescricao" class="form-label">Ministério - Descrição</label><input type="text" class="form-control" id="ministerioDescricao"></div>
+      <div class="mb-3"><label for="ministerioSigla" class="form-label">Ministério - Sigla</label><input type="text" class="form-control" id="ministerioSigla"></div>
+      <div class="mb-3"><label for="tipoEntidade" class="form-label">Tipo de Entidade</label><input type="text" class="form-control" id="tipoEntidade" required></div>
+      <div class="mb-3"><label for="normaJuridica" class="form-label">Norma Jurídica</label><input type="text" class="form-control" id="normaJuridica" required></div>
+      <div class="mb-3"><label for="classificacaoII" class="form-label">Classificação Nível II</label><input type="text" class="form-control" id="classificacaoII" required></div>
+      <div class="mb-3"><label for="areaAtividade" class="form-label">Área de Atividade</label><input type="text" class="form-control" id="areaAtividade" required></div>
+      <div class="mb-3"><label for="cae" class="form-label">CAE</label><input type="text" class="form-control" id="cae"></div>
+      <div class="mb-3"><label for="capitalSocial" class="form-label">Capital Social</label><input type="number" class="form-control" id="capitalSocial"></div>
+    </fieldset>
+
+    <!-- Seção 3: Utilizadores da Organização -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Utilizadores</legend>
+      <div class="mb-3"><label for="nomeUsuario" class="form-label">Nome</label><input type="text" class="form-control" id="nomeUsuario" required></div>
+      <div class="mb-3"><label for="ativo" class="form-label">Ativo?</label><select class="form-select" id="ativo" required><option value="">Selecione</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+      <div class="mb-3"><label for="ultimoAcesso" class="form-label">Último Acesso</label><input type="date" class="form-control" id="ultimoAcesso" required></div>
+    </fieldset>
+
+    <!-- Seção 4: Subentidades -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Subentidades</legend>
+      <div class="mb-3"><label for="orgSubentidade" class="form-label">Organização com Subentidades?</label><select class="form-select" id="orgSubentidade"><option value="">Selecione</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+      <div class="mb-3"><label for="nipcSub" class="form-label">NIPC Subentidade</label><input type="text" class="form-control" id="nipcSub"></div>
+      <div class="mb-3"><label for="descricaoSub" class="form-label">Descrição Subentidade</label><input type="text" class="form-control" id="descricaoSub"></div>
+      <div class="mb-3"><label for="paisSub" class="form-label">País Subentidade</label><input type="text" class="form-control" id="paisSub"></div>
+      <div class="mb-3"><label for="ativoSub" class="form-label">Subentidade Ativa?</label><select class="form-select" id="ativoSub"><option value="">Selecione</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+    </fieldset>
+
+    <!-- Seção 5: Contactos da Entidade -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Contactos</legend>
+      <div class="mb-3"><label for="rua" class="form-label">Rua</label><input type="text" class="form-control" id="rua" required></div>
+      <div class="mb-3"><label for="cidade" class="form-label">Cidade</label><input type="text" class="form-control" id="cidade" required></div>
+      <div class="mb-3"><label for="codigoPostal" class="form-label">Código Postal</label><input type="text" class="form-control" id="codigoPostal" required></div>
+      <div class="mb-3"><label for="nut" class="form-label">NUT III</label><input type="text" class="form-control" id="nut" required></div>
+      <div class="mb-3"><label for="telefone" class="form-label">Telefone</label><input type="text" class="form-control" id="telefone" required></div>
+      <div class="mb-3"><label for="email" class="form-label">Email</label><input type="email" class="form-control" id="email" required></div>
+      <div class="mb-3"><label for="fax" class="form-label">Fax</label><input type="text" class="form-control" id="fax" required></div>
+      <div class="mb-3"><label for="url" class="form-label">URL</label><input type="url" class="form-control" id="url" required></div>
+      <div class="mb-3"><label for="edelivery" class="form-label">eDelivery Gateway</label><input type="url" class="form-control" id="edelivery"></div>
+    </fieldset>
+
+    <!-- Seção 6: Contactos do Órgão competente -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Órgão Competente</legend>
+      <div class="mb-3"><label for="servico" class="form-label">Serviço/Órgão/Pessoa</label><input type="text" class="form-control" id="servico"></div>
+      <div class="mb-3"><label for="morada" class="form-label">Morada</label><input type="text" class="form-control" id="morada"></div>
+      <div class="mb-3"><label for="telOrgao" class="form-label">Telefone</label><input type="text" class="form-control" id="telOrgao"></div>
+      <div class="mb-3"><label for="emailOrgao" class="form-label">Email</label><input type="email" class="form-control" id="emailOrgao"></div>
+    </fieldset>
+
+    <!-- Seção 7: Registo e Correlações -->
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto px-2">Registo</legend>
+      <div class="mb-3"><label for="dataDR" class="form-label">Data publicação DR</label><input type="date" class="form-control" id="dataDR"></div>
+      <div class="mb-3"><label for="dataRegisto" class="form-label">Data registo sistema</label><input type="date" class="form-control" id="dataRegisto"></div>
+      <div class="mb-3"><label for="dataCancel" class="form-label">Data cancelamento</label><input type="date" class="form-control" id="dataCancel"></div>
+      <div class="mb-3"><label for="codigoINE" class="form-label">Código INE</label><input type="number" class="form-control" id="codigoINE"></div>
+      <div class="mb-3"><label for="codigoSIOE" class="form-label">Código SIOE</label><input type="number" class="form-control" id="codigoSIOE"></div>
+      <div class="mb-3"><label for="codigoDR" class="form-label">Código DR</label><input type="number" class="form-control" id="codigoDR"></div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Submeter</button>
+  </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
