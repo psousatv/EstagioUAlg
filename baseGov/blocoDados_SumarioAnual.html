@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estrutura Hierárquica com Accordion</title>
+  
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!--link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"-->
+</head>
+<body class="p-4">
+
+  <div class="container">
+    <h2 class="mb-2">Relatório Sumário Anual</h2>
+    <h6 class="mb-1">Anexo XIII - [a que se refere a alínea n) do n.º 1 do artigo 7.º]</h6>
+    <h6 class="mb-1">Declaração de Retificação n.º 33-B/2023</h6>
+    <h6 class="mb-4">DR n.º 246/2023, 3.º suplemento, Série I de 22-12-203</h6>
+
+    <div class="accordion" id="accordionNiveis">
+
+      <!-- Nível 1 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="nivel1Header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#nivel1" aria-expanded="true" aria-controls="nivel1">
+            1 - Entidade(s) Adjudicante(s)
+          </button>
+        </h2>
+        <div id="nivel1" class="accordion-collapse collapse show" aria-labelledby="nivel1Header" data-bs-parent="#accordionNiveis">
+          <div class="accordion-body">
+            <ul>
+              <li>1.1 - NIPC</li>
+              <li>1.2 - Descrição</li>
+              <li>1.3 - País</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nível 2 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="nivel2Header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nivel2" aria-expanded="false" aria-controls="nivel2">
+            2 - Gestor de Contrato
+          </button>
+        </h2>
+        <div id="nivel2" class="accordion-collapse collapse" aria-labelledby="nivel2Header" data-bs-parent="#accordionNiveis">
+          <div class="accordion-body">
+            <ul><li>Texto</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nível 3 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="nivel3Header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nivel3" aria-expanded="false" aria-controls="nivel3">
+            3 - Identificação do contrato
+          </button>
+        </h2>
+        <div id="nivel3" class="accordion-collapse collapse" aria-labelledby="nivel3Header" data-bs-parent="#accordionNiveis">
+          <div class="accordion-body">
+
+            <ul>
+              <li>3.1 - Objeto do contrato</li>
+              <li>3.2 - Lotes
+                <ul>
+                  <li>3.2.1 - Ordem</li>
+                  <li>3.2.2 - Designação</li>
+                  <li>3.2.3 - Preço Base</li>
+                </ul>
+              </li>
+              <li>3.3 - Prazo de execução do contrato (dias)</li>
+              <li>3.4 - Preço contratual s/IVA (euro)</li>
+              <li>3.5 - Ano de referência</li>
+              <li>3.6 - Valores acumulados
+                <ul>
+                  <li>3.6.1 - Totalidade dos trabalhos executados</li>
+                  <li>3.6.2 - Totalidade dos trabalhos a menos</li>
+                  <li>3.6.3 - Trabalhos complementares - circunstâncias imprevistas</li>
+                </ul>
+              </li>
+              <li>3.7 - Trabalhos complementares não previstos</li>
+              <li>3.8 - Informação
+                <ul>
+                  <li>3.8.1 - Estimativa do desvio temporal (%)</li>
+                  <li>3.8.2 - Informação relevante sobre o desenvolvimento da obra</li>
+                </ul>
+              </li>
+              <li>3.9 - Data da celebração do contrato</li>
+              <li>3.10 - Datas de consignação
+                <ul>
+                  <li>3.10.1 - Data</li>
+                  <li>3.10.2 - Descrição</li>
+                </ul>
+              </li>
+              <li>3.11 - Subcontratação?
+                <ul>
+                  <li>3.11.1 - Objeto da subcontratação</li>
+                  <li>3.11.2 - Lista de subcontratados
+                    <ul>
+                      <li>3.11.2.1 - Agrupamento</li>
+                      <li>3.11.2.2 - NIPC</li>
+                      <li>3.11.2.3 - Descrição</li>
+                      <li>3.11.2.4 - País</li>
+                      <li>3.11.2.5 - Valor</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- Bootstrap -->
+<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+<!--script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script-->
+</body>
+</html>

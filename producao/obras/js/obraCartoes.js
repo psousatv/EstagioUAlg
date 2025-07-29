@@ -143,7 +143,7 @@ console.log("PrevistoGlobal ", previstoGlobal);
                 <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('de-DE')}%</h3>
                 <h6 class="text-center">
                 Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)}
-                de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalPrevisto)}
+                de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalObra)}
                 </h6>
             </div>
         </div>
