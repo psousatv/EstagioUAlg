@@ -120,8 +120,6 @@ fetch(url)
 
 //${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}
 
-console.log("PrevistoGlobal ", previstoGlobal);
-
     var grauExecucaoCartao = `
     <div class="row g-3 w-100" style="max-width: 50%;">
         <!-- Cartão 1 -->

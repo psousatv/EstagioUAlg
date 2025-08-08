@@ -8,7 +8,7 @@ $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso'
 $processoHistorico = 'SELECT * 
                       FROM historico
                       WHERE historico_proces_check = "' .$codigoProcesso. '"
-                      ORDER BY historico_dataemissao ASC' ;
+                      ORDER BY historico_dataemissao DESC' ;
 
 $stmt = $myConn->query($processoHistorico);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

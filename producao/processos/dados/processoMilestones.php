@@ -53,6 +53,38 @@ $tipoContrato = [];
 $dispensaControlar = [];
 $fasesControlar = [];
 
+// Agrupar os registos de movimentos
+// Nos processos de ADS se registado Início de Procedimento
+// usa esse registo em vez de 'Fatura' (que fica por defeito)
+
+$movimentos = [];
+foreach($resultados as $movimento){
+  $movimentos[] = $movimento['movimento'];
+};
+
+$movimento_a_verificar_1 = 4;
+$movimento_a_verificar_2 = 9;
+
+// 1. Verifique se ambos os movimentos existem no array
+$movimentos_presentes = array_column($movimentos, 'movimento');
+$condicao_satisfeita = in_array($movimento_a_verificar_1, $movimentos_presentes) && 
+                       in_array($movimento_a_verificar_2, $movimentos_presentes);
+
+// 2. Se a condição for satisfeita, remova o movimento indesejado (neste caso, o 4)
+if ($condicao_satisfeita) {
+    $movimentos_atualizados = array_filter($movimentos, function($movimento) use ($movimento_a_verificar_1) {
+        return $movimento['movimento'] !== $movimento_a_verificar_1;
+    });
+    // Reindexa o array para garantir chaves sequenciais
+    $movimentos = [1, 4, 14];//array_values($movimentos_atualizados);
+    //echo "Os movimentos '{$movimento_a_verificar_1}' e '{$movimento_a_verificar_2}' foram encontrados. O movimento '{$movimento_a_verificar_1}' foi removido com sucesso.";
+} else {
+    $movimentos = [1, 9, 14];//array_values($movimentos_atualizados);
+    //echo "A condição não foi satisfeita. Nenhum movimento foi removido.";
+};
+
+
+
 
 for($i = 0; $i < count($resultados); $i++){
   // Se não for nulo
@@ -64,8 +96,7 @@ for($i = 0; $i < count($resultados); $i++){
         $tipoRegime = $resultados[$i]['regime'];
         $tipoContrato = $resultados[$i]['contrato'];
         $tipoProcedimento = $resultados[$i]['procedimento'];
-        $dispensaControlar = [5, 11, 12, 13, 15, 16, 18, 19, 26, 27, 28, 29, 30];
-        $fasesControlar = [4, 14, 17];
+        $fasesControlar = $movimentos;
         break; // Pára o ciclo ao encontrar a condição
       } elseif(
         // Serviços - Qualquer Procedimento, excepto, ADs
@@ -75,7 +106,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-          $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
           break; // Pára o ciclo ao encontrar a condição
         } elseif(
         // Bens - Qualquer Procedimento, excepto, ADs
@@ -85,7 +116,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-          $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
           break; // Pára o ciclo ao encontrar a condição
         } elseif(
         // Empreitadas - Qualquer Procedimento, excepto, ADs
@@ -95,7 +126,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 27, 28];
-          $fasesControlar = [4, 5, 10, 13, 14, 15, 16, 17, 18, 19, 26, 29, 30];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 16, 17, 18, 19, 26, 29, 30];
           break; // Pára o ciclo ao encontrar a condição
       }
     } elseif($resultados[$i]['valor_documento'] < 10000){
@@ -103,12 +134,13 @@ for($i = 0; $i < count($resultados); $i++){
       if(
         // Procedimento por Ajuste Direto Simplificado
         // Deve vir primeiro que o genérico, senão não é executado
-        $resultados[$i]['procedimento'] == 'Ajuste Direto Simplificado'){
+        $resultados[$i]['procedimento'] === 'Ajuste Direto Simplificado'){
           $tipoRegime = $resultados[$i]['regime'];
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
-          $fasesControlar = [4, 14];
+          $fasesControlar = $movimentos;
+          //$fasesControlar = [1, 4, 9, 14];
           break; // Pára o ciclo ao encontrar a condição
       } elseif (
         // Serviços - Qualquer Procedimento, excepto, ADs
@@ -118,7 +150,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-          $fasesControlar = [4, 5, 10, 13, 14, 15, 19, 28];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 19, 28];
           break; // Pára o ciclo ao encontrar a condição
         } elseif(
         // Bens - Qualquer Procedimento, excepto, ADs
@@ -128,7 +160,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-          $fasesControlar = [4, 5, 10, 13, 14, 15, 19, 27];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 19, 27];
           break; // Pára o ciclo ao encontrar a condição
         } elseif(
         // Empreitadas - Qualquer Procedimento, excepto, ADs
@@ -138,7 +170,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 27, 28];
-          $fasesControlar = [4, 5, 10, 13, 14, 15, 18, 19, 26, 29, 30];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 18, 19, 26, 29, 30];
           break; // Pára o ciclo ao encontrar a condição
       }
     } else {
