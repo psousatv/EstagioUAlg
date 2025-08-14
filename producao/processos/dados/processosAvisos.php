@@ -20,49 +20,51 @@ echo '
 <div class="card-body">
 <div class="card-header bg-secondary text-white" >Estado dos Processos</div>
 <h1 class="mt-2"></h1>
-<div class="col col-md-12">
-  <div class="row">
+<div class="row">
+  <div class="col-12">
   
-      <ul class="nav flex-column nav-pills" role="tablist">
+      <ul class="nav nav-tabs" role="tablist">
+        
         <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" id="Curso_tab" href="#curso" role="tab" aria-selected="true">
-            <span class="hidden-sm-up"></span>
+          <button class="nav-link active" id="Curso_tab" data-bs-toggle="tab"  data-bs-target="#curso" role="tab" type="button">
             <span class="hidden-xs-down">Em Curso</span>
-          </a>
+          </button>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="Adjudicado_tab" href="#adjudicado" role="tab" aria-selected="false">
-            <span class="hidden-sm-up"></span>
+          <button class="nav-link" id="Adjudicado_tab" data-bs-toggle="tab"  data-bs-target="#adjudicado" role="tab" type="button">
+            <span class="hidden-xs-up"></span>
             <span class="hidden-xs-down">Ajudicado</span>
-          </a>
+          </button>
         </li>
+        
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="Concurso_tab" href="#concurso" role="tab" aria-selected="false">
-            <span class="hidden-sm-up"></span>
+          <button class="nav-link" id="Concurso_tab" data-bs-toggle="tab"  data-bs-target="#concurso" role="tab" type="button">
             <span class="hidden-xs-down">Concurso</span>
-          </a>
+          </button>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="Consulta_tab" href="#consulta" role="tab" aria-selected="false">
-            <span class="hidden-sm-up"></span>
+          <button class="nav-link" id="Consulta_tab" data-bs-toggle="tab"  data-bs-target="#consulta" role="tab" type="button">
             <span class="hidden-xs-down">Consulta</span>
-          </a>
+          </button>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="Preparar_tab" href="#preparar" role="tab" aria-selected="false">
-            <span class="hidden-sm-up"></span>
+          <button class="nav-link" id="Preprar_tab" data-bs-toggle="tab"  data-bs-target="#preparar" role="tab" type="button">
             <span class="hidden-xs-down">Preparar</span>
-          </a>
+          </button>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="Outros_tab" href="#outros" role="tab" aria-selected="false">
-            <span class="hidden-sm-up"></span>
+          <button class="nav-link" id="Outros_tab" data-bs-toggle="tab"  data-bs-target="#outros" role="tab" type="button">
             <span class="hidden-xs-down">Outros</span>
-          </a>
+          </button>
         </li>
+
       </ul>
 
-      <div class="tab-content">
+      <div class="tab-content border-start border-end border-bottom p-3">
         <div class="tab-pane fade show active" id="curso" role="tabpanel" aria-labelledby="Curso_tab">
           <div id="processosFaseCurso">
             <table class="table table-striped small">';
