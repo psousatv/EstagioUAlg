@@ -4,7 +4,7 @@ header('Content-Type: application/json'); // Define o tipo de retorno como JSON
 include "../global/config/dbConn.php";
 
 //$codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
-$codigoProcesso = 28177;
+$codigoProcesso = 236202;
 
 // Queries
 $qryProcesso = '

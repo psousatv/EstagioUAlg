@@ -67,7 +67,7 @@ $movimento_a_verificar_2 = 9;
 
 // 1. Verifique se ambos os movimentos existem no array
 $movimentos_presentes = array_column($movimentos, 'movimento');
-$condicao_satisfeita = in_array($movimento_a_verificar_1, $movimentos_presentes) && 
+$condicao_satisfeita = in_array($movimento_a_verificar_1, $movimentos_presentes) || 
                        in_array($movimento_a_verificar_2, $movimentos_presentes);
 
 // 2. Se a condição for satisfeita, remova o movimento indesejado (neste caso, o 4)
@@ -96,7 +96,7 @@ for($i = 0; $i < count($resultados); $i++){
         $tipoRegime = $resultados[$i]['regime'];
         $tipoContrato = $resultados[$i]['contrato'];
         $tipoProcedimento = $resultados[$i]['procedimento'];
-        $fasesControlar = $movimentos;
+        $fasesControlar = [1, 4, 14, 17];
         break; // Pára o ciclo ao encontrar a condição
       } elseif(
         // Serviços - Qualquer Procedimento, excepto, ADs

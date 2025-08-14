@@ -14,7 +14,7 @@ fetch(API_URL)
         
         <div class="btn btn-primary text-white text-left mt-2">${processo[0]["nome"]}</div>
 
-        ${criarItemAccordion("Histórico por Fase", "historico", criarHTMLHistorico(historico))}
+        ${criarItemAccordion("Histórico por Fases", "historico", criarHTMLHistorico(historico))}
         ${criarItemAccordion("Faturas", "faturas", criarHTMLFaturas(faturas))}
         ${criarItemAccordion("Plano de Faturação", "plano", criarHTMLPlano(plano))}
     `;
