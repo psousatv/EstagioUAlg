@@ -1,0 +1,65 @@
+<div class="card">
+    <div class="card-body">
+        <div class="card-header bg-secondary text-white">Estado dos Processos</div>
+        <h1 class="mt-2"></h1>
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#curso" type="button">Em Curso</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#adjudicado" type="button">Adjudicado</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#concurso" type="button">Concurso</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#consulta" type="button">Consulta</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#preparar" type="button">Preparar</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#outros" type="button">Outros</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content border-start border-end border-bottom p-3">
+                    <div class="tab-pane fade show active" id="curso" role="tabpanel">
+                        <table class="table table-striped small">
+                            <thead><tr><th>Estado</th><th>Processo</th><th>Entidade</th></tr></thead>
+                            <tbody id="curso-tbody"></tbody> </table>
+                    </div>
+                    <div class="tab-pane fade" id="adjudicado" role="tabpanel">
+                        <table class="table table-striped small">
+                            <thead><tr><th>Estado</th><th>Processo</th><th>Entidade</th></tr></thead>
+                            <tbody id="adjudicado-tbody"></tbody> </table>
+                    </div>
+                    <div class="tab-pane fade" id="concurso" role="tabpanel">
+                        <table class="table table-striped small">
+                            <thead><tr><th>Estado</th><th>Processo</th><th>Entidade</th></tr></thead>
+                            <tbody id="concurso-tbody"></tbody> </table>
+                    </div>
+                    <div class="tab-pane fade" id="consulta" role="tabpanel">
+                        <table class="table table-striped small">
+                            <thead><tr><th>Estado</th><th>Processo</th><th>Entidade</th></tr></thead>
+                            <tbody id="consulta-tbody"></tbody> </table>
+                    </div>
+                    <div class="tab-pane fade" id="preparar" role="tabpanel">
+                        <table class="table table-striped small">
+                            <thead><tr><th>Estado</th><th>Processo</th><th>Entidade</th></tr></thead>
+                            <tbody id="preparar-tbody"></tbody> </table>
+                    </div>
+                    <div class="tab-pane fade" id="outros" role="tabpanel">
+                        <table class="table table-striped small">
+                            <thead><tr><th>Estado</th><th>Processo</th><th>Entidade</th></tr></thead>
+                            <tbody id="outros-tbody"></tbody> </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="avisos2.js"></script>
