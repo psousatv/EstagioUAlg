@@ -64,7 +64,7 @@
         <main class="mt-4">
 
             <div id="secao1" class="section-box">
-                <h3 class="mb-3">Seção 1</h3>
+                <h3 class="mb-3">Nome do Processo - Seccção 1</h3>
                 <div class="row">
                     <div class="col-8">
                         <button id="identificacao-btn" class="btn btn-outline-primary w-100 text-start">
@@ -80,7 +80,7 @@
             </div>
 
             <div id="secao2" class="section-box">
-                <h3 class="mb-3">Seção 2</h3>
+                <h3 class="mb-3">Millestones - Seção 2</h3>
                 <div class="row">
                     <div class="col-6">
                         <div class="p-2 border text-start">
@@ -96,7 +96,7 @@
             </div>
 
             <div id="secao3" class="section-box">
-                <h3 class="mb-3">Seção 3</h3>
+                <h3 class="mb-3">Por Definir - Seção 3</h3>
                 <div class="row">
                     <div class="col-8">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -158,7 +158,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Adiciona a data de hoje formatada no rodapé
             const dataHoje = new Date();
-            const opcoesData = { year: 'numeric', month: 'long', day: 'numeric' };
+            const opcoesData = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             document.getElementById('data-hoje').textContent = dataHoje.toLocaleDateString('pt-PT', opcoesData);
             
             // Simula a obtenção de dados de uma API
@@ -173,8 +173,8 @@
                 },
                 secao3: {
                     cartao1: "Conteúdo do Cartão 1 na Tab 1",
-                    cartao2: "Conteúdo do Cartão 2",
-                    cartao3: "Conteúdo do Cartão 3"
+                    cartao2: "Últimos movimentos do processo",
+                    cartao3: "Processos Relationados"
                 }
             };
 
