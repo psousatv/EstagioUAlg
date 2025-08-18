@@ -30,24 +30,25 @@ $previsao = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //Realização
 $processoPlanoPagamentosRealizado = "SELECT
-                      pp_ano AS 'Ano',
-                      sum(if((pp_proces_check = pp_proces_check), round(pp_valor_faturado,2),0)) AS 'Acumulado',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 1),round(pp_valor_faturado,2),0)) AS 'Jan',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 2),round(pp_valor_faturado,2),0)) AS 'Fev',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 3),round(pp_valor_faturado,2),0)) AS 'Mar',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 4),round(pp_valor_faturado,2),0)) AS 'Abr',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 5),round(pp_valor_faturado,2),0)) AS 'Mai',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 6),round(pp_valor_faturado,2),0)) AS 'Jun',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 7),round(pp_valor_faturado,2),0)) AS 'Jul',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 8),round(pp_valor_faturado,2),0)) AS 'Ago',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 9),round(pp_valor_faturado,2),0)) AS 'Set',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 10),round(pp_valor_faturado,2),0)) AS 'Out',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 11),round(pp_valor_faturado,2),0)) AS 'Nov',
-                      sum(if((pp_ano = pp_ano AND pp_mes_realizado = 12),round(pp_valor_faturado,2),0)) AS 'Dez'
-                      FROM plano_pagamentos
-                      WHERE pp_proces_check = '" .$codigoProcesso. "'
-                      GROUP BY pp_ano
-                      ORDER BY pp_ano, pp_auto_realizado" ;
+                      YEAR(fact_auto_data) AS 'Ano',
+                      MONTH(fact_auto_data) AS 'Mes',
+                      sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'Acumulado',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 1),round(fact_valor,2),0)) AS 'Jan',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 2),round(fact_valor,2),0)) AS 'Fev',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 3),round(fact_valor,2),0)) AS 'Mar',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 4),round(fact_valor,2),0)) AS 'Abr',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 5),round(fact_valor,2),0)) AS 'Mai',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 6),round(fact_valor,2),0)) AS 'Jun',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 7),round(fact_valor,2),0)) AS 'Jul',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 8),round(fact_valor,2),0)) AS 'Ago',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 9),round(fact_valor,2),0)) AS 'Set',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 10),round(fact_valor,2),0)) AS 'Out',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 11),round(fact_valor,2),0)) AS 'Nov',
+                      sum(if((YEAR(fact_auto_data) = YEAR(fact_auto_data) AND MONTH(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
+                      FROM factura
+                      WHERE fact_proces_check = '" .$codigoProcesso. "'
+                      GROUP BY YEAR(fact_auto_data)
+                      ORDER BY YEAR(fact_auto_data), MONTH(fact_auto_data)" ;
 
 $stmt = $myConn->query($processoPlanoPagamentosRealizado);
 $realizacao = $stmt->fetchAll(PDO::FETCH_ASSOC);
