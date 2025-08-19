@@ -1,4 +1,4 @@
-
+var anoCorrente = [];
 
 function cartoes(endereco){
 
@@ -143,7 +143,7 @@ $.ajax(
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
 function orcamentoResults(orcamentoItem) {
     
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
     //var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
     getQueryParams();
     window.location.href = URL;
@@ -153,7 +153,7 @@ function orcamentoResults(orcamentoItem) {
     function orcamentoNested(orcamentoItem) {
     
     //var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
-    var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
     getQueryParams();
     window.location.href = URL;
     
@@ -169,10 +169,12 @@ function anoDefault(){
     var anoFormulario = document.getElementById('anoCorrente').value;
 
     var url = endereco + anoFormulario;
-        cartoes(url);
 
-        console.log("anoAtual: ", anoAtual);
-        console.log("anoFormulario: ", anoFormulario);
+    anoCorrente = [];
+    anoCorrente += anoFormulario;
+
+    cartoes(url);
+
 };
 
 
@@ -181,10 +183,10 @@ function mudaAno(){
 
     var anoFormulario = document.getElementById('anoCorrente').value;
     var endereco = 'dados/main.php?anoCorrente=' + anoFormulario;
+    anoCorrente = [];
+    anoCorrente += anoFormulario;
 
     cartoes(endereco);
-        
-    console.log("anoFormularioMudaAno", anoFormulario);
 
 };
 

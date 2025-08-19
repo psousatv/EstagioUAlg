@@ -3,14 +3,14 @@
 include "../../../global/config/dbConn.php";
 
 $orcamentoItem = $_GET['orcamentoItem'];
-$anoCorrente = $_GET['anoCorrente'];
+$anoCorrente = $_GET['anoCorrente'] ?? date('Y');
 
 //Histórico Processos
 $orcamentoFaturacao = "SELECT
                     proces_rub_cod,
                     proces_padm,
                     year(fact_auto_data) AS 'Ano',
-                    sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'Acum',
+                    sum(if((fact_proces_check = fact_proces_check), round(fact_valor,2),0)) AS 'acumulado',
                     sum(if((month(fact_auto_data) = 1),round(fact_valor,2),0)) AS 'Jan',
                     sum(if((month(fact_auto_data) = 2),round(fact_valor,2),0)) AS 'Fev',
                     sum(if((month(fact_auto_data) = 3),round(fact_valor,2),0)) AS 'Mar',
@@ -25,14 +25,19 @@ $orcamentoFaturacao = "SELECT
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
                     JOIN processo ON proces_check = fact_proces_check
-                    WHERE proces_orc_ano = '".$anoCorrente."'
-                    AND proces_rub_cod = '" .$orcamentoItem. "'
+                    WHERE proces_rub_cod = :orcamentoItem AND proces_orc_ano = :anoCorrente 
                     AND proces_report_valores = 1
                     GROUP BY proces_rub_cod, proces_padm, year(fact_auto_data)
                     ORDER BY proces_padm ASC" ;
 
-$stmt = $myConn->query($orcamentoFaturacao);
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//$stmt = $myConn->query($orcamentoFaturacao);
+//$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmtOrc = $myConn->prepare($orcamentoFaturacao);
+$stmtOrc->bindParam(':orcamentoItem', $orcamentoItem);
+$stmtOrc->bindParam(':anoCorrente', $anoCorrente);
+$stmtOrc->execute();
+$data = $stmtOrc->fetchAll(PDO::FETCH_ASSOC);
 
 //Faturação
 echo "
@@ -68,7 +73,7 @@ echo "
             <tr>
               <td style='text-align:center'>" .$row['proces_padm']. "</td>
               <td style='text-align:center'>" .$row['Ano']. "</td>
-              <td style='text-align:right'>" .number_format($row['Acum'], 2, ',', '.'). "</td>
+              <td style='text-align:right'>" .number_format($row['acumulado'], 2, ',', '.'). "</td>
               <td style='text-align:right'>" .number_format($row['Jan'], 2, ',', '.'). "</td>
               <td style='text-align:right'>" .number_format($row['Fev'], 2, ',', '.'). "</td>
               <td style='text-align:right'>" .number_format($row['Mar'], 2, ',', '.'). "</td>

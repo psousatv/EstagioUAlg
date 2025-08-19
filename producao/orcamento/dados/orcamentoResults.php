@@ -5,12 +5,13 @@ include "../../../global/config/dbConn.php";
 $logo = "../../global/imagens/LogotipoTVerde.jpg";
 
 $orcamentoItem = $_GET['orcamentoItem'];
+$anoCorrente = $_GET['anoCorrente'] ?? date('Y');
 
-if(isset($_GET['anoCorrente'])){
-  $anoCorrente = $_GET['anoCorrente'] ;
-} else {
-  $anoCorrente = date('Y');
-};
+//if(isset($_GET['anoCorrente'])){
+//  $anoCorrente = $_GET['anoCorrente'] ;
+//} else {
+//  $anoCorrente = date('Y');
+//};
 
 // Valores do Orçamento na Rúbrica
 $sqlOrcamentoItemRubrica = "SELECT  
@@ -29,21 +30,26 @@ $sqlOrcamentoItemRubrica = "SELECT
                           LEFT JOIN processo ON proces_check = fact_proces_check
                           WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_faturado
                           FROM orcamento
-                          WHERE orc_rub_cod = '".$orcamentoItem."'
-                          AND orc_ano='".$anoCorrente."'
+                          WHERE orc_rub_cod = :orcamentoItem AND orc_ano = :anoCorrente
                           GROUP BY linhaO
                           ORDER BY linhaO";
 
-$stmt1 = $myConn->query($sqlOrcamentoItemRubrica);
-$orcamentoItemRubrica = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+//$stmt1 = $myConn->query($sqlOrcamentoItemRubrica);
+//$orcamentoItemRubrica = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+
+$stmtOrc = $myConn->prepare($sqlOrcamentoItemRubrica);
+$stmtOrc->bindParam(':orcamentoItem', $orcamentoItem);
+$stmtOrc->bindParam(':anoCorrente', $anoCorrente);
+$stmtOrc->execute();
+$orcamentoList = $stmtOrc->fetchAll(PDO::FETCH_ASSOC);
 
 //Número de processos - Orçamento' na Rúbrica
-$rows = count($orcamentoItemRubrica);
+$rows = count($orcamentoList);
 
 // Totais
-$totalPrevisto = array_sum(array_column($orcamentoItemRubrica, "total_previsto"));
-$totalAdjudicado = array_sum(array_column($orcamentoItemRubrica, "total_adjudicado"));
-$totalFaturado = array_sum(array_column($orcamentoItemRubrica, "total_faturado"));
+$totalPrevisto = array_sum(array_column($orcamentoList, "total_previsto"));
+$totalAdjudicado = array_sum(array_column($orcamentoList, "total_adjudicado"));
+$totalFaturado = array_sum(array_column($orcamentoList, "total_faturado"));
 
 // Processo indexados ao orçamento
 $sqlProcessosOrcamentoItemRubrica = "SELECT
