@@ -6,6 +6,14 @@
 // Cores a atribuir aos Gráficos
 //var cores = ['red', 'blue', 'green', 'purple', 'orange'];
 
+var allData = [];
+var dadosProgresso = [];
+var dadosGrafico = [];
+var titulo_colunas = [];
+var nome_candidatura = [];
+var classeCartao = '';
+var iconeCartao = '';
+
 $.ajax(
     {
     url: "dados/main.php",
@@ -32,11 +40,7 @@ $.ajax(
                     dir: 'DESC'},
             })
 
-            var allData = [];
-            var dadosProgresso = [];
-            var dadosGrafico = [];
-            var titulo_colunas = [];
-            var nome_candidatura = [];
+
 
             
             dataTable.rows().every(
@@ -62,59 +66,63 @@ $.ajax(
             containerCurso.innerHTML = "";
             containerEncerrada.innerHTML = "";
 
-            data.forEach((result) => {
-            // Create card element
-            
-            var classeCartao = ''
-            var iconeCartao = ''
-            
+            data.forEach((dados) => {
+            // Create card element            
             //Se taxa Cores dos Cartões conforme o montante recebido (Elegível)
-            // Até 65%
-            if (result["elegivel_recebido_percent"] <= result["taxa"] - 35.01) {
+            // Sucesso se mais de 85%
+            if (dados["faturado_recebido_percent"] < 50.00) {
                 var classeCartao = 'bg-danger text-white';
-                var iconeCartao = 'fa fa-thumbs-down'
-            // Até 75% - 
-            } else if (result["elegivel_recebido_percent"] <= result["taxa"]- 25.01){
+                var iconeCartao = 'fa fa-thumbs-down';
+                console.log("Candidatura : ", dados["candidatura"]);
+                console.log("Taxa: ", dados["faturado_recebido_percent"]);
+            // Boa Execução se mais de 70% e menos de 85% - 
+            } else if (dados["faturado_recebido_percent"] >= 50.00 && dados["faturado_recebido_percent"] <= 70.00){
                 var classeCartao = 'bg-warning text-black';
-                var iconeCartao = 'fa fa-warning'
-            // Até 85% - Melhorar
-            } else if (result["elegivel_recebido_percent"] <= result["taxa"] - 15.01){
+                var iconeCartao = 'fa fa-thumbs-down';
+                console.log("Candidatura : ", dados["candidatura"]);
+                console.log("Taxa Danger : ", dados["faturado_recebido_percent"]);
+            // Execução a melhorar se mais de 50% e menos de 70%
+            } else if (dados["faturado_recebido_percent"] >= 70.01 && dados["faturado_recebido_percent"] <= 85.00){
                 var classeCartao = 'bg-primary text-white';
-                var iconeCartao = 'fa fa-cog fa-spin'
-            // Mais de 95% - Sucesso
+                var iconeCartao = 'fa fa-cog fa-spin';
+                console.log("Candidatura : ", dados["candidatura"] );
+                console.log("Taxa Danger : ", dados["faturado_recebido_percent"]);
+            // Execução muito fraca ou nula se menor que 50%
             } else {
                 var classeCartao = 'bg-success text-white';
-                var iconeCartao = 'fa fa-smile'
+                var iconeCartao = 'fa fa-smile';
+                console.log("Candidatura : ", dados["candidatura"]);
+                console.log("Taxa Danger : ",  dados["faturado_recebido_percent"]);
             };
 
             //var cartao = document.createElement('div');
             //cartao.classList = 'card-body';
             
             var cartoes = `
-            
-                <div onclick="candidaturaRedirected('${result["candidatura"]}')" class="card col-md-3 ${classeCartao}">
-                    <div class="d-flex justify-content-between px-md-1">
-                        <div class="text-end">
-                            <p class="mb-0 small text-white">${result["candidatura"]}</p>
-                            <!--Faturado vs Reembolsos vs % -->
-                            <span class="h6">${Number(result["faturado"]).toLocaleString('pt')}€(F)</span>
-                            <span class="h6">- ${Number(result["recebido"]).toLocaleString('pt')}€(R)</span>
-                            <span class="h6">- ${result["faturado_recebido_percent"]}%</span>
-                            
-                            <!--Elegível-->
-                            <h6>
-                                ${Number(result["elegivel"]).toLocaleString('pt')}€(E)
-                            <span class="h6"> - ${result["elegivel_recebido_percent"]}%</span>
-                            </h6>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas ${iconeCartao} text-white fa-3x"></i>
+                <div class="card col-mb-4">
+                    <div class="card h-100 ${classeCartao}" onclick="candidaturaRedirected('${dados["candidatura"]}')" >
+                        <div class="d-flex justify-content-between px-md-4">
+                            <div class="text-end">
+                                <p class="mb-0 small">${dados["candidatura"]}</p>
+                                <h6>
+                                    <span>${Number(dados["faturado"]).toLocaleString('pt')}€(F)</span>
+                                    <span>- ${Number(dados["recebido"]).toLocaleString('pt')}€(R)</span>
+                                    <span>- ${dados["faturado_recebido_percent"]}%</span>
+                                    <!--Elegível-->
+                                    <p>${Number(dados["elegivel"]).toLocaleString('pt')}€(E)
+                                    <span> - ${dados["elegivel_recebido_percent"]}%</span>
+                                    </p>
+                                </h6>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas ${iconeCartao} text-white fa-3x"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
+
             // Acrescenta o cartão ao container
-            if(result["estado"] == 'Em Curso'){
+            if(dados["estado"] == 'Em Curso'){
                 containerCurso.innerHTML += cartoes;
             } else {
                 containerEncerrada.innerHTML += cartoes;
