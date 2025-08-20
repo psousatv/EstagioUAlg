@@ -9,6 +9,9 @@ var faturado = [];
 var previsto = []; //regista a previsão até ao último auto
 var previstoGlobal = []; //regista a previsão total
 
+var classeCartao = '';
+    var iconeCartao = '';
+
 // Fetch JSON data from the PHP script
 fetch(url)
     .then(response => response.json())  // Parse the JSON response
@@ -24,8 +27,7 @@ fetch(url)
         
         previstoGlobal.push(resultado["valor_previsto"]);
         
-        var classeCartao = '';
-        var iconeCartao = '';
+        
         
         //Calculo de percentagem por Auto
         if(resultado["valor_previsto"] == null){
@@ -57,11 +59,11 @@ fetch(url)
         };
        
         var obraAutosCartoes = `     
-             <div class="col-12 col-sm-6 col-md-3 mb-3">
+             <div class="card col-mb-3">
                 <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
-                <div class="card-body d-flex justify-content-between px-md-1">
+                <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                    <p class="mb-0 small">
+                    <p class="mb-0 small text-white">
                         ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
                     </p>
                     <h6>
@@ -77,7 +79,7 @@ fetch(url)
                     </h6>
                     </div>
                     <div class="align-self-center">
-                    <i class="fas ${iconeCartao} fa-3x"></i>
+                    <i class="fas ${iconeCartao} fa-3x text-white"></i>
                     </div>
                 </div>
                 </div>
@@ -121,11 +123,11 @@ fetch(url)
 //${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}
 
     var grauExecucaoCartao = `
-    <div class="row g-3 w-100" style="max-width: 50%;">
+    <div class="row w-100" style="max-width: 50%;">
         <!-- Cartão 1 -->
-        <div class="col-12 col-md-6">
-            <div class="bg-primary text-white p-4 rounded h-100">
-                <p class="mb-1 small text-center">Grau de Execução até ao auto n.º ${autos}</p>
+        <div class="card col-md-6">
+            <div class="card h-100 bg-primary text-white rounded">
+                <p class="text-center">Grau de Execução até ao auto n.º ${autos}</p>
                 <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
                 <h6 class="text-center">
                 Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)} 
@@ -135,9 +137,9 @@ fetch(url)
         </div>
 
         <!-- Cartão 2 -->
-        <div class="col-12 col-md-6">
-            <div class="bg-secondary text-white p-4 rounded h-100">
-                <p class="mb-1 small text-center">Grau de Execução Global</p>
+        <div class="card col-md-6">
+            <div class="card h-100 bg-secondary text-white rounded">
+                <p class="text-center">Grau de Execução Global</p>
                 <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('de-DE')}%</h3>
                 <h6 class="text-center">
                 Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)}
