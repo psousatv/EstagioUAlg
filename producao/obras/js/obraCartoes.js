@@ -63,20 +63,20 @@ fetch(url)
                 <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
                 <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
-                    <p class="mb-0 small text-white">
-                        ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
-                    </p>
-                    <h6>
-                        ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_faturado"])}
-                        <span class="h6">
-                            ${Intl.NumberFormat("de-DE", { style: "percent",
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2}).format(realizado)}
-                        </span>
-                    </h6>
-                    <h6>
-                        ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_previsto"])};
-                    </h6>
+                        <p class="mb-0 small text-white">
+                            ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
+                        </p>
+                        <h6>
+                            ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_faturado"])}
+                            <span class="h6">
+                                ${Intl.NumberFormat("de-DE", { style: "percent",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2}).format(realizado)}
+                            </span>
+                        </h6>
+                        <h6>
+                            ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_previsto"])};
+                        </h6>
                     </div>
                     <div class="align-self-center">
                     <i class="fas ${iconeCartao} fa-3x text-white"></i>
