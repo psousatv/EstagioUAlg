@@ -1,125 +1,156 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-PT">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout Dinâmico com Bootstrap</title>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
 
-    <!-- Bootstrap -->
-    <link href="../vendors/bootstrap533/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 1200px;
-            margin-top: 20px;
-        }
-        .header, .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-        .section-box {
-            border: 1px solid #dee2e6;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background-color: #fff;
-        }
-        .card-box {
-            border: 1px solid #ced4da;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-            background-color: #e9ecef;
-        }
-    </style>
-    
+<title>Orçamento</title>
+
+<!-- CSS -->
+<!-- Bootstrap -->
+<link href="../vendors/bootstrap533/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+<!-- GLOBAL -->
+<link href="../global/css/styles.css" rel="stylesheet" type="text/css">
+
+<style>
+    /* Adiciona uma imagem em 'background' a toda a página */
+    body  {
+      background-image: url('../global/imagens/bgPages.jpg');
+      background-size: cover;
+    }
+</style>
 
 </head>
+
 <body>
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="../../index.html">Orçamento</a>
+        <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+    
+        <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+          <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
+          </div>
+        </div>
+    
+        <!-- Logged -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Login</a>
+                <a class="dropdown-item" href="#">Logout</a>
+            </div>
+          </li>
+        </ul>
+    </nav>
+    
+    <div id="layoutSidenav">
 
-    <div class="container">
-        <main class="mt-4">
+        <div id="layoutSidenav_content">
+            <main class="mt-2">
+                <div class="container-fluid">
 
-            <div id="secao1" class="section-box">
-                <h3 class="mb-3">Secção 1 - Informação/Mudança de Ano</h3>
-                <div class="row">
-
-                    <div class="col-4 d-flex justify-content-around">
-                        <form id="simpleForm">
-                            <div class="row g-2 align-items-center">
-                                <div class="col-auto">
-                                    <label for="anoAtual" class="col-form-label">Ano Atual</label>
-                                </div>
-                                <div class="col-lg-4">
-                                    <input
-                                    type="number"
-                                    id="anoAtual"
-                                    name="anoAtual"
-                                    class="form-control text-center"
-                                    placeholder="Digite um número..."
-                                    value="10"/>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-primary">Alterar</button>
+                    <div id="secao1" class="card mt-2 bg-transparent border">
+                        <h3 class="mb-3">Secção 1 - Informação/Mudança de Ano</h3>
+                        <div class="row mb-2">
+        
+                            <div class="col-4 d-flex justify-content-around">
+                                <form id="simpleForm">
+                                    <div class="row g-2 align-items-center">
+                                        <div class="col-auto">
+                                            <label for="anoAtual" class="col-form-label">Ano Atual</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <input
+                                            type="number"
+                                            id="anoAtual"
+                                            name="anoAtual"
+                                            class="form-control text-center"
+                                            placeholder="Digite um número...">
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-primary">Alterar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div id="secao2" class="card mt-2 bg-transparent border">
+                        <h3 class="mb-3">Seção 2 - Cartões Rubricas de Investimento</h3>
+                        <div class="row mb-2">
+                            <div class="col-auto">
+                                <div class="p-2 border text-start">
+                                    <span class="fw-bold">Cartões Investimento (javascript)</span> <span id="rubricasInvestimento"></span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                    </div>
+        
+                    <div id="secao3" class="card mt-2 bg-transparent border">
+                        <h3 class="mb-3">Seção 3 - Cartões Rubricas de Gastos</h3>
+                        <div class="row mb-2">
+                            <div class="col-auto">
+                                <div class="p-2 border text-start">
+                                    <span class="fw-bold">1 - Cartões Gastos (javascript)</span> 
+                                    <span id="rubricasGastos">2 - Cartões Gastos (javascript)</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 
                 </div>
-            </div>
-
-            <div id="secao2" class="section-box">
-                <h3 class="mb-3">Seção 2 - Cartões Rubricas de Investimento</h3>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="p-2 border text-start">
-                            <span class="fw-bold">Cartões Investimento (javascript)</span> <span id="rubricasInvestimento"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="secao3" class="section-box">
-                <h3 class="mb-3">Seção 3 - Cartões Rubricas de Gastos</h3>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="p-2 border text-start">
-                            <span class="fw-bold">Cartões Gastos (javascript)</span> <span id="rubricasGastos"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
+            </main>
+        </div>
     </div>
 
-     <!-- Bootstrap -->
-    <script src="../vendors/bootstrap533/bootstrap.bundle.min.js"></script>
-    <!--script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script-->
+    <!-- Global -->
+    <script src="../global/js/scripts.js"></script>
+    <!-- JQuery -->
+    <script src="../vendors/jquery/jquery.js"></script>
+    <!-- Bootstrap -->
+    i<script src="../vendors/bootstrap533/bootstrap.bundle.min.js"></script>
+    <!-- Fontawesome -->
+    <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
+    <script src="../vendors/fonts/all.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../vendors/datatables/datatables.min.js"></script>
+    <!-- Charts -->
+    <script src="../vendors/charts/Chart.min.js"></script>
+
+<!-- JS de Página -->
+    <script src="../producao/obras/js/main.js"></script>
 
     <script>
-        // Adiciona a data de hoje formatada no rodapé
-        const dataHoje = new Date();
-        const opcoesData = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        document.getElementById('rubricasInvestimento').textContent = dataHoje.toLocaleDateString('pt-PT', opcoesData);
-        document.getElementById('rubricasGastos').textContent = dataHoje.toLocaleDateString('pt-PT', opcoesData);
-        // Validação simples + exemplo de ação ao enviar
-        const form = document.getElementById('simpleForm');
-        form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (!form.checkValidity()) {
-        form.classList.add('was-validated');
-        return;
-        }
-        const valor = document.getElementById('campo').value.trim();
-        alert('Valor alterado para: ' + valor);
-        // Aqui você poderia fazer um fetch() para enviar ao servidor.
+        // ao carregar a página, define o valor inicial como o ano corrente
+        document.addEventListener("DOMContentLoaded", () => {
+          const anoAtual = new Date().getFullYear();
+          const inputAno = document.getElementById("anoAtual");
+      
+          // só define o valor se estiver vazio
+          if (!inputAno.value) {
+            inputAno.value = anoAtual;
+          }
+      
+          // exemplo de captura do submit (opcional)
+          document.getElementById("simpleForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Ano escolhido: " + inputAno.value);
+            // aqui você pode tratar o valor como quiser (enviar via AJAX, etc.)
+          });
         });
-    </script>
-
+      </script>
+    
 </body>
 </html>

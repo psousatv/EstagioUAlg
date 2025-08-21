@@ -162,7 +162,7 @@ function orcamentoResults(orcamentoItem) {
 function anoDefault(){
     var data = new Date();
     var anoAtual = data.getFullYear();   
-    var endereco = 'dados/main.php?anoCorrente='
+    var endereco = 'dados/orcamentoDashboard.php?anoCorrente='
 
     //document.getElementById('anoCorrente').value = 2024;
     
@@ -182,7 +182,7 @@ function anoDefault(){
 function mudaAno(){
 
     var anoFormulario = document.getElementById('anoCorrente').value;
-    var endereco = 'dados/main.php?anoCorrente=' + anoFormulario;
+    var endereco = 'dados/orcamentoDashboard.php?anoCorrente=' + anoFormulario;
     anoCorrente = [];
     anoCorrente += anoFormulario;
 

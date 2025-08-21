@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Dinâmico com Bootstrap</title>
+
+    <!-- Bootstrap -->
+    <link href="../vendors/bootstrap533/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .header, .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .section-box {
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #fff;
+        }
+        .card-box {
+            border: 1px solid #ced4da;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            background-color: #e9ecef;
+        }
+    </style>
+    
+
+</head>
+<body>
+
+    <div class="container">
+        <main class="mt-4">
+
+            <div id="secao1" class="section-box">
+                <h3 class="mb-3">Secção 1 - Informação/Mudança de Ano</h3>
+                <div class="row">
+
+                    <div class="col-4 d-flex justify-content-around">
+                        <form id="simpleForm">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-auto">
+                                    <label for="anoAtual" class="col-form-label">Ano Atual</label>
+                                </div>
+                                <div class="col-lg-4">
+                                    <input
+                                    type="number"
+                                    id="anoAtual"
+                                    name="anoAtual"
+                                    class="form-control text-center"
+                                    placeholder="Digite um número..."
+                                    value="10"/>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary">Alterar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div id="secao2" class="section-box">
+                <h3 class="mb-3">Seção 2 - Cartões Rubricas de Investimento</h3>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="p-2 border text-start">
+                            <span class="fw-bold">Cartões Investimento (javascript)</span> <span id="rubricasInvestimento"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secao3" class="section-box">
+                <h3 class="mb-3">Seção 3 - Cartões Rubricas de Gastos</h3>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="p-2 border text-start">
+                            <span class="fw-bold">Cartões Gastos (javascript)</span> <span id="rubricasGastos"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+     <!-- Bootstrap -->
+    <script src="../vendors/bootstrap533/bootstrap.bundle.min.js"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script-->
+
+    <script>
+        // Adiciona a data de hoje formatada no rodapé
+        const dataHoje = new Date();
+        const opcoesData = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        document.getElementById('rubricasInvestimento').textContent = dataHoje.toLocaleDateString('pt-PT', opcoesData);
+        document.getElementById('rubricasGastos').textContent = dataHoje.toLocaleDateString('pt-PT', opcoesData);
+        // Validação simples + exemplo de ação ao enviar
+        const form = document.getElementById('simpleForm');
+        form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+        }
+        const valor = document.getElementById('campo').value.trim();
+        alert('Valor alterado para: ' + valor);
+        // Aqui você poderia fazer um fetch() para enviar ao servidor.
+        });
+    </script>
+
+</body>
+</html>
