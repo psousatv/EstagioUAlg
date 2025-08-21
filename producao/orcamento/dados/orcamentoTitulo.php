@@ -23,7 +23,7 @@ foreach($data as $row) {
             '.$row["rub_cod"].': '.$row["rub_tipo"].' - '.$row["rub_rubrica"].'- '.$row["rub_item"].'
         </div>
         <div class="btn btn-warning" onclick="orcamentoTitulo('.$row["rub_cod"].')"><i class="fa fa-solid fa-refresh"></i></div>  
-        <div class="btn btn-primary"><a class="text-white" href="main.html"><i class="fa fa-solid fa-search"></i></a></div>
+        <div class="btn btn-primary"><a class="text-white" href="orcamentoDashboard.html"><i class="fa fa-solid fa-search"></i></a></div>
         
     ';
     };
