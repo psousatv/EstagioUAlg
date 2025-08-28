@@ -126,7 +126,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 27, 28];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 16, 17, 18, 19, 26, 29, 30];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 16, 17, 18, 19, 26, 29, 30];
           break; // Pára o ciclo ao encontrar a condição
       }
     } elseif($resultados[$i]['valor_documento'] < 10000){
@@ -138,7 +138,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoRegime = $resultados[$i]['regime'];
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [5, 11, 12, 13, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+          $dispensaControlar = [5, 11, 12, 13, 16, 17, 18, 19, 26, 27, 28, 29, 30];
           $fasesControlar = $movimentos;
           //$fasesControlar = [1, 4, 9, 14];
           break; // Pára o ciclo ao encontrar a condição
@@ -150,7 +150,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 19, 28];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 19, 28];
           break; // Pára o ciclo ao encontrar a condição
         } elseif(
         // Bens - Qualquer Procedimento, excepto, ADs
@@ -160,7 +160,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 19, 27];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 19, 27];
           break; // Pára o ciclo ao encontrar a condição
         } elseif(
         // Empreitadas - Qualquer Procedimento, excepto, ADs
@@ -170,7 +170,7 @@ for($i = 0; $i < count($resultados); $i++){
           $tipoContrato = $resultados[$i]['contrato'];
           $tipoProcedimento = $resultados[$i]['procedimento'];
           $dispensaControlar = [11, 12, 27, 28];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 18, 19, 26, 29, 30];
+          $fasesControlar = [1, 4, 5, 10, 13, 14, 18, 19, 26, 29, 30];
           break; // Pára o ciclo ao encontrar a condição
       }
     } else {

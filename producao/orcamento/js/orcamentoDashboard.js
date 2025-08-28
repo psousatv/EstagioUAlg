@@ -58,14 +58,14 @@ $.ajax(
             
             if(result["tipo"] == 'Investimento'){
                 var cartoesIvestimentos = `     
-                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h6>${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
+                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["faturado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
-                                <h6>${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                                <h6>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["previsto"])}<span class="h6"> </span></h6>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas ${iconeCartao} text-white fa-3x"></i>
@@ -113,14 +113,14 @@ $.ajax(
 
             if(result["tipo"] == 'Gastos'){
                 var cartoesGastos = `     
-                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
+                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
-                                <p class="mb-0 small text-white">${result["item"]}</p>
+                                <p class="mb-0 small">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h3 class="text-white">${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
+                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["faturado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
-                                <h6 class="text-white">${Number(result["previsto"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                                <h6>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["previsto"])}<span class="h6"> </span></h6>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas ${iconeCartao} text-white fa-3x"></i>

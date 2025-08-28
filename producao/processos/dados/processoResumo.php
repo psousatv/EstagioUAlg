@@ -22,9 +22,9 @@ foreach($data as $row)
   <fieldset class="border p-3 mb-3">
     <legend class="badge bg-primary text-white">Dados Genéricos do Processo</legend>
     <div class="row small text-justify">
-      <div class="col-md-2 text-primary"><b>Enquadramento/Aprovado: </b></div>
+      <div class="col-md-2 text-primary"><b>Registo/Aprovado: </b></div>
       <div class="col-md-10 text-primary">'.$row["proces_data_enquadramento"].'/'.$row["proces_data_aprovacao"].'</div>  
-      <div class="col-md-2 text-primary"><b>Processo Administrativo: </b></div>
+      <div class="col-md-2 text-primary"><b>Proc. Administrativo: </b></div>
       <div class="col-md-10 text-primary">'.$row['proces_padm'].'</div>
       <div class="col-md-2"><b>Identificação: </b></div>
       <div class="col-md-10">('.$row['proces_check'].') - '.$row['proces_nome'].'
