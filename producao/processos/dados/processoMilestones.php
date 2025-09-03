@@ -3,7 +3,7 @@
 include "../../../global/config/dbConn.php";
 
 // Array de códigos de documentos
-$descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 27, 28, 29, 30];
+$descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
 $i = 0;
 
@@ -58,32 +58,31 @@ $fasesControlar = [];
 // usa esse registo em vez de 'Fatura' (que fica por defeito)
 
 $movimentos = [];
-foreach($resultados as $movimento){
-  $movimentos[] = $movimento['movimento'];
-};
+foreach ($resultados as $movimento) {
+    $movimentos[] = $movimento['movimento']; // agora é um array simples
+}
 
-$movimento_a_verificar_1 = 4;
-$movimento_a_verificar_2 = 9;
+$movimento_a_verificar_1 = 4; // este é o que deve permanecer
+$movimento_a_verificar_2 = 9; // este será removido se os dois existirem
 
 // 1. Verifique se ambos os movimentos existem no array
-$movimentos_presentes = array_column($movimentos, 'movimento');
-$condicao_satisfeita = in_array($movimento_a_verificar_1, $movimentos_presentes) || 
-                       in_array($movimento_a_verificar_2, $movimentos_presentes);
+$condicao_satisfeita = in_array($movimento_a_verificar_1, $movimentos) &&
+                       in_array($movimento_a_verificar_2, $movimentos);
 
-// 2. Se a condição for satisfeita, remova o movimento indesejado (neste caso, o 4)
+// 2. Se a condição for satisfeita, remova o movimento indesejado (9)
 if ($condicao_satisfeita) {
-    $movimentos_atualizados = array_filter($movimentos, function($movimento) use ($movimento_a_verificar_1) {
-        return $movimento['movimento'] !== $movimento_a_verificar_1;
+    $movimentos_atualizados = array_filter($movimentos, function($item) use ($movimento_a_verificar_2) {
+        return $item !== $movimento_a_verificar_2;
     });
-    // Reindexa o array para garantir chaves sequenciais
-    $movimentos = [1, 4, 14];//array_values($movimentos_atualizados);
-    //echo "Os movimentos '{$movimento_a_verificar_1}' e '{$movimento_a_verificar_2}' foram encontrados. O movimento '{$movimento_a_verificar_1}' foi removido com sucesso.";
+    
+    //$movimentos = array_values($movimentos_atualizados); // reindexa
+    $movimentos = [1, 4, 14];
+
+    //echo "Os movimentos '{$movimento_a_verificar_1}' e '{$movimento_a_verificar_2}' foram encontrados. O movimento '{$movimento_a_verificar_2}' foi removido com sucesso.";
 } else {
-    $movimentos = [1, 9, 14];//array_values($movimentos_atualizados);
+    $movimentos = [1, 9, 14];
     //echo "A condição não foi satisfeita. Nenhum movimento foi removido.";
-};
-
-
+}
 
 
 for($i = 0; $i < count($resultados); $i++){

@@ -27,16 +27,16 @@ $.ajax(
             containerInvestimentos.innerHTML = "";
             data.forEach((result) => {
             
-            var classeCartao = ''
-            var iconeCartao = ''
+            var classeCartao = '';
+            var iconeCartao = '';
+            var realizado = 0;
 
+            console.table(result);
 
-            var realizado = 0
-
-            if(result["faturado"] != 0 && result["previsto"] != 0 ){
-                realizado = (result["faturado"] / result["previsto"]) * 100;
+            if(result["adjudicado"] != 0 && result["previsto"] != 0 ){
+                realizado = (result["adjudicado"] / result["previsto"]) * 100;
             } else if(result["previsto"] == 0) {
-                realizado = result["faturado"] * 100;
+                realizado = result["adjudicado"] * 100;
             } else {
                 realizado = 0;
             };
@@ -63,7 +63,7 @@ $.ajax(
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["faturado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
+                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["adjudicado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
                                 <h6>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["previsto"])}<span class="h6"> </span></h6>
                             </div>
@@ -86,10 +86,10 @@ $.ajax(
             var iconeCartao = '';
             var realizado = 0;
 
-            if(result["faturado"] != 0 && result["previsto"] != 0 ){
-                realizado = (result["faturado"] / result["previsto"]) * 100;
+            if(result["adjudicado"] != 0 && result["previsto"] != 0 ){
+                realizado = (result["adjudicado"] / result["previsto"]) * 100;
             } else if(result["previsto"] == 0) {
-                realizado = result["faturado"] * 100;
+                realizado = result["adjudicado"] * 100;
             } else {
                 realizado = 0;
             };
@@ -118,7 +118,7 @@ $.ajax(
                             <div class="text-end">
                                 <p class="mb-0 small">${result["item"]}</p>
                                 <!--Faturado-->
-                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["faturado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
+                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["adjudicado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
                                 <!--Orçamento-->
                                 <h6>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["previsto"])}<span class="h6"> </span></h6>
                             </div>
