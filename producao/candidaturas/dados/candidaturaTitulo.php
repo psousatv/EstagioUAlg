@@ -23,6 +23,6 @@ foreach($data as $row) {
             '.$row["candsub_codigo"].': '.$row["candsub_nome"].'
         </div>
         <div class="btn btn-warning" onclick="candidaturaSelected('.$row["candsub_codigo"].')"><i class="fa fa-solid fa-refresh"></i></div>  
-        <div class="btn btn-primary"><a class="text-white" href="main.html"><i class="fa fa-solid fa-search"></i></a></div>
+        <div class="btn btn-primary"><a class="text-white" href="candidaturasDashboard.html"><i class="fa fa-solid fa-search"></i></a></div>
     ';
     };

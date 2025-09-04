@@ -16,7 +16,7 @@ var iconeCartao = '';
 
 $.ajax(
     {
-    url: "dados/main.php",
+    url: "dados/candidaturasDashboard.php",
     method: 'GET',
     contentType: 'application/json'
     }).done(
