@@ -67,15 +67,16 @@ fetch(url)
                             ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
                         </p>
                         <h6>
-                            ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_faturado"])}
+                            ${Intl.NumberFormat("de-DE", 
+                                { style: "currency", currency: "EUR" }).format(resultado["valor_faturado"])} -
                             <span class="h6">
-                                ${Intl.NumberFormat("de-DE", { style: "percent",
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2}).format(realizado)}
+                                ${Intl.NumberFormat("de-DE", 
+                                    { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2}).format(realizado)}
                             </span>
                         </h6>
                         <h6>
-                            ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(resultado["valor_previsto"])};
+                            ${Intl.NumberFormat("de-DE", 
+                                { style: "currency", currency: "EUR" }).format(resultado["valor_previsto"])}
                         </h6>
                     </div>
                     <div class="align-self-center">
@@ -129,8 +130,10 @@ fetch(url)
             <p class="text-center">Grau de Execução até ao auto n.º ${autos}</p>
             <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
             <h6 class="text-center">
-            Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)} 
-            de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalPrevisto)}
+            Faturado: ${Intl.NumberFormat("de-DE", 
+                { style: "currency", currency: "EUR" }).format(totalFaturado)} 
+            de ${Intl.NumberFormat("de-DE", 
+                { style: "currency", currency: "EUR" }).format(totalPrevisto)}
             </h6>
         </div>
     </div>
@@ -141,8 +144,10 @@ fetch(url)
             <p class="text-center">Grau de Execução Global</p>
             <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('de-DE')}%</h3>
             <h6 class="text-center">
-            Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)}
-            de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalObra)}
+            Faturado: ${Intl.NumberFormat("de-DE", 
+                { style: "currency", currency: "EUR" }).format(totalFaturado)}
+            de ${Intl.NumberFormat("de-DE", 
+                { style: "currency", currency: "EUR" }).format(totalObra)}
             </h6>
         </div>
     </div>
