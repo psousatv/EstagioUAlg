@@ -59,8 +59,8 @@ fetch(url)
         };
        
         var obraAutosCartoes = `     
-             <div class="card col-mb-3">
-                <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
+             <div class="col-md-3 mb-2">
+                <div class="h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
                 <div class="d-flex justify-content-between px-md-1">
                     <div class="text-end">
                         <p class="mb-0 small text-white">
@@ -123,31 +123,30 @@ fetch(url)
 //${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}
 
     var grauExecucaoCartao = `
-    <div class="row w-100" style="max-width: 50%;">
-        <!-- Cartão 1 -->
-        <div class="card col-md-6">
-            <div class="card h-100 bg-primary text-white rounded">
-                <p class="text-center">Grau de Execução até ao auto n.º ${autos}</p>
-                <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
-                <h6 class="text-center">
-                Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)} 
-                de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalPrevisto)}
-                </h6>
-            </div>
+    <!-- Cartão 1 -->
+    <div class="col col-md-4">
+        <div class="bg-primary text-white rounded">
+            <p class="text-center">Grau de Execução até ao auto n.º ${autos}</p>
+            <h3 class="text-center">${Number(grauExecucaoRealizado).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</h3>
+            <h6 class="text-center">
+            Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)} 
+            de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalPrevisto)}
+            </h6>
         </div>
-
-        <!-- Cartão 2 -->
-        <div class="card col-md-6">
-            <div class="card h-100 bg-secondary text-white rounded">
-                <p class="text-center">Grau de Execução Global</p>
-                <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('de-DE')}%</h3>
-                <h6 class="text-center">
-                Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)}
-                de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalObra)}
-                </h6>
-            </div>
+    </div>
+    
+    <!-- Cartão 2 -->
+    <div class="col col-md-4">
+        <div class="bg-secondary text-white rounded">
+            <p class="text-center">Grau de Execução Global</p>
+            <h3 class="text-center">${Number(grauExecucaoGlobal).toLocaleString('de-DE')}%</h3>
+            <h6 class="text-center">
+            Faturado: ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalFaturado)}
+            de ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(totalObra)}
+            </h6>
         </div>
-    </div>`;
+    </div>
+    `;
 
         // Append newyly created card element to the container
         containerGrauExecucao.innerHTML += grauExecucaoCartao;

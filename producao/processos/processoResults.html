@@ -160,11 +160,18 @@
               
               <!-- Linha: Tabela + Gráfico -->
               <div class="row">
-                <!-- Coluna: Tabela de Pagamentos -->
+                
                 <div class="col col-lg-8">
-                  <div id="lstPagamentos">
-                    <!-- Conteúdo carregado via JavaScript será inserido aqui -->
+                  <!-- Segunda linha: Grau de Execução (centralizado) -->
+                  <div class="row justify-content-center mt-2" id="cartaoGrauExecucao">
+                    <strong>Grau de Execução</strong>
                   </div>
+
+                  <!-- Terceira linha: Cartões ponto de situação -->
+                  <div class="row justify-content-between mt-2" id="lstObraCartoes">
+                    <strong>Cartões ponto de situação Auto a Auto vs Plano Pagamentos Previsto.</strong>
+                  </div>
+
                 </div>
                 <!-- Coluna: Gráfico da obra -->
                 <div class="col col-lg-4">
@@ -172,14 +179,16 @@
                 </div>
               </div>
 
-              <!-- Segunda linha: Grau de Execução (centralizado) -->
-              <div class="row justify-content-center g-3" id="cartaoGrauExecucao">
-                <strong>Grau de Execução</strong>
-              </div>
+              
 
-              <!-- Terceira linha: Cartões ponto de situação -->
-              <div class="row mt-2 justify-content-start" id="lstObraCartoes">
-                <strong>Cartões ponto de situação Auto a Auto vs Plano Pagamentos Previsto.</strong>
+              <!-- Linha: Tabela + Gráfico -->
+              <div class="row">
+                <!-- Coluna: Tabela de Pagamentos -->
+                <div class="col col-lg-12">
+                  <div id="lstPagamentos">
+                    <!-- Conteúdo carregado via JavaScript será inserido aqui -->
+                  </div>
+                </div>
               </div>
 
             </div>
