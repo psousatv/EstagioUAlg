@@ -141,6 +141,12 @@
                             <div class="card-header"><i class="fas fa-euro"></i>
                                 Facturação vs Reembolsos - Elegível
                             </div>
+                            <!-- Containers para os cartões -->
+                            <div class="badge bg-primary text-white">Candidaturas Em Curso</div>
+                            <div id="cartoesCandidaturaEmCurso" class="mt-2"></div>
+                            <div class="badge bg-info text-white">Candidaturas Encerradas</div>
+                            <div id="cartoesCandidaturaEncerrada" class="mt-2"></div>
+                            <!--
                             <div class="card-body">
                                 <div class="badge bg-primary text-white">Candidaturas Em Curso</div>
                                 <div class="row" id="cartoesCandidaturaEmCurso">Candidaturas em Curso</div>
@@ -149,6 +155,7 @@
                                 <div class="badge bg-primary text-white">Candidaturas Encerradas</div>
                                 <div class="row" id="cartoesCandidaturaEncerrada">Candidaturas Encerradas</div>
                             </div>
+                            -->
                         </div>
                     </div>
                 </div>
@@ -176,6 +183,19 @@
                                             </tr>
                                         </thead>
                                         <tbody class="small"></tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Total:</th>
+                                                <th></th>
+                                                <th></th> <!-- Elegível -->
+                                                <th></th>
+                                                <th></th> <!-- Faturado -->
+                                                <th></th> <!-- Recebido -->
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
