@@ -15,9 +15,9 @@ $query = "SELECT
           ROUND(SUM(proces_val_faturacao), 2) AS faturado,
           ROUND(SUM(proces_cand_recebido), 2) AS recebido,
           IF(SUM(proces_val_faturacao) = 0 OR SUM(proces_cand_recebido) = 0, 0,
-          ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao))*100, 2)) AS faturado_recebido_percent,
+          ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao)), 2)) AS faturado_recebido_percent,
           IF(SUM(proces_cand_elegivel) = 0 OR SUM(proces_cand_recebido) = 0, 0,
-          ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel))*100, 2)) AS elegivel_recebido_percent
+          ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel)), 2)) AS elegivel_recebido_percent
           FROM processo
           INNER JOIN candidaturas_submetidas cs ON cs.candsub_codigo = proces_cand
           WHERE proces_cand <> 'n.a.' AND proces_report_valores = 1
