@@ -33,8 +33,7 @@ fetch(url)
             //)
             {
             barraProgresso.push([
-                obraMetricas[i]['grupo'], 
-                obraMetricas[i]['objeto'], 
+                obraMetricas[i]['intervencao'],
                 obraMetricas[i]['valor_proposto'], 
                 obraMetricas[i]['valor_trabalhos'],
                 obraMetricas[i]['percentagem']
@@ -42,7 +41,7 @@ fetch(url)
             }
         };
 
-        //console.log("Barra Progresso:", barraProgresso);
+        console.table("Barra Progresso:", barraProgresso);
         
         // Replica o Gráfico de Dados Gerias - DOM
         var oldCanvas = document.getElementById('lstObraGrafico');
@@ -55,7 +54,7 @@ fetch(url)
 
         // Progress Bar
         // Contentores para agregar as barras de progresso
-        const progressBarsContainer = document.getElementById('lstMetricasProgressInstalacao');
+        const progressBarsContainer = document.getElementById('lstMetricasProgress');
         progressBarsContainer.innerHTML = "";
         // Função para crear una barra de progresso
         
@@ -90,14 +89,14 @@ fetch(url)
             var width = 0;
             const interval = setInterval(function()
             {
-                if (width >= value[4]) {
+                if (width >= value[3]) {
                     clearInterval(interval);
                 } else {
                     width++;
                     progressBar.style.width = width + '%';
                     //progressSpan.textContent = value[0] + ' - ' + value[1] + ' - ' + value[2];
-                    progressSpan.textContent = value[1];
-                    progressSpanBar.textContent = value[4] + '%';
+                    progressSpan.textContent = value[0];
+                    progressSpanBar.textContent = value[3] + '%';
                 }
 
             }, 1);
@@ -106,16 +105,16 @@ fetch(url)
         // Atribuir os dados às barras de progresso
         // Atribui ao conotainer Pavimentações os valores do grupo
         barraProgresso.forEach(function(value){
-            if(value[0] == 'Instalação'){ 
+            //if(value[0] == 'Instalação'){ 
                 createProgressBar(value);
-            }    
+            //}    
         }
         );
     
 
     })
     .catch(error => {
-        document.getElementById("lstMetricasProgressInstalacao").innerHTML = error;
+        document.getElementById("lstMetricasProgress").innerHTML = error;
         //console.error("Error fetching the data:", error);
     });
 

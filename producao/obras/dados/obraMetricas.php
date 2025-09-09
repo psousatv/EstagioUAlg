@@ -7,29 +7,21 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 
 $sql = "SELECT
         mt_check AS obra,
-        mt_componente_area AS area,
-        mt_componente_infraestrutura AS infraestrutura,
         mt_componente_intervencao AS intervencao,
-        o.objecto_grupo AS grupo,
-        mt_objecto AS objeto,
         ROUND(SUM(mt_val_obra),2) AS valor_proposto,
         (SELECT 
             COALESCE(ROUND(SUM(auto_valor),2),1)
-            FROM obra_autos WHERE auto_check = mt_check AND auto_objecto= mt_objecto) AS valor_trabalhos,
+            FROM obra_autos WHERE auto_check = mt_check AND auto_componente_intervencao = mt_componente_intervencao) AS valor_trabalhos,
         ROUND(((SELECT 
                 COALESCE(ROUND(SUM(auto_valor),2),1)
-                FROM obra_autos WHERE auto_check = mt_check AND auto_objecto= mt_objecto) /
+                FROM obra_autos WHERE auto_check = mt_check AND auto_componente_intervencao = mt_componente_intervencao) /
                 ROUND(SUM(mt_val_obra),2) * 100),2) AS percentagem
         
         FROM mapa_trabalhos
-        INNER JOIN projecto_objectos o ON o.objecto_descr = mt_objecto
-        WHERE mt_check = '".$codigoProcesso."' AND length(mt_objecto) > 0
-        GROUP BY mt_check, 
-        mt_componente_area, 
-        mt_componente_infraestrutura, 
-        mt_componente_intervencao, 
-        o.objecto_grupo, mt_objecto
-        ORDER BY o.objecto_grupo";
+        
+        WHERE mt_check = '".$codigoProcesso."' AND mt_componente_intervencao NOT LIKE ''
+        GROUP BY mt_componente_intervencao
+        ORDER BY mt_componente_intervencao";
 
 $stmt = $myConn->query($sql);
 $dadosEnviar = $stmt->fetchAll(PDO::FETCH_ASSOC);
