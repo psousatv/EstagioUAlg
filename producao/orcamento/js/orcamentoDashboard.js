@@ -31,7 +31,7 @@ $.ajax(
             var iconeCartao = '';
             var realizado = 0;
 
-            console.table(result);
+            //console.table(result);
 
             if(result["adjudicado"] != 0 && result["previsto"] != 0 ){
                 realizado = (result["adjudicado"] / result["previsto"]) * 100;

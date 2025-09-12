@@ -20,6 +20,7 @@ $sqlOrcamento = "
         orc_linha AS linhaO,
         orc_linha_SE AS linhaSE,
         orc_descritivo AS descritivo,
+        orc_observacoes AS observacoes,
         orc_valor_previsto AS previsto,
         SUM(orc_valor_previsto) AS total_previsto,
         (

@@ -5,7 +5,7 @@ $(document).ready(function () {
   
     const table = $('#processosNested').DataTable({
       ajax: {
-        url: 'dados/datatablesNested.php',
+        url: 'dados/orcamentoNested.php',
         data: function (d) {
           return { ...d, ...queryParams };
         }
@@ -18,7 +18,7 @@ $(document).ready(function () {
         ],
       columns: [
         { data: 'linhaO' },
-        { data: 'descritivo' },
+        { data: 'observacoes' },
         { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
         { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
         { data: 'total_faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },

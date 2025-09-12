@@ -58,33 +58,34 @@ fetch(url)
             iconeCartao = 'fa fa-smile';
         };
        
-        var obraAutosCartoes = `     
-             <div class="col-md-3 mb-2">
-                <div class="h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
-                <div class="d-flex justify-content-between px-md-1">
-                    <div class="text-end">
-                        <p class="mb-0 small text-white">
-                            ${resultado["documento"]} do auto n.º ${resultado["auto_num"]}
-                        </p>
-                        <h6>
-                            ${Intl.NumberFormat("de-DE", 
-                                { style: "currency", currency: "EUR" }).format(resultado["valor_faturado"])} -
-                            <span class="h6">
-                                ${Intl.NumberFormat("de-DE", 
-                                    { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2}).format(realizado)}
+        var obraAutosCartoes = `
+        <div class="col-sm-6 col-md-4 mb-2">
+            <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado["auto_num"]}')">
+                <div class="d-flex px-3 py-2 ">
+                    <!-- Bloco de texto (ocupa todo espaço disponível) -->
+                    <div class="flex-grow-1 text-left">
+                        <p class="mb-0 font-weight-bold small">${resultado["documento"]} do auto n.º ${resultado["auto_num"]}</p>
+                        <div>
+                            <h6 class="mb-1">${Intl.NumberFormat("de-DE",{ style: "currency", currency: "EUR" })
+                                .format(resultado["valor_faturado"])} - 
+                            <span>${Intl.NumberFormat("de-DE",{ style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                .format(realizado)}
                             </span>
-                        </h6>
-                        <h6>
-                            ${Intl.NumberFormat("de-DE", 
-                                { style: "currency", currency: "EUR" }).format(resultado["valor_previsto"])}
-                        </h6>
+                            </h6>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">${Intl.NumberFormat("de-DE",{ style: "currency", currency: "EUR" })
+                                .format(resultado["valor_previsto"])}
+                            </h6>
+                        </div>
                     </div>
-                    <div class="align-self-center">
-                    <i class="fas ${iconeCartao} fa-3x text-white"></i>
+                    <!-- Ícone -->
+                    <div class="pl-2 mt-auto">
+                        <i class="fas ${iconeCartao} fa-3x text-white"></i>
                     </div>
-                </div>
                 </div>
             </div>
+        </div>
         `;
 
         // Append newyly created card element to the container
