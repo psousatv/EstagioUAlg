@@ -4,130 +4,117 @@
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="description" content="" />
-<meta name="author" content="" />
-
 <title>Orçamento</title>
-<link
-  rel="icon"
-  type="image/png"
-  sizes="16x16"
-  href="../../templates/favicon.png"/>
-
-<!-- CSS -->
-<!-- Bootstrap -->
+<link rel="icon" type="image/png" sizes="16x16" href="../../templates/favicon.png"/>
 <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-<!-- Fontawesome -->
-<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
-<!-- Datables -->
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
-<!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 
 <style>
-    /* Adiciona uma imagem em 'background' a toda a página */
-    body  {
-      background-image: url('../../global/imagens/bgPages.jpg');
-      background-size: cover;
+    body {
+        background-image: url('../../global/imagens/bgPages.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .nested th, .nested td {
+        text-align: left;
+        vertical-align: top;
     }
 </style>
-
 </head>
 
 <body>
-    
-    <!--
-    <table id="orcamentoTable" class="display" style="width:100%">
-        <thead>
-          <tr>
-            <th>Linha</th>
-            <th>Descritivo</th>
-            <th>Previsto</th>
-            <th>Adjudicado</th>
-            <th>Faturado</th>
-            <th>Detalhes</th>
-          </tr>
-        </thead>
-      </table>
-      -->
-  
-      
-      
-      <div class="container-fluid">  
-          
-      <!-- Nome da Rúbrica -->
-      <div class="row">
-        <div class="col col-md-12">
-          <table class="table table-responsive table-striped" id="tituloRubrica">
-          </table>
+
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="main.html">Orçamento</a>
+    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fas fa-solid fa-house"></i></a></div>
+    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+        <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
         </div>
-      </div>
-
-      <div class="card col-md-12">
-        <div class="card-body">
-        <a class="badge bg-info text-white small">Os valores de orçamento são ajustados para os valores de adjudicação </a>
-          <table class="table table-responsive table-striped" id="tituloRubricaResumoValoresRubrica">
-          </table>
-        </div>
-      </div>
-
-      <!-- Nome dos Processos na Rúbrica -->
-      <div class="row" >
-        <div class="col col md-12" id="valoresRubrica">
-        <b>Nome dos Processos na Rúbrica</b>
-        </div>
-      </div>
-      
-      <!-- DataTables Nested -->
-      <div class="row">
-        <div class="col col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <table id="processosNested" class="display" style="width:100%">
-                <thead>
-                  <tr>
-                    <th>Linha</th>
-                    <th>Descritivo</th>
-                    <th>Previsto</th>
-                    <th>Adjudicado</th>
-                    <th>Faturado</th>
-                    <th>Saldo</th>
-                    <th>Detalhes</th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Facturação por Processo Administrativo -->
-      <h1 class="mt-2"></h1>
-      <div class="row col-md-12" id="lstFaturacaoPADM">
-        <b>Facturação por Processo Administrativo</b>
-      </div>
-
     </div>
 
-    <!-- Global -->
-    <script src="../../global/js/scripts.js"></script>
-    <!-- JQuery -->
-    <script src="../../vendors/jquery/jquery.js"></script>
-    <!-- Bootstrap -->
-    i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
-    <!-- Fontawesome -->
-    <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
-    <script src="../../vendors/fonts/all.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="../../vendors/datatables/datatables.min.js"></script>
-    <!-- Charts -->
-    <script src="../../vendors/charts/Chart.min.js"></script>
+    <ul class="navbar-nav ml-auto ml-md-0">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"><i class="fas fa-user fa-fw"></i></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">Convidado</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Login</a>
+                <a class="dropdown-item" href="#">Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
 
-<!-- JS de Página -->
-    <!--script>document.getElementById("anoCorrente").value = new Date().getFullYear();</script-->    
-    <script src="js/orcamentoNested.js"></script>
-    
+<div class="container-fluid">
+
+  <!-- Nome da Rubrica -->
+  <div class="row mt-2">
+    <div class="col col-md-12">
+      <!-- Nome da Rubrica -->
+      <div class="button bg-primary text-white d-inline-block p-2" id="nomeRubrica"></div>
+      
+      <!-- Botões sem texto, apenas ícones, com a mesma altura de nomeRubrica -->
+      <button class="btn btn-warning d-inline-block ml-2" id="btnRefresh">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+      <button class="btn btn-dark d-inline-block ml-2" id="btnBack">
+        <i class="fas fa-search"></i>
+      </button>
+      <button class="btn btn-danger d-inline-block ml-2" id="btnBack">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Valores na Rubrica -->
+  <div class="row mt-2">
+    <div class="col col-md-12">
+      <div class="button bg-secondary text-white d-inline-block p-2" id="valoresRubrica">Valores da Rubrica - Previsto, Adjudicado e Saldo</div>
+    </div>
+  </div>
+
+  <!-- DataTables Nested -->
+  <div class="row mt-2">
+    <div class="col col-md-12">
+      <div class="card">
+          <div class="card-body">
+              <table id="processosNested" class="display" style="width:100%">
+                  <thead>
+                      <tr>
+                          <th>Rubrica</th>
+                          <th>Previsto</th>
+                          <th>Adjudicado</th>
+                          <th>Faturado</th>
+                          <th>Saldo</th>
+                          <th>Detalhes</th>
+                      </tr>
+                  </thead>
+              </table>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Facturação por Processo Administrativo -->
+  <div class="row mt-2">
+    <div class="col col-md-12">
+      <div class="button bg-secondary text-white d-inline-block p-2" id="valoresPADM">Valores no Processo Administrativo</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../../global/js/scripts.js"></script>
+<script src="../../vendors/jquery/jquery.js"></script>
+<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="../../vendors/fonts/all.min.js"></script>
+<script src="../../vendors/datatables/datatables.min.js"></script>
+<script src="../../vendors/charts/Chart.min.js"></script>
+<script src="js/orcamentoNested.js"></script>
+
 </body>
 </html>
