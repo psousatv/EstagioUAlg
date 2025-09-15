@@ -16,7 +16,6 @@ if (!$orcamentoItem) {
 $sqlOrcamento = "
     SELECT  
         orc_check AS controle,
-        r.rub_item AS rubrica,
         orc_tipo AS tipo,
         orc_linha AS linhaO,
         orc_linha_SE AS linhaSE,
@@ -37,7 +36,6 @@ $sqlOrcamento = "
             WHERE proces_orcamento = orcamento.orc_check AND proces_report_valores = 1
         ) AS total_faturado
     FROM orcamento
-    INNER JOIN rubricas r ON r.rub_cod = orc_rub_cod
     WHERE orc_rub_cod = :orcamentoItem AND orc_ano = :anoCorrente
     GROUP BY orc_linha
     ORDER BY orc_linha

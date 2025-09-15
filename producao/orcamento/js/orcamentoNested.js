@@ -51,18 +51,6 @@ $(document).ready(function () {
         }
       ]
     });
-
-
-    // quando os dados forem carregados
-table.on('xhr.dt', function (e, settings, json, xhr) {
-  if (json && json.rubrica) {
-    $('#tituloRubrica').html(`
-      <thead>
-        <tr><th>${json.rubrica}</th></tr>
-      </thead>
-    `);
-  }
-});
   
     // Nested rows como antes
     function format(d) {

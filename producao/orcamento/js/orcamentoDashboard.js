@@ -58,7 +58,7 @@ $.ajax(
             
             if(result["tipo"] == 'Investimento'){
                 var cartoesIvestimentos = `     
-                    <div onclick="orcamentoNested('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
+                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small text-white">${result["item"]}</p>
@@ -113,7 +113,7 @@ $.ajax(
 
             if(result["tipo"] == 'Gastos'){
                 var cartoesGastos = `     
-                    <div onclick="orcamentoNested('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
+                    <div onclick="orcamentoResults('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
                         <div class="d-flex justify-content-between px-md-1">
                             <div class="text-end">
                                 <p class="mb-0 small">${result["item"]}</p>
@@ -141,19 +141,19 @@ $.ajax(
 
 // Os resultados da Seleção é redirecionado para a orcamentoResults.html
 // Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
-//function orcamentoResults(orcamentoItem) {
-//    
-//    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
+function orcamentoResults(orcamentoItem) {
+    
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
     //var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
-//    getQueryParams();
-//    window.location.href = URL;
-//    
-//    };
+    getQueryParams();
+    window.location.href = URL;
+    
+    };
 
     function orcamentoNested(orcamentoItem) {
     
     //var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
-    var URL = "orcamentoNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
+    var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
     getQueryParams();
     window.location.href = URL;
     
@@ -164,9 +164,10 @@ function anoDefault(){
     var anoAtual = data.getFullYear();   
     var endereco = 'dados/orcamentoDashboard.php?anoCorrente='
 
-    document.getElementById('anoCorrente').value = anoAtual;
+    //document.getElementById('anoCorrente').value = 2024;
     
     var anoFormulario = document.getElementById('anoCorrente').value;
+
     var url = endereco + anoFormulario;
 
     anoCorrente = [];
