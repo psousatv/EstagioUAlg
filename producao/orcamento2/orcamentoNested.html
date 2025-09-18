@@ -51,29 +51,31 @@
 
 <div class="container-fluid">
 
-  <!-- Nome da Rubrica -->
-  <div class="row mt-2">
-    <div class="col col-md-12">
-      <!-- Nome da Rubrica -->
-      <div class="button bg-primary text-white d-inline-block p-2" id="nomeRubrica"></div>
-      
-      <!-- Botões sem texto, apenas ícones, com a mesma altura de nomeRubrica -->
-      <button class="btn btn-warning d-inline-block ml-2" id="btnRefresh">
-        <i class="fas fa-sync-alt"></i>
-      </button>
-      <button class="btn btn-dark d-inline-block ml-2" id="btnBack">
-        <i class="fas fa-search"></i>
-      </button>
-      <button class="btn btn-danger d-inline-block ml-2" id="btnBack">
-        <i class="fas fa-arrow-left"></i>
-      </button>
-    </div>
-  </div>
+  <!-- Nome e Valores da Rubrica -->
+  <div class="col col-md-12">  
+    <div class="row mt-2 align-items-center">
 
-  <!-- Valores na Rubrica -->
-  <div class="row mt-2">
-    <div class="col col-md-12">
-      <div class="button bg-secondary text-white d-inline-block p-2" id="valoresRubrica">Valores da Rubrica - Previsto, Adjudicado e Saldo</div>
+      <div class="col col-md-8">
+        <!-- Nome da Rubrica -->
+        <div class="bg-primary text-white d-inline-block p-2" id="nomeRubrica"></div>
+        
+        <!-- Botões sem texto, apenas ícones, com a mesma altura de nomeRubrica -->
+        <button class="btn btn-warning d-inline-block ml-2" id="btnRefresh">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <button class="btn btn-dark d-inline-block ml-2" id="btnBack">
+          <i class="fas fa-search"></i>
+        </button>
+        <button class="btn btn-danger d-inline-block ml-2" id="btnBack">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+      </div>
+
+      <!-- Valores na Rubrica -->
+      <div class="col col-md-4 ml-auto">
+        <div class="bg-info text-white d-inline-block p-2" id="valoresRubrica">Valores da Rubrica - Previsto, Adjudicado e Saldo</div>
+      </div>
+      
     </div>
   </div>
 

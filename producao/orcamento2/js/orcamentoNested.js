@@ -1,110 +1,163 @@
 $(document).ready(function () {
-  const queryParams = getQueryParams();
-
-  const table = $('#processosNested').DataTable({
+    const queryParams = getQueryParams();
+  
+    const table = $('#processosNested').DataTable({
       ajax: {
-          url: 'dados/orcamentoNested.php',
-          data: function (d) { return { ...d, ...queryParams }; },
-          dataSrc: function (json) {
-            // Aqui, passamos tanto os dados das rubricas quanto os totais
-            // Adiciona os totais à listaRubricas para que o DataTable consiga acessar diretamente
-            json.data.listaRubricas.forEach(function (rubrica) {
-                rubrica.totais = json.data.totais;  // Adiciona totais em cada rubrica
+        url: 'dados/orcamentoNested.php',
+        data: function (d) { return { ...d, ...queryParams }; },
+        dataSrc: function(json) {
+            let orcamentos = [];
+            json.rubricas.forEach(rub => {
+                rub.orcamentos.forEach(orc => {
+                    // adiciona dados da rubrica em cada orçamento para exibição
+                    orc.descricaoRubrica = rub.descricaoRubrica;
+                    orc.codigoRubrica = rub.codigoRubrica;
+                    orcamentos.push(orc);
+                });
             });
-            return json.data.listaRubricas; // Retorna a lista de rubricas com os totais incluídos
+            return orcamentos;
         }
-    },
+      },
       paging: false,
       searching: false,
       columnDefs: [{ className: "dt-head-center", targets: "_all" }],
       columns: [
-          //{ data: 'orc_rub_cod' },
-          //{ data: 'orc_tipo' },
-          //{ data: 'orc_descritivo' },
-          { data: 'orc_observacoes' }, // É neste campo que se registo a desingação por ser possível existir + de uma "intenção" na Rúbrica
-          { data: 'orc_valor_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-          { data: 'totais.adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-          { data: 'totais.faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-          { data: 'totais.saldo', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-          //{ data: null,
-          //  defaultContent: '<a>Em construção</a>'
-          // },
-          // { data: null,
-          //  defaultContent: '<a>Em construção</a>'
-          // },
-           {
-              data: null,
-              className: 'details-control dt-center align-middle',
-              orderable: false,
-              defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-question"></i></button>'
+        { data: 'descricaoItemOrcamento' }, 
+        { data: 'valorItemOrcamentoPrevisto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+        { data: 'valorItemOrcamentoAdjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+        { data: 'valorItemOrcamentoFaturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+        { 
+          data: null, 
+          className: 'dt-body-right', 
+          render: function(data, type, row) {
+              const diff = row.valorItemOrcamentoAdjudicado - row.valorItemOrcamentoFaturado;
+              // Formatar para o formato de moeda
+              const formattedDiff = new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(diff);
+              
+              return formattedDiff;  // Retorna o valor formatado como moeda
+
           }
+        },
+        {
+          data: null,
+          className: 'details-control dt-center align-middle',
+          orderable: false,
+          defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-question"></i></button>'
+        }
       ]
-  });
-
-
-  //orc_rub_cod, orc_tipo, orc_descritivo, orc_observacoes, orc_valor_previsto
-
-  // Mostrar nome da rubrica
-  table.on('xhr.dt', function (e, settings, json) {
-      if (json && json.data && json.data.rubrica) {
-          $('#nomeRubrica').text(json.data.rubrica.rubrica + " - " + json.data.rubrica.item);
+    });
+  
+    // Mostrar nome da rubrica no topo
+    table.on('xhr.dt', function (e, settings, json) {
+      if (json && json.rubricas && json.rubricas.length > 0) {
+        $('#nomeRubrica').text(
+            json.rubricas[0].codigoRubrica 
+            + ": " + json.rubricas[0].descricaoRubrica
+            + " - " + json.rubricas[0].descricaoItem);
       }
-  });
+    });
+  
+    // Mostrar valores da rubrica no topo
+    table.on('xhr.dt', function (e, settings, json) {
+        if (json && json.rubricas && json.rubricas.length > 0) {
+            // Função de formatação de moeda
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('de-DE', { 
+                    style: 'currency', 
+                    currency: 'EUR' 
+                }).format(value);
+            };
 
-  // Nested rows
-  function format(d) {
-    if (!d.processos || d.processos.length === 0) return '<em>Sem processos</em>';
+            // Exibir os valores com uma formatação de moeda
+            const previsto = formatCurrency(json.rubricas[0].totaisPrevisto);
+            const adjudicado = formatCurrency(json.rubricas[0].totaisAdjudicado);
+            const faturado = formatCurrency(json.rubricas[0].totaisFaturado);
 
-    const formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
-    let html = `<table class="table nested table-dark">
-                    <thead>
-                        <tr>
-                            <th>Processo</th>
-                            <th class="text-center">Adjudicado</th>
-                            <th class="text-center">Faturação</th>
-                            <th class="text-center">Saldo</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-
-    d.processos.forEach(proc => {
-        // Calcula o acumulado usando reduce
-        const faturado = (proc.faturas || []).reduce((afa, fa) => afa + parseFloat(fa.fact_valor || 0), 0);
-        const adjudicado = parseFloat(proc.proces_val_adjudicacoes || 0);
-
-        const saldo = parseFloat(adjudicado - faturado || 0);
-
-        html += `<tr>
-                    <td>${proc.proces_nome}</td>
-                    <td class="text-right">${formatter.format(adjudicado)}</td>
-                    <td class="text-right">${formatter.format(faturado)}</td>
-                    <td class="text-right">${formatter.format(saldo)}</td>
-                 </tr>`;
+            // Criar o HTML para a exibição
+            $('#valoresRubrica').html(`
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="p-2 bg-dark text-white rounded">
+                            <strong>Previsto</strong><br>
+                            ${previsto}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 bg-success text-white rounded">
+                            <strong>Adjudicado</strong><br>
+                            ${adjudicado}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 bg-warning text-dark rounded">
+                            </i><strong>Faturado</strong><br>
+                            ${faturado}
+                        </div>
+                    </div>
+                    </div>
+                    `);
+        }
     });
 
-    html += '</tbody></table>';
-    return html;
-}
 
+    // Nested rows: mostrar processos e totais
+    function format(d) {
+      if (!d.processos || d.processos.length === 0) return '<em>Sem orçamentos</em>';
+  
+      const formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+      let html = `<table class="table nested table-dark">
+                    <thead>
+                      <tr>
+                        <th>Regime</th>
+                        <th>Processo</th>
+                        <th class="text-center">Adjudicado</th>
+                        <th class="text-center">Faturação</th>
+                        <th class="text-center">Saldo</th>
+                      </tr>
+                    </thead>
+                    <tbody>`;
+  
+        d.processos.forEach(proc => {
+            //const faturado = (proc.faturas || []).reduce((sum, f) => sum + parseFloat(f.fact_valor || 0), 0);
+            const adjudicado = parseFloat(proc.valorProcessoAdjudicado || 0);
+            const faturado = parseFloat(proc.valorProcessoFaturado || 0);
+            const saldo = parseFloat(proc.saldoProcesso || 0);
+            //const saldo = adjudicado - faturado;
+            
+            html += `<tr>
+                        <td>${proc.regime}</td>
+                        <td>${proc.descricao}</td>
+                        <td class="text-right">${formatter.format(adjudicado)}</td>
+                        <td class="text-right">${formatter.format(faturado)}</td>
+                        <td class="text-right">${formatter.format(saldo)}</td>
+                        </tr>`;
+        });
 
-  // Toggle nested rows
-  $('#processosNested tbody').on('click', 'td.details-control button', function () {
+        html += '</tbody></table>';
+        return html;
+    }
+  
+    // Toggle nested rows
+    $('#processosNested tbody').on('click', 'td.details-control button', function () {
       const tr = $(this).closest('tr');
       const row = table.row(tr);
       const icon = $(this).find('i');
+  
       if (row.child.isShown()) {
-          row.child.hide();
-          icon.removeClass('fa-circle-info').addClass('fa-circle-question');
+        row.child.hide();
+        icon.removeClass('fa-circle-info').addClass('fa-circle-question');
       } else {
-          row.child(format(row.data())).show();
-          icon.removeClass('fa-circle-question').addClass('fa-circle-info');
+        row.child(format(row.data())).show();
+        icon.removeClass('fa-circle-question').addClass('fa-circle-info');
       }
-  });
-
-  function getQueryParams() {
+    });
+  
+    // Função para extrair parâmetros da URL
+    function getQueryParams() {
       const params = {};
       const query = new URLSearchParams(window.location.search);
       for (const [key, value] of query.entries()) { params[key] = value; }
       return params;
-  }
-});
+    }
+  });
+  

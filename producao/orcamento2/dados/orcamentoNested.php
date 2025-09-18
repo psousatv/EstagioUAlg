@@ -1,5 +1,6 @@
 <?php
-include "../../../global/config/dbConn.php";
+
+require_once __DIR__ . "/../../../global/config/dbConn.php";
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -13,112 +14,142 @@ if (!$orcamentoItem) {
     exit;
 }
 
-// 🔹 Rubrica - Informações da rubrica principal
-$qryRubrica = "SELECT rub_cod, rub_tipo, rub_rubrica, rub_item FROM rubricas WHERE rub_cod = :codigoRubrica";
-$stmRubrica = $myConn->prepare($qryRubrica);
-$stmRubrica->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
-$stmRubrica->execute();
-$rubrica = $stmRubrica->fetch(PDO::FETCH_ASSOC); // Rubrica isolada
-
-if (!$rubrica) {
-    echo json_encode(["error" => "Rubrica não encontrada."]);
-    exit;
+// Funções para buscar dados
+function getRubricas($myConn, $orcamentoItem) {
+    $sql = "SELECT rub_cod, rub_tipo, rub_rubrica, rub_item
+            FROM rubricas
+            WHERE rub_cod = :codigoRubrica";
+    $stmt = $myConn->prepare($sql);
+    $stmt->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// 🔹 Lista de Rubricas no Orçamento com o mesmo rub_cod
-$qryListaRubricas = "SELECT orc_check, orc_rub_cod, orc_ano, orc_tipo, orc_descritivo, orc_observacoes, orc_valor_previsto 
-                     FROM orcamento 
-                     WHERE orc_rub_cod = :codigoRubrica
-                     AND orc_ano = :anoCorrente";
-$stmListaRubricas = $myConn->prepare($qryListaRubricas);
-$stmListaRubricas->bindParam(':anoCorrente', $anoCorrente, PDO::PARAM_STR);
-$stmListaRubricas->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
-$stmListaRubricas->execute();
-$listaRubricas = $stmListaRubricas->fetchAll(PDO::FETCH_ASSOC);
+function getOrcamentos($myConn, $orcamentoItem, $anoCorrente) {
+    $sql = "SELECT orc_check, orc_rub_cod, orc_ano, orc_tipo, orc_descritivo, orc_observacoes, orc_valor_previsto
+            FROM orcamento
+            WHERE orc_rub_cod = :codigoRubrica
+            AND orc_ano = :anoCorrente
+            ORDER BY orc_check";
+    $stmt = $myConn->prepare($sql);
+    $stmt->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
+    $stmt->bindParam(':anoCorrente', $anoCorrente, PDO::PARAM_STR);
+    $stmt->execute();
 
-// 🔹 Processos - Obter os processos relacionados a essa rubrica
-// 🔹 Historico - Equacionar usar a tabela historico para somar as adjudicações
-$qryProcessos = "SELECT proces_check, proces_orc_ano, proces_rub_cod, proces_orcamento, proces_nome, proces_val_adjudicacoes
-                 FROM processo
-                 WHERE proces_rub_cod = :codigoRubrica
-                 AND proces_orc_ano = :anoCorrente
-                 AND proces_report_valores = 1
-                 ORDER BY proces_nome";
-$stmProcessos = $myConn->prepare($qryProcessos);
-$stmProcessos->bindParam(':anoCorrente', $anoCorrente, PDO::PARAM_STR);
-$stmProcessos->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
-$stmProcessos->execute();
-$listaProcessos = $stmProcessos->fetchAll(PDO::FETCH_ASSOC);
-
-// 🔹 Faturas - Obter as faturas associadas a cada processo
-$qryFaturas = "SELECT fact_proces_check, fact_expediente, fact_tipo, fact_data, fact_valor
-               FROM factura
-               WHERE fact_proces_check = :procesCheck
-               ORDER BY fact_data";
-$stmFaturas = $myConn->prepare($qryFaturas);
-$faturas = [];
-
-foreach ($listaProcessos as $processo) {
-    $stmFaturas->bindValue(':procesCheck', $processo['proces_check'], PDO::PARAM_INT);
-    $stmFaturas->execute();
-    $faturas[$processo['proces_check']] = $stmFaturas->fetchAll(PDO::FETCH_ASSOC);
-}
-
-// Calculando os totais acumulados
-$totalAdjudicado = 0;
-$totalFaturado = 0;
-$totalSaldo = 0;
-// 🔹 Montar a estrutura com rubrica e listaRubricas, e agregar faturas
-foreach ($listaRubricas as &$rub) {
-    $rub['processos'] = [];
-    foreach ($listaProcessos as $proc) {
-        // Garantir que estamos considerando apenas os processos com o mesmo orc_rub_cod da rubrica
-        if ($proc['proces_rub_cod'] == $rub['orc_rub_cod']) {
-            // Agregar faturas para o processo
-            $faturasDoProcesso = $faturas[$proc['proces_check']] ?? [];
-            $proc['faturas'] = $faturasDoProcesso;
-
-            if($proc['proces_orcamento'] == $rub['orc_check']){
-                /// Calcula o acumulado de adjudicado e faturado
-                $faturado = array_reduce($proc['faturas'], function($sum, $fa) {
-                    return $sum + (float)$fa['fact_valor'];
-                }, 0);
-
-                $adjudicado = (float)$proc['proces_val_adjudicacoes'];
-                $saldo = $adjudicado - $faturado;
-
-                // Atualiza os totais
-                $totalAdjudicado += $adjudicado;
-                $totalFaturado += $faturado;
-                $totalSaldo += $saldo;
-         
-
-            $proc['faturado'] = $faturado;
-            $proc['adjudicado'] = $adjudicado;
-            $proc['saldo'] = $saldo;
-            
-            }
-
-            $rub['processos'][] = $proc; // Adiciona o processo à rubrica
-        }
+    $orcamentos = [];
+    $totalItemPrevisto = 0;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $orcamentos[] = $row;
+        $totalItemPrevisto += $row['orc_valor_previsto'];
     }
+    return [$orcamentos, $totalItemPrevisto];
 }
 
-// 🔹 Resposta JSON
-$resposta = [
-    "status" => "Sucesso",
-    "data" => [
-        "rubrica" => [
-            "rubrica" => $rubrica['rub_rubrica'] ,
-            "item" => $rubrica['rub_item']
-        ],
-        "listaRubricas" => $listaRubricas,
-        "totais" => [
-                "adjudicado" => $totalAdjudicado,
-                "faturado" => $totalFaturado,
-                "saldo" => $totalSaldo
-        ]
-    ]
-];
+function getProcessos($myConn, $indexOrcamento) {
+    $sql = "SELECT proces_check, proces_orc_ano, proces_rub_cod, proces_orcamento, 
+            p.proced_regime AS regime, proces_nome, proces_val_adjudicacoes 
+            FROM processo
+            INNER JOIN procedimento p on proces_proced_cod = p.proced_cod
+            WHERE proces_orcamento = :indexOrcamento
+            AND proces_report_valores = 1
+            ORDER BY proces_nome";
+    $stmt = $myConn->prepare($sql);
+    $stmt->bindParam(':indexOrcamento', $indexOrcamento, PDO::PARAM_STR);
+    $stmt->execute();
 
-echo json_encode($resposta, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    $processos = [];
+    $totalProcessos = 0;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $processos[] = $row;
+        $totalProcessos += $row['proces_val_adjudicacoes'];
+    }
+    return [$processos, $totalProcessos];
+}
+
+function getFaturas($myConn, $proces_check) {
+    $sql = "SELECT fact_proces_check, fact_expediente, fact_tipo, fact_data, fact_valor
+            FROM factura
+            WHERE fact_proces_check = :codigoProcesso";
+    $stmt = $myConn->prepare($sql);
+    $stmt->bindParam(':codigoProcesso', $proces_check, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $faturas = [];
+    $totalFaturas = 0;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $faturas[] = $row;
+        $totalFaturas += $row['fact_valor'];
+    }
+    return [$faturas, $totalFaturas];
+}
+
+// Montar JSON final
+$rubricas = getRubricas($myConn, $orcamentoItem);
+$jsonDados = [];
+
+foreach ($rubricas as $rubrica) {
+    list($orcamentos, $totalItemPrevisto) = getOrcamentos($myConn, $orcamentoItem, $anoCorrente);
+
+    $rubricaDados = [
+        'codigoRubrica'    => $rubrica['rub_cod'],
+        'descricaoRubrica' => $rubrica['rub_rubrica'],
+        'descricaoItem'    => $rubrica['rub_item'],
+        'totaisPrevisto'   => 0,
+        'totaisAdjudicado' => 0,
+        'totaisFaturado'   => 0,
+        'orcamentos'       => []
+    ];
+
+    $totalProcessosRubrica = 0;
+    $totalFaturasRubrica = 0;
+
+    foreach ($orcamentos as $orcamento) {
+        list($processos, $totalProcessos) = getProcessos($myConn, $orcamento['orc_check']);
+
+        $orcamentoDados = [
+            'indexOrcamento'            => $orcamento['orc_check'],
+            'codigoRubrica'             => $orcamento['orc_rub_cod'],
+            'descricaoRubricaOrcamento' => $orcamento['orc_descritivo'],
+            'descricaoItemOrcamento'    => $orcamento['orc_observacoes'],
+            'valorItemOrcamentoPrevisto'=> round($orcamento['orc_valor_previsto'],2),
+            'valorItemOrcamentoAdjudicado'=> round($totalProcessos,2),
+            'valorItemOrcamentoFaturado'=> 0,
+            'processos'                 => []
+        ];
+
+        foreach ($processos as $processo) {
+            list($faturas, $totalFaturas) = getFaturas($myConn, $processo['proces_check']);
+
+            $processoDados = [
+                'indexProcesso'           => $processo['proces_check'],
+                'indexOrcamento'          => $processo['proces_orcamento'],
+                'regime'               => $processo['regime'],
+                'descricao'               => $processo['proces_nome'],
+                'valorProcessoAdjudicado' => round($processo['proces_val_adjudicacoes'],2), //Alterar para ir buscar ao histórico
+                'valorProcessoFaturado'   => round($totalFaturas,2),
+                'saldoProcesso'           => round($processo['proces_val_adjudicacoes'] - $totalFaturas,2),
+                'faturas'                 => $faturas
+            ];
+
+            $orcamentoDados['processos'][] = $processoDados;
+            $totalFaturasRubrica += $totalFaturas;
+        }
+
+        // Atualiza valor faturado do orçamento
+        $orcamentoDados['valorItemOrcamentoFaturado'] = round(array_sum(array_column($orcamentoDados['processos'], 'valorProcessoFaturado')), 2);
+
+        $rubricaDados['orcamentos'][] = $orcamentoDados;
+        $totalProcessosRubrica += $totalProcessos;
+    }
+
+    // Totais da rubrica
+    $rubricaDados['totaisPrevisto']   = round($totalItemPrevisto,2);
+    $rubricaDados['totaisAdjudicado'] = round($totalProcessosRubrica,2);
+    $rubricaDados['totaisFaturado']   = round($totalFaturasRubrica,2);
+
+    $jsonDados[] = $rubricaDados;
+}
+
+// Retorno JSON
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode(['rubricas' => $jsonDados], JSON_PRETTY_PRINT);

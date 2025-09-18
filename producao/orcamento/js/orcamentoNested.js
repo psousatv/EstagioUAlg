@@ -64,6 +64,7 @@ $(document).ready(function () {
         <table class="table nested table-dark">
           <thead>
             <tr>
+              <th>Regime</th>
               <th>Designação</th>
               <th class="text-center align-middle">Adjudicado</th>
               <th class="text-center align-middle">Faturado</th>
@@ -81,6 +82,7 @@ $(document).ready(function () {
         if (!grouped[key]) {
           grouped[key] = {
             proces_check: key,
+            regime: proc.regime,
             designacao: proc.designacao,
             adjudicado: 0,
             faturado: 0
@@ -95,8 +97,9 @@ $(document).ready(function () {
       Object.values(grouped).forEach(proc => {
         const saldo = proc.adjudicado - proc.faturado;
   
-        html += `<tr>
-          <td onclick="redirectProcesso(${proc.proces_check})">${proc.designacao}</td>
+        html += `<tr onclick="redirectProcesso(${proc.proces_check})">
+          <td>${proc.regime}</td>
+          <td>${proc.designacao}</td>
           <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
           <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
           <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}</td>

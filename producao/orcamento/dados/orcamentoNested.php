@@ -60,7 +60,7 @@ if (count($orcIds) > 0) {
             proces_check,
             proces_orcamento,
             proces_padm AS padm,
-            proced_sigla AS procedimento,
+            proced_regime AS regime,
             proces_nome AS designacao,
             (
                 SELECT SUM(COALESCE(historico_valor, 0))
