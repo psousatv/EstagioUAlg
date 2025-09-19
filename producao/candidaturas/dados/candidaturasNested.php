@@ -26,12 +26,10 @@ function getRubricas($myConn, $orcamentoItem) {
 }
 
 function getOrcamentos($myConn, $orcamentoItem, $anoCorrente) {
-    $sql = "SELECT orc_check, orc_rub_cod, orc_ano, orc_tipo, 
-            orc_conta_agregadora, orc_conta_descritiva, orc_valor_previsto
+    $sql = "SELECT orc_check, orc_rub_cod, orc_ano, orc_tipo, orc_descritivo, orc_observacoes, orc_valor_previsto
             FROM orcamento
             WHERE orc_rub_cod = :codigoRubrica
             AND orc_ano = :anoCorrente
-            GROUP BY orc_rub_cod
             ORDER BY orc_check";
     $stmt = $myConn->prepare($sql);
     $stmt->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
@@ -39,41 +37,34 @@ function getOrcamentos($myConn, $orcamentoItem, $anoCorrente) {
     $stmt->execute();
 
     $orcamentos = [];
-    $totalPrevistoOrcamento = 0;
+    $totalItemPrevisto = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $orcamentos[] = $row;
-        $totalPrevistoOrcamento += $row['orc_valor_previsto'];
+        $totalItemPrevisto += $row['orc_valor_previsto'];
     }
-    return [$orcamentos, $totalPrevistoOrcamento];
-
+    return [$orcamentos, $totalItemPrevisto];
 }
 
 function getProcessos($myConn, $indexOrcamento) {
-    $codigoDescritivo = 14; // Adjudicação
-    $sql = "SELECT proces_check, proces_orc_ano, proces_rub_cod, proces_orc_check, 
-            p.proced_regime AS regime, proces_nome,
-            SUM(COALESCE(historico_valor, 0)) AS valorAdjudicacoes
+    $sql = "SELECT proces_check, proces_orc_ano, proces_rub_cod, proces_orcamento, 
+            p.proced_regime AS regime, proces_nome, proces_val_adjudicacoes 
             FROM processo
             INNER JOIN procedimento p on proces_proced_cod = p.proced_cod
-            INNER JOIN historico h ON historico_proces_check = proces_check
-            WHERE proces_orc_check = :indexOrcamento
-            AND historico_descr_cod = :codigoDescritivo
+            WHERE proces_orcamento = :indexOrcamento
             AND proces_report_valores = 1
             ORDER BY proces_nome";
     $stmt = $myConn->prepare($sql);
     $stmt->bindParam(':indexOrcamento', $indexOrcamento, PDO::PARAM_STR);
-    $stmt->bindParam(':codigoDescritivo', $codigoDescritivo, PDO::PARAM_STR);
     $stmt->execute();
 
     $processos = [];
-    $totalAdjudicadoProcessos = 0;
+    $totalProcessos = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $processos[] = $row;
-        $totalAdjudicadoProcessos += $row['valorAdjudicacoes'];
+        $totalProcessos += $row['proces_val_adjudicacoes'];
     }
-    return [$processos, $totalAdjudicadoProcessos];
+    return [$processos, $totalProcessos];
 }
-
 
 function getFaturas($myConn, $proces_check) {
     $sql = "SELECT fact_proces_check, fact_expediente, fact_tipo, fact_data, fact_valor
@@ -97,7 +88,7 @@ $rubricas = getRubricas($myConn, $orcamentoItem);
 $jsonDados = [];
 
 foreach ($rubricas as $rubrica) {
-    list($orcamentos, $totalPrevistoOrcamento) = getOrcamentos($myConn, $orcamentoItem, $anoCorrente);
+    list($orcamentos, $totalItemPrevisto) = getOrcamentos($myConn, $orcamentoItem, $anoCorrente);
 
     $rubricaDados = [
         'codigoRubrica'    => $rubrica['rub_cod'],
@@ -113,15 +104,15 @@ foreach ($rubricas as $rubrica) {
     $totalFaturasRubrica = 0;
 
     foreach ($orcamentos as $orcamento) {
-        list($processos, $totalAdjudicadoProcessos) = getProcessos($myConn, $orcamento['orc_check']);
+        list($processos, $totalProcessos) = getProcessos($myConn, $orcamento['orc_check']);
 
         $orcamentoDados = [
             'indexOrcamento'            => $orcamento['orc_check'],
             'codigoRubrica'             => $orcamento['orc_rub_cod'],
-            'descricaoRubricaOrcamento' => $orcamento['orc_conta_agregadora'],
-            'descricaoItemOrcamento'    => $orcamento['orc_conta_descritiva'],
+            'descricaoRubricaOrcamento' => $orcamento['orc_descritivo'],
+            'descricaoItemOrcamento'    => $orcamento['orc_observacoes'],
             'valorItemOrcamentoPrevisto'=> round($orcamento['orc_valor_previsto'],2),
-            'valorItemOrcamentoAdjudicado'=> round($totalAdjudicadoProcessos,2),
+            'valorItemOrcamentoAdjudicado'=> round($totalProcessos,2),
             'valorItemOrcamentoFaturado'=> 0,
             'processos'                 => []
         ];
@@ -131,12 +122,12 @@ foreach ($rubricas as $rubrica) {
 
             $processoDados = [
                 'indexProcesso'           => $processo['proces_check'],
-                'indexOrcamento'          => $processo['proces_orc_check'],
+                'indexOrcamento'          => $processo['proces_orcamento'],
                 'regime'               => $processo['regime'],
                 'descricao'               => $processo['proces_nome'],
-                'valorProcessoAdjudicado' => round($processo['valorAdjudicacoes'],2), //Alterar para ir buscar ao histórico
+                'valorProcessoAdjudicado' => round($processo['proces_val_adjudicacoes'],2), //Alterar para ir buscar ao histórico
                 'valorProcessoFaturado'   => round($totalFaturas,2),
-                'saldoProcesso'           => round($processo['valorAdjudicacoes'] - $totalFaturas,2),
+                'saldoProcesso'           => round($processo['proces_val_adjudicacoes'] - $totalFaturas,2),
                 'faturas'                 => $faturas
             ];
 
@@ -148,17 +139,16 @@ foreach ($rubricas as $rubrica) {
         $orcamentoDados['valorItemOrcamentoFaturado'] = round(array_sum(array_column($orcamentoDados['processos'], 'valorProcessoFaturado')), 2);
 
         $rubricaDados['orcamentos'][] = $orcamentoDados;
-        $totalProcessosRubrica += $totalAdjudicadoProcessos;
+        $totalProcessosRubrica += $totalProcessos;
     }
 
     // Totais da rubrica
-    $rubricaDados['totaisPrevisto']   = round($totalPrevistoOrcamento,2);
+    $rubricaDados['totaisPrevisto']   = round($totalItemPrevisto,2);
     $rubricaDados['totaisAdjudicado'] = round($totalProcessosRubrica,2);
     $rubricaDados['totaisFaturado']   = round($totalFaturasRubrica,2);
 
     $jsonDados[] = $rubricaDados;
 }
-
 
 // Retorno JSON
 header('Content-Type: application/json; charset=utf-8');

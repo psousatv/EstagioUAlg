@@ -17,22 +17,20 @@ $anoCorrente = $_GET['anoCorrente'] ?? date('Y');
 $sqlOrcamentoItemRubrica = "SELECT  
                           orc_check AS controle,
                           orc_tipo AS tipo,
-                          orc_linha AS linhaO,
-                          orc_linha_SE AS linhaSE,
-                          orc_descritivo AS descritivo,
+                          orc_conta_descritiva AS descritivo,
                           orc_valor_previsto AS previsto,
                           SUM(orc_valor_previsto) AS total_previsto,
                           (SELECT SUM(historico_valor)
                           FROM historico
                           LEFT JOIN processo ON proces_check = historico_proces_check
-                          WHERE proces_orcamento = orcamento.orc_check AND historico_descr_cod = 14) AS total_adjudicado,
+                          WHERE proces_orc_check = orcamento.orc_check AND historico_descr_cod = 14) AS total_adjudicado,
                           (SELECT SUM(fact_valor) FROM factura
                           LEFT JOIN processo ON proces_check = fact_proces_check
-                          WHERE proces_orcamento = controle AND proces_report_valores = 1) AS total_faturado
+                          WHERE proces_orc_check = orcamento.orc_check AND proces_report_valores = 1) AS total_faturado
                           FROM orcamento
                           WHERE orc_rub_cod = :orcamentoItem AND orc_ano = :anoCorrente
-                          GROUP BY linhaO
-                          ORDER BY linhaO";
+                          GROUP BY tipo
+                          ORDER BY tipo";
 
 //$stmt1 = $myConn->query($sqlOrcamentoItemRubrica);
 //$orcamentoItemRubrica = $stmt1->fetchAll(PDO::FETCH_ASSOC);
@@ -54,7 +52,7 @@ $totalFaturado = array_sum(array_column($orcamentoList, "total_faturado"));
 // Processo indexados ao orçamento
 $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      proces_check,
-                                     proces_orcamento,
+                                     proces_orc_check,
                                      proces_padm AS padm,
                                      proced_sigla AS procedimento,
                                      proces_nome AS designacao,                                    
@@ -67,9 +65,9 @@ $sqlProcessosOrcamentoItemRubrica = "SELECT
                                      (SELECT SUM(COALESCE(fact_valor, 0)) FROM factura
                                      WHERE fact_proces_check = proces_check) AS faturado
                                      FROM processo 
-                                     INNER JOIN orcamento ON orc_check = proces_orcamento
+                                     INNER JOIN orcamento ON orc_check = proces_orc_check
                                      INNER JOIN procedimento ON proced_cod = proces_proced_cod
-                                     WHERE proces_orcamento = orc_check
+                                     WHERE proces_orc_check = orc_check
                                      AND proces_report_valores = 1
                                      ORDER BY designacao";
 
@@ -88,7 +86,5 @@ echo '
       <td class="bg-info text-white">Saldo</td>
       <td class="bg-info text-white">'.number_format($totalPrevisto-$totalAdjudicado, 2, ",", ".").'€</td>
     </tr>
-  </table>
-  
-  ';
+  </table>';
 

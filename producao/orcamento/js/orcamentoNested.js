@@ -17,8 +17,8 @@ $(document).ready(function () {
           {"className": "dt-head-center", "targets": "_all"}
         ],
       columns: [
-        { data: 'linhaO' },
-        { data: 'observacoes' },
+        { data: 'tipo' },
+        { data: 'descritivo' },
         { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
         { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
         { data: 'total_faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
@@ -65,6 +65,8 @@ $(document).ready(function () {
           <thead>
             <tr>
               <th>Regime</th>
+              <th>Orçamento</th>
+              <th>S.Especiais</th>
               <th>Designação</th>
               <th class="text-center align-middle">Adjudicado</th>
               <th class="text-center align-middle">Faturado</th>
@@ -83,6 +85,8 @@ $(document).ready(function () {
           grouped[key] = {
             proces_check: key,
             regime: proc.regime,
+            orcamento: proc.linha_orc,
+            sespeciais: proc.linha_se,
             designacao: proc.designacao,
             adjudicado: 0,
             faturado: 0
@@ -92,13 +96,21 @@ $(document).ready(function () {
         grouped[key].adjudicado += parseFloat(proc.adjudicado) || 0;
         grouped[key].faturado += parseFloat(proc.faturado) || 0;
       });
+
+      // Transformar em array e ordenar por regime
+      const ordenado = Object.values(grouped).sort((asc, desc) => {
+        return desc.regime.localeCompare(asc.regime);
+      });
   
       // Gerar HTML por grupo
-      Object.values(grouped).forEach(proc => {
+      //Object.values(grouped).forEach(proc => {
+      ordenado.forEach(proc => {
         const saldo = proc.adjudicado - proc.faturado;
   
         html += `<tr onclick="redirectProcesso(${proc.proces_check})">
           <td>${proc.regime}</td>
+          <td>${proc.orcamento}</td>
+          <td>${proc.sespeciais}</td>
           <td>${proc.designacao}</td>
           <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
           <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>

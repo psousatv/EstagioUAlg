@@ -3,7 +3,7 @@ $(document).ready(function () {
   
     const table = $('#processosNested').DataTable({
       ajax: {
-        url: 'dados/orcamentoNested.php',
+        url: 'dados/candidaturasNested.php',
         data: function (d) { return { ...d, ...queryParams }; },
         dataSrc: function(json) {
             let orcamentos = [];
@@ -136,8 +136,7 @@ $(document).ready(function () {
         html += '</tbody></table>';
         return html;
     }
-
-      
+  
     // Toggle nested rows
     $('#processosNested tbody').on('click', 'td.details-control button', function () {
       const tr = $(this).closest('tr');
