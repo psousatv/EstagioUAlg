@@ -50,7 +50,7 @@ foreach($data as $row)
     <legend class="badge bg-secondary text-white">Enquadramento Legal</legend>
     <div class="row small text-justify">
       <div class="col-md-2 text-primary"><b>Regime: </b></div>
-      <div class="col-md-10 text-primary">'.$row['proced_regime'].' - '.$row['proces_data_pub_se'].' ['.$row['proces_ficha_imob'].']</div>
+      <div class="col-md-10 text-primary">'.$row['proced_regime'].' - '.$row['proces_data_pub_se'].' ['.$row['proces_linha_se'].']</div>
       <div class="col-md-2 text-primary"><b>Contrato: </b></div>
       <div class="col-md-10 text-primary">'.$row['proced_contrato'].'</div>
       <div class="col-md-2 text-primary"><b>Procedimento: </b></div>
@@ -77,7 +77,7 @@ foreach($data as $row)
     <legend class="badge bg-info text-white">Orçamento</legend>
     <div class="row small text-justify">
     <div class="col-md-2 text-primary"><b>Orçamentos: </b></div>
-      <div class="col-md-10 text-primary">'.$row['proces_orc_ano'].' ['.$row['proces_conta_imob'].']</div>
+      <div class="col-md-10 text-primary">'.$row['proces_orc_ano'].' ['.$row['proces_linha_orc'].']</div>
       <div class="col-md-2 text-primary"><b>Área de Atuação: </b></div>
       <div class="col-md-10 text-primary">'.$row['proces_orc_actividade'].'</div>
       <div class="col-md-2 text-primary"><b>Rubrica: </b></div> 
