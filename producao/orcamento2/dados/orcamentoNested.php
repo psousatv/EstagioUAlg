@@ -31,7 +31,7 @@ function getOrcamentos($myConn, $orcamentoItem, $anoCorrente) {
             FROM orcamento
             WHERE orc_rub_cod = :codigoRubrica
             AND orc_ano = :anoCorrente
-            GROUP BY orc_rub_cod
+            GROUP BY orc_conta_descritiva
             ORDER BY orc_check";
     $stmt = $myConn->prepare($sql);
     $stmt->bindParam(':codigoRubrica', $orcamentoItem, PDO::PARAM_STR);
