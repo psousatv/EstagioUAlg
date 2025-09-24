@@ -1,163 +1,109 @@
+
+
 $(document).ready(function () {
     const queryParams = getQueryParams();
-  
-    const table = $('#processosNested').DataTable({
-      ajax: {
-        url: 'dados/candidaturasNested.php',
-        data: function (d) { return { ...d, ...queryParams }; },
-        dataSrc: function(json) {
-            let orcamentos = [];
-            json.rubricas.forEach(rub => {
-                rub.orcamentos.forEach(orc => {
-                    // adiciona dados da rubrica em cada orçamento para exibição
-                    orc.descricaoRubrica = rub.descricaoRubrica;
-                    orc.codigoRubrica = rub.codigoRubrica;
-                    orcamentos.push(orc);
-                });
-            });
-            return orcamentos;
-        }
-      },
-      paging: false,
-      searching: false,
-      columnDefs: [{ className: "dt-head-center", targets: "_all" }],
-      columns: [
-        { data: 'descricaoItemOrcamento' }, 
-        { data: 'valorItemOrcamentoPrevisto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-        { data: 'valorItemOrcamentoAdjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-        { data: 'valorItemOrcamentoFaturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-        { 
-          data: null, 
-          className: 'dt-body-right', 
-          render: function(data, type, row) {
-              const diff = row.valorItemOrcamentoAdjudicado - row.valorItemOrcamentoFaturado;
-              // Formatar para o formato de moeda
-              const formattedDiff = new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(diff);
-              
-              return formattedDiff;  // Retorna o valor formatado como moeda
 
-          }
-        },
-        {
-          data: null,
-          className: 'details-control dt-center align-middle',
-          orderable: false,
-          defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-question"></i></button>'
-        }
-      ]
-    });
-  
-    // Mostrar nome da rubrica no topo
-    table.on('xhr.dt', function (e, settings, json) {
-      if (json && json.rubricas && json.rubricas.length > 0) {
-        $('#nomeRubrica').text(
-            json.rubricas[0].codigoRubrica 
-            + ": " + json.rubricas[0].descricaoRubrica
-            + " - " + json.rubricas[0].descricaoItem);
-      }
-    });
-  
-    // Mostrar valores da rubrica no topo
-    table.on('xhr.dt', function (e, settings, json) {
-        if (json && json.rubricas && json.rubricas.length > 0) {
-            // Função de formatação de moeda
-            const formatCurrency = (value) => {
-                return new Intl.NumberFormat('de-DE', { 
-                    style: 'currency', 
-                    currency: 'EUR' 
-                }).format(value);
-            };
+    // Função para formatar valores monetários
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+    }
 
-            // Exibir os valores com uma formatação de moeda
-            const previsto = formatCurrency(json.rubricas[0].totaisPrevisto);
-            const adjudicado = formatCurrency(json.rubricas[0].totaisAdjudicado);
-            const faturado = formatCurrency(json.rubricas[0].totaisFaturado);
+    // Função para gerar a tabela HTML dinamicamente
+    function generateTable(data) {
+        let tableHTML = `
+            <table id="processosNested" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Candidatura</th>
+                        <th class="text-right">Taxa</th>
+                        <th class="text-right">Elegível</th>
+                        <th class="text-right">Adjudicado</th>
+                        <th class="text-right">Faturado</th>
+                        <th class="text-right">Recebido</th>
+                        <th class="text-right">% Faturado/Recebido</th>
+                        <th class="text-right">% Elegível/Recebido</th>
+                        <th>Inicio</th>
+                        <th>Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
 
-            // Criar o HTML para a exibição
-            $('#valoresRubrica').html(`
-                <div class="row text-center">
-                    <div class="col-4">
-                        <div class="p-2 bg-dark text-white rounded">
-                            <strong>Previsto</strong><br>
-                            ${previsto}
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="p-2 bg-success text-white rounded">
-                            <strong>Adjudicado</strong><br>
-                            ${adjudicado}
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="p-2 bg-warning text-dark rounded">
-                            </i><strong>Faturado</strong><br>
-                            ${faturado}
-                        </div>
-                    </div>
-                    </div>
-                    `);
-        }
-    });
+        data.forEach((row) => {
+            const formattedTaxa = formatCurrency(row.taxa);
+            const formattedElegivel = formatCurrency(row.elegivel);
+            const formattedAdjudicado = formatCurrency(row.adjudicado);
+            const formattedFaturado = formatCurrency(row.faturado);
+            const formattedRecebido = formatCurrency(row.recebido);
+            const formattedFaturadoRecebidoPercent = (row.faturado_recebido_percent).toFixed(2) + "%";
+            const formattedElegivelRecebidoPercent = (row.elegivel_recebido_percent).toFixed(2) + "%";
 
-
-    // Nested rows: mostrar processos e totais
-    function format(d) {
-      if (!d.processos || d.processos.length === 0) return '<em>Sem orçamentos</em>';
-  
-      const formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
-      let html = `<table class="table nested table-dark">
-                    <thead>
-                      <tr>
-                        <th>Regime</th>
-                        <th>Processo</th>
-                        <th class="text-center">Adjudicado</th>
-                        <th class="text-center">Faturação</th>
-                        <th class="text-center">Saldo</th>
-                      </tr>
-                    </thead>
-                    <tbody>`;
-  
-        d.processos.forEach(proc => {
-            //const faturado = (proc.faturas || []).reduce((sum, f) => sum + parseFloat(f.fact_valor || 0), 0);
-            const adjudicado = parseFloat(proc.valorProcessoAdjudicado || 0);
-            const faturado = parseFloat(proc.valorProcessoFaturado || 0);
-            const saldo = parseFloat(proc.saldoProcesso || 0);
-            //const saldo = adjudicado - faturado;
-            
-            html += `<tr>
-                        <td>${proc.regime}</td>
-                        <td>${proc.descricao}</td>
-                        <td class="text-right">${formatter.format(adjudicado)}</td>
-                        <td class="text-right">${formatter.format(faturado)}</td>
-                        <td class="text-right">${formatter.format(saldo)}</td>
-                        </tr>`;
+            tableHTML += `
+                <tr>
+                    <td>${row.candidatura}</td>
+                    <td class="text-right">${formattedTaxa}</td>
+                    <td class="text-right">${formattedElegivel}</td>
+                    <td class="text-right">${formattedAdjudicado}</td>
+                    <td class="text-right">${formattedFaturado}</td>
+                    <td class="text-right">${formattedRecebido}</td>
+                    <td class="text-right">${formattedFaturadoRecebidoPercent}</td>
+                    <td class="text-right">${formattedElegivelRecebidoPercent}</td>
+                    <td class="text-right">${row.inicio}</td>
+                    <td><button class="btn btn-info btn-sm details-btn" data-candidatura="${row.candidatura}">Detalhes</button></td>
+                </tr>
+            `;
         });
 
-        html += '</tbody></table>';
-        return html;
+        tableHTML += '</tbody></table>';
+        $('#table-container').html(tableHTML); // Adiciona a tabela no container
+
+        // Adiciona evento de clique para os botões de "Detalhes"
+        $('.details-btn').on('click', function () {
+            const candidatura = $(this).data('candidatura');
+            showDetails(candidatura); // Exibe os detalhes
+        });
     }
-  
-    // Toggle nested rows
-    $('#processosNested tbody').on('click', 'td.details-control button', function () {
-      const tr = $(this).closest('tr');
-      const row = table.row(tr);
-      const icon = $(this).find('i');
-  
-      if (row.child.isShown()) {
-        row.child.hide();
-        icon.removeClass('fa-circle-info').addClass('fa-circle-question');
-      } else {
-        row.child(format(row.data())).show();
-        icon.removeClass('fa-circle-question').addClass('fa-circle-info');
-      }
-    });
-  
-    // Função para extrair parâmetros da URL
+
+    // Função para exibir os detalhes do processo
+    function showDetails(candidatura) {
+        // Aqui você pode fazer uma requisição para obter os dados do processo específico
+        alert(`Exibindo detalhes para a candidatura: ${candidatura}`);
+    }
+
+    // Função para obter parâmetros da URL
     function getQueryParams() {
-      const params = {};
-      const query = new URLSearchParams(window.location.search);
-      for (const [key, value] of query.entries()) { params[key] = value; }
-      return params;
+        const params = {};
+        const query = new URLSearchParams(window.location.search);
+        for (const [key, value] of query.entries()) { params[key] = value; }
+        return params;
     }
-  });
-  
+
+    // Chamar o AJAX para obter os dados da tabela
+    $.ajax({
+        url: 'dados/candidaturasNested.php',
+        data: queryParams,
+        success: function (response) {
+            if (response && response.rubricas && response.rubricas.length > 0) {
+                const rubrica = response.rubricas[0];
+                $('#nomeRubrica').text(`${rubrica.codigoRubrica}: ${rubrica.descricaoRubrica} - ${rubrica.descricaoItem}`);
+
+                // Mostrar os totais da rubrica
+                $('#valoresRubrica').html(`
+                    <div class="row text-center">
+                        <div class="col-4"><div class="p-2 bg-dark text-white rounded"><strong>Previsto</strong><br>${formatCurrency(rubrica.totaisPrevisto)}</div></div>
+                        <div class="col-4"><div class="p-2 bg-success text-white rounded"><strong>Adjudicado</strong><br>${formatCurrency(rubrica.totaisAdjudicado)}</div></div>
+                        <div class="col-4"><div class="p-2 bg-warning text-dark rounded"><strong>Faturado</strong><br>${formatCurrency(rubrica.totaisFaturado)}</div></div>
+                    </div>
+                `);
+
+                // Gerar a tabela com os dados da rubrica
+                generateTable(rubrica.orcamentos);
+            } else {
+                alert('Nenhum dado encontrado');
+            }
+        },
+        error: function () {
+            alert('Erro ao carregar os dados');
+        }
+    });
+});

@@ -1,367 +1,158 @@
 <?php
-//session_start();
 include "../../../global/config/dbConn.php";
 
-// Array de códigos de documentos
-$descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 $codigoProcesso = isset($_GET['codigoProcesso']) ? intval($_GET['codigoProcesso']) : 0;
-$i = 0;
+$descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 
-// Gerar placeholders dinâmicos
-$placeholders = implode(',', array_fill(0, count($descritivos), '?'));
-
-// Montar a query com IN dinâmico
-$sql = "SELECT
-        p2.proced_regime AS regime,
-        p2.proced_contrato AS contrato,
-        p2.proced_escolha AS procedimento,
-        d.descr_cod AS movimento,
-        d.descr_nome AS documento,
-        MIN(COALESCE(h1.historico_dataemissao, 0)) AS data_documento,
-        MIN(COALESCE(h1.historico_datamov, 0)) AS data_validacao_documento,
-        h1.historico_valor AS valor_documento,
-        MIN(COALESCE(h1.historico_doc, 0)) AS referencias,
-        MIN(COALESCE(h1.historico_notas, 'Sem anotações registadas')) AS notas
+// === 1. Função: Buscar resultados ===
+function buscarResultados(PDO $myConn, int $codigoProcesso, array $descritivos): array {
+    $placeholders = implode(',', array_fill(0, count($descritivos), '?'));
+    $sql = "
+        SELECT
+            p2.proced_regime AS regime,
+            p2.proced_contrato AS contrato,
+            p2.proced_escolha AS procedimento,
+            d.descr_cod AS movimento,
+            d.descr_nome AS documento,
+            MIN(COALESCE(h1.historico_dataemissao, 0)) AS data_documento,
+            MIN(COALESCE(h1.historico_datamov, 0)) AS data_validacao_documento,
+            h1.historico_valor AS valor_documento,
+            MIN(COALESCE(h1.historico_doc, 0)) AS referencias,
+            MIN(COALESCE(h1.historico_notas, 'Sem anotações registadas')) AS notas
         FROM descritivos d
         LEFT JOIN historico h1 ON h1.historico_descr_cod = d.descr_cod AND h1.historico_proces_check = ?
         LEFT JOIN processo p1 ON p1.proces_check = h1.historico_proces_check AND p1.proces_check = ?
         LEFT JOIN procedimento p2 ON p2.proced_cod = p1.proces_proced_cod
         WHERE d.descr_cod IN ($placeholders)
-        GROUP BY d.descr_cod, d.descr_nome, p2.proced_regime, p2.proced_contrato, p2.proced_escolha";
-        //ORDER BY descr_cod ASC";
+        GROUP BY d.descr_cod, d.descr_nome, p2.proced_regime, p2.proced_contrato, p2.proced_escolha
+    ";
 
-// Preparar statement
-$stmt = $myConn->prepare($sql);
+    $stmt = $myConn->prepare($sql);
+    $params = array_merge([$codigoProcesso, $codigoProcesso], $descritivos);
+    $stmt->execute($params);
 
-// Criar array de parâmetros
-// Primeiro dois são o processo, depois vem todos os descr_cod
-$params = array_merge([$codigoProcesso, $codigoProcesso], $descritivos);
-// Executar
-$stmt->execute($params);
-// Buscar tudo
-$resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-// ************************************************
-// Filtrar os descritivos por tipo de procedimento
-// para atribuição de valores às variáveis
-// Localizar o tipo de contrato
-
-$tipoRegime = [];
-$tipoProcedimento = [];
-$tipoContrato = [];
-$dispensaControlar = [];
-$fasesControlar = [];
-
-// Agrupar os registos de movimentos
-// Nos processos de ADS se registado Início de Procedimento
-// usa esse registo em vez de 'Fatura' (que fica por defeito)
-
-$movimentos = [];
-foreach ($resultados as $movimento) {
-    $movimentos[] = $movimento['movimento']; // agora é um array simples
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$movimento_a_verificar_1 = 4; // este é o que deve permanecer
-$movimento_a_verificar_2 = 9; // este será removido se os dois existirem
+// === 2. Função: Determinar tipo de contrato e fases ===
+function definirTipoProcesso(array $resultados): array {
+    foreach ($resultados as $res) {
+        $proc = $res['procedimento'];
+        $contrato = $res['contrato'];
+        $valor = $res['valor_documento'];
+        $regime = $res['regime'];
 
-// 1. Verifique se ambos os movimentos existem no array
-$condicao_satisfeita = in_array($movimento_a_verificar_1, $movimentos) &&
-                       in_array($movimento_a_verificar_2, $movimentos);
+        // Movimento Fatura (9) removido se houver Início de Procedimento (4)
+        $movimentos = array_column($resultados, 'movimento');
+        if (in_array(4, $movimentos) && in_array(9, $movimentos)) {
+            $movimentos = [1, 4, 14];
+        } else {
+            $movimentos = [1, 9, 14];
+        }
 
-// 2. Se a condição for satisfeita, remova o movimento indesejado (9)
-if ($condicao_satisfeita) {
-    $movimentos_atualizados = array_filter($movimentos, function($item) use ($movimento_a_verificar_2) {
-        return $item !== $movimento_a_verificar_2;
-    });
+        if ($valor >= 10000 && $proc == 'Ajuste Direto Simplificado') {
+            return [$regime, $proc, $contrato, [], [1, 4, 14, 17]];
+        }
+
+        $fases = [
+            'Aquisição de Serviços' => [1, 4, 5, 10, 13, 14, 19, 28],
+            'Aquisição de Bens'     => [1, 4, 5, 10, 13, 14, 19, 27],
+            'Empreitada'            => [1, 4, 5, 10, 13, 14, 18, 19, 26, 29, 30],
+        ];
+
+        $dispensas = [
+            'Ajuste Direto Simplificado' => [5,11,12,13,16,17,18,19,26,27,28,29,30],
+            'Aquisição de Serviços'      => [11,12,19,26,27,29,30],
+            'Aquisição de Bens'          => [11,12,19,26,28,29,30],
+            'Empreitada'                 => [11,12,27,28],
+        ];
+
+        if ($proc == 'Ajuste Direto Simplificado') {
+            return [$regime, $proc, $contrato, $dispensas[$proc], $movimentos];
+        }
+
+        if (isset($fases[$contrato])) {
+            return [$regime, $proc, $contrato, $dispensas[$contrato], $fases[$contrato]];
+        }
+    }
+
+    return [null, null, null, [], []];
+}
+
+// === 3. Função: Filtrar pontos de controle válidos ===
+function filtrarPontosControle(array $resultados, array $fases): array {
+    $pontos = [];
+
+    foreach ($resultados as $res) {
+        if (in_array($res['movimento'], $fases)) {
+            $pontos[] = [
+                'documento' => $res['documento'],
+                'data_doc'  => $res['data_documento'],
+                'data_val'  => $res['data_validacao_documento'],
+                'refer'     => $res['referencias'],
+                'notas'     => $res['notas']
+            ];
+        }
+    }
+
+    return $pontos;
+}
+
+// === 4. Função: Gerar HTML Stepper ===
+function gerarHTMLStepper(array $pontos): void {
+    echo '<div class="stepper-wrapper">';
     
-    //$movimentos = array_values($movimentos_atualizados); // reindexa
-    $movimentos = [1, 4, 14];
+    foreach ($pontos as $i => $pt) {
+        $status = 'nulo';
+        $dias = '';
+        
+        if ($pt['data_doc'] != 0) {
+            $status = 'conforme';
 
-    //echo "Os movimentos '{$movimento_a_verificar_1}' e '{$movimento_a_verificar_2}' foram encontrados. O movimento '{$movimento_a_verificar_2}' foi removido com sucesso.";
-} else {
-    $movimentos = [1, 9, 14];
-    //echo "A condição não foi satisfeita. Nenhum movimento foi removido.";
-}
+            if ($i > 0 && $pontos[$i-1]['data_doc'] != 0) {
+                $d1 = new DateTime($pt['data_doc']);
+                $d2 = new DateTime($pontos[$i-1]['data_doc']);
+                $dias = $d1->diff($d2)->days;
 
+                if ($pt['data_doc'] < $pontos[$i-1]['data_doc']) {
+                    $status = 'desconforme';
+                }
+            }
+        }
 
-for($i = 0; $i < count($resultados); $i++){
-  // Se não for nulo
-  if($resultados[$i]['data_documento'] != 0){
-    // Procedimento por Ajuste Direto Simplificado de valor >= 10.000 [inclui contrato]
-    if($resultados[$i]['valor_documento'] >= 10000){
-      // Deve vir primeiro que o genérico, senão não é executado
-      if($resultados[$i]['procedimento'] == 'Ajuste Direto Simplificado'){
-        $tipoRegime = $resultados[$i]['regime'];
-        $tipoContrato = $resultados[$i]['contrato'];
-        $tipoProcedimento = $resultados[$i]['procedimento'];
-        $fasesControlar = [1, 4, 14, 17];
-        break; // Pára o ciclo ao encontrar a condição
-      } elseif(
-        // Serviços - Qualquer Procedimento, excepto, ADs
-        $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
-        $resultados[$i]['contrato'] == 'Aquisição de Serviços'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 16, 17, 19, 28];
-          break; // Pára o ciclo ao encontrar a condição
-        } elseif(
-        // Bens - Qualquer Procedimento, excepto, ADs
-        $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
-        $resultados[$i]['contrato'] == 'Aquisição de Bens'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 15, 16, 17, 19, 27];
-          break; // Pára o ciclo ao encontrar a condição
-        } elseif(
-        // Empreitadas - Qualquer Procedimento, excepto, ADs
-        $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
-        $resultados[$i]['contrato'] == 'Empreitada'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [11, 12, 27, 28];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 16, 17, 18, 19, 26, 29, 30];
-          break; // Pára o ciclo ao encontrar a condição
-      }
-    } elseif($resultados[$i]['valor_documento'] < 10000){
-      // Procedimento por Ajuste Direto Simplificado de valor >= 10.000 [inclui contrato]
-      if(
-        // Procedimento por Ajuste Direto Simplificado
-        // Deve vir primeiro que o genérico, senão não é executado
-        $resultados[$i]['procedimento'] === 'Ajuste Direto Simplificado'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [5, 11, 12, 13, 16, 17, 18, 19, 26, 27, 28, 29, 30];
-          $fasesControlar = $movimentos;
-          //$fasesControlar = [1, 4, 9, 14];
-          break; // Pára o ciclo ao encontrar a condição
-      } elseif (
-        // Serviços - Qualquer Procedimento, excepto, ADs
-        $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
-        $resultados[$i]['contrato'] == 'Aquisição de Serviços'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [11, 12, 19, 26, 27, 29, 30];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 19, 28];
-          break; // Pára o ciclo ao encontrar a condição
-        } elseif(
-        // Bens - Qualquer Procedimento, excepto, ADs
-        $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
-        $resultados[$i]['contrato'] == 'Aquisição de Bens'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [11, 12, 19, 26, 28, 29, 30];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 19, 27];
-          break; // Pára o ciclo ao encontrar a condição
-        } elseif(
-        // Empreitadas - Qualquer Procedimento, excepto, ADs
-        $resultados[$i]['procedimento'] != 'Ajuste Direto Simplificado' &&
-        $resultados[$i]['contrato'] == 'Empreitada'){
-          $tipoRegime = $resultados[$i]['regime'];
-          $tipoContrato = $resultados[$i]['contrato'];
-          $tipoProcedimento = $resultados[$i]['procedimento'];
-          $dispensaControlar = [11, 12, 27, 28];
-          $fasesControlar = [1, 4, 5, 10, 13, 14, 18, 19, 26, 29, 30];
-          break; // Pára o ciclo ao encontrar a condição
-      }
-    } else {
-        $tipoRegime = null;
-        $tipoProcedimento = null;
-        $tipoContrato = null;
-        $dispensaControlar = null;
-        $fasesControlar = null;
-    }
-  } else {
-    continue;
-  }
-};
+        $badge = $dias !== '' 
+            ? '<span class="badge rounded-pill bg-' . ($status === 'desconforme' ? 'danger' : 'info') . ' text-white badge-notification"
+                    style="position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">'
+                    . $dias . 
+              '</span>' 
+            : '';
 
-
-$pontosControle = [];
-$referenciasControle = [
-                        $resultado['documento'], 
-                        $resultado['data_documento'], 
-                        $resultado['data_validacao_documento'], 
-                        $resultado['referencias'], 
-                        $resultado['notas']
-                      ];
-
-// Interagir nos resultados da query e descartar os pontos de controle
-// que não pertencem ao procedimento
-foreach($resultados as $resultado){
-  if ($tipoContrato == 'Aquisição de Serviços') {
-    if (in_array($resultado['movimento'], $fasesControlar)) {
-      //continue;
-      $pontosControle[] = [
-                            $resultado['documento'], 
-                            $resultado['data_documento'], 
-                            $resultado['data_validacao_documento'], 
-                            $resultado['referencias'], 
-                            $resultado['notas']
-                          ];
-    }
-    //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
-  } elseif($tipoContrato == 'Aquisição de Bens'){
-    if (in_array($resultado['movimento'], $fasesControlar)) {
-      //continue;
-      $pontosControle[] = [
-                            $resultado['documento'], 
-                            $resultado['data_documento'], 
-                            $resultado['data_validacao_documento'], 
-                            $resultado['referencias'], 
-                            $resultado['notas']
-                          ];
-    }
-    //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
-  } elseif($tipoContrato == 'Empreitada') {
-    if (in_array($resultado['movimento'], $fasesControlar)) {
-      //continue;
-      $pontosControle[] = [
-                            $resultado['documento'], 
-                            $resultado['data_documento'], 
-                            $resultado['data_validacao_documento'], 
-                            $resultado['referencias'], 
-                            $resultado['notas']
-                          ];
-    }
-    //$pontosControle[] = [$resultado['documento'], $resultado['data_documento'], $resultado['notas']];
-  } else {
-    $pontosControle[] = ['Não Iniciado', '' ,''];
-  }
-};
-
-
-// ************************************************
-// Filtrar os pontos de controle para atribuição
-// às variáveis de controle de datas
-$data_BaseGov = [];
-$data_Contrato = [];
-$data_Adjudicacao = [];
-$quantidadePontosControle = count($pontosControle);
-$incremento = 0;
-
-//echo $data_Adjudicacao[0] . "<br>";
-//echo $pontosControle[0][0];
-
-for($i = 0; $i < count($pontosControle); $i++){
-  // atribui, se exitir, o valor da data a BaseGov e acrescenta 20 dias
-  if($pontosControle[$i][0] == 'BaseGov'){
-    $data_BaseGov = $pontosControle[$i][2];
-    //echo "Data de publicação BseGov: " . $data_BaseGov . "<br>";
-  };
-  // atribui, se exitir, o valor da data a Contrato
-  if($pontosControle[$i][0] == 'Contrato'){
-    $data = $pontosControle[$i][2];
-    $data_Contrato = date('Y-m-d', strtotime($data . '+20 days'));
-    //echo "Data de Contrato: " . $data_Contrato . "<br>";
-  };
-  // atribui, se exitir, o valor da data a BaseGov
-  if($pontosControle[$i][0] == 'Adjudicação'){
-    $data = $pontosControle[$i][2];
-    $data_Adjudicacao = date('Y-m-d', strtotime($data . '+20 days'));
-    //echo "Data de Adjudicação: " . $data_Adjudicacao  . "<br>";
-  };
-};
-
-//echo "Pontos de Controle para o Procedimento de " . $tipoProcedimento
-//      . "para o contrato de " . $tipoContrato
-//      . "em Regime de " . $tipoRegime  . " -- "
-//      . $quantidadePontosControle . "<br>";
-//
-
-//echo 'Adjudicação: ' .$data_Adjudicacao;
-//echo var_dump($pontosControle);
-//Enviar os resultados para html
-
-// **************************************
-
-
-
-
-echo '<div class="stepper-wrapper">';
-for($i = 0; $i < count($pontosControle); $i++){
-  if($pontosControle[$i][1] == 0){
-    echo '
-      <div class="stepper-item nulo">
-        <div class="step-counter">'.($i+1).'</div>
-        <div class="step-name">'.$pontosControle[$i][0].'</div>
-      </div>';
-  } else { 
-    if($pontosControle[$i][1] < $pontosControle[$i-1][1] || ($i != 0 && $pontosControle[$i-1][1] == 0) || 
-      ($pontosControle[$i][0] == 'BaseGov' && $data_BaseGov > $data_Adjudicacao && $data_BaseGov > $data_Contrato)){
-      
-      if($i > 0 && $pontosControle[$i-1][1] != 0){
-        // Dias passados entre datas
-        $data_inicio = new DateTime($pontosControle[$i][1]);
-        $data_fim = new DateTime($pontosControle[$i-1][1]);
-
-        $intervalo = $data_inicio->diff($data_fim);
-      };
-
-      echo '
-            <div class="stepper-item desconforme">
-              <div class="step-counter position-relative" 
-                tabindex="0" 
-                role="button" 
-                data-bs-toggle="popover" 
-                data-bs-trigger="focus" 
-                data-bs-placement="top"
-                title="' . $pontosControle[$i][3] . ', Registo: ' . $pontosControle[$i][1] . ' - ' . $pontosControle[$i][4] . '"
-                data-bs-content="' . $pontosControle[$i][2] . '">
-                
-                ' . ($i + 1) . '
-
-                <span class="badge rounded-pill bg-danger text-white badge-notification"
-                      style="position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">
-                  ' . $intervalo->days . '
-                </span>
-              </div>
-
-              <div class="step-name badge bg-danger text-white">' . $pontosControle[$i][0] . '</div>
-              <div class="step-name badge bg-danger text-white">' . $pontosControle[$i][2] . '</div>
-              
-            </div>';
-    } else{
-          if($i > 0 && $pontosControle[$i-1][1] != 0){
-            // Dias passados entre datas
-            $data_inicio = new DateTime($pontosControle[$i][1]);
-            $data_fim = new DateTime($pontosControle[$i-1][1]);
-      
-            $intervalo = $data_inicio->diff($data_fim);
-          };
-
-          echo '
-                <div class="stepper-item conforme">
-                  <div class="step-counter position-relative" 
+        echo '
+            <div class="stepper-item ' . $status . '">
+                <div class="step-counter position-relative"
                     tabindex="0" 
                     role="button" 
                     data-bs-toggle="popover" 
                     data-bs-trigger="focus" 
                     data-bs-placement="top"
-                    title="' . $pontosControle[$i][3] . ', Registo: ' . $pontosControle[$i][1] . ' - ' . $pontosControle[$i][4] . '"
-                    data-bs-content="' . $pontosControle[$i][2] . '">
-                    
-                    ' . ($i + 1) . '
+                    title="' . $pt['refer'] . ', Registo: ' . $pt['data_doc'] . ' - ' . $pt['notas'] . '"
+                    data-bs-content="' . $pt['data_val'] . '">
+                    ' . ($i + 1) . $badge . '
+                </div>
+                <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
+                    . $pt['documento'] . 
+                '</div>
+                <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
+                    . $pt['data_val'] . 
+                '</div>
+            </div>';
+    }
 
-                    <span class="badge rounded-pill bg-info text-white badge-notification"
-                          style="position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">
-                      ' . $intervalo->days . '
-                    </span>
-                  </div>
+    echo '</div>';
+}
 
-                  <div class="step-name badge bg-success text-white">' . $pontosControle[$i][0] . '</div>
-                  <div class="step-name badge bg-success text-white">' . $pontosControle[$i][2] . '</div>
-                </div>';           
-      }
-  }
-};
-
-echo '</div>';
+// === Execução do fluxo ===
+$resultados = buscarResultados($myConn, $codigoProcesso, $descritivos);
+[$regime, $proc, $contrato, $dispensas, $fases] = definirTipoProcesso($resultados);
+$pontos = filtrarPontosControle($resultados, $fases);
+gerarHTMLStepper($pontos);
