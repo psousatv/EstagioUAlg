@@ -50,8 +50,10 @@ function definirTipoProcesso(array $resultados): array {
             $movimentos = [1, 9, 14];
         }
 
-        if ($valor >= 10000 && $proc == 'Ajuste Direto Simplificado') {
+        if ($valor >= 10001 && $proc == 'Ajuste Direto Simplificado') {
             return [$regime, $proc, $contrato, [], [1, 4, 14, 17]];
+        } else {
+            return [$regime, $proc, $contrato, [], [1, 9, 14]];
         }
 
         $fases = [
