@@ -110,7 +110,7 @@ $(document).ready(function () {
                                     <h5>
                                         ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(dados.elegivel)} 
                                         <span class="h6">- ${Intl.NumberFormat("de-DE", 
-                                            { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(dados.faturado_recebido_percent)}
+                                            { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(dados.elegivel_recebido_percent)}
                                         </span>
                                     </h5>
                                 </div>
