@@ -12,7 +12,7 @@ function buscarResultados(PDO $myConn, int $codigoProcesso, array $descritivos):
             p2.proced_regime AS regime,
             p2.proced_contrato AS contrato,
             p2.proced_escolha AS procedimento,
-            d.descr_cod AS movimento,
+            d.descr_cod AS codigo,
             d.descr_nome AS documento,
             MIN(COALESCE(h1.historico_dataemissao, 0)) AS data_documento,
             MIN(COALESCE(h1.historico_datamov, 0)) AS data_validacao_documento,
@@ -43,18 +43,30 @@ function definirTipoProcesso(array $resultados): array {
         $regime = $res['regime'];
 
         // Movimento Fatura (9) removido se houver Início de Procedimento (4)
-        $movimentos = array_column($resultados, 'movimento');
-        if (in_array(4, $movimentos) && in_array(9, $movimentos)) {
-            $movimentos = [1, 4, 14];
-        } else {
-            $movimentos = [1, 9, 14];
+        $movimentosExistentes = array_column($resultados, 'codigo');
+
+        $regras = [
+            [
+                'condicao' => fn($m) => in_array(9, $m),
+                'resultado' => [1, 9, 14],
+            ],
+            [
+                'condicao' => fn($m) => in_array(4, $m),
+                'resultado' => [1, 4, 14],
+            ],
+           
+        ];
+
+        foreach ($regras as $regra) {
+            if ($regra['condicao']($movimentosExistentes)) {
+                $movimentos = $regra['resultado'];
+                break;
+            }
         }
 
         if ($valor >= 10001 && $proc == 'Ajuste Direto Simplificado') {
             return [$regime, $proc, $contrato, [], [1, 4, 14, 17]];
-        } else {
-            return [$regime, $proc, $contrato, [], [1, 9, 14]];
-        }
+        } 
 
         $fases = [
             'Aquisição de Serviços' => [1, 4, 5, 10, 13, 14, 19, 28],
@@ -86,7 +98,9 @@ function filtrarPontosControle(array $resultados, array $fases): array {
     $pontos = [];
 
     foreach ($resultados as $res) {
-        if (in_array($res['movimento'], $fases)) {
+        
+        if (in_array($res['codigo'], $fases)) {
+
             $pontos[] = [
                 'documento' => $res['documento'],
                 'data_doc'  => $res['data_documento'],
