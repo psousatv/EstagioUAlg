@@ -23,12 +23,18 @@ $sqlOrcamentoItemRubrica = "SELECT
                           (SELECT SUM(historico_valor)
                           FROM historico
                           LEFT JOIN processo ON proces_check = historico_proces_check
-                          WHERE proces_orc_check = orcamento.orc_check AND historico_descr_cod = 14) AS total_adjudicado,
+                          WHERE proces_rub_cod = orcamento.orc_rubrica
+                          AND proces_orc_ano = :anoCorrente
+                          AND historico_descr_cod = 14) 
+                          AS total_adjudicado,
                           (SELECT SUM(fact_valor) FROM factura
                           LEFT JOIN processo ON proces_check = fact_proces_check
-                          WHERE proces_orc_check = orcamento.orc_check AND proces_report_valores = 1) AS total_faturado
+                          WHERE proces_rub_cod = orcamento.orc_rubrica
+                          AND proces_orc_ano = :anoCorrente
+                          AND proces_report_valores = 1) 
+                          AS total_faturado
                           FROM orcamento
-                          WHERE orc_rub_cod = :orcamentoItem AND orc_ano = :anoCorrente
+                          WHERE orc_rubrica = :orcamentoItem AND orc_ano = :anoCorrente
                           GROUP BY tipo
                           ORDER BY tipo";
 

@@ -24,17 +24,17 @@ $sqlOrcamento = "
         (
             SELECT SUM(COALESCE(historico_valor, 1))
             FROM historico
-            LEFT JOIN processo ON proces_check = historico_proces_check
+            JOIN processo ON proces_check = historico_proces_check
             WHERE proces_orc_check = orcamento.orc_check AND historico_descr_cod = 14
         ) AS total_adjudicado,
         (
             SELECT SUM(COALESCE(fact_valor, 1))
             FROM factura
-            LEFT JOIN processo ON proces_check = fact_proces_check
+            JOIN processo ON proces_check = fact_proces_check
             WHERE proces_orc_check = orcamento.orc_check AND proces_report_valores = 1
         ) AS total_faturado
     FROM orcamento
-    WHERE orc_rub_cod = :orcamentoItem AND orc_ano = :anoCorrente
+    WHERE orc_rubrica = :orcamentoItem AND orc_ano = :anoCorrente
     GROUP BY orc_check
     ORDER BY orc_tipo";
 
