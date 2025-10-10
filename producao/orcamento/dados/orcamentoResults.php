@@ -14,8 +14,7 @@ $anoCorrente = $_GET['anoCorrente'] ?? date('Y');
 //};
 
 // Valores do Orçamento na Rúbrica
-$sqlOrcamentoItemRubrica = "SELECT  
-                          orc_check AS controle,
+$sqlOrcamentoItemRubrica = "SELECT
                           orc_tipo AS tipo,
                           orc_conta_descritiva AS descritivo,
                           orc_valor_previsto AS previsto,
@@ -54,31 +53,6 @@ $rows = count($orcamentoList);
 $totalPrevisto = array_sum(array_column($orcamentoList, "total_previsto"));
 $totalAdjudicado = array_sum(array_column($orcamentoList, "total_adjudicado"));
 $totalFaturado = array_sum(array_column($orcamentoList, "total_faturado"));
-
-// Processo indexados ao orçamento
-$sqlProcessosOrcamentoItemRubrica = "SELECT
-                                     proces_check,
-                                     proces_orc_check,
-                                     proces_padm AS padm,
-                                     proced_sigla AS procedimento,
-                                     proces_nome AS designacao,                                    
-                                     (SELECT SUM(COALESCE(historico_valor, 0)) FROM historico
-                                     WHERE historico_proces_check = proces_check 
-                                     AND historico_descr_cod = 3) AS consulta,
-                                     (SELECT SUM(COALESCE(historico_valor, 0)) FROM historico
-                                     WHERE historico_proces_check = proces_check 
-                                     AND historico_descr_cod = 14) AS adjudicado,
-                                     (SELECT SUM(COALESCE(fact_valor, 0)) FROM factura
-                                     WHERE fact_proces_check = proces_check) AS faturado
-                                     FROM processo 
-                                     INNER JOIN orcamento ON orc_check = proces_orc_check
-                                     INNER JOIN procedimento ON proced_cod = proces_proced_cod
-                                     WHERE proces_orc_check = orc_check
-                                     AND proces_report_valores = 1
-                                     ORDER BY designacao";
-
-$stmt3 = $myConn->query($sqlProcessosOrcamentoItemRubrica);
-$processosOrcamentoItemRubrica = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 
 echo '
   <table class="table table-responsive table-striped">

@@ -36,7 +36,7 @@ $sqlOrcamento = "
     FROM orcamento
     WHERE orc_rubrica = :orcamentoItem AND orc_ano = :anoCorrente
     GROUP BY orc_check
-    ORDER BY orc_tipo";
+    ORDER BY tipo";
 
 $stmtOrc = $myConn->prepare($sqlOrcamento);
 $stmtOrc->bindParam(':orcamentoItem', $orcamentoItem);
