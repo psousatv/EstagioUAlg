@@ -64,16 +64,23 @@ $registos = count($relacoes);
         </li>
         <li>
           <span>Orçamento na Rubrica:</span>
-          <?= htmlspecialchars($processo['proces_linha_orc']) ?>
+          <?= htmlspecialchars($processo['proces_linha_orc']) ?>,
           <?= htmlspecialchars($processo['proces_orc_rubrica']) ?>
         </li>
         <li>
           <span>Setores Especiais:</span>
-          <?= htmlspecialchars($processo['proces_linha_se']) ?> - (
-            <?= htmlspecialchars($processo['proces_data_pub_se']) ?>)
+          <?= htmlspecialchars($processo['proces_linha_se']) ?> - 
+          Publicado no sítio da Taviraverde a
+          <?= htmlspecialchars($processo['proces_data_pub_se']) ?>
         </li>
         <li>
-          <span>Fundos Comunitárros:</span>
+          <a>Recepção/Execução: Em Curso</a>
+        </li>
+        <li>
+          <a>Documento em condições de liquidar: A indicar superiormente</a>
+        </li>
+        <li>
+          <span>Fundos Comunitários:</span>
           <?= htmlspecialchars($processo['proces_cand']) ?>
           <?= htmlspecialchars($processo['proces_cand_cnt']) ?>
         </li>
