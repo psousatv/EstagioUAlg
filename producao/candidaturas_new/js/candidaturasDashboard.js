@@ -13,9 +13,9 @@ function intVal(i) {
 }
 
 // Redireciona ao selecionar uma candidatura
-function candidaturaRedirected(nomeCandidatura) {
-    console.log("Nome Candidatura:", nomeCandidatura);
-    var URL = "candidaturaNested.html?nomeCandidatura=" + encodeURIComponent(nomeCandidatura);
+function candidaturaRedirected(codigoCandidatura) {
+    // console.log("Nome Candidatura:", codigoCandidatura);
+    var URL = "candidaturaNested.html?codigoCandidatura=" + encodeURIComponent(codigoCandidatura);
     window.location.href = URL;
 }
 
@@ -25,7 +25,7 @@ $(document).ready(function () {
         .then(response => response.json())
         .then(data => {
             // Inicializa DataTable
-            var dataTable = $('#tabela').DataTable({
+            var dataTable = $('#tituloCandidatura').DataTable({
                 searching: false,
                 lengthChange: false,
                 aaData: data,

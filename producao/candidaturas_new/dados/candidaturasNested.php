@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$nomeCandidatura = $_GET['nomeCandidatura'] ?? null;
+$codigoCandidatura = $_GET['codigoCandidatura'] ?? null;
 
 if (!$nomeCandidatura) {
     echo json_encode(["error" => "Parâmetro 'orcamentoItem' é obrigatório."]);
@@ -14,12 +14,23 @@ if (!$nomeCandidatura) {
 }
 
 // Funções para buscar dados
-function getTitulo($myConn, $nomeCandidatura) {
-    $sql = "SELECT rub_cod, rub_tipo, rub_rubrica, rub_item
-            FROM rubricas
-            WHERE rub_cod = :nomeCandidatura";
+function getTitulo($myConn, $codigoCandidatura) {
+    $sql = "SELECT 
+            candsub_aviso AS aviso,
+            candsub_codigo AS codigo,
+            candsub_nome AS designacao,
+            candsub_submissao AS submetida,
+            candsub_aprovacao AS aprovada,
+            candsub_dt_Aceitacao AS termo_aceitacao,
+            candasub_dt_inicio AS inicio,
+            candsub_dt_fim AS termo,
+            candsub_max_elegivel AS valor_elegivel,
+            candsub_fundo AS comparticipacao,
+            candsub_estado AS estado
+            FROM candidaturas_submetidas
+            WHERE candsub_codigo = :codigoCandidatura";
     $stmt = $myConn->prepare($sql);
-    $stmt->bindParam(':nomeCandidatura', $nomeCandidatura, PDO::PARAM_STR);
+    $stmt->bindParam(':codigoCandidatura', $codigoCandidatura, PDO::PARAM_STR);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -152,3 +163,4 @@ foreach ($rubricas as $rubrica) {
 // Retorno JSON
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode(['rubricas' => $jsonDados], JSON_PRETTY_PRINT);
+

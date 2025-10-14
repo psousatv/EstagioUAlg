@@ -49,65 +49,51 @@
     </ul>
 </nav>
 
-<div class="container-fluid">
-
-  <!-- Nome e Valores da Rubrica -->
-  <div class="col col-md-12">  
-    <div class="row mt-2 align-items-center">
-
-      <div class="col col-md-8">
-        <!-- Nome da Rubrica -->
-        <div class="bg-primary text-white d-inline-block p-2" id="nomeCandidatura"></div>
+<div class="page_wrapper">
+  <!-- Page Content-->
+  <h1 class="mt-2"></h1>
+  <div class="container-fluid">  
         
-        <!-- Botões sem texto, apenas ícones, com a mesma altura de nomeRubrica -->
-        <button class="btn btn-warning d-inline-block ml-2" id="btnRefresh">
-          <i class="fas fa-sync-alt"></i>
-        </button>
-        <button class="btn btn-dark d-inline-block ml-2" id="btnBack">
-          <i class="fas fa-search"></i>
-        </button>
-        <button class="btn btn-danger d-inline-block ml-2" id="btnBack">
-          <i class="fas fa-arrow-left"></i>
-        </button>
+    <!-- Nome da Candidatura -->
+    <div class="row">
+      <div class="col col-md-12">
+        <table class="table table-responsive table-striped" id="tituloCandidatura">
+          <b>Nome da Candidatura e Botões de Voltar Refresh e Voltar atrás</b>
+        </table>
       </div>
-
-      <!-- Valores na Rubrica -->
-      <div class="col col-md-4 ml-auto">
-        <div class="bg-info text-white d-inline-block p-2" id="valoresCandidatura">Valores da Candiatura - Aprovado, Faturado e Reembolsado</div>
-      </div>
-      
     </div>
-  </div>
 
-  <!-- DataTables Nested -->
-  <div class="row mt-2">
-    <div class="col col-md-12">
-      <div class="card">
+    <!-- Nome dos Processos na Candidatura -->
+    <div class="row" >
+      <div class="col col md-12" id="resumoValoresCandidatura">
+      <b>Distribuição de Valores da Candidatura: Aprovado, Adjudicado, Faturado e Reembolsado</b>
+      </div>
+    </div>
+    
+    <!-- DataTables Nested -->
+    <div class="row">
+      <div class="col col-md-12">
+        <div class="card">
           <div class="card-body">
-              <table id="processosNested" class="display" style="width:100%">
-                  <thead>
-                      <tr>
-                          <th>Rubrica</th>
-                          <th>Previsto</th>
-                          <th>Adjudicado</th>
-                          <th>Faturado</th>
-                          <th>Saldo</th>
-                          <th>Detalhes</th>
-                      </tr>
-                  </thead>
-              </table>
+            <table id="processosCandidatura" class="display" style="width:100%">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Processo</th>
+                  <th>Adjudicado</th>
+                  <th>Faturado</th>
+                  <th>Reembolsado</th>
+                  <th>Não Reembolsado</th>
+                  <th>Detalhes</th>
+                </tr>
+              </thead>
+            </table>
           </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Facturação por Processo Administrativo -->
-  <div class="row mt-2">
-    <div class="col col-md-12">
-      <div class="button bg-secondary text-white d-inline-block p-2" id="valoresPADM">Valores no Processo Administrativo</div>
-    </div>
   </div>
-
 </div>
 
 <script src="../../global/js/scripts.js"></script>

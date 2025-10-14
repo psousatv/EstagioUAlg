@@ -69,15 +69,17 @@ $registos = count($relacoes);
         </li>
         <li>
           <span>Setores Especiais:</span>
-          <?= htmlspecialchars($processo['proces_linha_se']) ?> - 
-          Publicado no sítio da Taviraverde a
-          <?= htmlspecialchars($processo['proces_data_pub_se']) ?>
+          <?= htmlspecialchars($processo['proces_linha_se']) ?> 
+          <?php if ($processo['proces_data_pub_se']): ?>
+              <a>Publicado no sítio da Taviraverde a</a>
+              <?= htmlspecialchars($processo['proces_data_pub_se']) ?>
+          <?php endif; ?>
         </li>
         <li>
-          <a>Recepção/Execução: Em Curso</a>
+          <b>Recepção/Execução: Em Curso / Encerrada / Terminada, a aguardar fatura final.</b>
         </li>
         <li>
-          <a>Documento em condições de liquidar: A indicar superiormente</a>
+          <b>Documento em condições de liquidar: A indicar superiormente / Em condições de liquidar.</b>
         </li>
         <li>
           <span>Fundos Comunitários:</span>

@@ -85,10 +85,10 @@ $(document).ready(function () {
         success: function (response) {
             if (response && response.rubricas && response.rubricas.length > 0) {
                 const rubrica = response.rubricas[0];
-                $('#nomeRubrica').text(`${rubrica.codigoRubrica}: ${rubrica.descricaoRubrica} - ${rubrica.descricaoItem}`);
+                $('#tituloCandidatura').text(`${rubrica.codigoRubrica}: ${rubrica.descricaoRubrica} - ${rubrica.descricaoItem}`);
 
-                // Mostrar os totais da rubrica
-                $('#valoresRubrica').html(`
+                // Mostrar os totais da Candidatura
+                $('#resumoValoresCandidatura').html(`
                     <div class="row text-center">
                         <div class="col-4"><div class="p-2 bg-dark text-white rounded"><strong>Previsto</strong><br>${formatCurrency(rubrica.totaisPrevisto)}</div></div>
                         <div class="col-4"><div class="p-2 bg-success text-white rounded"><strong>Adjudicado</strong><br>${formatCurrency(rubrica.totaisAdjudicado)}</div></div>
