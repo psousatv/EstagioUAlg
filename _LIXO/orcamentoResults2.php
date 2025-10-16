@@ -15,7 +15,7 @@ $anoCorrente = $_GET['anoCorrente'] ?? date('Y');
 
 // Valores do Orçamento na Rúbrica
 $sqlOrcamentoItemRubrica = "SELECT
-                          orc_tipo AS tipo,
+                          orc_regime AS regime,
                           orc_conta_descritiva AS descritivo,
                           orc_valor_previsto AS previsto,
                           SUM(orc_valor_previsto) AS total_previsto,
@@ -34,8 +34,8 @@ $sqlOrcamentoItemRubrica = "SELECT
                           AS total_faturado
                           FROM orcamento
                           WHERE orc_rubrica = :orcamentoItem AND orc_ano = :anoCorrente
-                          GROUP BY tipo
-                          ORDER BY tipo";
+                          GROUP BY regime
+                          ORDER BY regime, descritivo";
 
 //$stmt1 = $myConn->query($sqlOrcamentoItemRubrica);
 //$orcamentoItemRubrica = $stmt1->fetchAll(PDO::FETCH_ASSOC);

@@ -15,23 +15,23 @@ function orcamentoTitulo(orcamentoItem) {
   xmlhttp.open("GET","dados/orcamentoTitulo.php?orcamentoItem="+orcamentoItem,true);
   xmlhttp.send();
 
-  valoresRubrica(orcamentoItem);
+  //valoresRubrica(orcamentoItem);
   valoresPADM(orcamentoItem);
  
 };
 
-function valoresRubrica(orcamentoItem) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("valoresRubrica").innerHTML = this.responseText;
-    }
-  }
-
-  xmlhttp.open("GET","dados/orcamentoResults.php?orcamentoItem="+orcamentoItem,true);
-  xmlhttp.send();
- 
-};
+//function valoresRubrica(orcamentoItem) {
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.onreadystatechange = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      document.getElementById("valoresRubrica").innerHTML = this.responseText;
+//    }
+//  }
+//
+//  xmlhttp.open("GET","dados/orcamentoResults.php?orcamentoItem="+orcamentoItem,true);
+//  xmlhttp.send();
+// 
+//};
 
 function valoresPADM(orcamentoItem) {
   var xmlhttp = new XMLHttpRequest();

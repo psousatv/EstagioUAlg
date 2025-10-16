@@ -26,4 +26,4 @@ foreach($data as $row) {
         <div class="btn btn-primary"><a class="text-white" href="orcamentoDashboard.html"><i class="fa fa-solid fa-search"></i></a></div>
         
     ';
-    };
+};

@@ -17,6 +17,7 @@ $sqlOrcamento = "
     SELECT  
         orc_check,
         orc_tipo AS tipo,
+        orc_regime AS regime,
         orc_conta_agregadora AS agregadora,
         orc_conta_descritiva AS descritivo,
         orc_valor_previsto AS previsto,
@@ -36,7 +37,7 @@ $sqlOrcamento = "
     FROM orcamento
     WHERE orc_rubrica = :orcamentoItem AND orc_ano = :anoCorrente
     GROUP BY orc_check
-    ORDER BY tipo";
+    ORDER BY regime, descritivo";
 
 $stmtOrc = $myConn->prepare($sqlOrcamento);
 $stmtOrc->bindParam(':orcamentoItem', $orcamentoItem);

@@ -13,11 +13,9 @@ $(document).ready(function () {
       paging: false,
       searching: false,
       select: true,
-      "columnDefs": [
-          {"className": "dt-head-center", "targets": "_all"}
-        ],
+      columnDefs: [{ "className": "dt-head-center", "targets": "_all" }],
       columns: [
-        { data: 'tipo' },
+        { data: 'regime' },
         { data: 'descritivo' },
         { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
         { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
@@ -27,19 +25,14 @@ $(document).ready(function () {
           className: 'dt-body-right',
           render: function (data, type, row) {
             let diff = 0;
-            
-            const previsto = parseFloat(row.total_previsto) || 0;
-            const adjudicado = parseFloat(row.total_adjudicado) || 0;
-            const faturado = parseFloat(row.total_faturado) || 0;
-  
-            if (adjudicado === 0 && faturado === 0) {
-              diff = previsto;
-            } else if (adjudicado > 0 && faturado === 0){
-              diff = previsto - adjudicado;
-            } else {
-              diff = previsto - faturado;
-            }
-  
+            const previsto = row.total_previsto || 0;
+            const adjudicado = row.total_adjudicado || 0;
+            const faturado = row.total_faturado || 0;
+    
+            if (adjudicado === 0 && faturado === 0) diff = previsto;
+            else if (adjudicado > 0 && faturado === 0) diff = previsto - adjudicado;
+            else diff = previsto - faturado;
+    
             return $.fn.dataTable.render.number('.', ',', 2, '').display(diff);
           }
         },
@@ -51,8 +44,39 @@ $(document).ready(function () {
         }
       ]
     });
-  
-    // Nested rows como antes
+    
+    // Atualizar resumo depois de desenhar
+    table.on('draw', function () {
+      const data = table.rows().data().toArray();
+      const registos = data.length;
+    
+      const totalPrevisto = data.reduce((sum, r) => sum + (r.total_previsto || 0), 0);
+      const totalAdjudicado = data.reduce((sum, r) => sum + (r.total_adjudicado || 0), 0);
+      const totalFaturado = data.reduce((sum, r) => sum + (r.total_faturado || 0), 0);
+      const saldo = totalAdjudicado - totalFaturado;
+    
+      const titulo = `
+        <table class="table table-responsive table-striped">
+          <tr>
+            <td class="bg-primary text-white">Items no Orçamento 
+              <span class="badge bg-secondary">(${registos})</span>
+            </td>
+            <td class="bg-primary text-white">${formatCurrency(totalPrevisto)}</td>
+            <td class="bg-secondary text-white">Processos Adjudicados</td>
+            <td class="bg-secondary text-white">${formatCurrency(totalAdjudicado)}</td>  
+            <td class="bg-success text-white">Valor Faturado</td>
+            <td class="bg-success text-white">${formatCurrency(totalFaturado)}</td>
+            <td class="bg-info text-white">Saldo</td>
+            <td class="bg-info text-white">${formatCurrency(saldo)}</td>
+          </tr>
+        </table>
+      `;
+    
+      document.getElementById("valoresRubrica").innerHTML = titulo;
+    });
+    
+
+    // Nested rows
     function format(d) {
       if (!d.processos || d.processos.length === 0) return 'Sem processos';
   
@@ -152,3 +176,7 @@ $(document).ready(function () {
       return params;
     }
   
+        // Função para formatar valores monetários
+        function formatCurrency(value) {
+          return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+      }
