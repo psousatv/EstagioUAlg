@@ -61,7 +61,7 @@ try {
         WHERE o.orc_rubrica = :orcamentoItem
         AND o.orc_ano = :anoCorrente
         GROUP BY o.orc_check
-        ORDER BY o.orc_regime, o.orc_conta_descritiva
+        ORDER BY o.orc_conta_descritiva
     ";
 
     $stmtOrc = $myConn->prepare($sqlOrcamento);
@@ -86,18 +86,23 @@ try {
                 p.proces_padm AS padm,
                 proc.proced_regime AS regime,
                 p.proces_nome AS designacao,
-                COALESCE(SUM(h3.historico_valor), 0) AS consulta,
-                COALESCE(SUM(h14.historico_valor), 0) AS adjudicado,
-                COALESCE(SUM(f.fact_valor), 0) AS faturado
+                (SELECT COALESCE(SUM(h3.historico_valor), 0) 
+                 FROM historico h3 
+                 WHERE h3.historico_proces_check = p.proces_check
+                 AND h3.historico_descr_cod = 3) AS consulta,
+                (SELECT COALESCE(SUM(h14.historico_valor), 0) 
+                 FROM historico h14 
+                 WHERE h14.historico_proces_check = p.proces_check
+                 AND h14.historico_descr_cod = 14) AS adjudicado,
+                (SELECT COALESCE(SUM(f.fact_valor), 0)
+                 FROM factura f 
+                 WHERE f.fact_proces_check = p.proces_check) AS faturado
             FROM processo p
             INNER JOIN procedimento proc ON proc.proced_cod = p.proces_proced_cod
-            LEFT JOIN historico h3  ON h3.historico_proces_check = p.proces_check AND h3.historico_descr_cod = 3
-            LEFT JOIN historico h14 ON h14.historico_proces_check = p.proces_check AND h14.historico_descr_cod = 14
-            LEFT JOIN factura f     ON f.fact_proces_check = p.proces_check
             WHERE p.proces_orc_check IN ($placeholders)
-              AND p.proces_report_valores = 1
+            AND p.proces_report_valores = 1
             GROUP BY p.proces_check
-            ORDER BY proc.proced_regime DESC, p.proces_nome
+            ORDER BY p.proces_nome
         ";
 
         $stmtProc = $myConn->prepare($sqlProcessos);
