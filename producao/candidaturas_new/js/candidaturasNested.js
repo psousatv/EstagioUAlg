@@ -66,7 +66,7 @@ $(document).ready(function () {
 
     // Função para exibir os detalhes do processo
     function showDetails(candidatura) {
-        // Aqui você pode fazer uma requisição para obter os dados do processo específico
+        // Aqui pode fazer uma require para obter os dados do processo específico
         alert(`Exibindo detalhes para a candidatura: ${candidatura}`);
     }
 
@@ -83,21 +83,21 @@ $(document).ready(function () {
         url: 'dados/candidaturasNested.php',
         data: queryParams,
         success: function (response) {
-            if (response && response.rubricas && response.rubricas.length > 0) {
-                const rubrica = response.rubricas[0];
-                $('#tituloCandidatura').text(`${rubrica.codigoRubrica}: ${rubrica.descricaoRubrica} - ${rubrica.descricaoItem}`);
+            if (response && response.candidaturas && response.candidaturas.length > 0) {
+                const candidatura = response.candidaturas[0];
+                $('#tituloCandidatura').text(`${candidatura.codigoCandidatura}: ${candidatura.nomeCandidatura} - ${candidatura.descriçãoCandidatura}`);
 
                 // Mostrar os totais da Candidatura
                 $('#resumoValoresCandidatura').html(`
                     <div class="row text-center">
-                        <div class="col-4"><div class="p-2 bg-dark text-white rounded"><strong>Previsto</strong><br>${formatCurrency(rubrica.totaisPrevisto)}</div></div>
-                        <div class="col-4"><div class="p-2 bg-success text-white rounded"><strong>Adjudicado</strong><br>${formatCurrency(rubrica.totaisAdjudicado)}</div></div>
-                        <div class="col-4"><div class="p-2 bg-warning text-dark rounded"><strong>Faturado</strong><br>${formatCurrency(rubrica.totaisFaturado)}</div></div>
+                        <div class="col-4"><div class="p-2 bg-dark text-white rounded"><strong>Previsto</strong><br>${formatCurrency(candidatura.totaisPrevisto)}</div></div>
+                        <div class="col-4"><div class="p-2 bg-success text-white rounded"><strong>Adjudicado</strong><br>${formatCurrency(candidatura.totaisAdjudicado)}</div></div>
+                        <div class="col-4"><div class="p-2 bg-warning text-dark rounded"><strong>Faturado</strong><br>${formatCurrency(candidatura.totaisFaturado)}</div></div>
                     </div>
                 `);
 
-                // Gerar a tabela com os dados da rubrica
-                generateTable(rubrica.orcamentos);
+                // Gerar a tabela com os dados da candidatura
+                generateTable(candidatura.orcamentos);
             } else {
                 alert('Nenhum dado encontrado');
             }

@@ -15,7 +15,7 @@ function intVal(i) {
 // Redireciona ao selecionar uma candidatura
 function candidaturaRedirected(codigoCandidatura) {
     // console.log("Nome Candidatura:", codigoCandidatura);
-    var URL = "candidaturaNested.html?codigoCandidatura=" + encodeURIComponent(codigoCandidatura);
+    var URL = "candidaturasNested.html?codigoCandidatura=" + encodeURIComponent(codigoCandidatura);
     window.location.href = URL;
 }
 
