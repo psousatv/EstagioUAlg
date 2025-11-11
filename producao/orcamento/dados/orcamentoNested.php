@@ -61,7 +61,7 @@ try {
         WHERE o.orc_rubrica = :orcamentoItem
         AND o.orc_ano = :anoCorrente
         GROUP BY o.orc_check
-        ORDER BY o.orc_conta_descritiva
+        ORDER BY o.orc_conta_descritiva, o.orc_regime
     ";
 
     $stmtOrc = $myConn->prepare($sqlOrcamento);

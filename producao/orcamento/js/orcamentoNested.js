@@ -76,7 +76,7 @@ $(document).ready(function () {
               ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
             </div>
             <div class="btn btn-warning">
-              <a href="orcamentoNested.html" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
+              <a href="orcamentoNested.html?orcamentoItem=${rubrica.rubrica}&anoCorrente=${2025}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
             </div>
             <div class="btn btn-primary">
               <a class="text-white" href="orcamentoDashboard.html"><i class="fa-solid fa-search"></i></a>
@@ -86,19 +86,19 @@ $(document).ready(function () {
           const totalPrevisto = data.reduce((sum, r) => sum + (r.total_previsto || 0), 0);
           const totalAdjudicado = data.reduce((sum, r) => sum + (r.total_adjudicado || 0), 0);
           const totalFaturado = data.reduce((sum, r) => sum + (r.total_faturado || 0), 0);
-          const saldo = totalAdjudicado - totalFaturado;
+          const saldo = totalPrevisto - totalFaturado;
 
           $('#valoresRubrica').html(`
             <table class="table table-responsive table-striped">
               <tr>
-                <td class="bg-primary text-white">Items no Orçamento <span class="badge bg-secondary">(${data.length})</span></td>
+                <td class="bg-primary text-white">Orçamento <span class="badge bg-secondary">(${data.length})</span></td>
                 <td class="bg-primary text-white">${formatCurrency(totalPrevisto)}</td>
-                <td class="bg-secondary text-white">Processos Adjudicados</td>
+                <td class="bg-secondary text-white">Adjudicados </td>
                 <td class="bg-secondary text-white">${formatCurrency(totalAdjudicado)}</td>  
-                <td class="bg-success text-white">Valor Faturado</td>
-                <td class="bg-success text-white">${formatCurrency(totalFaturado)}</td>
-                <td class="bg-info text-white">Saldo</td>
+                <td class="bg-info text-white">Saldo </td>
                 <td class="bg-info text-white">${formatCurrency(saldo)}</td>
+                <td class="bg-success text-white">Faturado </td>
+                <td class="bg-success text-white">${formatCurrency(totalFaturado)}</td>
               </tr>
             </table>
           `);
