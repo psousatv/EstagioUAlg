@@ -33,7 +33,6 @@ try {
             o.orc_check,
             o.orc_tipo AS tipo,
             o.orc_regime AS regime,
-            o.orc_conta_agregadora AS agregadora,
             o.orc_conta_descritiva AS descritivo,
             o.orc_valor_previsto AS previsto,
             SUM(o.orc_valor_previsto) AS total_previsto,
@@ -56,13 +55,13 @@ try {
             FROM processo p
             JOIN factura fa ON fa.fact_proces_check = p.proces_check
             WHERE p.proces_report_valores = 1
+            AND YEAR(fa.fact_data) = :anoCorrente
             GROUP BY p.proces_orc_check
         ) f ON f.proces_orc_check = o.orc_check
         WHERE o.orc_rubrica = :orcamentoItem
         AND o.orc_ano = :anoCorrente
         GROUP BY o.orc_check
-        ORDER BY o.orc_conta_descritiva, o.orc_regime
-    ";
+        ORDER BY tipo, regime";
 
     $stmtOrc = $myConn->prepare($sqlOrcamento);
     $stmtOrc->bindParam(':orcamentoItem', $orcamentoItem, PDO::PARAM_INT);
@@ -86,6 +85,7 @@ try {
                 p.proces_padm AS padm,
                 proc.proced_regime AS regime,
                 p.proces_nome AS designacao,
+                p.proces_val_max AS previsto,
                 (SELECT COALESCE(SUM(h3.historico_valor), 0) 
                  FROM historico h3 
                  WHERE h3.historico_proces_check = p.proces_check
@@ -96,7 +96,8 @@ try {
                  AND h14.historico_descr_cod = 14) AS adjudicado,
                 (SELECT COALESCE(SUM(f.fact_valor), 0)
                  FROM factura f 
-                 WHERE f.fact_proces_check = p.proces_check) AS faturado
+                 WHERE f.fact_proces_check = p.proces_check
+                 AND YEAR(f.fact_data) = $anoCorrente) AS faturado
             FROM processo p
             INNER JOIN procedimento proc ON proc.proced_cod = p.proces_proced_cod
             WHERE p.proces_orc_check IN ($placeholders)

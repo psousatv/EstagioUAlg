@@ -17,16 +17,18 @@ $(document).ready(function () {
           orcamento: proc.linha_orc,
           sespeciais: proc.linha_se,
           designacao: proc.designacao,
+          previsto: proc.previsto,
           adjudicado: 0,
           faturado: 0
         };
       }
+      
       acc[key].adjudicado += parseFloat(proc.adjudicado) || 0;
       acc[key].faturado += parseFloat(proc.faturado) || 0;
       return acc;
     }, {});
 
-    const rows = Object.values(grouped).sort((a, b) => b.regime.localeCompare(a.regime));
+    const rows = Object.values(grouped).sort((a, b) => a.designacao.localeCompare(b.designacao));
 
     let html = `
       <table class="table nested table-dark">
@@ -34,8 +36,9 @@ $(document).ready(function () {
           <tr>
             <th>Regime</th>
             <th>Orçamento</th>
-            <th>S.Especiais</th>
+            <th>Listagem SE</th>
             <th>Designação</th>
+            <th class="text-center">Previsto</th>
             <th class="text-center">Adjudicado</th>
             <th class="text-center">Faturado</th>
             <th class="text-center">Saldo</th>
@@ -51,6 +54,7 @@ $(document).ready(function () {
         <td>${proc.orcamento}</td>
         <td>${proc.sespeciais}</td>
         <td>${proc.designacao}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.previsto)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}</td>
@@ -62,88 +66,107 @@ $(document).ready(function () {
   }
 
   // Inicializa DataTable
-  table = $('#processosNested').DataTable({
-    ajax: {
-      url: 'dados/orcamentoNested.php',
-      dataSrc: function (json) {
-        // Atualizar título e resumo
-        const rubrica = json.rubrica || {};
-        const data = json.data || [];
+table = $('#processosNested').DataTable({
+  ajax: {
+    url: 'dados/orcamentoNested.php',
+    dataSrc: function (json) {
+      const rubrica = json.rubrica || {};
+      const data = json.data || [];
 
-        if (data.length > 0) {
-          $('#titulo').html(`
-            <div class="btn btn-primary col-md-8 d-grid small text-white text-left">
-              ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
-            </div>
-            <div class="btn btn-warning">
-              <a href="orcamentoNested.html?orcamentoItem=${rubrica.rubrica}&anoCorrente=${2025}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
-            </div>
-            <div class="btn btn-primary">
-              <a class="text-white" href="orcamentoDashboard.html"><i class="fa-solid fa-search"></i></a>
-            </div>
-          `);
+      // Ordenar pelo tipo
+      data.sort((a, b) => a.tipo.localeCompare(b.tipo));
 
-          const totalPrevisto = data.reduce((sum, r) => sum + (r.total_previsto || 0), 0);
-          const totalAdjudicado = data.reduce((sum, r) => sum + (r.total_adjudicado || 0), 0);
-          const totalFaturado = data.reduce((sum, r) => sum + (r.total_faturado || 0), 0);
-          const saldo = totalPrevisto - totalFaturado;
+      // Array com a contagem de processos de cada linha
+      window.processosPorLinha = data.map(row => Array.isArray(row.processos) ? row.processos.length : 0);
 
-          $('#valoresRubrica').html(`
-            <table class="table table-responsive table-striped">
-              <tr>
-                <td class="bg-primary text-white">Orçamento <span class="badge bg-secondary">(${data.length})</span></td>
-                <td class="bg-primary text-white">${formatCurrency(totalPrevisto)}</td>
-                <td class="bg-secondary text-white">Adjudicados </td>
-                <td class="bg-secondary text-white">${formatCurrency(totalAdjudicado)}</td>  
-                <td class="bg-info text-white">Saldo </td>
-                <td class="bg-info text-white">${formatCurrency(saldo)}</td>
-                <td class="bg-success text-white">Faturado </td>
-                <td class="bg-success text-white">${formatCurrency(totalFaturado)}</td>
-              </tr>
-            </table>
-          `);
-        }
+      // Total de processos de todas as linhas
+      const totalProcessos = window.processosPorLinha.reduce((sum, qtd) => sum + qtd, 0);
 
-        return json.data || [];
-      },
-      data: function (d) {
-        return { ...d, ...queryParams };
+      console.table(rubrica);
+      console.table(data);
+
+      if (data.length > 0) {
+        $('#titulo').html(`
+          <div class="btn btn-primary col-md-8 d-grid small text-white text-left">
+            ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
+          </div>
+          <div class="btn btn-warning">
+            <a href="orcamentoNested.html?orcamentoItem=${rubrica.rubrica}&anoCorrente=2025" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
+          </div>
+          <div class="btn btn-primary">
+            <a class="text-white" href="orcamentoDashboard.html"><i class="fa-solid fa-search"></i></a>
+          </div>
+        `);
+
+        const totalPrevisto = data.reduce((sum, r) => sum + (r.total_previsto || 0), 0);
+        const totalAdjudicado = data.reduce((sum, r) => sum + (r.total_adjudicado || 0), 0);
+        const totalFaturado = data.reduce((sum, r) => sum + (r.total_faturado || 0), 0);
+        const saldo = totalPrevisto - totalFaturado;
+
+        $('#valoresRubrica').html(`
+          <table class="table table-striped table-md">
+            <tr>
+              <td class="bg-primary text-white">Orçamento</td>
+              <td class="bg-primary text-white text-end">${formatCurrency(totalPrevisto)}</td>
+              <td class="bg-secondary text-white">
+                Adjudicados <span class="badge bg-success">(${totalProcessos})</span>
+              </td>
+              <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>  
+              <td class="bg-success text-white">Faturado </td>
+              <td class="bg-success text-white text-end">${formatCurrency(totalFaturado)}</td>
+              <td class="bg-info text-white">Saldo </td>
+              <td class="bg-info text-white text-end">${formatCurrency(saldo)}</td>
+            </tr>
+          </table>
+        `);
+      }
+
+      return data;
+    },
+    data: function(d) {
+      return { ...d, ...queryParams };
+    }
+  },
+  paging: false,
+  searching: false,
+  select: true,
+  columnDefs: [{ className: "dt-head-center", targets: "_all" }],
+  order: [[6, 'asc']],
+  columns: [
+    { data: 'regime' },
+    { 
+      data: 'descritivo',
+      render: function(data, type, row, meta) {
+        const totalProcessosLinha = window.processosPorLinha[meta.row] || 0;
+        return `${data} <span class="badge bg-info text-white">(${totalProcessosLinha})</span>`;
       }
     },
-    paging: false,
-    searching: false,
-    select: true,
-    columnDefs: [{ className: "dt-head-center", targets: "_all" }],
-    columns: [
-      { data: 'regime' },
-      { data: 'descritivo' },
-      { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-      { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-      { data: 'total_faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-      {
-        data: null,
-        className: 'dt-body-right',
-        render: function (data, type, row) {
-          let diff = 0;
-          const previsto = row.total_previsto || 0;
-          const adjudicado = row.total_adjudicado || 0;
-          const faturado = row.total_faturado || 0;
-
-          if (adjudicado === 0 && faturado === 0) diff = previsto;
-          else if (adjudicado > 0 && faturado === 0) diff = previsto - adjudicado;
-          else diff = previsto - faturado;
-
-          return $.fn.dataTable.render.number('.', ',', 2, '').display(diff);
-        }
-      },
-      {
-        data: null,
-        className: 'details-control dt-center align-middle',
-        orderable: false,
-        defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-info"></i></button>'
+    { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+    { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+    { data: 'total_faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+    {
+      data: null,
+      className: 'dt-body-right',
+      render: function(data, type, row) {
+        const previsto = row.total_previsto || 0;
+        const adjudicado = row.total_adjudicado || 0;
+        const faturado = row.total_faturado || 0;
+        let diff = adjudicado === 0 && faturado === 0 ? previsto :
+                   adjudicado > 0 && faturado === 0 ? previsto - adjudicado :
+                   previsto - faturado;
+        return $.fn.dataTable.render.number('.', ',', 2, '').display(diff);
       }
-    ]
-  });
+    },
+    {
+      data: null,
+      className: 'details-control dt-center align-middle',
+      orderable: false,
+      defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-info"></i></button>'
+    },
+    { data: 'tipo', visible: false }
+  ]
+});
+
 
   // Nested rows toggle
   $('#processosNested tbody').on('click', 'td.details-control button', function () {
@@ -153,10 +176,10 @@ $(document).ready(function () {
 
     if (row.child.isShown()) {
       row.child.hide();
-      icon.removeClass('fa-circle-info').addClass('fa-circle-question');
+      icon.removeClass('fa-circle-info').addClass('fa-circle-minus');
     } else {
       row.child(formatNested(row.data().processos)).show();
-      icon.removeClass('fa-circle-question').addClass('fa-circle-info');
+      icon.removeClass('fa-circle-minus').addClass('fa-circle-info');
     }
   });
 });
