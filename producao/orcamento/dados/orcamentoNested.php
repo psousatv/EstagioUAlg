@@ -12,55 +12,49 @@ if (!$orcamentoItem) {
 
 try {
     // === RUBRICA ===
-    $sqlRubricas = "
-        SELECT
-            rub_cod AS rubrica,
-            rub_tipo AS tipo,
-            rub_rubrica AS grupo,
-            rub_item AS descritivo
+    $sqlRubricas = "SELECT
+        rub_cod AS rubrica,
+        rub_tipo AS tipo,
+        rub_rubrica AS grupo,
+        rub_item AS descritivo
         FROM rubricas
-        WHERE rub_cod = :orcamentoItem
-    ";
+        WHERE rub_cod = :orcamentoItem";
 
     $stmtRub = $myConn->prepare($sqlRubricas);
     $stmtRub->bindParam(':orcamentoItem', $orcamentoItem, PDO::PARAM_INT);
     $stmtRub->execute();
     $rubrica = $stmtRub->fetch(PDO::FETCH_ASSOC);
 
-    // === ORÇAMENTO (otimizado com JOINs agregados) ===
-    $sqlOrcamento = "
-        SELECT  
-            o.orc_check,
-            o.orc_tipo AS tipo,
-            o.orc_regime AS regime,
-            o.orc_conta_descritiva AS descritivo,
-            o.orc_valor_previsto AS previsto,
-            SUM(o.orc_valor_previsto) AS total_previsto,
-            COALESCE(SUM(DISTINCT h14.total_adjudicado), 0) AS total_adjudicado,
-            COALESCE(SUM(DISTINCT f.total_faturado), 0) AS total_faturado
-        FROM orcamento o
-        LEFT JOIN (
-            SELECT 
-                p.proces_orc_check, 
-                SUM(h.historico_valor) AS total_adjudicado
-            FROM processo p
-            JOIN historico h ON h.historico_proces_check = p.proces_check
-            WHERE h.historico_descr_cod = 14
-            GROUP BY p.proces_orc_check
-        ) h14 ON h14.proces_orc_check = o.orc_check
-        LEFT JOIN (
-            SELECT 
-                p.proces_orc_check, 
-                SUM(fa.fact_valor) AS total_faturado
-            FROM processo p
-            JOIN factura fa ON fa.fact_proces_check = p.proces_check
-            WHERE p.proces_report_valores = 1
-            AND YEAR(fa.fact_data) = :anoCorrente
-            GROUP BY p.proces_orc_check
-        ) f ON f.proces_orc_check = o.orc_check
-        WHERE o.orc_rubrica = :orcamentoItem
-        AND o.orc_ano = :anoCorrente
-        GROUP BY o.orc_check
+    // === ORÇAMENTO ===
+    $sqlOrcamento = "SELECT
+        orc_check,
+        orc_tipo AS tipo,
+        orc_regime AS regime,
+        orc_conta_descritiva AS descritivo,
+        orc_valor_previsto AS previsto,
+        SUM(orc_valor_previsto) AS total_previsto,
+
+        (
+        SELECT COALESCE(SUM(h14.historico_valor), 0) 
+        FROM historico h14
+        LEFT JOIN processo p ON p.proces_orc_check = orc_check
+        WHERE h14.historico_proces_check = p.proces_check
+        AND YEAR(h14.historico_dataemissao) = :anoCorrente
+        AND h14.historico_descr_cod = 14
+        ) AS total_adjudicado,
+
+        (
+        SELECT COALESCE(SUM(f.fact_valor), 0) 
+        FROM factura f
+        LEFT JOIN processo p ON p.proces_orc_check = orc_check
+        WHERE f.fact_proces_check = p.proces_check
+        AND YEAR(f.fact_data) = :anoCorrente
+        ) AS total_faturado
+
+        FROM orcamento
+        WHERE orc_rubrica = :orcamentoItem
+        AND orc_ano = :anoCorrente
+        GROUP BY orc_check
         ORDER BY tipo, regime";
 
     $stmtOrc = $myConn->prepare($sqlOrcamento);
@@ -76,35 +70,40 @@ try {
     if (!empty($orcIds)) {
         $placeholders = implode(',', array_fill(0, count($orcIds), '?'));
 
-        $sqlProcessos = "
-            SELECT
-                p.proces_check,
-                p.proces_orc_check,
-                p.proces_linha_orc AS linha_orc,
-                p.proces_linha_se AS linha_se,
-                p.proces_padm AS padm,
-                proc.proced_regime AS regime,
-                p.proces_nome AS designacao,
-                p.proces_val_max AS previsto,
-                (SELECT COALESCE(SUM(h3.historico_valor), 0) 
-                 FROM historico h3 
-                 WHERE h3.historico_proces_check = p.proces_check
-                 AND h3.historico_descr_cod = 3) AS consulta,
-                (SELECT COALESCE(SUM(h14.historico_valor), 0) 
-                 FROM historico h14 
-                 WHERE h14.historico_proces_check = p.proces_check
-                 AND h14.historico_descr_cod = 14) AS adjudicado,
-                (SELECT COALESCE(SUM(f.fact_valor), 0)
-                 FROM factura f 
-                 WHERE f.fact_proces_check = p.proces_check
-                 AND YEAR(f.fact_data) = $anoCorrente) AS faturado
-            FROM processo p
-            INNER JOIN procedimento proc ON proc.proced_cod = p.proces_proced_cod
-            WHERE p.proces_orc_check IN ($placeholders)
-            AND p.proces_report_valores = 1
-            GROUP BY p.proces_check
-            ORDER BY p.proces_nome
-        ";
+        $sqlProcessos = "SELECT
+            proces_check,
+            proces_orc_check,
+            proces_linha_orc AS linha_orc,
+            proces_linha_se AS linha_se,
+            proces_padm AS padm,
+            proc.proced_regime AS regime,
+            proces_nome AS designacao,
+            proces_val_max AS previsto,
+
+            (
+            SELECT COALESCE(SUM(h3.historico_valor), 0) 
+            FROM historico h3 
+            WHERE h3.historico_proces_check = proces_check
+            AND h3.historico_descr_cod = 3) AS consulta,
+
+            (
+            SELECT COALESCE(SUM(h14.historico_valor), 0) 
+            FROM historico h14 
+            WHERE h14.historico_proces_check = proces_check
+            AND h14.historico_descr_cod = 14) AS adjudicado,
+
+            (
+            SELECT COALESCE(SUM(f.fact_valor), 0)
+            FROM factura f 
+            WHERE f.fact_proces_check = proces_check
+            AND YEAR(f.fact_data) = $anoCorrente) AS faturado
+
+            FROM processo
+            INNER JOIN procedimento proc ON proc.proced_cod = proces_proced_cod
+            WHERE proces_orc_check IN ($placeholders)
+            AND proces_report_valores = 1
+            GROUP BY proces_check
+            ORDER BY proces_nome";
 
         $stmtProc = $myConn->prepare($sqlProcessos);
         $stmtProc->execute($orcIds);

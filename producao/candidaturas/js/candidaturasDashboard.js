@@ -122,6 +122,7 @@ $(document).ready(function () {
                     </div>
                 </div>
                 `;
+                
                 if (dados.estado === 'Em Curso') {
                     containerCurso.append(cartao);
                 } else {

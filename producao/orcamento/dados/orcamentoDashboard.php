@@ -8,34 +8,43 @@ if(isset($_GET['anoCorrente'])){
       $anoCorrente = date('Y') -1 ;
 };
 
-$orcamento = "SELECT
-              orc_ano AS ano,
-              orc_rubrica AS cod,
-              r.rub_tipo AS tipo,
-              r.rub_rubrica AS rubrica,
-              r.rub_item AS item,
-              COALESCE(SUM(orc_valor_previsto), 0) AS previsto,
-              
-              (SELECT COALESCE(SUM(f.fact_valor), 0) 
-              FROM processo
-              LEFT JOIN rubricas r1 ON r1.rub_cod = proces_rub_cod
-              LEFT JOIN factura f ON f.fact_proces_check = proces_check
-              WHERE YEAR(f.fact_data) = '".$anoCorrente."' 
-              AND r1.rub_tipo = r.rub_tipo 
-              AND r1.rub_cod = r.rub_cod 
-              AND r1.rub_item = r.rub_item) AS adjudicado
-              
-              FROM orcamento
-              LEFT JOIN rubricas r ON r.rub_cod = orc_rubrica
-              WHERE orc_ano = '".$anoCorrente."'
-              AND orc_rubrica <> 100
-              AND orc_rubrica <> 999
-              GROUP BY orc_ano, r.rub_cod
-              ORDER BY r.rub_cod, r.rub_tipo DESC, r.rub_rubrica ASC, r.rub_item ASC";
+$qryOrcamento = "SELECT
+      o.orc_ano AS ano,
+      o.orc_rubrica AS cod,
+      r.rub_tipo AS tipo,
+      r.rub_rubrica AS rubrica,
+      r.rub_item AS item,
+      COALESCE(SUM(o.orc_valor_previsto), 0) AS previsto,
+      COALESCE(SUM(hs.adjudicado), 0) AS adjudicado,
+      COALESCE(SUM(fs.faturado), 0) AS faturado
+      FROM orcamento o
+      LEFT JOIN rubricas r ON r.rub_cod = o.orc_rubrica
+      LEFT JOIN (
+      SELECT p.proces_orc_check, SUM(h.historico_valor) AS adjudicado
+      FROM historico h
+      INNER JOIN processo p ON p.proces_check = h.historico_proces_check
+      WHERE YEAR(h.historico_dataemissao) = :anoCorrente
+            AND h.historico_descr_cod = 14
+      GROUP BY p.proces_orc_check
+      ) hs ON hs.proces_orc_check = o.orc_check
+      LEFT JOIN (
+      SELECT p.proces_orc_check, SUM(f.fact_valor) AS faturado
+      FROM factura f
+      INNER JOIN processo p ON p.proces_check = f.fact_proces_check
+      WHERE YEAR(f.fact_data) = :anoCorrente
+      GROUP BY p.proces_orc_check
+      ) fs ON fs.proces_orc_check = o.orc_check
+      WHERE o.orc_ano = :anoCorrente
+      AND o.orc_rubrica NOT IN (100, 999)
+      GROUP BY o.orc_ano, o.orc_rubrica, r.rub_tipo, r.rub_rubrica, r.rub_item
+      ORDER BY o.orc_rubrica, r.rub_tipo DESC, r.rub_rubrica ASC, r.rub_item ASC";
 
-$stmt = $myConn->query($orcamento);
-$orcamentoAnual = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $myConn->prepare($qryOrcamento);
+$stmt->bindParam(':orcamentoItem', $orcamentoItem, PDO::PARAM_INT);
+$stmt->bindParam(':anoCorrente', $anoCorrente, PDO::PARAM_INT);
+$stmt->execute();
+$dadosOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Set the HTTP Content-Type header to indicate that the response is in JSON format
 header('Content-Type: application/json');
-echo json_encode($orcamentoAnual);
+echo json_encode($dadosOrcamento);

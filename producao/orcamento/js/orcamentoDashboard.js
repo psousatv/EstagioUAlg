@@ -22,151 +22,111 @@ $.ajax(
             //    ]
             //})
 
-            // ** Investimentos
-            var containerInvestimentos = document.getElementById('cartoesInvestimentos');
-            containerInvestimentos.innerHTML = "";
-            data.forEach((result) => {
+
+        // Cria os cartões
+        //var containerInvestimentos = $('#cartoesInvestimentos');
+        //var containerGastos = $('#cartoesGastos');
+        var containerInvestimentos = document.getElementById('cartoesInvestimentos');
+        var containerGastos = document.getElementById('cartoesGastos');
+        //containerInvestimentos.empty();
+        //containerGastos.empty();
+        containerInvestimentos.innerHTML = "";
+        containerGastos.innerHTML = "";
+
+        data.forEach(dados => {
+            let classeCartao, iconeCartao;
+
+            console.table(dados);
             
-            var classeCartao = '';
-            var iconeCartao = '';
-            var realizado = 0;
+            let adjudicado_percent = dados.adjudicado === 0 && dados.faturado === 0 ? 0 :
+                        dados.adjudicado > 0 && dados.faturado === 0 ? 0 :
+                        (dados.faturado / dados.adjudicado);
+            let previsto_percent = dados.previsto === 0 && dados.faturado === 0 ? 0 :
+                        dados.previsto > 0 && dados.faturado === 0 ? 0 :
+                        (dados.faturado / dados.previsto);
 
-            //console.table(result);
-
-            if(result["adjudicado"] != 0 && result["previsto"] != 0 ){
-                realizado = (result["adjudicado"] / result["previsto"]) * 100;
-            } else if(result["previsto"] == 0) {
-                realizado = result["adjudicado"] * 100;
+            if (previsto_percent > .85) {
+                classeCartao = 'bg-danger text-white';
+                iconeCartao = 'fa fa-thumbs-down';
+            } else if (previsto_percent > .70) {
+                classeCartao = 'bg-warning text-dark';
+                iconeCartao = 'fa fa-exclamation-triangle';
+            } else if (previsto_percent > .50) {
+                classeCartao = 'bg-primary text-white';
+                iconeCartao = 'fa fa-cog fa-spin';
             } else {
-                realizado = 0;
-            };
+                classeCartao = 'bg-success text-white';
+                iconeCartao = 'fa fa-smile';
+            }
 
-
-            if (realizado < 35) {
-                classeCartao = 'bg-success';
-                iconeCartao = 'fa-smile';
-            } else if (realizado >= 35 & realizado < 75){
-                classeCartao = 'bg-warning';
-                iconeCartao = 'fa-warning';
-            } else {
-                classeCartao = 'bg-danger';
-                iconeCartao = 'fa-thumbs-down';
-            };
-
-            const card = document.createElement('div');
-            card.classList = 'card-body';
-            
-            if(result["tipo"] == 'Investimento'){
-                var cartoesIvestimentos = `     
-                    <div onclick="orcamentoNested('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
-                        <div class="d-flex justify-content-between px-md-1">
-                            <div class="text-end">
-                                <p class="mb-0 small text-white">${result["item"]}</p>
-                                <!--Faturado-->
-                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["adjudicado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
-                                <!--Orçamento-->
-                                <h6>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["previsto"])}<span class="h6"> </span></h6>
+            let cartao = `
+            <div class="col-sm-6 col-md-3 mb-2">
+                <div class="card h-100 ${classeCartao}" onclick="orcamentoNested('${dados.cod}')">
+                    <div class="d-flex px-3 py-2 small">
+                        <div class="flex-grow-1 text-left">
+                            <p class="mb-1 font-weight-bold">${dados.item}</p>
+                            <div>
+                                <h6>
+                                    ${Intl.NumberFormat("de-DE", 
+                                        { style: "currency", currency: "EUR" }).format(dados.adjudicado)} -
+                                    ${Intl.NumberFormat("de-DE", 
+                                        { style: "currency", currency: "EUR" }).format(dados.faturado)} -
+                                    <span>${Intl.NumberFormat("de-DE", 
+                                        {style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(adjudicado_percent)}
+                                    </span>
+                                </h6>
                             </div>
-                            <div class="align-self-center">
-                                <i class="fas ${iconeCartao} text-white fa-3x"></i>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            // Append newyly created card element to the container
-            containerInvestimentos.innerHTML += cartoesIvestimentos;
-            }});
-
-            // ** Gastos
-            var containerInvestimentos = document.getElementById('cartoesGastos');
-            containerInvestimentos.innerHTML = "";
-            data.forEach((result) => {
-            
-            var classeCartao = '';
-            var iconeCartao = '';
-            var realizado = 0;
-
-            if(result["adjudicado"] != 0 && result["previsto"] != 0 ){
-                realizado = (result["adjudicado"] / result["previsto"]) * 100;
-            } else if(result["previsto"] == 0) {
-                realizado = result["adjudicado"] * 100;
-            } else {
-                realizado = 0;
-            };
-
-            if (realizado < 35) {
-                classeCartao = 'bg-success';
-                iconeCartao = 'fa-smile';
-            } else if (realizado >= 35 & realizado < 75){
-                classeCartao = 'bg-warning';
-                iconeCartao = 'fa-warning';
-            } else {
-                classeCartao = 'bg-danger';
-                iconeCartao = 'fa-thumbs-down';
-            };
-
-            var card = document.createElement('div');
-            card.classList = 'card-body';
-            
-// <div onclick="orcamentoRedirected('${result["cod"]}')" class="card col-md-3 ${classeCartao}">
-
-
-            if(result["tipo"] == 'Gastos'){
-                var cartoesGastos = `     
-                    <div onclick="orcamentoNested('${result["cod"]}')" class="card col-md-3 ${classeCartao} text-white">
-                        <div class="d-flex justify-content-between px-md-1">
-                            <div class="text-end">
-                                <p class="mb-0 small">${result["item"]}</p>
-                                <!--Faturado-->
-                                <h3>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["adjudicado"])}<span class="h6">- ${realizado.toFixed(2)}%</span></h3>
-                                <!--Orçamento-->
-                                <h6>${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(result["previsto"])}<span class="h6"> </span></h6>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas ${iconeCartao} text-white fa-3x"></i>
+                            <div>
+                                <h5>
+                                    ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(dados.previsto)} 
+                                    <span class="h6">- ${Intl.NumberFormat("de-DE", 
+                                        { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(previsto_percent)}
+                                    </span>
+                                </h5>
                             </div>
                         </div>
+                        <div class="pl-2 mt-auto">
+                            <i class="fas ${iconeCartao} fa-3x"></i>
+                        </div>
                     </div>
-                `;
-            // Append newyly created card element to the containergit add
-            containerInvestimentos.innerHTML += cartoesGastos;
-            }});
-        }
-    )
+                </div>
+            </div>
+            `;
+
+            if (dados.tipo === 'Investimento') {
+                containerInvestimentos.innerHTML += cartao;
+                //containerInvestimentos.append(cartao);
+            } else {
+                containerGastos.innerHTML += cartao;
+                //containerGastos.append(cartao);
+            }
+
+        });
+    })
 };
-
-    
-//});
 
 
 // Os resultados da Seleção é redirecionado para a orcamentoResults.html
-// Quando se seleciona uma candidatura - obtem a identificação e passa para o "Título"
 function orcamentoResults(orcamentoItem) {
-    
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
-    //var URL = "datatablesNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
+    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente;
     getQueryParams();
     window.location.href = URL;
-    
-    };
+};
 
-    function orcamentoNested(orcamentoItem) {
-    
-    //var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + 2025; //anoAtual;
-    var URL = "orcamentoNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente; //anoAtual;
+function orcamentoNested(orcamentoItem) {
+    var URL = "orcamentoNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente;
     getQueryParams();
     window.location.href = URL;
-    
-    };
+};
 
 function anoDefault(){
     var data = new Date();
-    var anoAtual = data.getFullYear();   
-    var endereco = 'dados/orcamentoDashboard.php?anoCorrente='
+    var anoAtual = data.getFullYear();
+    document.getElementById('anoCorrente').value = anoAtual;
 
-    //document.getElementById('anoCorrente').value = 2024;
-    
+    var endereco = 'dados/orcamentoDashboard.php?anoCorrente=';
     var anoFormulario = document.getElementById('anoCorrente').value;
+    
 
     var url = endereco + anoFormulario;
 
@@ -177,17 +137,16 @@ function anoDefault(){
 
 };
 
-
-
 function mudaAno(){
-
     var anoFormulario = document.getElementById('anoCorrente').value;
-    var endereco = 'dados/orcamentoDashboard.php?anoCorrente=' + anoFormulario;
+    var endereco = 'dados/orcamentoDashboard.php?anoCorrente=';
+
+    var url = endereco + anoFormulario;
+
     anoCorrente = [];
     anoCorrente += anoFormulario;
-
-    cartoes(endereco);
-
+    
+    cartoes(url);
 };
 
 
@@ -199,5 +158,5 @@ function getQueryParams() {
       params[key] = value;
     }
     return params;
-  }
+}
   
