@@ -2,11 +2,11 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeCandidatura = $_GET['nomeCandidatura'];
+$itemProcurado = $_GET['itemProcurado'];
 
 $query = "SELECT *
           FROM candidaturas_submetidas
-          WHERE candsub_codigo LIKE '%".$nomeCandidatura."%'";
+          WHERE candsub_codigo LIKE '%".$itemProcurado."%'";
 
 
 $stmt = $myConn->query($query);

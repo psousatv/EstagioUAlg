@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$nomeCandidatura = $_GET['nomeCandidatura'];
+$itemProcurado = $_GET['itemProcurado'];
 $pathImagens = "../../global/imagens/";
 $numProcessosAdjudicados = 0;
 
@@ -12,7 +12,7 @@ $sqlCandidaturas = "SELECT
                     cs.candsub_max_elegivel as max_elegivel
                     FROM candidaturas_submetidas cs
                     LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.candsub_aviso
-                    WHERE cs.candsub_codigo LIKE '%".$nomeCandidatura."%'";
+                    WHERE cs.candsub_codigo LIKE '%".$itemProcurado."%'";
 
 $stmt = $myConn->query($sqlCandidaturas);
 $Candidaturas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -38,7 +38,7 @@ $sqlProcessosCandidatura = "SELECT *,
                             fact_finan_pp LIKE 'PP%') AS reembolsado
                             FROM processo
                             INNER JOIN departamento ON dep_cod = proces_departamento
-                            WHERE proces_cand LIKE '%".$nomeCandidatura."%'
+                            WHERE proces_cand LIKE '%".$itemProcurado."%'
                             AND proces_report_valores = 1
                             ORDER BY proces_estado_nome ASC";
 

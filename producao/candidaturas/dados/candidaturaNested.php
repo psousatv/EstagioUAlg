@@ -1,5 +1,7 @@
 <?php
-include "../../../global/config/dbConn.php";
+// include "../../../global/config/dbConn.php";
+
+
 header('Content-Type: application/json; charset=utf-8');
 
 $itemProcurado = $_GET['itemProcurado'] ?? null;
@@ -11,19 +13,28 @@ if (!$itemProcurado) {
 }
 
 try {
-    // === RUBRICA ===
-    $sqlRubricas = "SELECT
-        rub_cod AS rubrica,
-        rub_tipo AS tipo,
-        rub_rubrica AS grupo,
-        rub_item AS descritivo
-        FROM rubricas
-        WHERE rub_cod = :itemProcurado";
+    // === Candidaturas ===
+    $qryCandidaturas = "SELECT
+        candsub_estado AS estado,
+        candsub_programa AS programa,
+        candsub_aviso AS aviso,
+        candsub_codigo AS candidatura,
+        candsub_nome AS designacao,
+        candsub_submissao AS submissao,
+        candsub_aprovacao AS aprovacao,
+        candsub_aceitacao AS aceitacao,
+        candsub_dt_inicio AS inicio,
+        candsub_dt_fim AS termo,
+        candsub_max_elegivel AS elegivel,
+        candsub_forfait AS defice_financeiro,
+        candsub_fundo AS taxa
+        FROM candidaturas_submetidas
+        WHERE candsub_codigo = :itemProcurado";
 
-    $stmtRub = $myConn->prepare($sqlRubricas);
-    $stmtRub->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
-    $stmtRub->execute();
-    $rubrica = $stmtRub->fetch(PDO::FETCH_ASSOC);
+    $stmt = $myConn->prepare($qryCandidaturas);
+    $stmt->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
+    $stmt->execute();
+    $candidaturas = $stmtRub->fetch(PDO::FETCH_ASSOC);
 
     // === ORÇAMENTO ===
     $sqlOrcamento = "SELECT

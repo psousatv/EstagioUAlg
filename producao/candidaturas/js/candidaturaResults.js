@@ -1,9 +1,9 @@
-var nomeCandidatura = String(nomeCandidatura)
+var itemProcurado = String(itemProcurado)
 
-function candidaturaSelected(nomeCandidatura) { 
+function candidaturaSelected(itemProcurado) { 
 
   var params = new URLSearchParams(window.location.search);
-  var nomeCandidatura = params.get("nomeCandidatura"); 
+  var itemProcurado = params.get("itemProcurado"); 
   
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -12,14 +12,14 @@ function candidaturaSelected(nomeCandidatura) {
     }
   }
 
-  xmlhttp.open("GET","dados/candidaturaTitulo.php?nomeCandidatura="+nomeCandidatura,true);
+  xmlhttp.open("GET","dados/candidaturaTitulo.php?itemProcurado="+itemProcurado,true);
   xmlhttp.send();
 
-  candidaturaProcessos(nomeCandidatura);
+  candidaturaProcessos(itemProcurado);
  
 };
 
-function candidaturaProcessos(nomeCandidatura) {
+function candidaturaProcessos(itemProcurado) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -27,7 +27,7 @@ function candidaturaProcessos(nomeCandidatura) {
     }
   }
 
-  xmlhttp.open("GET","dados/candidaturaResults.php?nomeCandidatura="+nomeCandidatura,true);
+  xmlhttp.open("GET","dados/candidaturaResults.php?itemProcurado="+itemProcurado,true);
   xmlhttp.send();
  
 };

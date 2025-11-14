@@ -2,7 +2,7 @@
 //session_start();
 include "../../../global/config/dbConn.php";
 
-$orcamentoItem = $_GET['orcamentoItem'];
+$itemProcurado = $_GET['itemProcurado'];
 $anoCorrente = $_GET['anoCorrente'] ?? date('Y');
 
 //Histórico Processos
@@ -25,7 +25,7 @@ $orcamentoFaturacao = "SELECT
                     sum(if((month(fact_auto_data) = 12),round(fact_valor,2),0)) AS 'Dez'
                     FROM factura
                     JOIN processo ON proces_check = fact_proces_check
-                    WHERE proces_rub_cod = :orcamentoItem 
+                    WHERE proces_rub_cod = :itemProcurado 
                     AND proces_orc_ano = :anoCorrente 
                     AND proces_report_valores = 1
                     GROUP BY proces_rub_cod, proces_padm, year(fact_auto_data)
@@ -35,7 +35,7 @@ $orcamentoFaturacao = "SELECT
 //$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmtOrc = $myConn->prepare($orcamentoFaturacao);
-$stmtOrc->bindParam(':orcamentoItem', $orcamentoItem);
+$stmtOrc->bindParam(':itemProcurado', $itemProcurado);
 $stmtOrc->bindParam(':anoCorrente', $anoCorrente);
 $stmtOrc->execute();
 $data = $stmtOrc->fetchAll(PDO::FETCH_ASSOC);

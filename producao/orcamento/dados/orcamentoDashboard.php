@@ -40,7 +40,7 @@ $qryOrcamento = "SELECT
       ORDER BY o.orc_rubrica, r.rub_tipo DESC, r.rub_rubrica ASC, r.rub_item ASC";
 
 $stmt = $myConn->prepare($qryOrcamento);
-$stmt->bindParam(':orcamentoItem', $orcamentoItem, PDO::PARAM_INT);
+$stmt->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
 $stmt->bindParam(':anoCorrente', $anoCorrente, PDO::PARAM_INT);
 $stmt->execute();
 $dadosOrcamento = $stmt->fetchAll(PDO::FETCH_ASSOC);

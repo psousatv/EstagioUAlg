@@ -107,14 +107,14 @@ $.ajax(
 
 
 // Os resultados da Seleção é redirecionado para a orcamentoResults.html
-function orcamentoResults(orcamentoItem) {
-    var URL = "orcamentoResults.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente;
+function orcamentoResults(itemProcurado) {
+    var URL = "orcamentoResults.html?itemProcurado=" + itemProcurado + "&anoCorrente=" + anoCorrente;
     getQueryParams();
     window.location.href = URL;
 };
 
-function orcamentoNested(orcamentoItem) {
-    var URL = "orcamentoNested.html?orcamentoItem=" + orcamentoItem + "&anoCorrente=" + anoCorrente;
+function orcamentoNested(itemProcurado) {
+    var URL = "orcamentoNested.html?itemProcurado=" + itemProcurado + "&anoCorrente=" + anoCorrente;
     getQueryParams();
     window.location.href = URL;
 };
