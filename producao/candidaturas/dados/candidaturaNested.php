@@ -1,5 +1,9 @@
 <?php
-// include "../../../global/config/dbConn.php";
+require_once __DIR__ . "/../../../global/config/dbConn.php";
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 
 header('Content-Type: application/json; charset=utf-8');
@@ -34,107 +38,75 @@ try {
     $stmt = $myConn->prepare($qryCandidaturas);
     $stmt->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
     $stmt->execute();
-    $candidaturas = $stmtRub->fetch(PDO::FETCH_ASSOC);
+    $candidaturas = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // === ORÇAMENTO ===
-    $sqlOrcamento = "SELECT
-        orc_check,
-        orc_tipo AS tipo,
-        orc_regime AS regime,
-        orc_conta_descritiva AS descritivo,
-        orc_valor_previsto AS previsto,
-        SUM(orc_valor_previsto) AS total_previsto,
+    // === Historico ===
+    $itemsHistorico = [91, 92];
+    $qryHistorico = "SELECT
+        historico_proces_check,
+        historico_descr_cod,
+        historico_dataemissao,
+        historico_doc,
+        historico_num,
+        COALESCE(historico_valor, 0)
+        FROM historico
+        WHERE historico_descr_cod IN :itemsHistorico";
 
-        (
-        SELECT COALESCE(SUM(h14.historico_valor), 0) 
-        FROM historico h14
-        LEFT JOIN processo p ON p.proces_orc_check = orc_check
-        WHERE h14.historico_proces_check = p.proces_check
-        AND YEAR(h14.historico_dataemissao) = :anoCorrente
-        AND h14.historico_descr_cod = 14
-        ) AS total_adjudicado,
+    $stmt = $myConn->prepare($qryHistorico);
+    $stmt->bindParam(':itemsHistorico', $itemsHistorico, PDO::PARAM_INT);
+    $stmt->execute();
+    $historico = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        (
-        SELECT COALESCE(SUM(f.fact_valor), 0) 
-        FROM factura f
-        LEFT JOIN processo p ON p.proces_orc_check = orc_check
-        WHERE f.fact_proces_check = p.proces_check
-        AND YEAR(f.fact_data) = :anoCorrente
-        ) AS total_faturado
+    // === Processos ===
+    //$processosId = array_column($listaProcessos, 'proces_check');
+    //$processos = [];
 
-        FROM orcamento
-        WHERE orc_rubrica = :itemProcurado
-        AND orc_ano = :anoCorrente
-        GROUP BY orc_check
-        ORDER BY tipo, regime";
+    //if (!empty($processosId)) {
+    //    $placeholders = implode(',', array_fill(0, count($processosId), '?'));
 
-    $stmtOrc = $myConn->prepare($sqlOrcamento);
-    $stmtOrc->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
-    $stmtOrc->bindParam(':anoCorrente', $anoCorrente, PDO::PARAM_INT);
-    $stmtOrc->execute();
-    $orcamentoList = $stmtOrc->fetchAll(PDO::FETCH_ASSOC);
-
-    // === PROCESSOS ===
-    $orcIds = array_column($orcamentoList, 'orc_check');
-    $processos = [];
-
-    if (!empty($orcIds)) {
-        $placeholders = implode(',', array_fill(0, count($orcIds), '?'));
-
-        $sqlProcessos = "SELECT
+        $qryProcessos = "SELECT
             proces_check,
             proces_orc_check,
             proces_linha_orc AS linha_orc,
             proces_linha_se AS linha_se,
             proces_padm AS padm,
-            proc.proced_regime AS regime,
+            processo.proced_regime AS regime,
             proces_nome AS designacao,
             proces_val_max AS previsto,
-
-            (
-            SELECT COALESCE(SUM(h3.historico_valor), 0) 
-            FROM historico h3 
-            WHERE h3.historico_proces_check = proces_check
-            AND h3.historico_descr_cod = 3) AS consulta,
-
-            (
-            SELECT COALESCE(SUM(h14.historico_valor), 0) 
+            (SELECT COALESCE(SUM(h14.historico_valor), 0) 
             FROM historico h14 
             WHERE h14.historico_proces_check = proces_check
             AND h14.historico_descr_cod = 14) AS adjudicado,
-
-            (
-            SELECT COALESCE(SUM(f.fact_valor), 0)
+            (SELECT COALESCE(SUM(f.fact_valor), 0)
             FROM factura f 
             WHERE f.fact_proces_check = proces_check
             AND YEAR(f.fact_data) = $anoCorrente) AS faturado
-
             FROM processo
-            INNER JOIN procedimento proc ON proc.proced_cod = proces_proced_cod
+            INNER JOIN procedimento processo ON processo.proced_cod = proces_proced_cod
             WHERE proces_orc_check IN ($placeholders)
             AND proces_report_valores = 1
             GROUP BY proces_check
             ORDER BY proces_nome";
 
-        $stmtProc = $myConn->prepare($sqlProcessos);
-        $stmtProc->execute($orcIds);
-        $processos = $stmtProc->fetchAll(PDO::FETCH_ASSOC);
-    }
+        $stmtProc = $myConn->prepare($qryProcessos);
+        $stmtProc->execute($processosId);
+        $listaProcessos = $stmtProc->fetchAll(PDO::FETCH_ASSOC);
+    //}
 
-    // === AGRUPAR PROCESSOS POR ORÇAMENTO ===
-    $mapP = [];
-    foreach ($processos as $proc) {
-        $mapP[$proc['proces_orc_check']][] = $proc;
-    }
+    // === Agrupa os Processos por Candidatura ===
+    //$mapP = [];
+    //foreach ($processos as $processo) {
+    //    $mapP[$processo['proces_orc_check']][] = $processo;
+    //}
 
-    foreach ($orcamentoList as &$orc) {
-        $orc['processos'] = $mapP[$orc['orc_check']] ?? [];
-    }
+    //foreach ($listaProcessos as &$orc) {
+    //    $orc['processos'] = $mapP[$orc['orc_check']] ?? [];
+    //}
 
-    // === RETORNO FINAL: Rubrica + Data ===
+    // === RETORNO FINAL: Candidatura + Data ===
     echo json_encode([
-        "rubrica" => $rubrica,
-        "data"    => $orcamentoList
+        "candidatura" => $candidatura,
+        "data"    => $listaProcessos
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (PDOException $e) {
