@@ -119,7 +119,7 @@ table = $('#processosNested').DataTable({
             </tr>
           </table>
         `);
-      }
+        }
 
       return data;
     },
