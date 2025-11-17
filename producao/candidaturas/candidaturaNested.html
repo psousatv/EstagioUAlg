@@ -74,27 +74,33 @@
         </div>
       </div>
 
-      <!-- Descritivo -->
 
-      <div class="row" >
-        <div class="col-12 col-md-8" id="valores">
-        <b>Valores do Item Selecionado</b>
-        </div>
-      </div>
-
-
-
+      
       
       <!-- DataTables Nested -->
       <div class="row">
         <div class="col col-md-12">
           <div class="card">
+            <div class="card-header">
+      <!-- Valores e logotipo -->
+      <div class="row align-items-center">
+        <!-- Coluna dos valores -->
+        <div class="col-8" id="valores">
+          <!-- Valores serão inseridos pelo JS -->
+        </div>
+      
+        <!-- Coluna do logo -->
+        <div class="col-2 d-flex justify-content-end" id="logo">
+          <!-- Logo será inserido pelo JS -->
+        </div>
+      </div>
+            </div>
             <div class="card-body">
               <table id="processosNested" class="display" style="width:100%">
                 <thead>
                   <tr>
-                    <th>Estado</th>
-                    <th>Previsto</th>
+                    <th>PADM</th>
+                    <th>Processo</th>
                     <th>Adjudicado</th>
                     <th>Faturado</th>
                     <th>Reembolsado</th>
@@ -105,7 +111,8 @@
             </div>
           </div>
         </div>
-      </div>    
+      </div>
+
     </div>
   </div>
 

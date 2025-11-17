@@ -32,8 +32,10 @@ try {
             candsub_dt_fim AS termo,
             candsub_max_elegivel AS elegivel,
             candsub_forfait AS defice_financeiro,
-            candsub_fundo AS taxa
+            candsub_fundo AS taxa,
+            ca.cand_logo AS logo
         FROM candidaturas_submetidas
+        INNER JOIN candidaturas_avisos ca ON ca.cand_aviso = candsub_aviso
         WHERE candsub_codigo = :itemProcurado";
 
     $cand = $myConn->prepare($qryCandidaturas);

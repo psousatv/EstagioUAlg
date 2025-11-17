@@ -162,14 +162,16 @@ function formatNested(processo) {
           estado: json.estado,
           aviso: json.aviso,
           programa: json.programa,
-          taxa: json.taxa
+          nome: json.designacao,
+          taxa: json.taxa,
+          logo: json.logo
         }));
 
         // Título da candidatura
         $('#titulo').html(`
           <div class="btn btn-primary col-md-8 d-grid small text-white text-left">
-            ${json.aviso || ''}: ${json.estado || ''} 
-            - ${json.candidatura || ''} - ${json.taxa * 100 || ''}%
+            ${json.estado || ''}: ${json.candidatura || ''} 
+            - ${json.designacao || ''} - ${json.taxa * 100 || ''}%
           </div>
           <div class="btn btn-warning">
             <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
@@ -179,6 +181,13 @@ function formatNested(processo) {
           </div>
         `);
 
+        // Logotipo da Candidatura
+        const path = "../../global/imagens";
+
+        $('#logo').html(`
+          <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;"></img>
+        `);
+        
         // Somatórios de todos os processos
         const totalAdjudicado = processos
         .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===14 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
@@ -189,7 +198,7 @@ function formatNested(processo) {
       const totalReembolsos = processos
         .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===92 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
 
-      // Colocar no HTML
+      // Valores da Candidatura
       $('#valores').html(`
         <table class="table table-striped table-md">
           <tr>
@@ -216,7 +225,7 @@ function formatNested(processo) {
     select: true,
     columnDefs: [{ className: "dt-head-center", targets: "_all" }],
     columns: [
-      { data: 'programa' },
+      { data: 'padm' },
       { 
         data: 'designacao',
         render: function(data, type, row) {
