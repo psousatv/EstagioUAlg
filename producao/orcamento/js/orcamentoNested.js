@@ -101,7 +101,7 @@ table = $('#processosNested').DataTable({
         const totalPrevisto = data.reduce((sum, r) => sum + (r.total_previsto || 0), 0);
         const totalAdjudicado = data.reduce((sum, r) => sum + (r.total_adjudicado || 0), 0);
         const totalFaturado = data.reduce((sum, r) => sum + (r.total_faturado || 0), 0);
-        const saldo = totalPrevisto - totalFaturado;
+        const saldo = totalAdjudicado - totalFaturado;
 
         $('#valoresRubrica').html(`
           <table class="table table-striped table-md">
@@ -153,7 +153,7 @@ table = $('#processosNested').DataTable({
         const faturado = row.total_faturado || 0;
         let diff = adjudicado === 0 && faturado === 0 ? previsto :
                    adjudicado > 0 && faturado === 0 ? previsto - adjudicado :
-                   previsto - faturado;
+                   adjudicado - faturado;
         return $.fn.dataTable.render.number('.', ',', 2, '').display(diff);
       }
     },

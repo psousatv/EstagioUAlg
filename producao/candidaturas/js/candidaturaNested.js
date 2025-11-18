@@ -6,7 +6,14 @@ $(document).ready(function () {
 
   function formatCurrency(value) {
     return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-  }
+  };
+
+  function formatExpediente(str) {
+    const clean = str.replace(/[^A-Za-z0-9]/g, '');
+    return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
+        return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
+    });
+  };
 
   // Nested row: apenas os itens financeiros do processo clicado
   
@@ -15,139 +22,127 @@ function formatNested(processo) {
   if (!processo) return 'Sem registros';
 
   let html = `<table class="table table-sm table-bordered table-dark">
-    <thead>
-      <tr>
-        <th colspan="4">Pedidos</th>
-        <th colspan="4">Reembolsos</th>
-        <th colspan="4">Faturas</th>
-      </tr>
-      <tr>
-        <th>Número</th>
-        <th>Expediente</th>
-        <th>Data</th>
-        <th>Valor</th>
-        <th>Número</th>
-        <th>Expediente</th>
-        <th>Data</th>
-        <th>Valor</th>
-        <th>Auto / Expediente / Data / Valor</th>
-      </tr>
-    </thead>
-    <tbody>`;
+      <thead>
+        <tr>
+          <th colspan="4">Pedidos</th>
+          <th>Faturas</th>
+          <th colspan="4">Reembolsos</th>
+        </tr>
+        <tr>
+          <th>Número</th>
+          <th>Expediente</th>
+          <th>Data</th>
+          <th>Valor</th>
+          <th>Expediente / Data / Auto / Valor</th>
+          <th>Número</th>
+          <th>Expediente</th>
+          <th>Data</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>`;
 
-  const pedidosMap = {};
-  const reembolsosOrfaos = [];
-  const faturasOrfaos = [];
+    const pedidosMap = {};
+    const faturasOrfaos = [];
+    const reembolsosOrfaos = [];
 
-  // Separar pedidos e reembolsos
-  (processo.historico || []).forEach(h => {
-      if (h.historico_descr_cod === 91) {
-          if (!pedidosMap[h.historico_num]) pedidosMap[h.historico_num] = { pedido: h, reembolsos: [] };
-      }
-      if (h.historico_descr_cod === 92) {
-          if (!pedidosMap[h.historico_num]) {
-              // Reembolso sem pedido
-              reembolsosOrfaos.push({ reembolso: h, faturas: [] });
-          } else {
-              pedidosMap[h.historico_num].reembolsos.push({ reembolso: h, faturas: [] });
-          }
-      }
-  });
+    // Separar pedidos e faturas
+    (processo.historico || []).forEach(h => {
+        if (h.historico_descr_cod === 91) {
+            if (!pedidosMap[h.historico_num]) pedidosMap[h.historico_num] = { pedido: h, faturas: [], reembolsos: [] };
+        }
+    });
 
-  // Associar faturas aos reembolsos ou identificar faturas órfãs
-  (processo.faturas || []).forEach(f => {
-      const historicoNum = f.fact_finan_pp;
-      if (pedidosMap[historicoNum]) {
-          const reembolsos = pedidosMap[historicoNum].reembolsos;
-          if (reembolsos.length > 0) {
-              reembolsos[reembolsos.length - 1].faturas.push(f);
-          } else {
-              faturasOrfaos.push(f);
-          }
-      } else {
-          faturasOrfaos.push(f);
-      }
-  });
+    // Associar faturas diretamente aos pedidos
+    (processo.faturas || []).forEach(f => {
+        const historicoNum = f.fact_finan_pp;
+        if (pedidosMap[historicoNum]) {
+            pedidosMap[historicoNum].faturas.push(f);
+        } else {
+            faturasOrfaos.push(f);
+        }
+    });
 
-  // Monta linhas de pedidos, reembolsos e faturas
-  Object.values(pedidosMap).forEach(item => {
-      const pedidoText = item.pedido
-          ? [item.pedido.historico_num, item.pedido.historico_doc, item.pedido.historico_dataemissao, formatCurrency(item.pedido.valor)]
-          : ['', '', '', ''];
+    // Separar reembolsos e associar aos pedidos
+    (processo.historico || []).forEach(h => {
+        if (h.historico_descr_cod === 92) {
+            const pedido = pedidosMap[h.historico_num];
+            if (pedido) {
+                pedido.reembolsos.push(h);
+            } else {
+                reembolsosOrfaos.push(h);
+            }
+        }
+    });
 
-      if (item.reembolsos.length === 0) {
-          html += `<tr>
-                      <td>${pedidoText[0]}</td>
-                      <td>${pedidoText[1]}</td>
-                      <td>${pedidoText[2]}</td>
-                      <td class="text-right">${pedidoText[3]}</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                   </tr>`;
-      } else {
-          item.reembolsos.forEach(reemb => {
-              const reembText = [reemb.reembolso.historico_num, reemb.reembolso.historico_doc, reemb.reembolso.historico_dataemissao, formatCurrency(reemb.reembolso.valor)];
-              const faturasText = reemb.faturas
-                  .map(f => [f.fact_auto_num, f.fact_expediente, f.fact_data, formatCurrency(f.valor)])
-                  .map(fText => fText.join(' / '))
-                  .join('<br>');
-              html += `<tr>
-                          <td>${pedidoText[0]}</td>
-                          <td>${pedidoText[1]}</td>
-                          <td>${pedidoText[2]}</td>
-                          <td class="text-right">${pedidoText[3]}</td>
-                          <td>${reembText[0]}</td>
-                          <td>${reembText[1]}</td>
-                          <td>${reembText[2]}</td>
-                          <td class="text-right">${reembText[3]}</td>
-                          <td>${faturasText}</td>
-                       </tr>`;
-          });
-      }
-  });
+    // Monta linhas de pedidos, faturas e reembolsos
+    Object.values(pedidosMap).forEach(item => {
+        const pedidoText = item.pedido
+            ? [item.pedido.historico_num, item.pedido.historico_doc, item.pedido.historico_dataemissao, formatCurrency(item.pedido.valor)]
+            : ['', '', '', ''];
 
-  // Linhas de reembolsos órfãos
-  reembolsosOrfaos.forEach(r => {
-      const reembText = [r.reembolso.historico_num, r.reembolso.historico_doc, r.reembolso.historico_dataemissao, formatCurrency(r.reembolso.valor)];
-      const faturasText = r.faturas
-          .map(f => [f.fact_auto_num, f.fact_expediente, f.fact_data, formatCurrency(f.valor)])
-          .map(fText => fText.join(' / '))
-          .join('<br>');
-      html += `<tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>${reembText[0]}</td>
-                  <td>${reembText[1]}</td>
-                  <td>${reembText[2]}</td>
-                  <td>${reembText[3]}</td>
-                  <td>${faturasText}</td>
-               </tr>`;
-  });
+        const faturasText = item.faturas
+            .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_auto_num, formatCurrency(f.valor)].join(' / '))
+            .join('<br>');
 
-  // Linhas de faturas órfãs
-  faturasOrfaos.forEach(f => {
-      const fText = [f.fact_auto_num, f.fact_expediente, f.fact_data, formatCurrency(f.valor)];
-      html += `<tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td class="text-right">${fText.join(' / ')}</td>
-               </tr>`;
-  });
+        if (item.reembolsos.length === 0) {
+            html += `
+                <tr>
+                    <td>${pedidoText[0]}</td>
+                    <td>${pedidoText[1]}</td>
+                    <td>${pedidoText[2]}</td>
+                    <td class="text-end">${pedidoText[3]}</td>
+                    <td>${faturasText}</td>
+                    <td></td><td></td><td></td><td></td>
+                </tr>`;
+        } else {
+            item.reembolsos.forEach(reemb => {
+                const reembText = [
+                    reemb.historico_num,
+                    reemb.historico_doc,
+                    reemb.historico_dataemissao,
+                    formatCurrency(reemb.valor)
+                ];
 
-  html += `</tbody></table>`;
-  return html;
-}
+                html += `
+                    <tr>
+                        <td>${pedidoText[0]}</td>
+                        <td>${pedidoText[1]}</td>
+                        <td>${pedidoText[2]}</td>
+                        <td class="text-end">${pedidoText[3]}</td>
+                        <td>${faturasText}</td>
+                        <td>${reembText[0]}</td>
+                        <td>${reembText[1]}</td>
+                        <td>${reembText[2]}</td>
+                        <td class="text-end">${reembText[3]}</td>
+                    </tr>`;
+            });
+        }
+    });
+
+    // Linhas de faturas órfãs
+    faturasOrfaos.forEach(f => {
+        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_auto_num, formatCurrency(f.valor)];
+        html += `<tr>
+                    <td></td><td></td><td></td><td></td>
+                    <td class="text-end">${fText.join(' / ')}</td>
+                    <td></td><td></td><td></td><td></td>
+                </tr>`;
+    });
+
+    // Linhas de reembolsos órfãos
+    reembolsosOrfaos.forEach(r => {
+        const reembText = [r.historico_num, r.historico_doc, r.historico_dataemissao, formatCurrency(r.valor)];
+        html += `<tr>
+                    <td></td><td></td><td></td><td></td>
+                    <td></td><td></td><td></td><td></td>
+                    <td>${reembText.join(' / ')}</td>
+                </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    return html;
+  }
 
 
   // Inicializa DataTable principal
