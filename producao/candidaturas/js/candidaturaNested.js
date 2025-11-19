@@ -187,27 +187,27 @@ function formatNested(processo) {
         const totalAdjudicado = processos
         .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===14 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
 
-      const totalFaturas = processos
+        const totalFaturas = processos
         .reduce((sumProc, p) => sumProc + (p.faturas?.filter(f => (f.valor||0) > 0).reduce((s,f) => s + f.valor,0) || 0), 0);
 
-      const totalReembolsos = processos
+        const totalReembolsos = processos
         .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===92 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
 
-      // Valores da Candidatura
-      $('#valores').html(`
-        <table class="table table-striped table-md">
-          <tr>
-            <td class="bg-primary text-white">Aprovado</td>
-            <td class="bg-primary text-white text-end">${formatCurrency(json.elegivel)}</td>
-            <td class="bg-secondary text-white">Adjudicados </td>
-            <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>  
-            <td class="bg-success text-white">Faturado </td>
-            <td class="bg-success text-white text-end">${formatCurrency(totalFaturas)}</td>
-            <td class="bg-info text-white">Reembolsos </td>
-            <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos)}</td>
-          </tr>
-        </table>
-      `);
+        // Valores da Candidatura
+        $('#valores').html(`
+          <table class="table table-striped table-md">
+            <tr>
+              <td class="bg-primary text-white">Aprovado</td>
+              <td class="bg-primary text-white text-end">${formatCurrency(json.elegivel)}</td>
+              <td class="bg-secondary text-white">Adjudicados </td>
+              <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>  
+              <td class="bg-success text-white">Faturado </td>
+              <td class="bg-success text-white text-end">${formatCurrency(totalFaturas)}</td>
+              <td class="bg-info text-white">Reembolsos </td>
+              <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos)}</td>
+            </tr>
+          </table>
+        `);
 
         return processos;
       },
@@ -283,6 +283,19 @@ function formatNested(processo) {
       icon.removeClass('fa-circle-info').addClass('fa-circle-minus');
     }
   });
+
+  // Clique em qualquer parte da linha (exceto no botão de detalhe)
+  $('#processosNested tbody').on('click', 'tr', function (e) {
+
+    // Não aciona se clicar no botão de detalhes
+    if ($(e.target).closest('.btn-detalhe').length) return;
+
+    const rowData = table.row(this).data();
+    if (!rowData) return;
+
+    redirectProcesso(rowData.proces_check);
+  });
+
 });
 
 // Query params
