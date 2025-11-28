@@ -48,11 +48,11 @@ function definirTipoProcesso(array $resultados): array {
         $regras = [
             [
                 'condicao' => fn($m) => in_array(9, $m),
-                'resultado' => [1, 9, 14],
+                'resultado' => [1, 4, 14],
             ],
             [
                 'condicao' => fn($m) => in_array(4, $m),
-                'resultado' => [1, 4, 14],
+                'resultado' => [1, 9, 14],
             ],
            
         ];
@@ -69,9 +69,9 @@ function definirTipoProcesso(array $resultados): array {
         } 
 
         $fases = [
-            'Aquisição de Serviços' => [1, 4, 5, 10, 13, 14, 19, 28],
-            'Aquisição de Bens'     => [1, 4, 5, 10, 13, 14, 19, 27],
-            'Empreitada'            => [1, 4, 5, 10, 13, 14, 18, 19, 26, 29, 30],
+            'Aquisição de Serviços' => [1, 4, 5, 10, 13, 14, 16, 19, 28],
+            'Aquisição de Bens'     => [1, 4, 5, 10, 13, 14, 16, 19, 27],
+            'Empreitada'            => [1, 4, 5, 10, 13, 14, 16, 17, 18, 19, 26, 29, 30],
         ];
 
         $dispensas = [

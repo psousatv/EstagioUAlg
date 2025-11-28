@@ -33,7 +33,7 @@ function formatNested(processo) {
           <th>Expediente</th>
           <th>Data</th>
           <th>Valor</th>
-          <th>Expediente / Data / Auto / Valor</th>
+          <th>Expediente / Data / Número / Auto / Valor</th>
           <th>Número</th>
           <th>Expediente</th>
           <th>Data</th>
@@ -82,7 +82,7 @@ function formatNested(processo) {
             : ['', '', '', ''];
 
         const faturasText = item.faturas
-            .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_auto_num, formatCurrency(f.valor)].join(' / '))
+            .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.valor)].join(' / '))
             .join('<br>');
 
         if (item.reembolsos.length === 0) {
@@ -122,7 +122,7 @@ function formatNested(processo) {
 
     // Linhas de faturas órfãs
     faturasOrfaos.forEach(f => {
-        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_auto_num, formatCurrency(f.valor)];
+        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.valor)];
         html += `<tr>
                     <td></td><td></td><td></td><td></td>
                     <td class="text-end">${fText.join(' / ')}</td>

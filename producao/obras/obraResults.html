@@ -162,33 +162,36 @@
   
             <!-- Aba Métricas -->
             <div class="tab-pane fade" id="metricas" role="tabpanel" aria-labelledby="metricas-tab">
-                             
-              <div class="row">
+
+              <div class="row g-3">
+                
                 <!-- Progresso -->
-                <div class="col col-lg-6">
-                  <div class="card">
-                    <div class="card-body col-sm-6">
-                      <div id="lstMetricasProgress"></div>
-                    </div>
-                    <div class="card-body col-sm-6">
-                      <div id="lstMetricasProgressAcessorios"></div>
-                    </div>
+                <div class="col-lg-6">
+                  <div class="card h-100">
                     <div class="card-body">
+
+                      <h5 class="mb-3">Progresso das Intervenções</h5>
+
+                      <!-- 3 blocos independentes -->
+                      <div id="lstMetricasProgress" class="mb-2"></div>
+                      <div id="lstMetricasProgressAcessorios" class="mb-2"></div>
                       <div id="lstMetricasProgressOutros"></div>
+
                     </div>
                   </div>
                 </div>
+
                 <!-- Gráfico -->
-                <div class="col col-lg-6">
-                  <div class="card">
-                    <div class="card-body col-sm-12">
-                      <canvas class="text-center" id="lstMetricasGrafico"></canvas>
+                <div class="col-lg-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <canvas id="lstMetricasGrafico"></canvas>
                     </div>
                   </div>
                 </div>
-              
+
               </div>
-            </div>
+            </div>  <!-- /metricas -->
   
           </div> <!-- /tab-content -->
   
@@ -198,7 +201,6 @@
   
   </div>
   
-
   <!-- Global -->
   <script src="../../global/js/scripts.js"></script>
   <!-- JQuery -->
@@ -214,6 +216,8 @@
   <script src="../../vendors/datatables/datatables.min.js"></script>
   <!-- Charts -->
   <script src="../../vendors/charts/Chart.min.js"></script>
+  <!-- ChartDataLabels local -->
+  <script src="../../vendors/charts/chartjs-plugin-datalabels.min.js"></script>
 
 <script src="js/obraResults.js"></script>
 <script src="js/obraCartoes.js"></script>

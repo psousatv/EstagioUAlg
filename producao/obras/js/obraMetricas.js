@@ -1,138 +1,160 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const codigoProcesso = params.get("codigoProcesso");
+    const url = "../obras/dados/obraMetricas.php?codigoProcesso=" + codigoProcesso;
 
-var params = new URLSearchParams(window.location.search);
-var codigoProcesso = params.get("codigoProcesso"); 
-var url = "../obras/dados/obraMetricas.php?codigoProcesso=" + codigoProcesso;
+    fetchMetricas(url);
+});
 
-var obraMetricas = [];
-var barraProgresso = [];
-
-// Fetch JSON data from the PHP script
-fetch(url)
-    .then(response => {
-        if(!response.ok){
-            throw new Error (document.getElementById("lstMetricasProgressInstalacao").innerHTML = response.statusText);    
-        }
-        return response.json();
-    })
-    .then(fetchedData => {
-        // Append the fetched data to the existing array
-        obraMetricas = obraMetricas.concat(fetchedData);
-
-        // Dados para as Barras de ProgressO 
-        //barraProgresso.push([obraMetricas[0]['objeto'], obraMetricas[0]['valor_proposto'], obraMetricas[0]['valor_trabalhos'],
-        //    Math.round((obraMetricas[0]['valor_trabalhos'] / obraMetricas[0]['valor_proposto'])* 100, 2)
-        //]);
-        for(var i = 0; i < obraMetricas.length; i++){
-            //if(
-            //    obraMetricas[i]['infraestrutura'].match('AA_Condutas')
-            //    obraMetricas[i]['objeto'] == 'Pavimentações' || 
-            //    obraMetricas[i]['objeto'] == 'Movimento Terras' || 
-            //    obraMetricas[i]['objeto'] == 'Tubagens' || 
-            //    obraMetricas[i]['objeto'] == 'Acessórios' || 
-            //    obraMetricas[i]['objeto'] == 'Ramais'
-            //)
-            {
-            barraProgresso.push([
-                obraMetricas[i]['intervencao'],
-                obraMetricas[i]['valor_proposto'], 
-                obraMetricas[i]['valor_trabalhos'],
-                obraMetricas[i]['percentagem']
-            ]);
+// ---------------------------------------------------------------
+// 1) Buscar dados
+// ---------------------------------------------------------------
+function fetchMetricas(url) {
+    fetch(url)
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                obraMetricas = data;
+                renderProgressBars(obraMetricas);   // Renderiza as barras de progresso
+                gerarGraficoLadoALado(obraMetricas); // Gera o gráfico lado a lado
+            } else {
+                document.getElementById("lstMetricasProgress").innerHTML =
+                    `<div class="text-warning">Nenhum dado encontrado para as métricas.</div>`;
+                document.getElementById("lstMetricasGrafico").innerHTML = 
+                    `<div class="text-warning">Nenhum gráfico disponível.</div>`;
             }
+        })
+        .catch(err => {
+            document.getElementById("lstMetricasProgress").innerHTML =
+                `<div class="text-danger">Erro ao carregar as métricas: ${err}</div>`;
+            document.getElementById("lstMetricasGrafico").innerHTML = 
+                `<div class="text-danger">Erro ao carregar o gráfico: ${err}</div>`;
+        });
+}
+
+// ---------------------------------------------------------------
+// 2) Renderizar tudo (barras + gráfico)
+// ---------------------------------------------------------------
+function renderProgressBars(metricas) {
+    const container = document.getElementById("lstMetricasProgress");
+    container.innerHTML = "";
+
+    metricas.forEach(m => {
+        // Verifica se os dados são válidos
+        const valor = {
+            titulo: m.trabalho,
+            proposto: m.valor_proposto || 0,  // Garantir valores numéricos
+            executado: m.valor_trabalhos || 0,  // Garantir valores numéricos
+            percentagem: m.percentagem || 0  // Garantir valores numéricos
         };
+        container.appendChild(createProgressBar(valor));
+    });
+}
 
-        console.table("Barra Progresso:", barraProgresso);
-        
-        // Replica o Gráfico de Dados Gerias - DOM
-        var oldCanvas = document.getElementById('lstObraGrafico');
-        var newCanvas = document.getElementById('lstMetricasGrafico');
-        var contexto = newCanvas.getContext('2d');
-        newCanvas.width = oldCanvas.width;
-        newCanvas.height = oldCanvas.height;
-        contexto.drawImage(oldCanvas, 0, 0);
-         
+// ---------------------------------------------------------------
+// 3) Componente Progress Bar animado (retorna um <div> pronto)
+// ---------------------------------------------------------------
+function createProgressBar({ titulo, percentagem }) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "mb-3";
 
-        // Progress Bar
-        // Contentores para agregar as barras de progresso
-        const progressBarsContainer = document.getElementById('lstMetricasProgress');
-        progressBarsContainer.innerHTML = "";
-        // Função para crear una barra de progresso
-        
-        function createProgressBar(value)
-        {
-            // Contentores
-            // 1
-            const progressWrapper = document.createElement('div');
-            progressWrapper.className = 'mt-2';
-            //2
-            const progressWrapperFlex = document.createElement('div');
-            progressWrapperFlex.className = 'd-flex no-block align-items-center';
-            //3 - Os títulos das barras - acima das barras
-            const progressSpan = document.createElement('span')
-            //4 - Agregador das barras
-            const progressContainer = document.createElement('div');
-            progressContainer.className = 'progress';
-            //5 - As barras
-            const progressBar = document.createElement('div');
-            progressBar.className = 'progress-bar progress-bar-striped';
-            //6 - As designações das barras - dentro das barras
-            const progressSpanBar = document.createElement('span')
+    wrapper.innerHTML = `
+        <small class="fw-bold">${titulo}</small>
+        <div class="progress mt-1" style="height:22px">
+            <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated"
+                 role="progressbar"
+                 style="width:0%"
+                 data-target="${percentagem}">
+                 <span class="ms-2 fw-bold">${percentagem}%</span>
+            </div>
+        </div>
+    `;
 
-            // configuração dos contentores - ordem
-            progressBarsContainer.appendChild(progressWrapper);
-            progressWrapper.appendChild(progressSpan);
-            progressWrapper.appendChild(progressContainer);
-            progressContainer.appendChild(progressBar);
-            progressBar.appendChild(progressSpanBar);
+    animateProgressBar(wrapper.querySelector(".progress-bar"));
+    return wrapper;
+}
 
-            // Configuração das barras
-            var width = 0;
-            const interval = setInterval(function()
-            {
-                if (width >= value[3]) {
-                    clearInterval(interval);
-                } else {
-                    width++;
-                    progressBar.style.width = width + '%';
-                    //progressSpan.textContent = value[0] + ' - ' + value[1] + ' - ' + value[2];
-                    progressSpan.textContent = value[0];
-                    progressSpanBar.textContent = value[3] + '%';
-                }
+// ---------------------------------------------------------------
+// 4) Animação suave da barra
+// ---------------------------------------------------------------
+function animateProgressBar(bar) {
+    let current = 0;
+    const target = Number(bar.dataset.target);
 
-            }, 1);
-        }
+    const interval = setInterval(() => {
+        if (current >= target) return clearInterval(interval);
+        current++;
+        bar.style.width = current + "%";
+    }, 10);
+}
 
-        // Atribuir os dados às barras de progresso
-        // Atribui ao conotainer Pavimentações os valores do grupo
-        barraProgresso.forEach(function(value){
-            //if(value[0] == 'Instalação'){ 
-                createProgressBar(value);
-            //}    
-        }
-        );
-    
+// ---------------------------------------------------------------
+// 5) Gerar gráfico de barras lado a lado com base nos dados de metricas
+// ---------------------------------------------------------------
+function gerarGraficoLadoALado(metricas) {
+    const ctx = document.getElementById("lstMetricasGrafico").getContext("2d");
 
-    })
-    .catch(error => {
-        document.getElementById("lstMetricasProgress").innerHTML = error;
-        //console.error("Error fetching the data:", error);
+    // Extrair dados e garantir que não sejam nulos
+    const labels = metricas.map(m => m.trabalho || 'Desconhecido');
+    const proposto = metricas.map(m => Number(m.valor_proposto || 0));
+    const executado = metricas.map(m => Number(m.valor_trabalhos || 0));
+
+    // Determinar cores dinâmicas para "Executado"
+    const coresExecutado = metricas.map((m, i) => {
+        const perc = (executado[i] / proposto[i]) * 100;
+        if (perc >= 80) return "rgba(0, 200, 0, 0.8)";       // verde
+        if (perc >= 50) return "rgba(255, 193, 7, 0.8)";     // amarelo
+        return "rgba(220, 53, 69, 0.8)";                     // vermelho
     });
 
+    // Destruir gráfico antigo se existir
+    if (window.metricasChart) window.metricasChart.destroy();
 
-
-//        var metricaProgress = document.getElementById("lstMetricasProgress");
-//        obraMetricas.forEach((resultado) => {
-//            var percentagem = Math.round((resultado['valor_trabalhos'] / resultado['valor_proposto'])* 100, 2);
-//            var lstTitulos = `<div class='small'><a>
-//            ${resultado['objeto']} - 
-//            ${Number(resultado['valor_proposto']).toLocaleString('pt')} - 
-//            ${Number(resultado['valor_trabalhos']).toLocaleString('pt')} -
-//            ${Number(percentagem).toLocaleString('pt')}
-//            </a></div>`;
-//            //${Number(result["faturado"]).toLocaleString('pt')
-//
-//            //progresso.push(resultado["mt_designacao"], resultado["mt_item"]);
-//            metricaProgress.innerHTML += lstTitulos;
-//        });
-
-        
+    // Criar gráfico de barras lado a lado
+    window.metricasChart = new Chart(ctx, {
+        type: "bar",  // Tipo de gráfico: barras
+        data: {
+            labels: labels,  // Labels para as barras
+            datasets: [
+                {
+                    label: "Proposto (€)",
+                    data: proposto,
+                    backgroundColor: "rgba(54, 162, 235, 0.6)",  // Cor das barras do proposto
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1
+                },
+                {
+                    label: "Executado (€)",
+                    data: executado,
+                    backgroundColor: "rgba(75, 192, 192, 0.6)",  // Cor das barras do executado
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,  // Tornar o gráfico responsivo
+            maintainAspectRatio: false,  // Não manter a proporção fixa
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => ctx.dataset.label + ": " + ctx.raw.toLocaleString("pt-PT", { style: 'currency', currency: 'EUR' })
+                    }
+                },
+                legend: { position: 'top' }  // Posição da legenda
+            },
+            scales: {
+                x: {
+                    stacked: false,  // Desmarcar stacked para exibir as barras lado a lado
+                },
+                y: {
+                    stacked: false,  // Desmarcar stacked para as barras no eixo Y também
+                    beginAtZero: true,  // Começar o eixo Y do zero
+                    ticks: {
+                        callback: value => value.toLocaleString("pt-PT", { style: 'currency', currency: 'EUR' })  // Formatar o eixo Y como moeda
+                    }
+                }
+            }
+        }
+    });
+}
