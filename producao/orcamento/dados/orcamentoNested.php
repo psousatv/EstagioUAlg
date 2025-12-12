@@ -79,25 +79,16 @@ try {
             proc.proced_regime AS regime,
             proces_nome AS designacao,
             proces_val_max AS previsto,
-
-            (
-            SELECT COALESCE(SUM(h3.historico_valor), 0) 
-            FROM historico h3 
-            WHERE h3.historico_proces_check = proces_check
-            AND h3.historico_descr_cod = 3) AS consulta,
-
             (
             SELECT COALESCE(SUM(h14.historico_valor), 0) 
             FROM historico h14 
             WHERE h14.historico_proces_check = proces_check
             AND h14.historico_descr_cod = 14) AS adjudicado,
-
             (
             SELECT COALESCE(SUM(f.fact_valor), 0)
             FROM factura f 
             WHERE f.fact_proces_check = proces_check
             AND YEAR(f.fact_data) = $anoCorrente) AS faturado
-
             FROM processo
             INNER JOIN procedimento proc ON proc.proced_cod = proces_proced_cod
             WHERE proces_orc_check IN ($placeholders)
