@@ -17,7 +17,6 @@ $(document).ready(function () {
           orcamento: proc.linha_orc,
           sespeciais: proc.linha_se,
           designacao: proc.designacao,
-          previsto: proc.previsto,
           adjudicado: 0,
           faturado: 0
         };
@@ -38,7 +37,6 @@ $(document).ready(function () {
             <th>Orçamento</th>
             <th>Listagem SE</th>
             <th>Designação</th>
-            <th class="text-center">Previsto</th>
             <th class="text-center">Adjudicado</th>
             <th class="text-center">Faturado</th>
             <th class="text-center">Saldo</th>
@@ -54,7 +52,6 @@ $(document).ready(function () {
         <td>${proc.orcamento}</td>
         <td>${proc.sespeciais}</td>
         <td>${proc.designacao}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.previsto)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}</td>
@@ -109,7 +106,7 @@ table = $('#processosNested').DataTable({
               <td class="bg-primary text-white">Orçamento</td>
               <td class="bg-primary text-white text-end">${formatCurrency(totalPrevisto)}</td>
               <td class="bg-secondary text-white">
-                Adjudicados <span class="badge bg-success">(${totalProcessos})</span>
+                Registados <span class="badge bg-success">(${totalProcessos})</span>
               </td>
               <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>  
               <td class="bg-success text-white">Faturado </td>

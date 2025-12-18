@@ -1,136 +1,196 @@
-//Processos
+// =======================
+// Variáveis globais
+// =======================
+let grafico = null;
+let allData = [];
+let dadosGrafico = [];
+let dadosOriginais = []; // dados vindos do backend
 
-// Conversões dos dados do DataTable para os Gráficos e Progress Bar
-var allData = [];
-var dadosGrafico = [];
+// =======================
+// Inicialização
+// =======================
+document.addEventListener('DOMContentLoaded', () => {
+    carregarDados();
+});
 
-//console.log("AllData: ", allData);
+// =======================
+// Fetch de dados
+// =======================
+async function carregarDados() {
+    try {
+        const response = await fetch('dados/main.php');
 
-$.ajax(
-    {
-    url: "dados/main.php",
-    method: 'GET',
-    contentType: 'application/json'
-    }).done(
-        function(data)
-        {
-            var grafico;
-            var dataTable = $('#tabela').DataTable({
-                aaData: data,
-                aoColumns:[
-                    { mDataProp: 'contrato'},
-                    { mDataProp: 'adjudicado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { mDataProp: 'percent', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '')}
-                ]
-            })
+        if (!response.ok) throw new Error('Erro ao carregar dados');
 
-            dataTable.rows().every(
-                function(){
-                    var rowData = this.data();
-                    // Todos os dados de Datatable (data) para array local
-                    allData.push(rowData);
-                    // Títulos para x do gráfico
-                    titulo_colunas = Object.keys(rowData);
-                    // Valores recebidos - para o Gráfico
-                    dadosGrafico.push([rowData["contrato"], rowData["adjudicado"], rowData["faturado"]]);
-                }
-            );
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error('Formato de dados inválido');
 
-            
-            // Gráfico
-            var chart_data = {
-                labels: data.map(row => row.contrato),
-                datasets:[
-                    {
-                    label : 'Adjudicado',
-                    backgroundColor : 'rgba(178, 34, 34, .3)',
-                    //color : '#fff',
-                    data: data.map(row => row.adjudicado)
-                    },
-                    {
-                    label : 'Faturado',
-                    backgroundColor : 'rgba(3, 100, 255, .3)',
-                    //color : '#fff',
-                    data: data.map(row => row.faturado)
-                    }
-                ]
-                };
+        dadosOriginais = validarDados(data);
 
-                var group_chart = $('#grafico');
+        // Inicializa dashboard com todos os dados
+        atualizarDashboard(dadosOriginais);
 
-                if(grafico)
+    } catch (error) {
+        console.error(error);
+        alert('Erro ao carregar os dados.');
+    }
+}
+
+// =======================
+// Validação de dados
+// =======================
+function validarDados(data) {
+    return data.map(item => ({
+        contrato: item.contrato ?? 'N/D',
+        adjudicado: Number(item.adjudicado) || 0,
+        faturado: Number(item.faturado) || 0,
+        percent: Number(item.percent) || 0
+    }));
+}
+
+// =======================
+// Atualiza todo o dashboard
+// =======================
+function atualizarDashboard(data) {
+    allData = [...data];
+    dadosGrafico = data.map(d => [d.contrato, d.adjudicado, d.faturado]);
+
+    inicializarTabela(data);
+    criarGrafico(data);
+    criarCartoes(data);
+}
+
+// =======================
+// DataTable
+// =======================
+function inicializarTabela(data) {
+    $('#tabela').DataTable({
+        destroy: true,
+        data: data,
+        columns: [
+            { data: 'contrato' },
+            { data: 'adjudicado', className: 'dt-body-right', render: renderMoeda },
+            { data: 'faturado', className: 'dt-body-right', render: renderMoeda },
+            { data: 'percent', className: 'dt-body-right', render: d => `${d}%` }
+        ]
+    });
+}
+
+// =======================
+// Gráfico Misto (barra + linha) com acumulado
+// =======================
+function calcularAcumulado(data, campo) {
+    let total = 0;
+    return data.map(item => total += item[campo]);
+}
+
+function criarGrafico(data) {
+    const labels = data.map(d => d.contrato);
+
+    const adjudicadoAcum = calcularAcumulado(data, 'adjudicado');
+    const faturadoAcum = calcularAcumulado(data, 'faturado');
+
+    if (grafico) grafico.destroy();
+
+    grafico = new Chart(document.getElementById('grafico'), {
+        data: {
+            labels: labels,
+            datasets: [
                 {
-                    grafico.destroy();
-                }
-                grafico = new Chart(group_chart,
+                    type: 'bar',
+                    label: 'Adjudicado (Acumulado)',
+                    data: adjudicadoAcum,
+                    backgroundColor: 'rgba(178, 34, 34, 0.4)'
+                },
                 {
-                type: 'bar',
-                data: chart_data
-                });
+                    type: 'line',
+                    label: 'Faturado (Acumulado)',
+                    data: faturadoAcum,
+                    borderColor: 'rgba(3, 100, 255, 0.9)',
+                    backgroundColor: 'rgba(3, 100, 255, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
 
-            // ** Cartões
-            var container = document.getElementById('cartoesEsquerdaGrafico');
-            container.innerHTML = "";
-            data.forEach((result, idx) => {
-            // Create card element
-            var classeCartao = ''
-            var iconeCartao = ''
-            if (result["percent"] < 10) {
-                var classeCartao = 'bg-danger text-white';
-                var iconeCartao = 'fa fa-thumbs-down'
-            } else if (result["percent"] > 10 & result["percent"]< 35){
-                var classeCartao = 'bg-warning text-black';
-                var iconeCartao = 'fa fa-warning'
-            } else if (result["percent"] >35 & result["percent"] < 75){
-                var classeCartao = 'bg-primary text-white';
-                var iconeCartao = 'fa fa-cog fa-spin'
-            } else {
-                var classeCartao = 'bg-success text-white';
-                var iconeCartao = 'fa fa-smile'
-            };
+// =======================
+// Cartões
+// =======================
+function criarCartoes(data) {
+    const container = document.getElementById('cartoesEsquerdaGrafico');
+    container.innerHTML = '';
 
-            const card = document.createElement('div');
-            card.classList = 'card-body';
-            
-            var cartoes = `
-            <div class="col-md-12 col-md-6 stretch-card pb-sm-3 pb-lg-0" >
-                <div class="card ${classeCartao}">
+    const fragment = document.createDocumentFragment();
+
+    data.forEach(item => {
+        const { classe, icone } = obterClasseCartao(item.percent);
+
+        const div = document.createElement('div');
+        div.innerHTML = `
+        <div class="col-md-12 stretch-card pb-sm-3">
+            <div class="card ${classe}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between px-md-1">
-                    <div class="text-end">
-                        <p class="mb-0 text-white" onclick="redirectTipoProcesso(${result["contrato"]})">${result["contrato"]}</p>
-                        <!--Faturado-->
-                        <h6>${Number(result["faturado"]).toLocaleString('pt')}€<span class="h6">- ${result["percent"]}%</span></h3>
-                        <!--Adjudicado-->
-                        <h6>${Number(result["adjudicado"]).toLocaleString('pt')}€<span class="h6"> </span></h6>
+                        <div class="text-end">
+                            <p class="mb-0 text-white"
+                               onclick="redirectTipoProcesso('${item.contrato}')">
+                               ${item.contrato}
+                            </p>
+                            <h6>${formatarMoeda(item.faturado)} <span>- ${item.percent}%</span></h6>
+                            <h6>${formatarMoeda(item.adjudicado)}</h6>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas ${icone} fa-3x"></i>
+                        </div>
                     </div>
-                    <div class="align-self-center">
-                        <i class="fas ${iconeCartao} text-white fa-3x"></i>
-                    </div>
-                    </div>
-                </div>
                 </div>
             </div>
-            `;
+        </div>
+        `;
+        fragment.appendChild(div);
+    });
 
-            // Append newyly created card element to the container
-            container.innerHTML += cartoes;
-        });
-    }
-);
+    container.appendChild(fragment);
+}
 
-// Os resultados da Seleção é redirecionado para a página pretendida
+function obterClasseCartao(percent) {
+    if (percent < 10) return { classe: 'bg-danger text-white', icone: 'fa-thumbs-down' };
+    if (percent < 35) return { classe: 'bg-warning text-black', icone: 'fa-warning' };
+    if (percent < 75) return { classe: 'bg-primary text-white', icone: 'fa-cog fa-spin' };
+    return { classe: 'bg-success text-white', icone: 'fa-smile' };
+}
+
+// =======================
+// Helpers
+// =======================
+function formatarMoeda(valor) {
+    return `${valor.toLocaleString('pt-PT')} €`;
+}
+
+function renderMoeda(data) {
+    return formatarMoeda(Number(data));
+}
+
+// =======================
+// Redirecionamento
+// =======================
 function redirectTipoProcesso(tipoProcesso) {
+    const url = (tipoProcesso === 'Empreitada')
+        ? '../obras/obrasSearch.html'
+        : '../servicos/servicosSearch.html';
 
-    //console.log("Tipo de Processo", tipoProcesso);
-
-    if(tipoProcesso == 'Empreitada'){
-        var URL = "../obras/obrasSearch.html";
-        window.location.href = URL;
-    } else if (tipoProcesso != 'Empreitada') {
-        var URL = "../servicos/servicosSearch.html";
-        window.location.href = URL;
-    }
-    
-    };
+    window.location.href = url;
+}
