@@ -164,7 +164,7 @@ function formatNested(processo) {
 
         // Título da candidatura
         $('#titulo').html(`
-          <div class="btn btn-primary col-md-8 d-grid small text-white text-left">
+          <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
             ${json.estado || ''}: ${json.candidatura || ''} 
             - ${json.designacao || ''} - ${json.taxa * 100 || ''}%
           </div>
