@@ -39,7 +39,7 @@ try {
         FROM historico h14
         LEFT JOIN processo p ON p.proces_orc_check = orc_check
         WHERE h14.historico_proces_check = p.proces_check
-        AND YEAR(h14.historico_dataemissao) = :anoCorrente
+        
         AND h14.historico_descr_cod = 14
         ) AS total_adjudicado,
 

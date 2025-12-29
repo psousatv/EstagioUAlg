@@ -17,6 +17,7 @@ $(document).ready(function () {
           orcamento: proc.linha_orc,
           sespeciais: proc.linha_se,
           designacao: proc.designacao,
+          previsto: proc.previsto,
           adjudicado: 0,
           faturado: 0
         };
@@ -37,6 +38,7 @@ $(document).ready(function () {
             <th>Orçamento</th>
             <th>Listagem SE</th>
             <th>Designação</th>
+            <th class="text-center">Previsto</th>
             <th class="text-center">Adjudicado</th>
             <th class="text-center">Faturado</th>
             <th class="text-center">Saldo</th>
@@ -46,12 +48,19 @@ $(document).ready(function () {
     `;
 
     rows.forEach(proc => {
-      const saldo = proc.adjudicado - proc.faturado;
+      const saldo = proc.adjudicado === 0 && proc.faturado === 0 ? proc.previsto :
+      proc.adjudicado > 0 && proc.faturado === 0 ? proc.previsto - proc.adjudicado :
+      proc.previsto === 0 && proc.faturado > 0 ? proc.adjudicado - proc.faturado :
+      proc.previsto - proc.faturado;
+      
+      // const saldo = proc.previsto - proc.faturado;
+
       html += `<tr onclick="redirectProcesso(${proc.proces_check})">
         <td>${proc.regime}</td>
         <td>${proc.orcamento}</td>
         <td>${proc.sespeciais}</td>
         <td>${proc.designacao}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.previsto)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}</td>
@@ -105,10 +114,12 @@ table = $('#processosNested').DataTable({
             <tr>
               <td class="bg-primary text-white">Orçamento</td>
               <td class="bg-primary text-white text-end">${formatCurrency(totalPrevisto)}</td>
+              
               <td class="bg-secondary text-white">
                 Registados <span class="badge bg-success">(${totalProcessos})</span>
               </td>
-              <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>  
+              <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>
+              
               <td class="bg-success text-white">Faturado </td>
               <td class="bg-success text-white text-end">${formatCurrency(totalFaturado)}</td>
               <td class="bg-info text-white">Saldo </td>
@@ -153,7 +164,8 @@ table = $('#processosNested').DataTable({
         const faturado = row.total_faturado || 0;
         let diff = adjudicado === 0 && faturado === 0 ? previsto :
         adjudicado > 0 && faturado === 0 ? previsto - adjudicado :
-        adjudicado - faturado;
+        previsto === 0 && faturado > 0 ? adjudicado - faturado :
+        previsto - faturado;
         return $.fn.dataTable.render.number('.', ',', 2, '').display(diff);
       }
     },
