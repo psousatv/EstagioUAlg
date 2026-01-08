@@ -75,6 +75,8 @@ function formatNested(processo) {
         }
     });
 
+    console.log("Pedidos: ", pedidosMap);
+
     // Monta linhas de pedidos, faturas e reembolsos
     Object.values(pedidosMap).forEach(item => {
         const pedidoText = item.pedido
