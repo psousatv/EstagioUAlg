@@ -42,40 +42,41 @@ function formatNested(processo) {
       </thead>
       <tbody>`;
 
-    const pedidosMap = {};
-    const faturasOrfaos = [];
-    const reembolsosOrfaos = [];
-
-    // Separar pedidos e faturas
-    (processo.historico || []).forEach(h => {
-        if (h.historico_descr_cod === 91) {
-            if (!pedidosMap[h.historico_num]) pedidosMap[h.historico_num] = { pedido: h, faturas: [], reembolsos: [] };
-        }
-    });
-
-    // Associar faturas diretamente aos pedidos
-    (processo.faturas || []).forEach(f => {
-        const historicoNum = f.fact_finan_pp;
-        if (pedidosMap[historicoNum]) {
-            pedidosMap[historicoNum].faturas.push(f);
-        } else {
-            faturasOrfaos.push(f);
-        }
-    });
-
-    // Separar reembolsos e associar aos pedidos
-    (processo.historico || []).forEach(h => {
-        if (h.historico_descr_cod === 92) {
-            const pedido = pedidosMap[h.historico_num];
-            if (pedido) {
-                pedido.reembolsos.push(h);
+      const { pedidosMap, faturasOrfaos, reembolsosOrfaos } = (processo.historico || []).reduce(
+        (acc, h) => {
+          const num = h.historico_num;
+      
+          // Separar pedidos
+          if (h.historico_descr_cod === 91 && num != null) {
+            acc.pedidosMap[num] ??= { pedido: h, faturas: [], reembolsos: [] };
+          }
+      
+          // Separar reembolsos
+          if (h.historico_descr_cod === 92 && num != null) {
+            if (acc.pedidosMap[num]) {
+              acc.pedidosMap[num].reembolsos.push(h);
             } else {
-                reembolsosOrfaos.push(h);
+              acc.reembolsosOrfaos.push(h);
             }
+          }
+      
+          return acc;
+        },
+        { pedidosMap: {}, faturasOrfaos: [], reembolsosOrfaos: [] }
+      );
+      
+      // Associar faturas aos pedidos
+      (processo.faturas || []).forEach(f => {
+        const num = f.fact_finan_pp;
+        if (pedidosMap[num]) {
+          pedidosMap[num].faturas.push(f);
+        } else {
+          faturasOrfaos.push(f);
         }
-    });
+      });
+     
+console.table(pedidosMap);
 
-    console.log("Pedidos: ", pedidosMap);
 
     // Monta linhas de pedidos, faturas e reembolsos
     Object.values(pedidosMap).forEach(item => {

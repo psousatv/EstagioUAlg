@@ -70,7 +70,7 @@
                         <div class="card-header">
                             <!-- Formulario para escolha do ano do Orçamento - Default = Ano Corrente -->
                             <div class="btn btn-info text-white text-left">
-                                <form>
+                                <form onsubmit="return false;">
                                     <label style="text-align: left" for="anoCorrente">Orçamento do Ano:
                                         <input id="anoCorrente" style="text-align: right" type="text"
                                         autofocus>
@@ -111,7 +111,7 @@
     <!-- Bootstrap -->
     <script src="../../vendors/datatables/datatables.min.js"></script>
     <!-- Charts -->
-    <script src="../../vendors/charts/chart.min.js"></script>
+    <script src="../../vendors/charts/chart.umd.min.js"></script>
 
     <!-- JS de Página -->
     <!--script>document.getElementById("anoCorrente").value = new Date().getFullYear();</script-->    

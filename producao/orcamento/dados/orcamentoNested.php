@@ -28,6 +28,7 @@ try {
     // === ORÇAMENTO ===
     $sqlOrcamento = "SELECT
         orc_check,
+        orc_ano AS ano,
         orc_tipo AS tipo,
         orc_regime AS regime,
         orc_conta_descritiva AS descritivo,

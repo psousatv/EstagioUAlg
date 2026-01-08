@@ -1,43 +1,22 @@
-var anoCorrente = [];
+// Variável para armazenar o ano atual
+var anoCorrente = new Date().getFullYear();  
 
-function cartoes(endereco){
-
-$.ajax(
-    {
-    url: endereco,
-    method: 'GET',
-    contentType: 'application/json'
-    }).done(
-        function(data)
-        {
-            //var dataTable = $('#tabela').DataTable({
-            //    aaData: data,
-            //    aoColumns:[
-            //        { mDataProp: 'ano'},
-            //        { mDataProp: 'tipo'},
-            //        { mDataProp: 'rubrica'},
-            //        { mDataProp: 'item'},
-            //        { mDataProp: 'previsto', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') },
-            //        { mDataProp: 'faturado', className: 'dt-body-right', "render": $.fn.dataTable.render.number('.', ',', 2, '') }
-            //    ]
-            //})
-
-
-        // Cria os cartões
-        //var containerInvestimentos = $('#cartoesInvestimentos');
-        //var containerGastos = $('#cartoesGastos');
+// Função para carregar os cartões
+function cartoes(endereco) {
+    $.ajax({
+        url: endereco,
+        method: 'GET',
+        contentType: 'application/json'
+    }).done(function(data) {
         var containerInvestimentos = document.getElementById('cartoesInvestimentos');
         var containerGastos = document.getElementById('cartoesGastos');
-        //containerInvestimentos.empty();
-        //containerGastos.empty();
+
         containerInvestimentos.innerHTML = "";
         containerGastos.innerHTML = "";
 
         data.forEach(dados => {
             let classeCartao, iconeCartao;
 
-            console.table(dados);
-            
             let adjudicado_percent = dados.adjudicado === 0 && dados.faturado === 0 ? 0 :
                         dados.adjudicado > 0 && dados.faturado === 0 ? 0 :
                         (dados.faturado / dados.adjudicado);
@@ -45,13 +24,13 @@ $.ajax(
                         dados.previsto > 0 && dados.faturado === 0 ? 0 :
                         (dados.faturado / dados.previsto);
 
-            if (previsto_percent > .85) {
+            if (previsto_percent > 0.85) {
                 classeCartao = 'bg-danger text-white';
                 iconeCartao = 'fa fa-thumbs-down';
-            } else if (previsto_percent > .70) {
+            } else if (previsto_percent > 0.70) {
                 classeCartao = 'bg-warning text-dark';
                 iconeCartao = 'fa fa-exclamation-triangle';
-            } else if (previsto_percent > .50) {
+            } else if (previsto_percent > 0.50) {
                 classeCartao = 'bg-primary text-white';
                 iconeCartao = 'fa fa-cog fa-spin';
             } else {
@@ -67,21 +46,15 @@ $.ajax(
                             <p class="mb-1 font-weight-bold">${dados.item}</p>
                             <div>
                                 <h6>
-                                    ${Intl.NumberFormat("de-DE", 
-                                        { style: "currency", currency: "EUR" }).format(dados.adjudicado)} -
-                                    ${Intl.NumberFormat("de-DE", 
-                                        { style: "currency", currency: "EUR" }).format(dados.faturado)} -
-                                    <span>${Intl.NumberFormat("de-DE", 
-                                        {style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(adjudicado_percent)}
-                                    </span>
+                                    ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(dados.adjudicado)} -
+                                    ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(dados.faturado)} -
+                                    <span>${Intl.NumberFormat("de-DE", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(adjudicado_percent)}</span>
                                 </h6>
                             </div>
                             <div>
                                 <h5>
                                     ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(dados.previsto)} 
-                                    <span class="h6">- ${Intl.NumberFormat("de-DE", 
-                                        { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(previsto_percent)}
-                                    </span>
+                                    <span class="h6">- ${Intl.NumberFormat("de-DE", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(previsto_percent)}</span>
                                 </h5>
                             </div>
                         </div>
@@ -95,68 +68,60 @@ $.ajax(
 
             if (dados.tipo === 'Investimento') {
                 containerInvestimentos.innerHTML += cartao;
-                //containerInvestimentos.append(cartao);
             } else {
                 containerGastos.innerHTML += cartao;
-                //containerGastos.append(cartao);
             }
-
         });
-    })
-};
+    });
+}
 
+// Valida o ano (somente números, entre 2000 e 2100)
+function validaAno(ano) {
+    ano = parseInt(ano, 10);
+    if (isNaN(ano)) {
+        alert("Ano inválido! Por favor insira um número.");
+        return false;
+    }
+    if (ano < 2000 || ano > 2100) {
+        alert("Ano fora do intervalo permitido (2000-2100).");
+        return false;
+    }
+    return true;
+}
 
-// Os resultados da Seleção é redirecionado para a orcamentoResults.html
+// Atualiza o ano e recarrega os cartões
+function mudaAno() {
+    var anoFormulario = document.getElementById('anoCorrente').value;
+
+    if (!validaAno(anoFormulario)) {
+        // Se não for válido, restaura o input para o anoCorrente atual
+        document.getElementById('anoCorrente').value = anoCorrente;
+        return;
+    }
+
+    anoCorrente = anoFormulario;  // Atualiza a variável global
+
+    var url = 'dados/orcamentoDashboard.php?anoCorrente=' + anoCorrente;
+    cartoes(url);
+}
+
+// Inicializa o formulário com o ano atual e carrega os cartões
+function anoDefault() {
+    document.getElementById('anoCorrente').value = anoCorrente;
+    var url = 'dados/orcamentoDashboard.php?anoCorrente=' + anoCorrente;
+    cartoes(url);
+}
+
+// Redirecionamento
 function orcamentoResults(itemProcurado) {
     var URL = "orcamentoResults.html?itemProcurado=" + itemProcurado + "&anoCorrente=" + anoCorrente;
-    getQueryParams();
     window.location.href = URL;
 };
 
 function orcamentoNested(itemProcurado) {
     var URL = "orcamentoNested.html?itemProcurado=" + itemProcurado + "&anoCorrente=" + anoCorrente;
-    getQueryParams();
     window.location.href = URL;
 };
 
-function anoDefault(){
-    var data = new Date();
-    var anoAtual = data.getFullYear();
-    document.getElementById('anoCorrente').value = anoAtual;
-
-    var endereco = 'dados/orcamentoDashboard.php?anoCorrente=';
-    var anoFormulario = document.getElementById('anoCorrente').value;
-    
-
-    var url = endereco + anoFormulario;
-
-    anoCorrente = [];
-    anoCorrente += anoFormulario;
-
-    cartoes(url);
-
-};
-
-function mudaAno(){
-    var anoFormulario = document.getElementById('anoCorrente').value;
-    var endereco = 'dados/orcamentoDashboard.php?anoCorrente=';
-
-    var url = endereco + anoFormulario;
-
-    anoCorrente = [];
-    anoCorrente += anoFormulario;
-    
-    cartoes(url);
-};
-
-
-function getQueryParams() {
-    const params = {};
-    const search = window.location.search;
-    const query = new URLSearchParams(search);
-    for (const [key, value] of query.entries()) {
-      params[key] = value;
-    }
-    return params;
-}
-  
+// Chamada automática ao carregar a página
+window.onload = anoDefault;

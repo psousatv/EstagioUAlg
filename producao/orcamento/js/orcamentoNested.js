@@ -88,8 +88,8 @@ table = $('#processosNested').DataTable({
       // Total de processos de todas as linhas
       const totalProcessos = window.processosPorLinha.reduce((sum, qtd) => sum + qtd, 0);
 
-      console.table(rubrica);
-      console.table(data);
+      //console.table(rubrica);
+      //console.table(data[0]["ano"]);
 
       if (data.length > 0) {
         $('#titulo').html(`
@@ -97,7 +97,7 @@ table = $('#processosNested').DataTable({
             ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
           </div>
           <div class="btn btn-warning">
-            <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=2025" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
+            <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=${data[0]["ano"]}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
           </div>
           <div class="btn btn-primary">
             <a class="text-white" href="orcamentoDashboard.html"><i class="fa-solid fa-search"></i></a>

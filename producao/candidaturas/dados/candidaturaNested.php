@@ -86,7 +86,7 @@ try {
                 COALESCE(historico_valor, 0) AS valor
             FROM historico
             WHERE historico_proces_check = :pc
-            AND historico_descr_cod IN (14, 91,92)
+            AND historico_descr_cod IN (14, 91, 92)
             ORDER BY historico_dataemissao
         ";
 
