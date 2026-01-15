@@ -23,7 +23,7 @@ function obterMovimentosDaFase($faseDesejada) {
         "contrato" => [16, 17, 19, 40],
         "garantias" => [40, 41, 42, 43, 44],
         "preparacao_execucao" => [60, 61, 62, 63, 64],
-        "execucao" => [18, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 96, 98]
+        "execucao" => [9, 18, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 96, 98]
     ];
 
     return $fases[$faseDesejada] ?? [];
