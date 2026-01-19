@@ -1,4 +1,4 @@
-// processoObraGlobal.js
+
 window.ProcessoObra = (() => {
 
     const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -15,6 +15,8 @@ window.ProcessoObra = (() => {
         meses.forEach(m => html += `<th>${m}</th>`);
         html += `</tr>`;
 
+        console.table(dados);
+
         dados.forEach(row => {
             html += `<tr>
                         <td style='text-align:center'>${row.Ano}</td>
@@ -25,11 +27,12 @@ window.ProcessoObra = (() => {
 
         html += `</table>`;
         return html;
+
     }
 
     async function carregarFinanceiro(codigoProcesso, tabelaPrevistoId, tabelaRealizadoId) {
         try {
-            const res = await fetch(`dados/processoFinanceiro.php?codigoProcesso=${codigoProcesso}`);
+            const res = await fetch(`../comum/dados/processoFinanceiro.php?codigoProcesso=${codigoProcesso}`);
             const data = await res.json();
             document.getElementById(tabelaPrevistoId).innerHTML = gerarTabelaHTML(data.previsto, 'Previsto');
             document.getElementById(tabelaRealizadoId).innerHTML = gerarTabelaHTML(data.realizado, 'Realizado');
@@ -38,6 +41,7 @@ window.ProcessoObra = (() => {
         }
     }
 
+    
     // ---------------- Cartões ----------------
     async function carregarCartoes(codigoProcesso, containerCartoesId, containerGrauId) {
         try {
@@ -81,7 +85,7 @@ window.ProcessoObra = (() => {
 
                 if (resultado.valor_faturado != 0) {
                     const cartaoHTML = `
-                    <div class="col-sm-6 col-md-4 mb-2">
+                    <div class="col-sm-6 col-md-4 col-sm-2 mb-2">
                         <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado.auto_num}')">
                             <div class="d-flex px-3 py-2">
                                 <div class="flex-grow-1 text-left">
@@ -93,9 +97,9 @@ window.ProcessoObra = (() => {
                                         <h6 class="mb-0">${formatMoeda.format(resultado.valor_previsto)}</h6>
                                     </div>
                                 </div>
-                                <div class="pl-2 mt-auto">
+                                <span class="pl-2 mt-auto">
                                     <i class="fas ${iconeCartao} fa-3x text-white"></i>
-                                </div>
+                                </span>
                             </div>
                         </div>
                     </div>`;

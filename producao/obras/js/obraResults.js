@@ -21,8 +21,7 @@ function obraSelected(codigo) {
           obraResults(codigo);
           mapaTrabalhos(codigo);
           mapaAutos(codigo);
-          //faturasProcesso(codigo);
-          //garantiasProcesso(codigo);
+          Financeiro(codigo);
 
 };
 
@@ -93,17 +92,31 @@ function garantiasProcesso(codigo) {
   xmlhttp.send();
 };
 
+//Financeiro
+function Financeiro(codigoProcesso){
+  //const codigoProcesso = new URLSearchParams(window.location.search).get("codigoProcesso");
+
+    // Carregar tabelas financeiras
+    //ProcessoObra.Financeiro.carregar(codigoProcesso, 'tabelaPrevisto', 'tabelaRealizado');
+
+    // Carregar cartões
+    ProcessoObra.Cartoes.carregar(codigoProcesso, 'lstObraCartoes', 'cartaoGrauExecucao');
+
+    // Criar gráfico
+    ProcessoObra.Grafico.criar(codigoProcesso, 'lstObraGrafico');
+};
+
 
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada
 function redirectObras(){
-  var obrasURL = "../../producao/obras/obraResults.html?codigoProcesso=" + processoCodigo;
+  var obrasURL = "../obraResults.html?codigoProcesso=" + processoCodigo;
   //window.open(obrasURL, "_blank");
   window.location.href = obrasURL;
 };
 
 function redirectHome(){
-  var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso="+processoCodigo;
+  var obrasURL = "../processos/processoResults.html?codigoProcesso="+processoCodigo;
   //window.open(obrasURL, "_blank");
   window.location.href = obrasURL;
 };

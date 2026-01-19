@@ -19,6 +19,7 @@ function gerarPivotQuery($tabela, $colData, $colValor, $codigoProcesso, $colProc
     return $sql;
 }
 
+
 // Previsão
 $sqlPrevisto = gerarPivotQuery(
     'plano_pagamentos',

@@ -163,37 +163,29 @@
   
             <!-- Aba Financeiro -->
             <div class="tab-pane fade" id="financeiro" role="tabpanel" aria-labelledby="financeiro-tab">
-              
-              <!-- Linha: Tabela + Gráfico -->
+              <!-- Linha: Cartões + Gráfico -->
               <div class="row">
-                
-                <div class="col col-lg-8">
-                  <!-- Segunda linha: Grau de Execução (centralizado) -->
+                <!-- Coluna: Cartões -->
+                <div class="col col-lg-7">
+                  <!-- Grau de Execução (centralizado) -->
                   <div class="row justify-content-center mt-2" id="cartaoGrauExecucao">
                     <strong>Grau de Execução</strong>
                   </div>
-
-                  <!-- Terceira linha: Cartões ponto de situação -->
+                  <!-- Cartões ponto de situação -->
                   <div class="row justify-content-between mt-2" id="lstObraCartoes">
                     <strong>Cartões ponto de situação Auto a Auto vs Plano Pagamentos Previsto.</strong>
                   </div>
-
                 </div>
                 
                 <!-- Coluna: Gráfico da obra -->
-                <div class="col col-lg-4">
+                <div class="col col-lg-5">
                   <canvas id="lstObraGrafico" ></canvas>
                 </div>
               </div>
               
-              <!-- Linha: Tabela + Gráfico -->
+              <!-- Linha: Tabelas -->
               <div class="row">
-                <!-- Coluna: Tabela de Pagamentos -->
                 <div class="col col-lg-12">
-                <!--
-                  <div id="lstPagamentos"></div>
-                -->    
-                  <!-- Containers onde o JS vai inserir as tabelas -->
                   <div id="tabelaPrevisto" class="mb-4"></div>
                   <div id="tabelaRealizado" class="mb-4"></div>
                 </div>
@@ -237,12 +229,8 @@
   <script src="../../vendors/datatables/datatables.min.js"></script>
 
   <script src="js/processoResults.js"></script>
-  <script src="js/processoFinanceiro.js"></script>
-<!--
-  <script src="../../producao/obras/js/obraGraficos.js"></script>
-  <script src="../../producao/obras/js/obraCartoes.js"></script>
--->
-
+  <script src="../comum/js/processoFinanceiro.js"></script>
+  
 </body>
 
 </html>
