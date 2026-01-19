@@ -190,8 +190,12 @@
               <div class="row">
                 <!-- Coluna: Tabela de Pagamentos -->
                 <div class="col col-lg-12">
-                  <div id="lstPagamentos">
-                  </div>
+                <!--
+                  <div id="lstPagamentos"></div>
+                -->    
+                  <!-- Containers onde o JS vai inserir as tabelas -->
+                  <div id="tabelaPrevisto" class="mb-4"></div>
+                  <div id="tabelaRealizado" class="mb-4"></div>
                 </div>
               </div>
 
@@ -231,19 +235,13 @@
   <script src="../../vendors/fonts/all.min.js"></script>
   <!-- Datatables -->
   <script src="../../vendors/datatables/datatables.min.js"></script>
-  <!-- Charts -->
-   <!--
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
-  --> 
 
   <script src="js/processoResults.js"></script>
-  <!--
-  <script src="../../producao/obras/js/obraFinanceiro.js"></script>
-  -->
+  <script src="js/processoFinanceiro.js"></script>
+<!--
   <script src="../../producao/obras/js/obraGraficos.js"></script>
   <script src="../../producao/obras/js/obraCartoes.js"></script>
-  
-
+-->
 
 </body>
 

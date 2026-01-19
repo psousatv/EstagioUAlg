@@ -24,7 +24,8 @@ function processoSelected() {
         fasesProcesso(codigo); // Milestones
         resumoCCP(codigo);
         relacoesProcesso(codigo);
-        pagamentosProcesso(codigo); // Plano de Pagamentos
+        Financeiro(codigo);
+        //pagamentosProcesso(codigo); // Plano de Pagamentos
         faturasProcesso(codigo); // Detalhes daas Faturas
         garantiasProcesso(codigo);
 
@@ -97,16 +98,30 @@ function relacoesProcesso(codigo) {
 };
 
 // Plano de Pagamentos
-function pagamentosProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstPagamentos").innerHTML = this.responseText;
-    }
-  }
+//function pagamentosProcesso(codigo) {
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.onreadystatechange = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      document.getElementById("lstPagamentos").innerHTML = this.responseText;
+//    }
+//  }
+//
+//  xmlhttp.open("GET","dados/processoFinanceiro.php?codigoProcesso="+codigo,true);
+//  xmlhttp.send();
+//};
 
-  xmlhttp.open("GET","dados/processoFinanceiro.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
+//Financeiro
+function Financeiro(codigoProcesso){
+  //const codigoProcesso = new URLSearchParams(window.location.search).get("codigoProcesso");
+
+    // Carregar tabelas financeiras
+    ProcessoObra.Financeiro.carregar(codigoProcesso, 'tabelaPrevisto', 'tabelaRealizado');
+
+    // Carregar cartões
+    ProcessoObra.Cartoes.carregar(codigoProcesso, 'lstObraCartoes', 'cartaoGrauExecucao');
+
+    // Criar gráfico
+    ProcessoObra.Grafico.criar(codigoProcesso, 'lstObraGrafico');
 };
 
 // Facturas
