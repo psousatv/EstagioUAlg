@@ -164,9 +164,7 @@ fetch(url)
     });
 
 
-//var auto = 10
-
-function obraAuto(codigoProcesso,auto){
+function obraAuto(codigoProcesso, auto){
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {

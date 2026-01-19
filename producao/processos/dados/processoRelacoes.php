@@ -76,6 +76,17 @@ $registos = count($relacoes);
           <?php endif; ?>
         </li>
         <li>
+          <?php
+          $atividadesPadrao = [
+              'AA - Águas de Abastecimento',
+              'AR - Águas Residuais'
+          ];
+          if (!in_array($processo['proces_orc_actividade'], $atividadesPadrao, true)) {
+              echo '<b>Para a aquisição deve indicar a Atividade (AA ou ARD): </b>';
+          }
+          ?>
+        </li>
+        <li>
           <b>Recepção/Execução: Em Curso / Encerrada / Terminada, a aguardar fatura final.</b>
         </li>
         <li>

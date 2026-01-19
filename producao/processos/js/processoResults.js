@@ -105,7 +105,7 @@ function pagamentosProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processoPPagamentos.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoFinanceiro.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
 };
 
