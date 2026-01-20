@@ -155,7 +155,7 @@ function gerarHTMLStepper(array $pontos): void {
                     data-bs-toggle="popover" 
                     data-bs-trigger="focus" 
                     data-bs-placement="top"
-                    title="' . $pt['refer'] . ', Registo: ' . $pt['data_doc'] . ' - ' . $pt['notas'] . '"
+                    title="' . $pt['refer'] . ', Aprovado: ' . $pt['data_val'] . ' - ' . $pt['notas'] . '"
                     data-bs-content="' . $pt['data_val'] . '">'
                     . ($i + 1) . $badge . '
                 </div>
