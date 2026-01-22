@@ -113,15 +113,12 @@ function relacoesProcesso(codigo) {
 //Financeiro
 function Financeiro(codigoProcesso){
   //const codigoProcesso = new URLSearchParams(window.location.search).get("codigoProcesso");
-
-    // Carregar tabelas financeiras
-    ProcessoObra.Financeiro.carregar(codigoProcesso, 'tabelaPrevisto', 'tabelaRealizado');
-
-    // Carregar cartões
-    ProcessoObra.Cartoes.carregar(codigoProcesso, 'lstObraCartoes', 'cartaoGrauExecucao');
-
-    // Criar gráfico
-    ProcessoObra.Grafico.criar(codigoProcesso, 'lstObraGrafico');
+  // Carregar tabelas financeiras
+  ProcessoObra.Financeiro.carregar(codigoProcesso, 'tabelaPrevisto', 'tabelaRealizado');
+  // Carregar cartões
+  ProcessoObra.Cartoes.carregar(codigoProcesso, 'lstObraCartoes', 'cartaoGrauExecucao');
+  // Criar gráfico
+  ProcessoObra.Grafico.criar(codigoProcesso, 'lstObraGrafico');
 };
 
 // Facturas

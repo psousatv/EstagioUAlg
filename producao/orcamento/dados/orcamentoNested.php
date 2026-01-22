@@ -41,7 +41,8 @@ try {
         LEFT JOIN processo p ON p.proces_orc_check = orc_check
         WHERE h14.historico_proces_check = p.proces_check
         
-        AND h14.historico_descr_cod = 14
+        AND (h14.historico_descr_cod = 14
+        OR h14.historico_descr_cod = 9)
         ) AS total_adjudicado,
 
         (
@@ -84,7 +85,7 @@ try {
             SELECT COALESCE(SUM(h14.historico_valor), 0) 
             FROM historico h14 
             WHERE h14.historico_proces_check = proces_check
-            AND h14.historico_descr_cod = 14) AS adjudicado,
+            AND (h14.historico_descr_cod = 14 OR h14.historico_descr_cod = 9)) AS adjudicado,
             (
             SELECT COALESCE(SUM(f.fact_valor), 0)
             FROM factura f 
