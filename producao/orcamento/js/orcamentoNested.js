@@ -38,8 +38,8 @@ $(document).ready(function () {
             <th>Orçamento</th>
             <th>Listagem SE</th>
             <th>Designação</th>
-            <th class="text-center">Previsto</th>
             <th class="text-center">Adjudicado</th>
+            <th class="text-center">Plano Anual</th>
             <th class="text-center">Faturado</th>
             <th class="text-center">Saldo</th>
           </tr>
@@ -51,22 +51,23 @@ $(document).ready(function () {
      
       const saldoProcesso =
       proc.adjudicado !== 0
-          ? proc.adjudicado - proc.faturado
-          : proc.previsto - proc.faturado;  
+          ? proc.previsto - proc.faturado
+          : proc.adjudicado - proc.faturado;  
       
       //const saldoProcesso = proc.adjudicado === 0 && proc.faturado === 0 ? proc.previsto :
       //proc.adjudicado > 0 && proc.faturado === 0 ? proc.previsto - proc.adjudicado :
       //proc.previsto === 0 && proc.faturado > 0 ? proc.adjudicado - proc.faturado :
       //proc.previsto - proc.faturado;
       
+      //O previsto deve ter como base o plano de pagamentos para que retire os valores de cada ano
 
       html += `<tr onclick="redirectProcesso(${proc.proces_check})">
         <td>${proc.regime}</td>
         <td>${proc.orcamento}</td>
         <td>${proc.sespeciais}</td>
         <td>${proc.designacao}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.previsto)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.previsto)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldoProcesso)}</td>
       </tr>`;
@@ -121,20 +122,20 @@ table = $('#processosNested').DataTable({
         
         const saldoRubrica =
           totalAdjudicado !== 0
-            ? totalAdjudicado - totalFaturado
-            : totalPrevisto - totalFaturado;        
+            ? totalPrevisto - totalFaturado
+            : totalAdjudicado - totalFaturado;        
 
+        // Titulo
         $('#valoresRubrica').html(`
           <table class="table table-striped table-md">
             <tr>
-              <td class="bg-primary text-white">Orçamento</td>
-              <td class="bg-primary text-white text-end">${formatCurrency(totalPrevisto)}</td>
-              
-              <td class="bg-secondary text-white">
-                Registados <span class="badge bg-success">(${totalProcessos})</span>
+              <td class="bg-secondary text-white">Registados
+                <span class="badge bg-success">(${totalProcessos})</span>
               </td>
               <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>
               
+              <td class="bg-primary text-white">Orçamento</td>
+              <td class="bg-primary text-white text-end">${formatCurrency(totalPrevisto)}</td>
               <td class="bg-success text-white">Faturado </td>
               <td class="bg-success text-white text-end">${formatCurrency(totalFaturado)}</td>
               <td class="bg-info text-white">Saldo </td>
@@ -164,8 +165,8 @@ table = $('#processosNested').DataTable({
         return `${data} <span class="badge bg-info text-white">(${totalProcessosLinha})</span>`;
       }
     },
-    { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
     { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+    { data: 'total_previsto', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
     { data: 'total_faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
     {
       data: null,
@@ -187,8 +188,8 @@ table = $('#processosNested').DataTable({
 
         const saldoTitulo =
         adjudicado !== 0
-            ? adjudicado - faturado
-            : previsto - faturado; 
+            ? previsto - faturado
+            : adjudicado - faturado; 
 
         return $.fn.dataTable.render.number('.', ',', 2, '').display(saldoTitulo);
       }

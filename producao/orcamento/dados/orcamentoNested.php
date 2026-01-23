@@ -103,6 +103,12 @@ try {
         $processos = $stmtProc->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // === FATURAÇÃO ===
+
+    // === PLANO DE PAGAMENTOS ===
+    // === O apuramento do saldo deve ser através do previsto
+    // === no plano_pagamentos e o faturado
+
     // === AGRUPAR PROCESSOS POR ORÇAMENTO ===
     $mapP = [];
     foreach ($processos as $proc) {
