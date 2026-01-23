@@ -48,12 +48,17 @@ $(document).ready(function () {
     `;
 
     rows.forEach(proc => {
-      const saldo = proc.adjudicado === 0 && proc.faturado === 0 ? proc.previsto :
-      proc.adjudicado > 0 && proc.faturado === 0 ? proc.previsto - proc.adjudicado :
-      proc.previsto === 0 && proc.faturado > 0 ? proc.adjudicado - proc.faturado :
-      proc.previsto - proc.faturado;
+     
+      const saldoProcesso =
+      proc.adjudicado !== 0
+          ? proc.adjudicado - proc.faturado
+          : proc.previsto - proc.faturado;  
       
-      // const saldo = proc.previsto - proc.faturado;
+      //const saldoProcesso = proc.adjudicado === 0 && proc.faturado === 0 ? proc.previsto :
+      //proc.adjudicado > 0 && proc.faturado === 0 ? proc.previsto - proc.adjudicado :
+      //proc.previsto === 0 && proc.faturado > 0 ? proc.adjudicado - proc.faturado :
+      //proc.previsto - proc.faturado;
+      
 
       html += `<tr onclick="redirectProcesso(${proc.proces_check})">
         <td>${proc.regime}</td>
@@ -63,7 +68,7 @@ $(document).ready(function () {
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.previsto)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td>
         <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldo)}</td>
+        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldoProcesso)}</td>
       </tr>`;
     });
 
@@ -104,10 +109,20 @@ table = $('#processosNested').DataTable({
           </div>
         `);
 
-        const totalPrevisto = data.reduce((sum, r) => sum + (r.total_previsto || 0), 0);
-        const totalAdjudicado = data.reduce((sum, r) => sum + (r.total_adjudicado || 0), 0);
-        const totalFaturado = data.reduce((sum, r) => sum + (r.total_faturado || 0), 0);
-        const saldo = totalPrevisto - totalFaturado;
+        const { totalPrevisto, totalAdjudicado, totalFaturado } = data.reduce(
+          (acc, r) => {
+            acc.totalPrevisto += Number(r.total_previsto) || 0;
+            acc.totalAdjudicado += Number(r.total_adjudicado) || 0;
+            acc.totalFaturado += Number(r.total_faturado) || 0;
+            return acc;
+          },
+          { totalPrevisto: 0, totalAdjudicado: 0, totalFaturado: 0 }
+        );
+        
+        const saldoRubrica =
+          totalAdjudicado !== 0
+            ? totalAdjudicado - totalFaturado
+            : totalPrevisto - totalFaturado;        
 
         $('#valoresRubrica').html(`
           <table class="table table-striped table-md">
@@ -123,7 +138,7 @@ table = $('#processosNested').DataTable({
               <td class="bg-success text-white">Faturado </td>
               <td class="bg-success text-white text-end">${formatCurrency(totalFaturado)}</td>
               <td class="bg-info text-white">Saldo </td>
-              <td class="bg-info text-white text-end">${formatCurrency(saldo)}</td>
+              <td class="bg-info text-white text-end">${formatCurrency(saldoRubrica)}</td>
             </tr>
           </table>
         `);
@@ -162,11 +177,20 @@ table = $('#processosNested').DataTable({
         const previsto = row.total_previsto || 0;
         const adjudicado = row.total_adjudicado || 0;
         const faturado = row.total_faturado || 0;
-        let diff = adjudicado === 0 && faturado === 0 ? previsto :
-        adjudicado > 0 && faturado === 0 ? previsto - adjudicado :
-        previsto === 0 && faturado > 0 ? adjudicado - faturado :
-        previsto - faturado;
-        return $.fn.dataTable.render.number('.', ',', 2, '').display(diff);
+
+        //É necessário simplificar este cálculo
+        //let saldoTitulo = adjudicado === 0 && faturado === 0 ? previsto :
+        //adjudicado !== 0 && faturado === 0 ? previsto - adjudicado :
+        //adjudicado !== 0 && faturado !== 0 ? adjudicado - faturado :
+        //previsto === 0 && faturado > 0 ? adjudicado - faturado :
+        //adjudicado - faturado;
+
+        const saldoTitulo =
+        adjudicado !== 0
+            ? adjudicado - faturado
+            : previsto - faturado; 
+
+        return $.fn.dataTable.render.number('.', ',', 2, '').display(saldoTitulo);
       }
     },
     {
@@ -177,7 +201,9 @@ table = $('#processosNested').DataTable({
     },
     { data: 'tipo', visible: false }
   ]
-});
+}
+);
+
 
 
   // Nested rows toggle
