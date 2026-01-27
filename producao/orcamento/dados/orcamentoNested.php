@@ -32,8 +32,8 @@ try {
         orc_tipo AS tipo,
         orc_regime AS regime,
         orc_conta_descritiva AS descritivo,
-        orc_valor_previsto AS previsto,
-        SUM(orc_valor_previsto) AS total_previsto,
+        orc_valor_previsto AS orcamento,
+        SUM(orc_valor_previsto) AS total_orcamento,
 
         (
         SELECT COALESCE(SUM(h14.historico_valor), 0) 
@@ -75,12 +75,12 @@ try {
         $sqlProcessos = "SELECT
             proces_check,
             proces_orc_check,
-            proces_linha_orc AS linha_orc,
+            proces_linha_orc AS linha_orcamento,
             proces_linha_se AS linha_se,
             proces_padm AS padm,
             proc.proced_regime AS regime,
             proces_nome AS designacao,
-            proces_val_max AS previsto,
+            proces_val_max AS val_max,
             (
             SELECT COALESCE(SUM(h14.historico_valor), 0) 
             FROM historico h14 

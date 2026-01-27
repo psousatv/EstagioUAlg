@@ -136,7 +136,10 @@ function gerarHTMLStepper(array $pontos): void {
                 $d2 = new DateTime($pontos[$i-1]['data_doc']);
                 $dias = $d1->diff($d2)->days;
 
-                if ($pt['data_doc'] < $pontos[$i-1]['data_doc']) {
+                // Só desconforme se:
+                // - documento for BaseGov
+                // - diferença maior que 20 dias
+                if ($pt['documento'] === 'BaseGov' && $dias > 20) {
                     $status = 'desconforme';
                 }
             }

@@ -15,7 +15,7 @@ window.ProcessoObra = (() => {
         meses.forEach(m => html += `<th>${m}</th>`);
         html += `</tr>`;
 
-        console.table(dados);
+        //console.table(dados);
 
         dados.forEach(row => {
             html += `<tr>
