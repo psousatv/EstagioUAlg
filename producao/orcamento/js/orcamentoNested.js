@@ -127,7 +127,7 @@ table = $('#processosNested').DataTable({
             ? totalOrcamento - totalFaturado
             : totalOrcamento;        
 
-        // Titulo
+        // Atualiza os valores na tabela
         $('#valoresRubrica').html(`
           <table class="table table-striped table-md">
             <tr>
@@ -146,6 +146,10 @@ table = $('#processosNested').DataTable({
           </table>
         `);
         }
+
+      // Atualiza o rodapé com a nota
+      //const notaRodape = `Total de processos: ${totalProcessos} | Saldo: ${formatCurrency(saldoTitulo)}`;
+      //$('#notaRodape').text(notaRodape);  // Atualiza o conteúdo da nota no rodapé
 
       return data;
     },

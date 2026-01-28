@@ -1,116 +1,141 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="description" content="" />
-<meta name="author" content="" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
-<title>Setores Especiais</title>
+    <title>Setores Especiais</title>
 
-<link
-  rel="icon"
-  type="image/png"
-  sizes="16x16"
-  href="../../templates/favicon.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="../../templates/favicon.png" />
+    <link href="../../vendors/fonts/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+    <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 
-<!-- CSS -->
-<!-- Materials /*Cards de Teste 2 */ -->
-<link href="../../vendors/fonts/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
-<!-- Bootstrap -->
-<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-<!-- Fontawesome -->
-<link href="../../vendors/fonts/fontawesome.min.css" rel="stylesheet" type="text/css">
-<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
-<!-- Datables -->
-<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
-<!-- GLOBAL -->
-<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
-
-<style>
-  /* Adiciona uma imagem em 'background' a toda a página */
-  body  {
-    background-image: url('../../global/imagens/bgPages.jpg');
-    background-size: cover;
-  }
-</style>
-
+    <style>
+        body {
+            background-image: url('../../global/imagens/bgPages.jpg');
+            background-size: cover;
+        }
+    </style>
 </head>
 
-<body>
-  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="main.html">Setores Especiais</a>
-    <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fas fa-solid fa-house"></i></a></div>
+<body onload="anoDefault()">
 
-    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-      <div class="d-flex align-items-center justify-content-between small">
-        <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
-      </div>
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="../../index.html">Setores Especiais</a>
+        <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+        <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
+            </div>
+        </div>
+        <ul class="navbar-nav ml-auto ml-md-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Login</a>
+                    <a class="dropdown-item" href="#">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="layoutSidenav_content">
+        <div class="container-fluid">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <!--
+                        <div class="card-header">
+                            <div class="btn btn-info text-white text-left">
+                                <form onsubmit="return false;">
+                                    <label style="text-align: left" for="anoCorrente">Listagem do Ano:
+                                        <input id="anoCorrente" style="text-align: right" type="text" autofocus>
+                                    </label>
+                                    <button type="button" class="btn btn-dark" onclick="mudaAno()">Alterar</button>
+                                </form>
+                            </div>
+                        </div>
+                        -->
+                        <a id="anoCorrente"></a>
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col d-flex justify-content-between align-items-center" id="titulo">
+                                    <b>Plano Anual de Obras, Investimentos e Aquisição</b>
+                                </div>
+                            </div>
+                            <h1 class="mt-2"></h1>
+
+                            <div class="row">
+                                <div class="col d-flex justify-content-between align-items-center" id="valoresDetalhes">
+                                    <b>Valores Obras || Investimentos || Aquisições (Gastos)</b>
+                                </div>
+                            </div>
+                            <h1 class="mt-2"></h1>
+
+                            <div class="row">
+                                <div class="col col-12" id="listaDetalhes">
+                                    <b>Valores Obras || Investimentos || Aquisições (Gastos)</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Logged -->
-    <ul class="navbar-nav ml-auto ml-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Login</a>
-            <a class="dropdown-item" href="#">Logout</a>
+    <!-- Modal para exibir os detalhes do processo -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1" role="dialog" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalhesLabel">Detalhes dos Processos Associados</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar" onclick="fecharModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered small" id="processosDetalhes">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Processo Administrativo</th>
+                            <th>Designação</th>
+                            <th>Valor Máximo</th>
+                            <th>Tipo de Contrato</th>
+                            <th>Valores Faturados</th>
+                            <th>Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="processosBody">
+                        <!-- Detalhes dos processos vão aqui -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="fecharModal()">Fechar</button>
+            </div>
         </div>
-      </li>
-    </ul>
-  </nav>
-
-  
-  <div id="layoutSidenav_content">
-    <h1 class="mt-2"></h1>
-    <div class="container-fluid">  
-          
-      <!-- Título -->
-      <div class="row">
-        <div class="col col-md-12" id="titulo">
-          <b>Plano Anual de Obras, Investimentos e Aquisição</b>
-        </div>
-      </div>
-
-      <!-- Lista de Valores dos Processos da DAS -->
-      <div class="row" >
-        <div class="col-12" id="valoresDetalhes">
-        <b>Valores Obras || Investimentos || Aquisições (Gastos)</b>
-        </div>
-      </div>
-      
-      <!-- Lista de Processos da DAS -->
-      <div class="row" >
-        <div class="col-12" id="listaDetalhes">
-        <b>Valores Obras || Investimentos || Aquisições (Gastos)</b>
-        </div>
-      </div> 
-
     </div>
-  </div>
+</div>
 
-  <!-- JQuery - Deve Ser incluido antes do Global -->
-  <script src="../../vendors/jquery/jquery.js"></script>
-  <!-- Global -->
-  <script src="../../global/js/scripts.js"></script>
-      
-  <!-- Bootstrap -->
-  <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
-  <!-- Fontawesome -->
-  <script src="../../vendors/fonts/fontawesome.min.js"></script>
-  <script src="../../vendors/fonts/all.min.js"></script>
-  <!-- Datatables -->
-  <script src="../../vendors/datatables/datatables.min.js"></script>
-  <!-- Charts -->
-  <script src="../../vendors/charts/chart.umd.min.js"></script>
 
-  <!--script src="js/orcamentoResults.js"></script-->
-  <script src="js/setores_especiais.js"></script>
-
+    <script src="../../vendors/jquery/jquery.js"></script>
+    <script src="../../global/js/scripts.js"></script>
+    <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="../../vendors/fonts/all.min.js"></script>
+    <script src="../../vendors/datatables/datatables.min.js"></script>
+    <script src="../../vendors/charts/chart.umd.min.js"></script>
+    <script src="js/setoresEspeciais.js"></script>
 
 </body>
-
 </html>
-
