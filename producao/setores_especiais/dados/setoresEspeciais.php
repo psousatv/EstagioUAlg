@@ -42,13 +42,17 @@ try {
         p.proces_estado_nome,
         p.proces_nome,
         p.proces_val_max,
-        p.proces_val_faturacao
+        p.proces_val_faturacao,
+        po.proced_regime,
+        p.proces_proced_cod
     FROM setores_especiais s
     LEFT JOIN processo p
         ON p.proces_linha_se = s.se_check
+    JOIN procedimento po
+        ON p.proces_proced_cod = po.proced_cod
     WHERE s.se_ano = :anoCorrente
       AND p.proces_report_valores = 1
-    ORDER BY s.se_linha_se, p.proces_nome
+    ORDER BY s.se_linha_se, p.proces_proced_cod
     ";
 
     $stmtProc = $myConn->prepare($sqlProcessos);
@@ -56,43 +60,73 @@ try {
     $stmtProc->execute();
     $processos = $stmtProc->fetchAll(PDO::FETCH_ASSOC);
 
-    // === AGRUPAR PROCESSOS POR LINHA_SE ===
+    // Agrupar processos por linha_se e somar os valores de faturação e valor máximo
+    $resumoValores = [];
     $processosPorLinha = [];
-    $resumoValores = [
-        'obras' => 0,
-        'investimentos' => 0,
-        'aquisicoes' => 0
-    ];
-    
-    foreach ($processos as $proc) {
-        $setorKey = $proc['linha_se']; // Associando cada processo ao seu setor
-        if (!isset($processosPorLinha[$setorKey])) {
-            $processosPorLinha[$setorKey] = []; // Cria uma nova chave se não existir
+
+    foreach ($processos as $processo) {
+        // Agrupar os processos por linha_se
+        $linha_se = $processo['linha_se'];
+
+        // Inicializar o array de resumo para esta linha_se, caso ainda não tenha sido inicializado
+        if (!isset($resumoValores[$linha_se])) {
+            $resumoValores[$linha_se] = [
+                'total_val_faturacao' => 0,
+                'total_val_max' => 0
+            ];
         }
-        $processosPorLinha[$setorKey][] = $proc; // Adiciona o processo ao setor
+
+        // Somar os valores de faturação e valor máximo
+        if ($processo['proced_regime'] == 'Setores Especiais'){
+            $resumoValores[$linha_se]['total_val_faturacao'] += $processo['proces_val_faturacao'];
+            $resumoValores[$linha_se]['total_val_max'] += $processo['proces_val_max'];    
+        }
         
-        // Soma o valor máximo por contrato
-        if ($proc['contrato'] == 'Obras') {
-            $resumoValores['obras'] += $proc['valor_maximo'];
-        } elseif ($proc['contrato'] == 'Investimentos') {
-            $resumoValores['investimentos'] += $proc['valor_maximo'];
-        } elseif ($proc['contrato'] == 'Aquisições') {
-            $resumoValores['aquisicoes'] += $proc['valor_maximo'];
+        // Agrupar processos por linha_se para adicionar na coluna "processos"
+        if (!isset($processosPorLinha[$linha_se])) {
+            $processosPorLinha[$linha_se] = [];
         }
+
+        // Adiciona o processo à lista de processos para a linha_se
+        $processosPorLinha[$linha_se][] = $processo;
     }
 
-    // Calculando o saldo (como exemplo, você pode modificar conforme necessário)
-    //$resumoValores['saldo'] = $resumoValores['obras'] + $resumoValores['investimentos'] + $resumoValores['aquisicoes'];
-
-    // === ASSOCIA PROCESSOS A CADA LINHA ===
+    // Adicionar o total_faturacao e os processos diretamente à listagem de setores especiais
     foreach ($setoresEspeciais as &$setor) {
-        $setor['processos'] = $processosPorLinha[$setor['linha_se']] ?? []; // Associando processos ao setor
+        $linha_se = $setor['linha_se'];
+
+        // Adicionar o total_faturacao diretamente
+        if (isset($resumoValores[$linha_se])) {
+            $setor['total_faturacao'] = $resumoValores[$linha_se]['total_val_faturacao'];
+        } else {
+            $setor['total_faturacao'] = 0;
+        }
+
+        // Adicionar os processos correspondentes à linha_se como uma nova coluna
+        if (isset($processosPorLinha[$linha_se])) {
+            $setor['processos'] = $processosPorLinha[$linha_se];  // Coluna de processos
+        } else {
+            $setor['processos'] = [];  // Caso não haja processos para essa linha_se
+        }
+
+        // Reorganizando as colunas, com 'total_faturacao' logo após 'valor_publicado' e 'processos' logo após 'estado'
+        $setor = [
+            'se_check' => $setor['se_check'],
+            'linha_se' => $setor['linha_se'],
+            'linha_orcamento' => $setor['linha_orcamento'],
+            'data_publicacao' => $setor['data_publicacao'],
+            'descritivo' => $setor['descritivo'],
+            'valor_publicado' => $setor['valor_publicado'],
+            'total_faturacao' => $setor['total_faturacao'],  // Adicionando após 'valor_publicado'
+            'estado' => $setor['estado'],
+            'processos' => $setor['processos']  // Adicionando 'processos' após 'estado'
+        ];
     }
 
     // === RETORNO FINAL ===
     echo json_encode([
         "titulo" => $titulo,         // Títulos
-        "listagem" => $setoresEspeciais, // Listagem de setores com os processos associados
+        "listagem" => $setoresEspeciais, // Listagem de setores com os processos associados e total_faturacao
         "resumoValores" => $resumoValores // Resumo de valores máximos por contrato
     ], JSON_UNESCAPED_UNICODE);
 
