@@ -2,12 +2,12 @@ let anoCorrente = new Date().getFullYear();
 
 // Cabeçalhos personalizados
 const cabecalhos = [
-    "Linha SE",
-    "Linha Orçamento",
+    "SE",
+    "Orçamento",
     "Descritivo",
     "Valor Publicado",
     "Estado",
-    "Detalhes"  // nova coluna
+    "Detalhes"
 ];
 
 // Função para inicializar o ano e carregar a tabela
@@ -40,21 +40,10 @@ function carregarTabela(ano) {
 
         // Preenche título
         $('#titulo').html(`
-            <!-- Título Detalhe -->
             <div class="btn btn-primary col-md-8 d-grid small text-white text-left" id="tituloDetalhe">
                 ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
             </div>
         `);
-        //    <!-- Alterar Ano -->
-        //   <div class="btn btn-info text-white text-left" id="alterarAno">
-        //        <form onsubmit="return false;">
-        //            <label style="text-align: left" for="${anoCorrente || ''}">Listagem do Ano:
-        //                <input id="${anoCorrente || ''}" style="text-align: right" type="text" autofocus>
-        //            </label>
-        //            <button type="button" class="btn btn-dark" onclick="mudaAno()">Alterar</button>
-        //        </form>
-        //    </div>
-        //`);
 
         // Preenche valoresDetalhes com resumo dos valores
         const v = dados.resumoValores || {};
@@ -92,12 +81,27 @@ function carregarTabela(ano) {
 
             // Coluna Detalhes com ícone
             linhasHTML += `<td class="text-center">
-                               <i class="fas fa-info-circle text-primary" style="cursor:pointer;" 
-                                  onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos)})' title="Mais detalhes"></i>
-                           </td>`;
+                            <i class="fas fa-info-circle text-primary" style="cursor:pointer;" 
+                                onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos)})' title="Mais detalhes"></i>
+                        </td>`;
+
+            // Adiciona a célula com a cor ao final da linha
+            let cor = '';
+            if (item.estado === 'Em Curso') {
+                cor = 'background-color: green;';
+            } else if (item.estado === 'Em Preparação') {
+                cor = 'background-color: orange;';
+            } else {
+                cor = 'background-color: transparent;';
+            }
+
+            // Adiciona a nova célula no final com 1 pixel de largura
+            linhasHTML += `<td style="width: 1px; ${cor}"></td>`; // Largura de 3 pixels
+
             linhasHTML += '</tr>';
         });
 
+        // Cria o HTML da tabela
         const tabelaHTML = `
             <table class="table table-striped table-sm small">
                 <thead>
@@ -107,19 +111,18 @@ function carregarTabela(ano) {
             </table>
         `;
 
+        // Exibe a tabela
         $('#listaDetalhes').html(tabelaHTML);
     });
 }
 
 // Função para visualizar detalhes (clicando no ícone)
 function verDetalhes(linhaSE, processos) {
-    // Verifica se processos estão presentes
     if (!processos || processos.length === 0) {
         alert("Nenhum processo encontrado para essa linha.");
         return;
     }
 
-    // Preenche o modal com os detalhes dos processos relacionados à linha
     let processosHTML = '';
     processos.forEach(proc => {
         processosHTML += ` 
@@ -137,10 +140,7 @@ function verDetalhes(linhaSE, processos) {
         `;
     });
 
-    // Atualiza o corpo do modal com os processos
     $('#processosBody').html(processosHTML);
-
-    // Exibe o modal
     $('#modalDetalhes').modal('show');
 }
 
@@ -154,11 +154,10 @@ function formatCurrency(valor) {
     return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(valor || 0);
 }
 
-// Ao clicar no processo redireciona para o processo
-function redirectProcesso(codigoProcesso){
+// Redireciona para o processo
+function redirectProcesso(codigoProcesso) {
     var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso=" + codigoProcesso;
-    //window.open(obrasURL, "_blank");
     window.location.href = obrasURL;
-  };
-  
+}
+
 window.onload = anoDefault;
