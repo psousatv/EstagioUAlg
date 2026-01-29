@@ -60,14 +60,14 @@ function carregarTabela(ano) {
                 cor = 'background-color: transparent;';
             }
 
-            // Adiciona a célula com 1 pixel de largura e a cor
+            // Adiciona a célula a cor
             linhasHTML += `
                 <td style=" ${cor}" title="${item.estado}"></td>
             `;
 
             // Coluna Detalhes com ícone
             linhasHTML += `<td class="text-center">
-                            <i class="fas fa-info-circle text-primary" style="cursor:pointer;" 
+                            <i class="fas fa-info-circle text-primary fa-2x" style="cursor:pointer;" 
                                 onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos)})' title="Mais detalhes"></i>
                         </td>`;
 
@@ -138,7 +138,7 @@ function verDetalhes(linhaSE, processos) {
                 <td class="text-right">${formatCurrency(proc.proces_val_max)}</td>
                 <td class="text-right">${formatCurrency(proc.proces_val_faturacao)}</td>
                 <td class="text-center">
-                    <i class="fas fa-info-circle text-primary" style="cursor:pointer;" 
+                    <i class="fas fa-info-circle text-primary fa-2x" style="cursor:pointer;" 
                     onclick='redirectProcesso(${proc.proces_check})' title="Mais detalhes"></i>
                 </td>
             </tr>
