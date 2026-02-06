@@ -167,15 +167,20 @@ console.table(pedidosMap);
 
         // Título da candidatura
         $('#titulo').html(`
-          <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
-            ${json.estado || ''}: ${json.candidatura || ''} 
-            - ${json.designacao || ''} - ${json.taxa * 100 || ''}%
+          <div>
+            <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
+              ${json.estado || ''}: ${json.candidatura || ''} 
+              - ${json.designacao || ''} - ${json.taxa * 100 || ''}%
+            </div>
+            <div class="btn btn-warning">
+              <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
+            </div>
+            <div class="btn btn-primary">
+              <a class="text-white" href="candidaturasDashboard.html"><i class="fa-solid fa-search"></i></a>
+            </div>
           </div>
-          <div class="btn btn-warning">
-            <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
-          </div>
-          <div class="btn btn-primary">
-            <a class="text-white" href="candidaturasDashboard.html"><i class="fa-solid fa-search"></i></a>
+          <div class="mt-2">
+            <b>Breve descrição da Candiatura - a do Aviso</b>
           </div>
         `);
 

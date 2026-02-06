@@ -93,8 +93,8 @@ function carregarTabela(ano) {
 
        // Cria o HTML da tabela
        const tabelaHTML = `
-       <div class="table-responsive small" style="max-height:750px;">
-           <table class="table table-striped table-bordered mb-0 p-0">
+       <div class="table-responsive small" style="max-height:800px;">
+           <table class="table table-striped table-bordered mb-0 p-0 table-sm">
                <thead class="sticky-top bg-white">
                    <tr>${cabecalhos.map((th, index) => index === 0 ? 
                     `<th style="width: 3px; min-width: 3px; max-width: 3px; padding: 0; margin: 0; border: none;">
