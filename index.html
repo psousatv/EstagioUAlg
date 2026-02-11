@@ -146,13 +146,10 @@
       <!-- Coluna 1-->
       <div class="col-lg-6">
         <div class="card small">
-          <div class="card-header"><b>Avisos Gerais</b></div>
-          <div class="card-body" id="lstAvisosGeriais">
+          <div class="card-header"><b>Obras Ativas - Cronologia</b></div>
+          <div class="card-body" id="lstCronos">
             <div>Lista avisos gerais - Perigo
               <span style="position: absolute; right: 50px;" class="badge badge-danger">Falta</span>
-            </div>
-            <div>Lista avisos gerais - Ter atenção
-              <span style="position: absolute; right: 50px;" class="badge badge-warning">Falta</span>
             </div>
           </div>
         </div>
@@ -171,12 +168,17 @@
     <!-- Fim Coluna 2-->
     </div>
   </div>
-  
 
   <!--<script src="vendors/jquery/jquery.js"></script>-->
   <script src="vendors/jquery/jquery.min.js"></script>
   <script src="vendors/bootstrap/bootstrap.min.js"></script>
   <script src="vendors/fonts/all.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+        $("#lstCronos").load("producao/comum/dados/cronosProcessos.php");
+    });
+  </script>
 
 
 </body>
