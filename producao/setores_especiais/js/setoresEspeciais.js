@@ -43,6 +43,11 @@ function carregarTabela(ano) {
             <div class="btn btn-primary col-md-8 d-grid small text-white text-left" id="tituloDetalhe">
                 ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
             </div>
+            
+            <div class="btn btn-primary">
+            <a class="text-white" href="setoresEspeciais.html"><i class="fa-solid fa-rotate"></i></a>
+            </div>
+
         `);
 
         // Monta a tabela principal
