@@ -1,186 +1,168 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
-  <meta name="description" content="Investmentos e Aquisições" />
-  <meta name="author" content="Paulo Sousa" />
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+<meta name="description" content="Investmentos e Aquisições" />
+<meta name="author" content="Paulo Sousa" />
 
-  <title>Investimentos e Aquisições</title>
+<title>Investimentos e Aquisições</title>
 
-<link
-  rel="icon"
-  type="image/png"
-  sizes="16x16"
-  href="templates/favicon.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="templates/favicon.png"/>
 
-  <!-- CSS -->
-  
-  <!-- BOOTSTRAP STYLE CSS -->
-  <link href="vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <!-- GLOBAL STYLE CSS -->
-  <link href="global/css/styles.css" rel="stylesheet" type="text/css">
-  <!-- FONT-AWESOME -->
-  <link href="vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- CSS -->
+<link href="vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="global/css/styles.css" rel="stylesheet" type="text/css">
+<link href="vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
 
-    <style>
-    body  {
-      background-image: url('global/imagens/bgPages.jpg');
-      background-size: cover;
-    }
-    </style>
+<style>
+  body {
+    background-image: url('global/imagens/bgPages.jpg');
+    background-size: cover;
+  }
 
+  /* Espaçamento dos containers */
+  .container-fluid + .container-fluid {
+    margin-top: 2px; /* 2px entre os containers */
+  }
+
+  .card-box {
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+
+  /* Para cards internos */
+  .card-box .card {
+    margin-bottom: 2px;
+  }
+</style>
 </head>
+
 <body>
-    
-  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.html">Investimentos e Aquisições</a>
-
-    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-      <div class="d-flex align-items-center justify-content-between small">
-        <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
-      </div>
+  
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.html">Investimentos e Aquisições</a>
+  <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+    <div class="d-flex align-items-center justify-content-between small">
+      <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
     </div>
+  </div>
 
-    <!-- Logged -->
-    <ul class="navbar-nav ml-auto ml-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Login</a>
-            <a class="dropdown-item" href="#">Logout</a>
-        </div>
-      </li>
-    </ul>
-  </nav>
-    
+  <ul class="navbar-nav ml-auto ml-md-0">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-user fa-fw"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+        <a class="dropdown-item" href="#">Convidado</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">Login</a>
+        <a class="dropdown-item" href="#">Logout</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<!-- Área 1: 4 colunas x várias linhas -->
+<div class="container-fluid" style="margin-top:2px;">
   <div class="card-box">
-      <div class="card-body">
-          <div class="container-fluid">
-              <div class="row">
-                <!-- Processos, Obras e Serviços -->
-                <div class="col col-lg-3">
-                  <div class="col-lg-12 col-sm-3">
-                      <div class="card-box bg-blue">
-                          <div class="inner"><h3>Processos</h3><p>Detalhes</p></div>
-                          <div class="icon"><i class="fa fa-project-diagram"></i></div>
-                          <a href="producao/processos/processosSearch.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                      </div>
-                  </div>
-                  <div class="col-lg-12 col-sm-3">
-                      <div class="card-box bg-dark">
-                          <div class="inner"><h3>Obras</h3><p>Detalhes</p></div>
-                          <div class="icon"><i class="text-light fa fa-person-digging"></i></div>
-                          <a href="producao/obras/obrasSearch.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                      </div>
-                  </div>
-                  <div class="col-lg-12 col-sm-3">
-                      <div class="card-box bg-green">
-                          <div class="inner"><h3>Serviços</h3><p>Detalhes</p></div>
-                          <div class="icon "><i class="fa fa-cogs"></i></div>
-                          <a href="producao/servicos/servicosSearch.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                      </div>
-                  </div>
-                </div>
-                <!-- Vistorias [Fornecedores] -->
-                <div class="col col-lg-3">
-                  <div class="col-lg-12 col-sm-3">
-                    <div class="card-box bg-green">
-                        <div class="inner"><h3>Vistorias</h3><p>Fornecedores</p></div>
-                        <div class="icon"><i class="fa fa-cogs"></i></div>
-                        <a href="producao/fornecedores/main.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                  </div>
-                  <!-- Métricas [Estatísticas] -->
-                  <div class="col-lg-12 col-sm-3">
-                      <div class="card-box bg-red">
-                          <div class="inner"><h3>Métricas</h3><p>Indicadores</p></div>
-                          <div class="icon"><i class="fa fa-chart-line"></i></div>
-                          <a href="producao/metricas/main.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                      </div>
-                  </div>
-                </div>
-                <!-- Orçamento e Candidaturas -->
-                <div class="col col-lg-3">
-                  <div class="col-lg-12 col-sm-3">
-                    <div class="card-box bg-orange">
-                        <div class="inner"><h3>Candidaturas</h3><p>Histórico</p></div>
-                        <div class="icon"><i class="fa fa-euro"></i></div>
-                        <a href="producao/candidaturas/candidaturasDashboard.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                  <div class="col-lg-12 col-sm-3">
-                    <div class="card-box bg-red">
-                        <div class="inner"><h3>Orçamento</h3><p>Ano Corrente</p></div>
-                        <div class="icon"><i class="fa fa-euro"></i></div>
-                        <a href="producao/orcamento/orcamentoDashboard.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                  </div>
-                </div>
-                <!-- Fornecedores -->
-                <div class="col col-lg-3">
-                  <div class="col-lg-12 col-sm-3">
-                    <div class="card-box bg-blue">
-                        <div class="inner"><h3>Setores Especiais</h3>
-                          <a href="https://taviraverde.pt/sites/default/files/documentos/2025-11/ilovepdfmerged.pdf"
-                          target="_blank" >
-                          <p class="text-white">Listagem</p></a>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-list"></i>
-                        </div>
-                        <a href="producao/setores_especiais/setoresEspeciais.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                  </div>
-                </div>
-                
-              </div>
+    <div class="card-body">
+      <div class="row">
+        <!-- Coluna 1 -->
+        <div class="col-lg-3 col-md-6 mb-2">
+          <div class="card-box bg-blue mb-2">
+            <div class="inner"><h3>Processos</h3><p>Detalhes</p></div>
+            <div class="icon"><i class="fa fa-project-diagram"></i></div>
+            <a href="producao/processos/processosSearch.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
           </div>
-      </div>
-  </div>
+          <div class="card-box bg-green mb-2">
+            <div class="inner"><h3>Vistorias</h3><p>Fornecedores</p></div>
+            <div class="icon"><i class="fa fa-cogs"></i></div>
+            <a href="producao/fornecedores/main.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+          <div class="card-box bg-red mb-2">
+            <div class="inner"><h3>Métricas</h3><p>Indicadores</p></div>
+            <div class="icon"><i class="fa fa-chart-line"></i></div>
+            <a href="producao/metricas/main.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
 
-  <div class="div">
-    <div class="row">
-      <!-- Coluna 1-->
-      <div class="col-lg-6">
-        <div class="card small">
-          <div class="card-header"><b>Obras Ativas - Cronologia</b></div>
-          <div class="card-body" id="lstCronos">
-            <div>Lista avisos gerais - Perigo
-              <span style="position: absolute; right: 50px;" class="badge badge-danger">Falta</span>
-            </div>
+        <!-- Coluna 2 -->
+        <div class="col-lg-3 col-md-6 mb-2">
+          <div class="card-box bg-dark mb-2">
+            <div class="inner"><h3>Obras</h3><p>Detalhes</p></div>
+            <div class="icon"><i class="text-light fa fa-person-digging"></i></div>
+            <a href="producao/obras/obrasSearch.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+          <div class="card-box bg-green mb-2">
+            <div class="inner"><h3>Serviços</h3><p>Detalhes</p></div>
+            <div class="icon"><i class="fa fa-cogs"></i></div>
+            <a href="producao/servicos/servicosSearch.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-      </div>
-      <!-- Coluna 2-->
-      <div class="col-lg-6">
-        <div class="card small">
-          <div class="card-header"><b>Vistorias</b></div>
-          <div class="card-body" id="lstVistorias">
-            <div >Lista as vistorias
-              <span style="position: absolute; right: 50px;" class="badge badge-success">Completo</span>
-            </div>
+
+        <!-- Coluna 3 -->
+        <div class="col-lg-3 col-md-6 mb-2">
+          <div class="card-box bg-orange mb-2">
+            <div class="inner"><h3>Candidaturas</h3><p>Histórico</p></div>
+            <div class="icon"><i class="fa fa-euro"></i></div>
+            <a href="producao/candidaturas/candidaturasDashboard.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+          <div class="card-box bg-red mb-2">
+            <div class="inner"><h3>Orçamento</h3><p>Ano Corrente</p></div>
+            <div class="icon"><i class="fa fa-euro"></i></div>
+            <a href="producao/orcamento/orcamentoDashboard.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
+
+        <!-- Coluna 4 -->
+        <div class="col-lg-3 col-md-6 mb-2">
+          <div class="card-box bg-blue mb-2">
+            <div class="inner"><h3>Setores Especiais</h3>
+              <a href="https://taviraverde.pt/sites/default/files/documentos/2025-11/ilovepdfmerged.pdf" target="_blank">
+                <p class="text-white">Listagem</p>
+              </a>
+            </div>
+            <div class="icon"><i class="fa fa-list"></i></div>
+            <a href="producao/setores_especiais/setoresEspeciais.html" class="card-box-footer">Aceder <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+
+      </div> <!-- row -->
+    </div> <!-- card-body -->
+  </div> <!-- card-box -->
+</div> <!-- container-fluid -->
+
+
+<!-- Área 2: 2 colunas lado a lado -->
+<div class="container-fluid" style="margin-top:2px;">
+  <div class="row">
+    <div class="col-lg-6 mb-2">
+      <div class="card small">
+        <div class="card-header"><b>Obras Ativas - Cronologia</b></div>
+        <div class="card-body" id="lstCronos">
+          <div class="text-muted">A carregar...</div>
+        </div>
       </div>
-    <!-- Fim Coluna 2-->
+    </div>
+    <div class="col-lg-6 mb-2">
+      <div class="card small">
+        <div class="card-header"><b>Vistorias</b></div>
+        <div class="card-body" id="lstVistorias">
+          <div class="text-muted">A carregar...</div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!--<script src="vendors/jquery/jquery.js"></script>-->
-  <script src="vendors/jquery/jquery.min.js"></script>
-  <script src="vendors/bootstrap/bootstrap.min.js"></script>
-  <script src="vendors/fonts/all.min.js"></script>
+<script src="vendors/jquery/jquery.min.js"></script>
+<script src="vendors/bootstrap/bootstrap.min.js"></script>
+<script src="vendors/fonts/all.min.js"></script>
 
-  <script>
-    $(document).ready(function(){
-        $("#lstCronos").load("producao/comum/dados/cronosProcessos.php");
-    });
-  </script>
-
+<script src="producao/comum/js/cronosProcessos.js" defer></script>
+<script src="producao/comum/js/vistoriasProcessos.js" defer></script>
 
 </body>
-
 </html>

@@ -1,69 +1,45 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-include "../../../global/config/dbConn.php";
+header('Content-Type: application/json; charset=utf-8');
 
-// Query
-$sql = "SELECT * FROM processos";
-$result = mysqli_query($conn, $sql);
+try {
 
-// Data atual
-$dataAtual = new DateTime();
+    include "../../../global/config/dbConn.php";
 
-// Início do Card
-//echo '<div class="col-lg-6">
-//        <div class="card small">
-//          <div class="card-header"><b>Obras Ativas - Cronologia</b></div>
-//          <div class="card-body" id="lstCronos">';
-
-while ($proc = mysqli_fetch_assoc($result)) {
-
-    // Filtrar apenas processos "Em Curso"
-    if ($proc['proces_estado_nome'] !== "Em Curso") {
-        continue;
+    if (!isset($myConn)) {
+        throw new Exception("Ligação PDO não encontrada.");
     }
 
-    // Datas principais
-    $dataAdjudicacao = new DateTime($proc['proces_data_adjudicacao']);
-    $dataConsignacao = new DateTime($proc['proces_data_contrato']);
+    $sql = "SELECT proces_check,
+                   proces_nome,
+                   proces_data_adjudicacao,
+                   proces_data_contrato,
+                   proces_data_csgn,
+                   proces_prz_exec
+            FROM processo
+            WHERE proces_estado_nome = :estado
+            AND proces_report_valores = :reporta
+            ORDER BY proces_cpv_sigla ASC";
 
-    // Calcular Data Termo
-    $dataTermo = clone $dataAdjudicacao;
-    $dataTermo->modify("+" . (int)$proc['proces_prz_exec'] . " days");
+    $stmt = $myConn->prepare($sql);
+    //$stmt->bindParam(':estado', 'Em Curso', PDO::PARAM_STR);
+    //$stmt->bindParam(':reporta', int('1'), PDO::PARAM_INT);
+    //$stmt->execute();
+    $stmt->execute(['estado' => 'Em Curso','reporta' => '1'] );
 
-    // Criar datas limite
-    $limite30 = (clone $dataAtual)->modify("-30 days");
-    $limite10 = (clone $dataAtual)->modify("-10 days");
+    $processos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Definir badge conforme regra solicitada
-    if ($dataTermo < $limite30) {
-        $textoBadge = "Conforme";
-        $classeBadge = "badge-success"; // Verde
-    } elseif ($dataTermo < $limite10) {
-        $textoBadge = "Prorrogar";
-        $classeBadge = "badge-warning"; // Laranja
-    } elseif ($dataTermo >= $dataAtual) {
-        $textoBadge = "Vencida";
-        $classeBadge = "badge-danger"; // Vermelho
-    } else {
-        $textoBadge = "Em análise";
-        $classeBadge = "badge-secondary";
-    }
+    echo json_encode($processos);
+    exit;
 
-    echo '<div style="position: relative; margin-bottom:15px; padding:10px; border-bottom:1px solid #ddd;">
-            
-            <div><strong>Data Adjudicação:</strong> ' . $dataAdjudicacao->format("d-m-Y") . '</div>
-            <div><strong>Data Consignação:</strong> ' . $dataConsignacao->format("d-m-Y") . '</div>
-            <div><strong>Data Termo:</strong> ' . $dataTermo->format("d-m-Y") . '</div>
+} catch (Throwable $e) {
 
-            <span style="position: absolute; right: 50px; top: 10px;" 
-                  class="badge ' . $classeBadge . '">' . $textoBadge . '</span>
-
-          </div>';
+    http_response_code(500);
+    echo json_encode([
+        "erro" => true,
+        "mensagem" => $e->getMessage()
+    ]);
+    exit;
 }
-
-// Fechamento do Card
-//echo '    </div>
-//        </div>
-//      </div>';
-
-?>
