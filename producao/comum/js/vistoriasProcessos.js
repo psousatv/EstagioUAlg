@@ -82,6 +82,7 @@ function renderVistorias(processos) {
         <table class="table table-sm table-hover table-bordered align-middle">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 10;">
                 <tr class="small">
+                    <th style="width: 100px;">Entidade</th>
                     <th style="width: 75px;">Estado</th>
                     <th>Processo</th>
                     <th style="width: 75px;">Previsto</th>   <!-- largura fixa -->
@@ -98,6 +99,7 @@ function renderVistorias(processos) {
 
     html += `
         <tr class="small">
+            <td style="width: 50px;">${proc.entidade}</td>
             <td style="width: 75px;">
                 <span class="badge ${proc.classeBadge}">
                     ${proc.textoBadge}
@@ -127,3 +129,4 @@ function formatDate(date) {
     const ano = date.getFullYear();
     return `${dia}-${mes}-${ano}`;
 }
+

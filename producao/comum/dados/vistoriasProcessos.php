@@ -14,6 +14,7 @@ try {
 
     $sql = "SELECT proces_check,
                    proces_nome,
+                   e.ent_nome AS entidade,
                    h.historico_dataemissao AS agendamento,
                    h.historico_datamov,
                    h.historico_doc,
@@ -21,12 +22,16 @@ try {
                    h.historico_valor
             FROM processo
             JOIN historico h ON h.historico_proces_check = proces_check
+            JOIN entidade e ON e.ent_cod = proces_ent_Cod
             WHERE proces_estado_nome <> 'Em Curso'
             AND proces_report_valores = 1
             AND YEAR(h.historico_datamov) <= :hoje
-            AND h.historico_descr_nome = 'Auto Vistoria'
+            AND (
+            h.historico_descr_nome = 'Auto Vistoria'
+            OR h.historico_descr_nome = 'Receção Definitiva'
+            )
             AND h.historico_obs = 'Programado'
-            ORDER BY h.historico_dataemissao ASC";
+            ORDER BY h.historico_dataemissao, e.ent_nome";
 
     $stmt = $myConn->prepare($sql);
     $stmt->execute(['hoje' => date("Y-m-d")]);

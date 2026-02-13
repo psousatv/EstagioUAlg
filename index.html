@@ -140,7 +140,25 @@
   <div class="row">
     <div class="col-lg-6 mb-2">
       <div class="card small">
-        <div class="card-header"><b>Obras Ativas - Cronologia</b></div>
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <b>Obras Ativas - Cronologia</b>
+          <div>
+            <a href="javascript:void(0)" onclick="imprimirCronos()" 
+               class="text-dark mr-2" title="Imprimir">
+              <i class="fas fa-print"></i>
+            </a>
+        
+            <a href="javascript:void(0)" onclick="exportarCronosPDF()" 
+               class="text-danger mr-2" title="Exportar PDF">
+              <i class="fas fa-file-pdf"></i>
+            </a>
+        
+            <a href="javascript:void(0)" onclick="exportarCronosExcel()" 
+               class="text-success" title="Exportar Excel">
+              <i class="fas fa-file-excel"></i>
+            </a>
+          </div>
+        </div>        
         <div class="card-body" id="lstCronos">
           <div class="text-muted">A carregar...</div>
         </div>
@@ -148,7 +166,26 @@
     </div>
     <div class="col-lg-6 mb-2">
       <div class="card small">
-        <div class="card-header"><b>Vistorias</b></div>
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <b>Vistorias</b>
+          <div>
+            <a href="javascript:void(0)" onclick="imprimirVistorias()" 
+               class="text-dark mr-2" title="Imprimir">
+              <i class="fas fa-print"></i>
+            </a>
+        
+            <a href="javascript:void(0)" onclick="exportarVistoriasPDF()" 
+               class="text-danger mr-2" title="Exportar PDF">
+              <i class="fas fa-file-pdf"></i>
+            </a>
+        
+            <a href="javascript:void(0)" onclick="exportarVistoriasExcel()" 
+               class="text-success" title="Exportar Excel">
+              <i class="fas fa-file-excel"></i>
+            </a>
+          </div>
+        </div>
+        
         <div class="card-body" id="lstVistorias">
           <div class="text-muted">A carregar...</div>
         </div>
@@ -160,7 +197,15 @@
 <script src="vendors/jquery/jquery.min.js"></script>
 <script src="vendors/bootstrap/bootstrap.min.js"></script>
 <script src="vendors/fonts/all.min.js"></script>
+<!-- jsPDF -->
+<script src="vendors/pdf/jspdf.umd.min.js"></script>
+<!-- jsPDF autoTable -->
+<script src="vendors/pdf/jspdf.plugin.autotable.min.js"></script>
+<!-- SheetJS (XLSX) -->
+<script src="vendors/pdf/xlsx.full.min.js"></script>
 
+
+<script src="producao/comum/funcoes.js" defer></script>
 <script src="producao/comum/js/cronosProcessos.js" defer></script>
 <script src="producao/comum/js/vistoriasProcessos.js" defer></script>
 
