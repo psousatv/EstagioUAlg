@@ -25,7 +25,7 @@ try {
             JOIN entidade e ON e.ent_cod = proces_ent_Cod
             WHERE proces_estado_nome <> 'Em Curso'
             AND proces_report_valores = 1
-            AND YEAR(h.historico_datamov) <= :hoje
+            AND h.historico_datamov <= :hoje
             AND (
             h.historico_descr_nome = 'Auto Vistoria'
             OR h.historico_descr_nome = 'Receção Definitiva'
