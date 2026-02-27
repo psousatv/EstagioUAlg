@@ -214,6 +214,10 @@ console.table(pedidosMap);
               <td class="bg-info text-white">Reembolsos </td>
               <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos)}</td>
             </tr>
+          <br>
+          <div class="mt-2">
+            <b>Considerar alterar o Layout por pedido de reembolso e órfãos (sem pedido)</b>
+          </div>
           </table>
         `);
 

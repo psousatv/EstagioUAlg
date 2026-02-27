@@ -44,3 +44,32 @@ foreach($data as $row)
     </tr>";
 };
 echo "</table>";
+echo "
+<b>Considerar listar as vistorias programadas [exemplo] </b>
+<table class='table table-responsive table-striped table-hover small'>
+  <tr class='text-center'>
+    <th class='bg-warning'>Ano</th>  
+    <th>Data</th>
+    <th>Garantia</th>
+    <th>Duodécimo</th>
+    <th>Cativo</th>
+    <th>Remanescente</th>
+  </tr>
+  <tr class='text-center'>
+    <td class='bg-warning'>2026</td>  
+    <td>01-01-2026</td>
+    <td>100,00</td>
+    <td>100,00</td>
+    <td>1.000,00</td>
+    <td>800,00</td>
+  </tr>
+  <tr class='text-center'>
+    <td class='bg-warning'>2027</td>  
+    <td>01-01-2027</td>
+    <td>100,00</td>
+    <td>100,00</td>
+    <td>800,00</td>
+    <td>600,00</td>
+  </tr>
+  
+  ";

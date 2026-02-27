@@ -7,25 +7,36 @@ window.ProcessoObra = (() => {
     // ---------------- Financeiro ----------------
     function gerarTabelaHTML(dados, titulo) {
         let acumuladoTotal = dados.reduce((sum, row) => sum + parseFloat(row.Acumulado), 0);
-        let html = `<b>${titulo} » ${formatMoeda.format(acumuladoTotal)}</b>
-                    <table class='table table-bordered table-striped table-hover small'>
-                    <tr style='text-align:center'>
-                        <th>Ano</th>
-                        <th>Acumulado</th>`;
-        meses.forEach(m => html += `<th>${m}</th>`);
-        html += `</tr>`;
+        let html = `<div class='card mb-4'>
+                        <div class='card-header bg-primary text-white'>${titulo} » ${formatMoeda.format(acumuladoTotal)}</div>
+                        <div class='card-body p-2'>
+                            <div class='table-responsive small'>
+                                <table class='table table-sm table-bordered table-striped table-hover mb-0'>
+                                    <thead>
+                                        <tr style='text-align:center'>
+                                            <th>Ano</th>
+                                            <th>Acumulado</th>`;
+                                            meses.forEach(m => html += `<th>${m}</th>`);
+            html += `   </tr>
+                      </thead>`;
 
         //console.table(dados);
 
         dados.forEach(row => {
-            html += `<tr>
-                        <td style='text-align:center'>${row.Ano}</td>
-                        <td style='text-align:right'>${formatMoeda.format(row.Acumulado)}</td>`;
-            meses.forEach(m => html += `<td style='text-align:right'>${formatMoeda.format(row[m])}</td>`);
-            html += `</tr>`;
+            html += `<tbody>
+                        <tr>
+                            <td style='text-align:center'>${row.Ano}</td>
+                            <td style='text-align:right'>${formatMoeda.format(row.Acumulado)}</td>
+                            `;
+                meses.forEach(m => html += `<td style='text-align:right'>${formatMoeda.format(row[m])}</td>`);
+            html += `</tr>
+                     </tbody>`;
         });
 
-        html += `</table>`;
+        html += `</table>
+                </div>
+              </div>
+            </div>`;
         return html;
 
     }
@@ -85,7 +96,7 @@ window.ProcessoObra = (() => {
 
                 if (resultado.valor_faturado != 0) {
                     const cartaoHTML = `
-                    <div class="col-sm-6 col-md-4 col-sm-2 mb-2">
+                    <div class="col-sm-6 col-md-3 mb-3">
                         <div class="card h-100 text-white ${classeCartao}" onclick="obraAuto('${codigoProcesso}', '${resultado.auto_num}')">
                             <div class="d-flex px-3 py-2">
                                 <div class="flex-grow-1 text-left">

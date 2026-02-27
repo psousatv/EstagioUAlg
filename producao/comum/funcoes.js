@@ -1,3 +1,5 @@
+// FUNÇÕES PARA IMPRIMIR NA IMPRESSORA, PDF E EXCEL
+
 // OBRAS ATIVAS - CRONOLOGIA
 function imprimirCronos() {
     // Seleciona todas as linhas do tbody gerado pelo renderVistorias()
@@ -7,7 +9,7 @@ function imprimirCronos() {
     let html = `
         <html>
         <head>
-            <title>Impressão de Vistorias</title>
+            <title>Impressão da Situação Cronológica de Processos Ativos</title>
             <link href="vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
@@ -19,7 +21,7 @@ function imprimirCronos() {
             </style>
         </head>
         <body>
-            <h4>Lista de Vistorias</h4>
+            <h4>Cronologia de Processos Ativos</h4>
             <table>
                 <thead>
                     <tr>
@@ -110,7 +112,7 @@ function imprimirVistorias() {
     let html = `
         <html>
         <head>
-            <title>Impressão de Vistorias</title>
+            <title>Relação de Vistorias Vencidas e Vincendas</title>
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
@@ -122,7 +124,7 @@ function imprimirVistorias() {
             </style>
         </head>
         <body>
-            <h4>Lista de Vistorias</h4>
+            <h4>Relação de Vistorias Vencidas e Vincendas</h4>
             <table>
                 <thead>
                     <tr>
