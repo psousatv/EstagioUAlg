@@ -107,6 +107,11 @@ function renderCronos(processos) {
     `;
 
     lista.forEach(proc => {
+
+        
+        console.table(proc);
+
+
     html += `
         <tr class="small">
             <td style="width: 75px;">

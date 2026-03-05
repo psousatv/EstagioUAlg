@@ -40,6 +40,46 @@
     background-image: url('../../global/imagens/bgPages.jpg');
     background-size: cover;
   }
+
+  .table thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.zero {
+    color: white;      /* texto branco */
+    background: white; /* fundo branco */
+}
+
+.text-right { text-align: right; }
+.text-left  { text-align: left;  }
+.text-center{ text-align: center;}
+
+.table-container{
+    max-height: 1000px;   /* ou a altura que quiseres */
+    overflow-y: auto;
+}
+
+/* Todas as células do thead */
+.table-container thead th{
+    position: sticky;
+    background: white;
+    z-index: 10;
+}
+
+/* Primeira linha */
+.table-container thead tr.head-1 th{
+    top: 0;
+    z-index: 20;  /* mais alto */
+}
+
+/* Segunda linha */
+.table-container thead tr.head-2 th{
+    top: 42px;   /* altura REAL da primeira linha */
+}
+
 </style>
 
 </head>

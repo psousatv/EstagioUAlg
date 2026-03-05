@@ -95,8 +95,6 @@ function renderVistorias(processos) {
 
     lista.forEach(proc => {
 
-    console.table(proc);
-
     html += `
         <tr class="small">
             <td style="width: 50px;">${proc.entidade}</td>
