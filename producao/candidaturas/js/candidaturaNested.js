@@ -17,7 +17,6 @@ $(document).ready(function () {
 
   // Nested row: apenas os itens financeiros do processo clicado
   
-  // Nested row: apenas os itens financeiros do processo clicado
 function formatNested(processo) {
   if (!processo) return 'Sem registros';
 
@@ -75,7 +74,7 @@ function formatNested(processo) {
         }
       });
      
-console.table(pedidosMap);
+//console.table(pedidosMap);
 
 
     // Monta linhas de pedidos, faturas e reembolsos
@@ -214,11 +213,14 @@ console.table(pedidosMap);
               <td class="bg-info text-white">Reembolsos </td>
               <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos)}</td>
             </tr>
-          <br>
+          </table>
+        `);
+        
+        // Cartões
+        $('#reembolsos').html(`
           <div class="mt-2">
             <b>Considerar alterar o Layout por pedido de reembolso e órfãos (sem pedido)</b>
           </div>
-          </table>
         `);
 
         return processos;

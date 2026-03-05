@@ -54,7 +54,7 @@ echo "
       <th colspan='2'>Executado</th>
       <th colspan='3'>Não Executado</th>
   </tr>
-  <tr class='nead-2 text-center'>
+  <tr class='head-2 text-center'>
       <th>Ordem</th>
       <th>Conta</th>
       <th>Item</th>

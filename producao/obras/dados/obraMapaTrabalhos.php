@@ -36,15 +36,15 @@ echo "
     <col span='3' style='background-color: #D6EEEE'>
   </colgroup>
   <thead>
-    <tr style='text-align: center'>
-      <th colspan='5' style='text-align: left'>
+    <tr class='text-center'>
+      <th colspan='4' class='head-1 text-left'>
         <b>Mapa de Trabalhos » " . number_format($valorTrabalhos, 2, ",", ".") . "€</b>
       </th>
       <th colspan='3'>Orçamento</th>
       <th colspan='2'>Proposto</th>
       <th colspan='3'>Variação</th>
     </tr>
-    <tr style='text-align: center'>
+    <tr class='head-2 text-center'>
       <th>Ordem</th>
       <th>Conta</th>
       <th>Item</th>
