@@ -8,10 +8,11 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 //Histórico Processos
 $processoGarantias = "SELECT 
                     fact_proces_check,
-                    ROUND(SUM(fact_duovalor), 2) AS duo,
                     ROUND(SUM(fact_garban), 2) AS gb,
-                    ROUND(SUM(fact_duopaga), 2) AS duoDevolve,
+                    ROUND(SUM(fact_duovalor), 2) AS duo,
+                    ROUND(SUM(fact_duocga), 2) AS outros,
                     ROUND(SUM(fact_garbanpaga), 2) AS gbReducao,
+                    ROUND(SUM(fact_duopaga), 2) AS duoDevolve,
                     (ROUND(SUM(fact_duovalor), 2) + ROUND(SUM(fact_garban), 2)) -
                     (ROUND(SUM(fact_duopaga), 2) + ROUND(SUM(fact_garbanpaga), 2)) AS cativo 
                     FROM factura
@@ -27,23 +28,27 @@ echo "
 <table class='table table-responsive table-striped table-hover small'>
   <tr class='text-center'>
     <th class='bg-warning'>Cativo</th>  
-    <th>Duodécimos</th>
-    <th>Devolvido</th>
     <th>Garantia</th>
+    <th>Duodécimos</th>
+    <th>Outros</th>
     <th>Reduções</th>
+    <th>Devolvido</th>
   </tr>";
 foreach($data as $row)
 {
   echo "
     <tr>
-      <td class='bg-warning'  style='text-align:left'>" .number_format($row['cativo'], 2, ',', '.'). "</td>  
-      <td  style='text-align:right'>" .number_format($row['duo'], 2, ',', '.'). "</td>
-      <td  style='text-align:right'>" .number_format($row['duoDevolve'], 2, ',', '.'). "</td>
+      <td class='bg-warning'  style='text-align:left'>" .number_format($row['cativo'], 2, ',', '.'). "</td>
       <td  style='text-align:right'>" .number_format($row['gb'], 2, ',', '.'). "</td>
+      <td  style='text-align:right'>" .number_format($row['duo'], 2, ',', '.'). "</td>
+      <td  style='text-align:right'>" .number_format($row['outros'], 2, ',', '.'). "</td>
       <td  style='text-align:right'>" .number_format($row['gbReducao'], 2, ',', '.'). "</td>
+      <td  style='text-align:right'>" .number_format($row['duoDevolve'], 2, ',', '.'). "</td>
     </tr>";
 };
 echo "</table>";
+
+// Montantes a libertar nas vistorias Programadas
 echo "
 <b>Considerar listar as vistorias programadas [exemplo] </b>
 <table class='table table-responsive table-striped table-hover small'>
