@@ -81,7 +81,7 @@ function definirTipoProcesso(array $resultados): array {
                 }
             }
 
-            return [$regime, $proc, $contrato, $dispensas[$proc], $movimentos];
+            return [$regime, $proc, $contrato, $fases[$proc], $movimentos];
         }
 
         // 2️⃣ Regras especiais ADS, valor > 10000
@@ -91,7 +91,7 @@ function definirTipoProcesso(array $resultados): array {
 
         // 3️⃣ Processos normais
         if (isset($fases[$contrato])) {
-            return [$regime, $proc, $contrato, $dispensas[$contrato], $fases[$contrato]];
+            return [$regime, $proc, $contrato, $fases[$contrato], $fases[$contrato]];
         }
     }
 
@@ -104,6 +104,7 @@ function definirTipoProcesso(array $resultados): array {
  */
 function filtrarPontosControle(array $resultados, array $fases): array {
     $pontos = [];
+
     foreach ($resultados as $res) {
         if (in_array($res['codigo'], $fases)) {
             $pontos[] = [

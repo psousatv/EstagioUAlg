@@ -21,10 +21,10 @@ echo "
 <table class='table table-bordered table-striped table-hover small'>
 <thead>
 <tr>
-  <th colspan='15' class='bg-primary text-white'>Faturado » ".number_format($processoFaturasAcumulado, 2, ",", ".")."€</th>
+  <th colspan='16' class='bg-primary text-white'>Faturado » ".number_format($processoFaturasAcumulado, 2, ",", ".")."€</th>
 </tr>
   <tr style='text-align: center'>
-    <th class='bg-secondary text-white' colspan='11'>Faturas</th>
+    <th class='bg-secondary text-white' colspan='12'>Faturas</th>
     
     <th colspan='4' class='bg-warning'>Reembolsos</th>
   </tr>
@@ -37,6 +37,7 @@ echo "
       <th>Auto</th>
       <th>Data</th>
       <th class='bg-info text-white'>Valor</th>
+      <th class='bg-info text-white'>IVA</th>
       <th>Caução</th>
       <th class='bg-secondary text-white'>SubTotal</th>
       <th class='bg-info text-white'>Outros</th>
@@ -55,8 +56,8 @@ foreach($data as $row)
   $expediente = $tipo. "." .$numero. "." .$ano;
   $subtotal = $row['fact_valor'] - $row['fact_duovalor'];
   $pagar = $subtotal - $row['fact_duocga'];
-  $elegivel = $row['fact_valor'] - $row['fact_duocga'];
-  $fundo = $row['fact_finan_max_elegivel'];
+  $elegivel = $row['fact_valor'] + $row['fact_iva'] ;
+  $fundo = $row['fact_finan_fundo'];
   $privado = $row['fact_finan_max_elegivel'] - $row['fact_finan_fundo'];
 
   echo "
@@ -67,6 +68,7 @@ foreach($data as $row)
       <td class='text-left'>".$row['fact_auto_num']."</td>
       <td class='text-left'>".$row['fact_auto_data']."</td>
       <td class='bg-info text-right text-white'>" .number_format($row['fact_valor'], 2, ',', '.'). "</td>
+      <td class='bg-info text-right text-white'>" .number_format($row['fact_iva'], 2, ',', '.'). "</td>
       <td class='text-right'>" .number_format($row['fact_duovalor'], 2, ',', '.'). "</td>
       <td class='bg-secondary text-white' style='text-align:right'>
         ".number_format($subtotal, 2, ',', '.')."

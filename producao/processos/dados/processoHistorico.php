@@ -12,12 +12,12 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Definir fases e códigos
 $fases = [
-    "enquadramento" => [0,1,2,3,53,54],
-    "concurso" => [4,5,6,7,8,10,11,12,13,51,52,80,81,82],
+    "enquadramento" => [0,1,2,3,51,52,53,54],
+    "procedimento" => [4,5,6,7,8,10,11,12,13,80,81,82],
     "contrato" => [16,17],
     "garantias" => [40,41,42,43,44],
-    "preparacao_execucao" => [14,19,60,61,62,63,64],
-    "execucao" => [9,18,21,22,23,24,25,26,27,28,29,30,96,98]
+    "preparacao_execucao" => [14,19],
+    "execucao" => [9,18,21,22,23,24,25,26,27,28,29,30,60,61,62,63,64, 96,98]
 ];
 
 // Organizar dados por fase e determinar fase a expandir
