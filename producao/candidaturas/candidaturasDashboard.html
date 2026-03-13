@@ -136,19 +136,24 @@
             <div class="container-fluid">
 
                 <!-- Dashboard Cards -->
-                <div class="row mb-4">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-euro"></i> Facturação vs Reembolsos - Elegível
+                                <i class="fas fa-euro"></i> Candidaturas 
                             </div>
                             <div class="card-body">
+
+                                <!-- Estatísticas -->
+                                <a class="badge badge-primary text-white mb-1">Estatisticas - ordenar por ano de aprovação</a>
+                                <div class="row" id="estatisticaCandidaturas">Candidatura / Empreitada / Adjudciado / Faturado / % / Km / RM</div>
+
                                 <!-- Candidaturas Em Curso -->
-                                <h5 class="badge badge-primary mb-3">Candidaturas Em Curso</h5>
+                                <a class="badge badge-primary text-white mb-1">Candidaturas Em Curso</a>
                                 <div class="row" id="cartoesCandidaturaEmCurso"></div>
             
                                 <!-- Candidaturas Encerradas -->
-                                <h5 class="badge badge-info mt-4 mb-3">Candidaturas Encerradas</h5>
+                                <a class="badge badge-secondary text-white mb-1">Candidaturas Encerradas</a>
                                 <div class="row" id="cartoesCandidaturaEncerrada"></div>
                             </div>
                         </div>

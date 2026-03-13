@@ -72,6 +72,8 @@ $(document).ready(function () {
             containerCurso.empty();
             containerEncerrada.empty();
 
+            console.table(allData);
+
             data.forEach(dados => {
                 let classeCartao, iconeCartao;
 
