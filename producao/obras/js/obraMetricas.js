@@ -42,7 +42,7 @@ function renderProgressBars(metricas) {
     metricas.forEach(m => {
         // Verifica se os dados são válidos
         const valor = {
-            titulo: m.trabalho,
+            titulo: m.metrica.slice(4),
             proposto: m.valor_proposto || 0,  // Garantir valores numéricos
             executado: m.valor_trabalhos || 0,  // Garantir valores numéricos
             percentagem: m.percentagem || 0  // Garantir valores numéricos
@@ -95,7 +95,9 @@ function gerarGraficoLadoALado(metricas) {
     const ctx = document.getElementById("lstMetricasGrafico").getContext("2d");
 
     // Extrair dados e garantir que não sejam nulos
-    const labels = metricas.map(m => m.trabalho || 'Desconhecido');
+    const labels = metricas.map(m => 
+        (m.metrica || 'Desconhecido').replace(/^\d{2}\s*-\s*/, '')
+    );
     const proposto = metricas.map(m => Number(m.valor_proposto || 0));
     const executado = metricas.map(m => Number(m.valor_trabalhos || 0));
 

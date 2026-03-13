@@ -19,6 +19,7 @@ function obraSelected(codigo) {
   xmlhttp.send();
 
           obraResults(codigo);
+          //redirectObras(codigo);
           mapaTrabalhos(codigo);
           mapaAutos(codigo);
           Financeiro(codigo);
@@ -110,7 +111,7 @@ function Financeiro(codigoProcesso){
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada
 function redirectObras(){
-  var obrasURL = "../obraResults.html?codigoProcesso=" + processoCodigo;
+  var obrasURL = "../obras/obraResults.html?codigoProcesso=" + processoCodigo;
   //window.open(obrasURL, "_blank");
   window.location.href = obrasURL;
 };
