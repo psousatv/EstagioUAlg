@@ -172,9 +172,8 @@ function veIndicador() {
                              background-size: contain; 
                              background-repeat: no-repeat; 
                              background-position: center 10px; 
-                             padding-top: 40px; min-width:120px;" 
+                             padding-top: 50px; min-width:120px;" 
                       data-group-index="${index}">
-                ${key}
               </button>
             </div>
           `;
