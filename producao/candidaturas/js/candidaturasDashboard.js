@@ -138,13 +138,15 @@ $(document).ready(function () {
 
 });
 
-// candidaturasDashboard.js
+// Indicadores Gerais de Candidaturas com botões centralizados e totais
 function veIndicador() {
-    fetch('dados/candidaturasDashboard2.php')
+    fetch('dados/candidaturasIndicadores.php')
       .then(response => response.json())
       .then(data => {
-        const container = $('#indicadoresCandidaturas');
-        container.empty(); // limpa conteúdo antigo
+        const botoesContainer = $('#botoesIndicadores');
+        const tabelaContainer = $('#tabelaIndicadores');
+        botoesContainer.empty();
+        tabelaContainer.empty(); // limpa tabelas antigas
 
         // Agrupa dados por programa
         const grupos = {};
@@ -154,39 +156,59 @@ function veIndicador() {
           grupos[key].push(item);
         });
 
+        // Caminho das logos
+        const path = "../../global/imagens";
+
         Object.keys(grupos).forEach((key, index) => {
           const groupData = grupos[key];
+          const logoName = groupData[0].logo || '';
+          const logoURL = logoName ? `${path}/${logoName}` : '';
 
-          // Cria div para o grupo
-          const groupDivId = `grupo_${index}`;
-          container.append(`<div id="${groupDivId}" class="col-sm-12"></div>`);
-          const groupDiv = $(`#${groupDivId}`);
+          // Cria botão do grupo
+          const buttonHTML = `
+            <div class="col-auto mb-2 d-flex justify-content-center">
+              <button class="btn btn-outline-primary text-white fw-bold group-btn" 
+                      style="background-image: url('${logoURL}'); 
+                             background-size: contain; 
+                             background-repeat: no-repeat; 
+                             background-position: center 10px; 
+                             padding-top: 40px; min-width:120px;" 
+                      data-group-index="${index}">
+                ${key}
+              </button>
+            </div>
+          `;
+          botoesContainer.append(buttonHTML);
 
-          // Logotipo da Candidatura
-          const path = "../../global/imagens";
-          const logoName = groupData[0].logo || ''; // pega o valor do JSON
-          const logoURL = logoName ? `${path}/${logoName}` : ''; // monta a URL completa
-
-          // Cabeçalho clicável
-          groupDiv.append(`
-              <h6 class="col-sm-3 header-toggle fw-bold rounded d-flex align-items-center"
-                  style="cursor:pointer; border: 1px solid #ccc; padding: 6px 12px; background-color:#e9f2ff;">
-              ${key}:
-              ${logoURL ? `<img src="${logoURL}" alt="${key}" style="height:24px; width:auto; margin-left:8px;">` : ''}
-              </h6>
-          `);
-
-          // Cria tabela (inicialmente escondida) ocupando toda a largura
+          // Cria tabela (inicialmente invisível)
           const tableId = `tabela_${index}`;
-          groupDiv.append(`<div class="table-responsive"><table id="${tableId}" class="display table table-sm table-striped table-hover small" style="display:none; width:100%;"></table></div>`);
+          tabelaContainer.append(`<div class="col-12 table-responsive mb-3" id="container_${tableId}" style="display:none;">
+                                      <table id="${tableId}" class="display table table-sm table-striped table-hover small" style="width:100%;">
+                                        <tfoot>
+                                          <tr>
+                                            <th colspan="4" class="text-right">Totais</th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                          </tr>
+                                        </tfoot>
+                                      </table>
+                                  </div>`);
 
-          // Inicializa DataTable
+          // Inicializa DataTable com totais
           const table = $(`#${tableId}`).DataTable({
             data: groupData,
             columns: [
                 { data: 'programa', title: 'Programa' },
                 { data: 'candidatura', title: 'Candidatura' },
                 { data: 'processo_nome', title: 'Processo' },
+                { 
+                    data: 'adjudicado_por_processo', 
+                    title: 'Adjudicado', className: 'dt-body-right',
+                    render: function(data) {
+                      return Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+                    }
+                  },
                 { 
                   data: 'faturado_por_processo', 
                   title: 'Faturado', className: 'dt-body-right',
@@ -210,14 +232,59 @@ function veIndicador() {
             paging: false,
             searching: false,
             info: false,
-            autoWidth: false
+            autoWidth: false,
+            footerCallback: function (row, data, start, end, display) {
+                var api = this.api();
+
+                // Função para somar colunas
+                const totalAdjudicado = api
+                    .column(3, { page: 'current' })
+                    .data()
+                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
+                const totalFaturado = api
+                    .column(4, { page: 'current' })
+                    .data()
+                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
+
+                const totalKm = api
+                    .column(5, { page: 'current' })
+                    .data()
+                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
+
+                const totalRamais = api
+                    .column(6, { page: 'current' })
+                    .data()
+                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
+
+                // Atualiza footer e alinha à direita
+                $(api.column(3).footer()).html(
+                    totalAdjudicado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+                ).addClass('text-right'); // Alinha à direita
+                $(api.column(4).footer()).html(
+                    totalFaturado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+                ).addClass('text-right'); // Alinha à direita
+                $(api.column(5).footer()).html(
+                    totalKm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' km'
+                ).addClass('text-right'); // Alinha à direita
+                $(api.column(6).footer()).html(
+                    totalRamais.toLocaleString('de-DE')
+                ).addClass('text-right'); // Alinha à direita
+            }
           });
 
-          // Toggle da tabela ao clicar no cabeçalho
-          groupDiv.find('.header-toggle').on('click', function() {
-            $(`#${tableId}`).slideToggle();
-          });
         });
+
+        // Evento ao clicar no botão do grupo
+        $('.group-btn').on('click', function() {
+            const index = $(this).data('group-index');
+
+            // Esconde todas as tabelas
+            tabelaContainer.children().hide();
+
+            // Mostra a tabela do grupo clicado
+            $(`#container_tabela_${index}`).slideDown();
+        });
+
       })
       .catch(error => console.error('Erro ao buscar dados:', error));
 }

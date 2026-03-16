@@ -17,16 +17,23 @@ $query = "SELECT
     p.proces_check AS processo,
     p.proces_nome AS processo_nome,
     p.proces_cpv_sigla AS tipo,
-    -- se houver nome do processo
+    COALESCE(ha.adjudicado, 0) AS adjudicado_por_processo,
     COALESCE(fp.faturado, 0) AS faturado_por_processo,
     COALESCE(ap.kmRede / 1000, 0) AS KmRede_por_processo,
     COALESCE(ap.numRamais, 0) AS numRamais_por_processo
     FROM candidaturas_submetidas cs
         -- Para acesso ao logo da Candidatura
         LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.candsub_aviso
-    
         -- Todos os processos da candidatura
         LEFT JOIN processo p ON p.proces_cand = cs.candsub_codigo
+        -- Soma as adjudicações por processo
+        LEFT JOIN (
+            SELECT
+                h.historico_proces_check,
+                ROUND(SUM(CASE WHEN h.historico_descr_cod = 14 THEN h.historico_valor ELSE 0 END), 2) AS adjudicado
+            FROM historico h
+            GROUP BY h.historico_proces_check
+            ) ha ON ha.historico_proces_check = p.proces_check
         -- Soma das faturas por processo
         LEFT JOIN (
             SELECT
