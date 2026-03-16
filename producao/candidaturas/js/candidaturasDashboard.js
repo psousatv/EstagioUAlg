@@ -14,10 +14,10 @@ function intVal(i) {
 
 // Redireciona ao selecionar uma candidatura
 function candidaturaRedirected(itemProcurado) {
-    console.log("Nome Candidatura:", itemProcurado);
     var URL = "candidaturaNested.html?itemProcurado=" + encodeURIComponent(itemProcurado); // alterar para candidaturaNested
     window.location.href = URL;
 }
+
 
 // Fetch com jQuery
 $(document).ready(function () {
@@ -71,8 +71,6 @@ $(document).ready(function () {
             var containerEncerrada = $('#cartoesCandidaturaEncerrada');
             containerCurso.empty();
             containerEncerrada.empty();
-
-            console.table(allData);
 
             data.forEach(dados => {
                 let classeCartao, iconeCartao;
@@ -132,5 +130,91 @@ $(document).ready(function () {
                 }
             });
         })
-        .catch(error => console.error("Erro ao carregar dados:", error));
+        .catch(error => console.error("Erro ao carregar dados:", error)
+    );
+    
+      // Função que cria as tabelas agrupadas
+  veIndicador(); // chama sua função de fetch/DataTables para #indicadoresCandidatura
+
 });
+
+// candidaturasDashboard.js
+function veIndicador() {
+    fetch('dados/candidaturasDashboard2.php')
+      .then(response => response.json())
+      .then(data => {
+        const container = $('#indicadoresCandidaturas');
+        container.empty(); // limpa conteúdo antigo
+
+        // Agrupa dados por programa
+        const grupos = {};
+        data.forEach(item => {
+          const key = `${item.programa}`;
+          if (!grupos[key]) grupos[key] = [];
+          grupos[key].push(item);
+        });
+
+        Object.keys(grupos).forEach((key, index) => {
+          const groupData = grupos[key];
+
+          // Cria div para o grupo
+          const groupDivId = `grupo_${index}`;
+          container.append(`<div id="${groupDivId}" class="col-sm-12"></div>`);
+          const groupDiv = $(`#${groupDivId}`);
+
+          // Logotipo da Candidatura
+          const path = "../../global/imagens";
+          const logoName = groupData[0].logo || ''; // pega o valor do JSON
+          const logoURL = logoName ? `${path}/${logoName}` : ''; // monta a URL completa
+
+          // Cabeçalho clicável azul
+          groupDiv.append(`<h6 class="col-sm-3 header-toggle fw-bold" style="cursor:pointer;">
+            ${key}:  ${logoURL ? `<img src="${logoURL}" alt="${key}" style="height:24px; width:auto; margin-right:8px;">` : ''}
+                
+            </h6>`);
+
+          // Cria tabela (inicialmente escondida) ocupando toda a largura
+          const tableId = `tabela_${index}`;
+          groupDiv.append(`<div class="table-responsive"><table id="${tableId}" class="display table table-sm table-striped table-hover small" style="display:none; width:100%;"></table></div>`);
+
+          // Inicializa DataTable
+          const table = $(`#${tableId}`).DataTable({
+            data: groupData,
+            columns: [
+                { data: 'programa', title: 'Programa' },
+                { data: 'candidatura', title: 'Candidatura' },
+                { data: 'processo_nome', title: 'Processo' },
+                { 
+                  data: 'faturado_por_processo', 
+                  title: 'Faturado', className: 'dt-body-right',
+                  render: function(data) {
+                    return Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+                  }
+                },
+                { 
+                  data: 'KmRede_por_processo', title: 'Km Rede', className: 'dt-body-right',
+                  render: function(data) {
+                    return Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' km';
+                  }
+                },
+                { 
+                  data: 'numRamais_por_processo', title: 'Nº Ramais', className: 'dt-body-right',
+                  render: function(data) {
+                    return Number(data).toLocaleString('de-DE');
+                  }
+                }
+            ],
+            paging: false,
+            searching: false,
+            info: false,
+            autoWidth: false
+          });
+
+          // Toggle da tabela ao clicar no cabeçalho
+          groupDiv.find('.header-toggle').on('click', function() {
+            $(`#${tableId}`).slideToggle();
+          });
+        });
+      })
+      .catch(error => console.error('Erro ao buscar dados:', error));
+}
