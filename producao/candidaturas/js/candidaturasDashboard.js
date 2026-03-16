@@ -167,11 +167,14 @@ function veIndicador() {
           const logoName = groupData[0].logo || ''; // pega o valor do JSON
           const logoURL = logoName ? `${path}/${logoName}` : ''; // monta a URL completa
 
-          // Cabeçalho clicável azul
-          groupDiv.append(`<h6 class="col-sm-3 header-toggle fw-bold" style="cursor:pointer;">
-            ${key}:  ${logoURL ? `<img src="${logoURL}" alt="${key}" style="height:24px; width:auto; margin-right:8px;">` : ''}
-                
-            </h6>`);
+          // Cabeçalho clicável
+          groupDiv.append(`
+              <h6 class="col-sm-3 header-toggle fw-bold rounded d-flex align-items-center"
+                  style="cursor:pointer; border: 1px solid #ccc; padding: 6px 12px; background-color:#e9f2ff;">
+              ${key}:
+              ${logoURL ? `<img src="${logoURL}" alt="${key}" style="height:24px; width:auto; margin-left:8px;">` : ''}
+              </h6>
+          `);
 
           // Cria tabela (inicialmente escondida) ocupando toda a largura
           const tableId = `tabela_${index}`;
