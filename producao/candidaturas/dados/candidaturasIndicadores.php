@@ -38,7 +38,7 @@ $query = "SELECT
         LEFT JOIN (
             SELECT
                 f.fact_proces_check,
-                ROUND(SUM(f.fact_valor), 2) AS faturado
+                ROUND(SUM(CASE WHEN f.fact_tipo = 'FTN' THEN f.fact_valor ELSE 0 END), 2) AS faturado
             FROM factura f
             GROUP BY f.fact_proces_check
             ) fp ON fp.fact_proces_check = p.proces_check
