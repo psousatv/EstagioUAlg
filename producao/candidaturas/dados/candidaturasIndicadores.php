@@ -19,8 +19,10 @@ $query = "SELECT
     p.proces_cpv_sigla AS tipo,
     COALESCE(ha.adjudicado, 0) AS adjudicado_por_processo,
     COALESCE(fp.faturado, 0) AS faturado_por_processo,
-    COALESCE(ap.kmRede / 1000, 0) AS KmRede_por_processo,
-    COALESCE(ap.numRamais, 0) AS numRamais_por_processo
+    COALESCE(mtp.previsto_kmRede / 1000, 0) AS KmRede_previsto,
+    COALESCE(ap.executado_kmRede / 1000, 0) AS KmRede_executado,
+    COALESCE(mtp.previsto_numRamais, 0) AS numRamais_previsto,
+    COALESCE(ap.executado_numRamais, 0) AS numRamais_executado
     FROM candidaturas_submetidas cs
         -- Para acesso ao logo da Candidatura
         LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.candsub_aviso
@@ -46,12 +48,21 @@ $query = "SELECT
         LEFT JOIN (
             SELECT
                 a.auto_check,
-                ROUND(SUM(CASE WHEN a.auto_objecto = 'Tubagens' THEN a.auto_qt ELSE 0 END), 2) AS kmRede,
-                ROUND(SUM(CASE WHEN a.auto_objecto = 'Ramais' THEN a.auto_qt ELSE 0 END), 2) AS numRamais
+                ROUND(SUM(CASE WHEN a.auto_objecto = 'Tubagens' AND a.auto_num < 90 THEN a.auto_qt ELSE 0 END), 2) AS executado_kmRede,
+                ROUND(SUM(CASE WHEN a.auto_objecto = 'Ramais' AND a.auto_num < 90 THEN a.auto_qt ELSE 0 END), 2) AS executado_numRamais
             FROM obra_autos a
             GROUP BY a.auto_check
             ) ap ON ap.auto_check = p.proces_check
-    WHERE p.proces_cpv_sigla = 'EMP'
+        -- Soma dos objetos do mapa de trabalhos por processo
+        LEFT JOIN (
+            SELECT
+                mt.mt_check,
+                ROUND(SUM(CASE WHEN mt.mt_objecto = 'Tubagens' THEN mt.mt_qt ELSE 0 END), 2) AS previsto_kmRede,
+                ROUND(SUM(CASE WHEN mt.mt_objecto = 'Ramais' THEN mt.mt_qt ELSE 0 END), 2) AS previsto_numRamais
+            FROM mapa_trabalhos mt
+            GROUP BY mt.mt_check
+            ) mtp ON mtp.mt_check = p.proces_check
+    WHERE p.proces_cpv_sigla = 'EMP' AND p.proces_report_valores = 1
     ORDER BY cs.candsub_dt_fim DESC, cs.candsub_programa, p.proces_check";
 
 $stmt = $myConn->query($query);

@@ -9,11 +9,13 @@ $(document).ready(function () {
   };
 
   function formatExpediente(str) {
+    if (typeof str !== 'string') return '';
+  
     const clean = str.replace(/[^A-Za-z0-9]/g, '');
     return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
-        return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
+      return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
     });
-  };
+  }
 
   // Nested row: apenas os itens financeiros do processo clicado
   
@@ -66,6 +68,7 @@ function formatNested(processo) {
       
       // Associar faturas aos pedidos
       (processo.faturas || []).forEach(f => {
+
         const num = f.fact_finan_pp;
         if (pedidosMap[num]) {
           pedidosMap[num].faturas.push(f);
@@ -74,7 +77,8 @@ function formatNested(processo) {
         }
       });
      
-//console.table(pedidosMap);
+      //console.table(processo.faturas);
+      //console.table(pedidosMap);
 
 
     // Monta linhas de pedidos, faturas e reembolsos
@@ -194,8 +198,18 @@ function formatNested(processo) {
         const totalAdjudicado = processos
         .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===14 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
 
-        const totalFaturas = processos
-        .reduce((sumProc, p) => sumProc + (p.faturas?.filter(f => (f.valor||0) > 0).reduce((s,f) => s + f.valor,0) || 0), 0);
+        //const totalFaturas = processos
+        //.reduce((sumProc, p) => sumProc + (p.faturas?.filter(f => (f.valor||0) > 0).reduce((s,f) => s + f.valor,0) || 0), 0);
+        
+        const tiposValidos = ['FTN', 'NC'];
+
+        const totalFaturas = processos.reduce((sumProc, p) => {
+          const total = (p.faturas || [])
+            .filter(f => (f.valor || 0) > 0 && tiposValidos.includes((f.fact_tipo || '').toUpperCase()))
+            .reduce((s, f) => s + f.valor, 0);
+
+          return sumProc + total;
+        }, 0);
 
         const totalReembolsos = processos
         .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===92 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
@@ -257,10 +271,10 @@ function formatNested(processo) {
         data: null,
         className: 'dt-body-right',
         render: function(data, type, row) {
+          const tiposValidos = ['FTN', 'NC'];
           const totalFaturas = row.faturas
-            ?.filter(f => (f.valor || 0) > 0)
-            .reduce((sum, f) => sum + f.valor, 0) || 0;
-      
+            ?.filter(f => (f.valor || 0) > 0 && tiposValidos.includes((f.fact_tipo || '').toUpperCase()))
+            .reduce((sum, f) => sum + f.valor, 0) || 0;      
           return formatCurrency(totalFaturas);
         }
       },

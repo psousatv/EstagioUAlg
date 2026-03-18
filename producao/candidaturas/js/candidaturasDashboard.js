@@ -138,149 +138,182 @@ $(document).ready(function () {
 
 });
 
-// Indicadores Gerais de Candidaturas com botões centralizados e totais
+// Indicadores Gerais por Candidatura e por Processo
 function veIndicador() {
     fetch('dados/candidaturasIndicadores.php')
       .then(response => response.json())
       .then(data => {
+
         const botoesContainer = $('#botoesIndicadores');
         const tabelaContainer = $('#tabelaIndicadores');
+
         botoesContainer.empty();
-        tabelaContainer.empty(); // limpa tabelas antigas
+        tabelaContainer.empty();
+
+        // CSS aplicado diretamente
+        const style = `
+        <style>
+            table.dataTable thead th {
+                vertical-align: middle !important;
+                text-align: center;
+            }
+            table.dataTable thead tr:first-child th {
+                border-bottom: none;
+                font-weight: bold;
+            }
+            table.dataTable thead tr:nth-child(2) th {
+                border-top: none;
+                font-weight: normal;
+            }
+            .dt-body-right {
+                text-align: right;
+            }
+        </style>
+        `;
+        tabelaContainer.append(style);
 
         // Agrupa dados por programa
         const grupos = {};
         data.forEach(item => {
-          const key = `${item.programa}`;
-          if (!grupos[key]) grupos[key] = [];
-          grupos[key].push(item);
+            const key = `${item.programa}`;
+            if (!grupos[key]) grupos[key] = [];
+            grupos[key].push(item);
         });
 
-        // Caminho das logos
         const path = "../../global/imagens";
 
         Object.keys(grupos).forEach((key, index) => {
-          const groupData = grupos[key];
-          const logoName = groupData[0].logo || '';
-          const logoURL = logoName ? `${path}/${logoName}` : '';
 
-          // Cria botão do grupo
-          const buttonHTML = `
-            <div class="col-auto mb-2 d-flex justify-content-center">
-              <button class="btn btn-outline-primary text-white fw-bold group-btn" 
-                      style="background-image: url('${logoURL}'); 
-                             background-size: contain; 
-                             background-repeat: no-repeat; 
-                             background-position: center 10px; 
-                             padding-top: 50px; min-width:120px;" 
-                      data-group-index="${index}">
-              </button>
-            </div>
-          `;
-          botoesContainer.append(buttonHTML);
+            const groupData = grupos[key];
+            const logoName = groupData[0].logo || '';
+            const logoURL = logoName ? `${path}/${logoName}` : '';
 
-          // Cria tabela (inicialmente invisível)
-          const tableId = `tabela_${index}`;
-          tabelaContainer.append(`<div class="col-12 table-responsive mb-3" id="container_${tableId}" style="display:none;">
-                                      <table id="${tableId}" class="display table table-sm table-striped table-hover small" style="width:100%;">
-                                        <tfoot>
-                                          <tr>
-                                            <th colspan="4" class="text-right">Totais</th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                          </tr>
-                                        </tfoot>
-                                      </table>
-                                  </div>`);
+            // BOTÃO
+            botoesContainer.append(`
+                <div class="col-auto mb-2 d-flex justify-content-center">
+                    <button class="btn btn-outline-primary text-white fw-bold group-btn"
+                        style="background-image:url('${logoURL}');
+                               background-size:contain;
+                               background-repeat:no-repeat;
+                               background-position:center 10px;
+                               padding-top:50px; min-width:120px;"
+                        data-group-index="${index}">
+                    </button>
+                </div>
+            `);
 
-          // Inicializa DataTable com totais
-          const table = $(`#${tableId}`).DataTable({
-            data: groupData,
-            columns: [
-                { data: 'programa', title: 'Programa' },
-                { data: 'candidatura', title: 'Candidatura' },
-                { data: 'processo_nome', title: 'Processo' },
-                { 
-                    data: 'adjudicado_por_processo', 
-                    title: 'Adjudicado', className: 'dt-body-right',
-                    render: function(data) {
-                      return Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+            const tableId = `tabela_${index}`;
+
+            // TABELA COM HEADER DUPLO
+            tabelaContainer.append(`
+                <div class="col-12 table-responsive mb-3" id="container_${tableId}" style="display:none;">
+                    <table id="${tableId}" class="display table table-sm table-striped table-hover small" style="width:100%;">
+                        
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Programa</th>
+                                <th rowspan="2">Candidatura</th>
+                                <th rowspan="2">Processo</th>
+                                <th colspan="2">Valores</th>
+                                <th colspan="2">Rede (Km)</th>
+                                <th colspan="2">Ramais (un)</th>
+                            </tr>
+                            <tr>
+                                <th>Adjudicado</th>
+                                <th>Faturado</th>
+                                <th>Previsto</th>
+                                <th>Executado</th>
+                                <th>Previsto</th>
+                                <th>Executado</th>
+                            </tr>
+                        </thead>
+
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-right">Totais</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+
+                    </table>
+                </div>
+            `);
+
+            // DATATABLE
+            const table = $(`#${tableId}`).DataTable({
+                data: groupData,
+                columns: [
+                    { data: 'programa' },
+                    { data: 'candidatura' },
+                    { data: 'processo_nome' },
+
+                    {
+                        data: 'adjudicado_por_processo',
+                        className: 'dt-body-right',
+                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €'
+                    },
+                    {
+                        data: 'faturado_por_processo',
+                        className: 'dt-body-right',
+                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €'
+                    },
+
+                    {
+                        data: 'KmRede_previsto',
+                        className: 'dt-body-right',
+                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km'
+                    },
+                    {
+                        data: 'KmRede_executado',
+                        className: 'dt-body-right',
+                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km'
+                    },
+
+                    {
+                        data: 'numRamais_previsto',
+                        className: 'dt-body-right',
+                        render: data => Number(data).toLocaleString('de-DE')
+                    },
+                    {
+                        data: 'numRamais_executado',
+                        className: 'dt-body-right',
+                        render: data => Number(data).toLocaleString('de-DE')
                     }
-                  },
-                { 
-                  data: 'faturado_por_processo', 
-                  title: 'Faturado', className: 'dt-body-right',
-                  render: function(data) {
-                    return Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-                  }
-                },
-                { 
-                  data: 'KmRede_por_processo', title: 'Km Rede', className: 'dt-body-right',
-                  render: function(data) {
-                    return Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' km';
-                  }
-                },
-                { 
-                  data: 'numRamais_por_processo', title: 'Nº Ramais', className: 'dt-body-right',
-                  render: function(data) {
-                    return Number(data).toLocaleString('de-DE');
-                  }
+                ],
+
+                paging: false,
+                searching: false,
+                info: false,
+                autoWidth: false,
+
+                footerCallback: function () {
+                    const api = this.api();
+
+                    const soma = col =>
+                        api.column(col).data().reduce((a, b) => a + (parseFloat(b) || 0), 0);
+
+                    $(api.column(3).footer()).html(soma(3).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €').addClass('text-right');
+                    $(api.column(4).footer()).html(soma(4).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €').addClass('text-right');
+
+                    $(api.column(5).footer()).html(soma(5).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km').addClass('text-right');
+                    $(api.column(6).footer()).html(soma(6).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km').addClass('text-right');
+
+                    $(api.column(7).footer()).html(soma(7).toLocaleString('de-DE')).addClass('text-right');
+                    $(api.column(8).footer()).html(soma(8).toLocaleString('de-DE')).addClass('text-right');
                 }
-            ],
-            paging: false,
-            searching: false,
-            info: false,
-            autoWidth: false,
-            footerCallback: function (row, data, start, end, display) {
-                var api = this.api();
-
-                // Função para somar colunas
-                const totalAdjudicado = api
-                    .column(3, { page: 'current' })
-                    .data()
-                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
-                const totalFaturado = api
-                    .column(4, { page: 'current' })
-                    .data()
-                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
-
-                const totalKm = api
-                    .column(5, { page: 'current' })
-                    .data()
-                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
-
-                const totalRamais = api
-                    .column(6, { page: 'current' })
-                    .data()
-                    .reduce((a, b) => a + parseFloat(b) || 0, 0);
-
-                // Atualiza footer e alinha à direita
-                $(api.column(3).footer()).html(
-                    totalAdjudicado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
-                ).addClass('text-right'); // Alinha à direita
-                $(api.column(4).footer()).html(
-                    totalFaturado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
-                ).addClass('text-right'); // Alinha à direita
-                $(api.column(5).footer()).html(
-                    totalKm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' km'
-                ).addClass('text-right'); // Alinha à direita
-                $(api.column(6).footer()).html(
-                    totalRamais.toLocaleString('de-DE')
-                ).addClass('text-right'); // Alinha à direita
-            }
-          });
+            });
 
         });
 
-        // Evento ao clicar no botão do grupo
-        $('.group-btn').on('click', function() {
+        // EVENTO BOTÕES
+        $('.group-btn').on('click', function () {
             const index = $(this).data('group-index');
-
-            // Esconde todas as tabelas
             tabelaContainer.children().hide();
-
-            // Mostra a tabela do grupo clicado
             $(`#container_tabela_${index}`).slideDown();
         });
 
