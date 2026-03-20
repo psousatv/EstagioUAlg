@@ -14,10 +14,12 @@ $query = "SELECT
           ROUND(SUM(proces_cand_elegivel), 2) AS elegivel,
           ROUND(SUM(proces_val_faturacao), 2) AS faturado,
           ROUND(SUM(proces_cand_recebido), 2) AS recebido,
-          IF(SUM(proces_val_faturacao) = 0 OR SUM(proces_cand_recebido) = 0, 0,
-          ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao)), 2)) AS faturado_recebido_percent,
-          IF(SUM(proces_cand_elegivel) = 0 OR SUM(proces_cand_recebido) = 0, 0,
-          ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel)), 2)) AS elegivel_recebido_percent
+
+          
+         COALESCE(ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao)) * 100, 2), 0) AS faturado_recebido_percent,
+         COALESCE(ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel)) * 100, 2), 0) AS elegivel_recebido_percent
+
+          
           FROM processo
           INNER JOIN candidaturas_submetidas cs ON cs.candsub_codigo = proces_cand
           WHERE proces_cand <> 'n.a.' AND proces_report_valores = 1
@@ -30,5 +32,11 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Set the HTTP Content-Type header to indicate that the response is in JSON format
 header('Content-Type: application/json');
 
-echo json_encode($data);
+echo json_encode($data, JSON_PRETTY_PRINT);
 
+
+//ROUND(SUM(CASE WHEN h.historico_descr_cod = 14 THEN h.historico_valor ELSE 0 END), 2) AS adjudicado,
+//IF(SUM(proces_val_faturacao) = 0 OR SUM(proces_cand_recebido) = 0, 0,
+//          ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao)), 2)) AS faturado_recebido_percent,
+//IF(SUM(proces_cand_elegivel) = 0 OR SUM(proces_cand_recebido) = 0, 0,
+//          ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel)), 2)) AS elegivel_recebido_percent
