@@ -13,18 +13,14 @@ $query = "SELECT
           ROUND(SUM(proces_val_adjudicacoes), 2) AS adjudicado,
           ROUND(SUM(proces_cand_elegivel), 2) AS elegivel,
           ROUND(SUM(proces_val_faturacao), 2) AS faturado,
-          ROUND(SUM(proces_cand_recebido), 2) AS recebido,
-
-          
-         COALESCE(ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao)) * 100, 2), 0) AS faturado_recebido_percent,
-         COALESCE(ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel)) * 100, 2), 0) AS elegivel_recebido_percent
-
-          
-          FROM processo
-          INNER JOIN candidaturas_submetidas cs ON cs.candsub_codigo = proces_cand
-          WHERE proces_cand <> 'n.a.' AND proces_report_valores = 1
-          GROUP BY proces_cand
-          ORDER BY YEAR(cs.candsub_dt_inicio) DESC ";
+          ROUND(SUM(proces_cand_recebido), 2) AS recebido,         
+         COALESCE(ROUND((SUM(proces_cand_recebido) / SUM(proces_val_faturacao)), 4), 0) AS faturado_recebido_percent,
+         COALESCE(ROUND((SUM(proces_cand_recebido) / SUM(proces_cand_elegivel)), 4), 0) AS elegivel_recebido_percent
+         FROM processo
+         INNER JOIN candidaturas_submetidas cs ON cs.candsub_codigo = proces_cand
+         WHERE proces_cand <> 'n.a.' AND proces_report_valores = 1
+         GROUP BY proces_cand
+         ORDER BY YEAR(cs.candsub_dt_inicio) DESC ";
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

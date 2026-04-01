@@ -36,8 +36,16 @@ $(document).ready(function () {
                     { data: 'adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
                     { data: 'faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
                     { data: 'recebido', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'faturado_recebido_percent', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'elegivel_recebido_percent', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
+                    { data: 'faturado_recebido_percent',
+                        className: 'dt-body-right',
+                        render: function (data, type, row) {
+                          return $.fn.dataTable.render.number('.', ',', 2).display(data * 100) + '%';
+                        }},
+                    { data: 'elegivel_recebido_percent',
+                        className: 'dt-body-right',
+                        render: function (data, type, row) {
+                          return $.fn.dataTable.render.number('.', ',', 2).display(data * 100) + '%';
+                        } },
                     { data: 'inicio', visible: false }
                 ],
                 order: [[8, 'desc']],
