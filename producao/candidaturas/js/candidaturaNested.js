@@ -173,7 +173,7 @@ function formatNested(processo) {
           <div>
             <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
               ${json.estado || ''}: ${json.candidatura || ''} 
-              - ${json.designacao || ''} - ${json.taxa * 100 || ''}%
+              - ${json.designacao || ''} - Apoio de ${json.taxa * 100 || ''}%
             </div>
             <div class="btn btn-warning">
               <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
@@ -211,21 +211,42 @@ function formatNested(processo) {
           return sumProc + total;
         }, 0);
 
+        const totalPedidos = processos
+          .reduce((sumProc, p) => 
+            sumProc + (
+              p.historico
+                ?.filter(h => 
+                  h.historico_descr_cod === 91 &&
+                  (h.valor || 0) > 0
+                )
+                .reduce((s, h) => s + h.valor, 0) || 0
+            ), 
+          0);
+
         const totalReembolsos = processos
-        .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===92 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
+          .reduce((sumProc, p) => 
+            sumProc + (
+              p.historico
+                ?.filter(h => 
+                  h.historico_descr_cod === 92 &&
+                  (h.valor || 0) > 0
+                )
+                .reduce((s, h) => s + h.valor, 0) || 0
+            ), 
+          0);
 
         // Valores da Candidatura
         $('#valores').html(`
           <table class="table table-striped table-md">
             <tr>
-              <td class="bg-primary text-white">Aprovado</td>
+              <td class="bg-primary text-white">Investimento</td>
               <td class="bg-primary text-white text-end">${formatCurrency(json.elegivel)}</td>
-              <td class="bg-secondary text-white">Adjudicados </td>
-              <td class="bg-secondary text-white text-end">${formatCurrency(totalAdjudicado)}</td>  
-              <td class="bg-success text-white">Faturado </td>
-              <td class="bg-success text-white text-end">${formatCurrency(totalFaturas)}</td>
-              <td class="bg-info text-white">Reembolsos </td>
-              <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos)}</td>
+              <td class="bg-secondary text-white">Apoio </td>
+              <td class="bg-secondary text-white text-end">${formatCurrency(json.elegivel * json.taxa)}</td>  
+              <td class="bg-success text-white">Pedido </td>
+              <td class="bg-success text-white text-end">${formatCurrency(totalPedidos)}</td>
+              <td class="bg-info text-white">Pago </td>
+              <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos * json.taxa)}</td>
             </tr>
           </table>
         `);
@@ -272,19 +293,23 @@ function formatNested(processo) {
         className: 'dt-body-right',
         render: function(data, type, row) {
           const tiposValidos = ['FTN', 'NC'];
-          const totalFaturas = row.faturas
-            ?.filter(f => (f.valor || 0) > 0 && tiposValidos.includes((f.fact_tipo || '').toUpperCase()))
-            .reduce((sum, f) => sum + f.valor, 0) || 0;      
-          return formatCurrency(totalFaturas);
+          const totalPedidos = row.historico
+          ?.filter(h => h.historico_descr_cod === 91 
+            && (h.valor || 0) > 0 
+            && !(h.historico_num?.includes("Ad")))
+          .reduce((sum, h) => sum + (h.valor || 0), 0) || 0;     
+          return formatCurrency(totalPedidos);
         }
       },
       { 
         data: null,
         className: 'dt-body-right',
         render: function(data, type, row) {
-          const totalReembolsos = row.historico
-        ?.filter(h => h.historico_descr_cod === 92 && (h.valor || 0) > 0)
-        .reduce((sum, h) => sum + (h.valor || 0), 0) || 0;
+          const totalReembolsos = row.historico 
+          ?.filter(h => h.historico_descr_cod === 92 
+            && (h.valor || 0) > 0 
+            && !(h.historico_num?.includes("Ad")))
+          .reduce((sum, h) => sum + (h.valor || 0), 0) || 0;
           return formatCurrency(totalReembolsos);
         }
       },

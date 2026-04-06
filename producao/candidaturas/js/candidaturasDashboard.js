@@ -19,77 +19,202 @@ function candidaturaRedirected(itemProcurado) {
 }
 
 
-// Fetch com jQuery
+// 🌍 FORMATADORES GLOBAIS
+const Formatters = {
+    currency: new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }),
+    number: new Intl.NumberFormat('de-DE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }),
+    percent: new Intl.NumberFormat('de-DE', {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    })
+};
+
 $(document).ready(function () {
+
+    // 🔹 Converte valores para cálculos
+    function intVal(i) {
+        return typeof i === 'string'
+            ? parseFloat(i.replace(/[^\d,-]/g, '').replace(',', '.')) || 0
+            : typeof i === 'number'
+                ? i
+                : 0;
+    }
+
+    // 🔹 Calcula coluna Apoio
+    function calcularApoio(row) {
+        return (row.elegivel || 0) * (row.taxa || 0);
+    }
+
     fetch("dados/candidaturasDashboard.php")
         .then(response => response.json())
         .then(data => {
-            // Inicializa DataTable
+
             var dataTable = $('#tabela').DataTable({
                 searching: false,
                 lengthChange: false,
                 aaData: data,
+
                 columns: [
                     { data: 'candidatura' },
-                    { data: 'taxa', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'elegivel', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'recebido', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-                    { data: 'faturado_recebido_percent',
+
+                    {
+                        data: 'taxa',
+                        className: 'dt-body-right',
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.percent.format(data || 0);
+                        }
+                    },
+
+                    {
+                        data: 'elegivel',
+                        className: 'dt-body-right',
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.number.format(data || 0);
+                        }
+                    },
+
+                    // ✅ Coluna calculada Apoio
+                    {
+                        data: null,
                         className: 'dt-body-right',
                         render: function (data, type, row) {
-                          return $.fn.dataTable.render.number('.', ',', 2).display(data * 100) + '%';
-                        }},
-                    { data: 'elegivel_recebido_percent',
+                            const valor = calcularApoio(row);
+                            if (type === 'sort' || type === 'type') return valor;
+                            return Formatters.number.format(valor);
+                        }
+                    },
+
+                    {
+                        data: 'adjudicado',
                         className: 'dt-body-right',
-                        render: function (data, type, row) {
-                          return $.fn.dataTable.render.number('.', ',', 2).display(data * 100) + '%';
-                        } },
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.number.format(data || 0);
+                        }
+                    },
+
+                    {
+                        data: 'faturado',
+                        className: 'dt-body-right',
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.number.format(data || 0);
+                        }
+                    },
+
+                    {
+                        data: 'recebido',
+                        className: 'dt-body-right',
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.number.format(data || 0);
+                        }
+                    },
+
+                    {
+                        data: 'faturado_recebido_percent',
+                        className: 'dt-body-right',
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.percent.format(data || 0);
+                        }
+                    },
+
+                    {
+                        data: 'elegivel_recebido_percent',
+                        className: 'dt-body-right',
+                        render: function (data, type) {
+                            if (type === 'sort' || type === 'type') return data || 0;
+                            return Formatters.percent.format(data || 0);
+                        }
+                    },
+
                     { data: 'inicio', visible: false }
                 ],
+
                 order: [[8, 'desc']],
-                footerCallback: function (row, data, start, end, display) {
+
+                // ✅ Totais no footer
+                footerCallback: function () {
                     var api = this.api();
-                    [2, 4, 5].forEach(function (colIndex) {
-                        var totalGlobal = api.column(colIndex).data().reduce((a, b) => intVal(a) + intVal(b), 0);
-                        var totalPagina = api.column(colIndex, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+
+                    [2, 3, 4, 5, 6].forEach(function (colIndex) {
+
+                        let totalGlobal = 0;
+                        let totalPagina = 0;
+
+                        if (colIndex === 3) {
+                            // Coluna calculada Apoio
+                            totalGlobal = api.rows().data().toArray()
+                                .reduce((sum, row) => sum + calcularApoio(row), 0);
+
+                            totalPagina = api.rows({ page: 'current' }).data().toArray()
+                                .reduce((sum, row) => sum + calcularApoio(row), 0);
+
+                        } else {
+                            totalGlobal = api.column(colIndex).data()
+                                .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+                            totalPagina = api.column(colIndex, { page: 'current' }).data()
+                                .reduce((a, b) => intVal(a) + intVal(b), 0);
+                        }
+
                         $(api.column(colIndex).footer()).html(
                             `<div class="text-right">
-                                ${Number(totalPagina).toLocaleString('pt-PT')} €<br>
-                                <small>(Global: ${Number(totalGlobal).toLocaleString('pt-PT')} €)</small>
+                                ${Formatters.currency.format(totalPagina)}<br>
+                                <small>(Global: ${Formatters.currency.format(totalGlobal)})</small>
                             </div>`
                         );
                     });
                 }
             });
 
-            // Preenche arrays auxiliares
+            // 🔹 Arrays auxiliares
             dataTable.rows().every(function () {
                 var rowData = this.data();
+
                 allData.push(rowData);
                 titulo_colunas = Object.keys(rowData);
-                nome_candidatura.push(rowData["candidatura"]);
-                dadosProgresso.push([rowData["candidatura"], rowData["recebido"], rowData["elegivel_recebido_percent"]]);
-                dadosGrafico.push(rowData["recebido"]);
+                nome_candidatura.push(rowData.candidatura);
+
+                dadosProgresso.push([
+                    rowData.candidatura,
+                    rowData.recebido,
+                    rowData.elegivel_recebido_percent
+                ]);
+
+                dadosGrafico.push(rowData.recebido);
             });
 
-            // Cria os cartões
+            // 🔹 Cartões
             var containerCurso = $('#cartoesCandidaturaEmCurso');
             var containerEncerrada = $('#cartoesCandidaturaEncerrada');
+
             containerCurso.empty();
             containerEncerrada.empty();
 
             data.forEach(dados => {
+
                 let classeCartao, iconeCartao;
 
-                if (dados.faturado_recebido_percent < .50) {
+                if (dados.faturado_recebido_percent < 0.50) {
                     classeCartao = 'bg-danger text-white';
                     iconeCartao = 'fa fa-thumbs-down';
-                } else if (dados.faturado_recebido_percent < .70) {
+                } else if (dados.faturado_recebido_percent < 0.70) {
                     classeCartao = 'bg-warning text-dark';
                     iconeCartao = 'fa fa-exclamation-triangle';
-                } else if (dados.faturado_recebido_percent < .85) {
+                } else if (dados.faturado_recebido_percent < 0.85) {
                     classeCartao = 'bg-primary text-white';
                     iconeCartao = 'fa fa-cog fa-spin';
                 } else {
@@ -103,26 +228,26 @@ $(document).ready(function () {
                         <div class="d-flex px-3 py-2 small">
                             <div class="flex-grow-1 text-left">
                                 <p class="mb-1 font-weight-bold">${dados.candidatura}</p>
+
                                 <div>
                                     <h6>
-                                        ${Intl.NumberFormat("de-DE", 
-                                            { style: "currency", currency: "EUR" }).format(dados.faturado)} -
-                                        ${Intl.NumberFormat("de-DE", 
-                                            { style: "currency", currency: "EUR" }).format(dados.recebido)} -
-                                        <span>${Intl.NumberFormat("de-DE", 
-                                            {style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(dados.faturado_recebido_percent)}
-                                        </span>
+                                        ${Formatters.currency.format(dados.faturado)} -
+                                        ${Formatters.currency.format(dados.recebido)} -
+                                        ${Formatters.percent.format(dados.faturado_recebido_percent)}
                                     </h6>
                                 </div>
+
                                 <div>
                                     <h5>
-                                        ${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(dados.elegivel)} 
-                                        <span class="h6">- ${Intl.NumberFormat("de-DE", 
-                                            { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(dados.elegivel_recebido_percent)}
+                                        ${Formatters.currency.format(dados.elegivel)}
+                                        <span class="h6">
+                                            - ${Formatters.percent.format(dados.elegivel_recebido_percent)}
                                         </span>
                                     </h5>
                                 </div>
+
                             </div>
+
                             <div class="pl-2 mt-auto">
                                 <i class="fas ${iconeCartao} fa-3x"></i>
                             </div>
@@ -130,19 +255,19 @@ $(document).ready(function () {
                     </div>
                 </div>
                 `;
-                
+
                 if (dados.estado === 'Em Curso') {
                     containerCurso.append(cartao);
                 } else {
                     containerEncerrada.append(cartao);
                 }
             });
+
         })
-        .catch(error => console.error("Erro ao carregar dados:", error)
-    );
-    
-      // Função que cria as tabelas agrupadas
-  veIndicador(); // chama sua função de fetch/DataTables para #indicadoresCandidatura
+        .catch(error => console.error("Erro ao carregar dados:", error));
+
+    // 🔹 Outras tabelas ou indicadores
+    veIndicador();
 
 });
 
@@ -196,7 +321,7 @@ function veIndicador() {
             const logoName = groupData[0].logo || '';
             const logoURL = logoName ? `${path}/${logoName}` : '';
 
-            // BOTÃO
+            // BOTÃO LOGOTIPO   
             botoesContainer.append(`
                 <div class="col-auto mb-2 d-flex justify-content-center">
                     <button class="btn btn-outline-primary text-white fw-bold group-btn"
@@ -263,34 +388,34 @@ function veIndicador() {
                     {
                         data: 'adjudicado_por_processo',
                         className: 'dt-body-right',
-                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €'
+                        render: data => Formatters.currency.format(Number(data) || 0)
                     },
                     {
                         data: 'faturado_por_processo',
                         className: 'dt-body-right',
-                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €'
+                        render: data => Formatters.currency.format(Number(data) || 0)
                     },
 
                     {
                         data: 'KmRede_previsto',
                         className: 'dt-body-right',
-                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km'
+                        render: data => Formatters.number.format(Number(data) || 0) + ' km'
                     },
                     {
                         data: 'KmRede_executado',
                         className: 'dt-body-right',
-                        render: data => Number(data).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km'
+                        render: data => Formatters.number.format(Number(data) || 0) + ' km'
                     },
 
                     {
                         data: 'numRamais_previsto',
                         className: 'dt-body-right',
-                        render: data => Number(data).toLocaleString('de-DE')
+                        render: data => Formatters.number.format(Number(data) || 0)
                     },
                     {
                         data: 'numRamais_executado',
                         className: 'dt-body-right',
-                        render: data => Number(data).toLocaleString('de-DE')
+                        render: data => Formatters.number.format(Number(data) || 0)
                     }
                 ],
 
@@ -305,14 +430,14 @@ function veIndicador() {
                     const soma = col =>
                         api.column(col).data().reduce((a, b) => a + (parseFloat(b) || 0), 0);
 
-                    $(api.column(3).footer()).html(soma(3).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €').addClass('text-right');
-                    $(api.column(4).footer()).html(soma(4).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €').addClass('text-right');
+                    $(api.column(3).footer()).html(Formatters.currency.format(soma(3))).addClass('text-right');
+                    $(api.column(4).footer()).html(Formatters.currency.format(soma(4))).addClass('text-right');
 
-                    $(api.column(5).footer()).html(soma(5).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km').addClass('text-right');
-                    $(api.column(6).footer()).html(soma(6).toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' km').addClass('text-right');
+                    $(api.column(5).footer()).html(Formatters.number.format(soma(5)) + ' km').addClass('text-right');
+                    $(api.column(6).footer()).html(Formatters.number.format(soma(6)) + ' km').addClass('text-right');
 
-                    $(api.column(7).footer()).html(soma(7).toLocaleString('de-DE')).addClass('text-right');
-                    $(api.column(8).footer()).html(soma(8).toLocaleString('de-DE')).addClass('text-right');
+                    $(api.column(7).footer()).html(Formatters.currency.format(soma(7))).addClass('text-right');
+                    $(api.column(8).footer()).html(Formatters.currency.format(soma(8))).addClass('text-right');
                 }
             });
 
