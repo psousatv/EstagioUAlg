@@ -35,6 +35,7 @@ $query = "SELECT
     YEAR(cs.candsub_dt_fim) AS termo,
     cs.candsub_max_elegivel AS elegivel,
     ROUND(cs.candsub_fundo, 2) AS taxa,
+    COALESCE(p.processos, 0) AS processos,
     COALESCE(ha.adjudicado, 0) AS adjudicado,
     COALESCE(ha.pedido, 0) AS pedido,
     COALESCE(ha.recebido, 0) AS recebido,
@@ -45,7 +46,16 @@ $query = "SELECT
         -- Para acesso ao logo da Candidatura
         LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.candsub_aviso
         -- Todos os processos da candidatura
-        LEFT JOIN processo p ON p.proces_cand = cs.candsub_codigo
+        LEFT JOIN (
+            SELECT
+                proces_check,
+                proces_cand,
+                proces_report_valores,
+                COALESCE(COUNT(proces_cand), 0) AS processos
+            FROM processo
+            WHERE proces_cand NOT LIKE '%n.a.%' AND proces_report_valores = 1
+            GROUP BY proces_check, proces_cand, proces_report_valores
+        ) p ON p.proces_cand = cs.candsub_codigo
         -- Soma as adjudicações, pedidos de reembolso e reembolsos por processo
         LEFT JOIN (
             SELECT
@@ -65,9 +75,9 @@ $query = "SELECT
             FROM factura f
             GROUP BY f.fact_proces_check
             ) fp ON fp.fact_proces_check = p.proces_check
-    WHERE p.proces_cand <> 'n.a.' AND p.proces_report_valores = 1
+    
     GROUP BY cs.candsub_codigo
-    ORDER BY  cs.candsub_estado, cs.candsub_programa, YEAR(cs.candsub_dt_inicio) DESC";
+    ORDER BY cs.candsub_estado, cs.candsub_programa, YEAR(cs.candsub_dt_inicio) DESC";
 
 $stmt = $myConn->query($query);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
