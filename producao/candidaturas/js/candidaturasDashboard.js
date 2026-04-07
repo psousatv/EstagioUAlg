@@ -84,17 +84,6 @@ $(document).ready(function () {
                         }
                     },
 
-                    // ✅ Coluna calculada Apoio
-                    {
-                        data: null,
-                        className: 'dt-body-right',
-                        render: function (data, type, row) {
-                            const valor = calcularApoio(row);
-                            if (type === 'sort' || type === 'type') return valor;
-                            return Formatters.number.format(valor);
-                        }
-                    },
-
                     {
                         data: 'adjudicado',
                         className: 'dt-body-right',
@@ -110,6 +99,17 @@ $(document).ready(function () {
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
                             return Formatters.number.format(data || 0);
+                        }
+                    },
+
+                    // ✅ Coluna calculada Apoio
+                    {
+                        data: null,
+                        className: 'dt-body-right',
+                        render: function (data, type, row) {
+                            const valor = calcularApoio(row);
+                            if (type === 'sort' || type === 'type') return valor;
+                            return Formatters.number.format(valor);
                         }
                     },
 
@@ -143,7 +143,7 @@ $(document).ready(function () {
                     { data: 'inicio', visible: false }
                 ],
 
-                order: [[8, 'desc']],
+                order: [[1, 'desc']],
 
                 // ✅ Totais no footer
                 footerCallback: function () {
@@ -154,7 +154,7 @@ $(document).ready(function () {
                         let totalGlobal = 0;
                         let totalPagina = 0;
 
-                        if (colIndex === 3) {
+                        if (colIndex === 5) {
                             // Coluna calculada Apoio
                             totalGlobal = api.rows().data().toArray()
                                 .reduce((sum, row) => sum + calcularApoio(row), 0);
