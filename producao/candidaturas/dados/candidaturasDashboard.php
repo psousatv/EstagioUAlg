@@ -70,7 +70,7 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT
         fact_proces_check,
-        SUM(CASE WHEN fact_tipo IN ('FTN','NC') THEN fact_valor ELSE 0 END) AS faturado
+        SUM(CASE WHEN fact_tipo IN ('FTN','FTC','NC') THEN fact_valor ELSE 0 END) AS faturado
     FROM factura
     GROUP BY fact_proces_check
 ) fp 

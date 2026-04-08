@@ -9,6 +9,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 $processoFaturas = "SELECT *
                     FROM factura
                     WHERE fact_proces_check = '" .$codigoProcesso. "'
+                    AND fact_tipo IN ('FTN', 'FTC', 'NC')
                     ORDER BY fact_auto_num DESC";
 
 $stmt = $myConn->query($processoFaturas);

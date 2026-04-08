@@ -27,7 +27,7 @@ function processoSelected() {
         Financeiro(codigo);
         //pagamentosProcesso(codigo); // Plano de Pagamentos
         faturasProcesso(codigo); // Detalhes daas Faturas
-        garantiasProcesso(codigo);
+        //garantiasProcesso(codigo);
 
 };
 
@@ -135,19 +135,19 @@ function faturasProcesso(codigo) {
 };
 
 // Garantias
-function garantiasProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("lstGarantias").innerHTML = this.responseText;
-    }
-
-    
-  }
-  
-  xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
-  xmlhttp.send();
-};
+//function garantiasProcesso(codigo) {
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.onreadystatechange = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      document.getElementById("lstGarantias").innerHTML = this.responseText;
+//    }
+//
+//    
+//  }
+//  
+//  xmlhttp.open("GET","dados/processoGarantias.php?codigoProcesso="+codigo,true);
+//  xmlhttp.send();
+//};
 
 // Botões
 // Ao clicar nos botões, redireciona para a página ou rotina selecionada

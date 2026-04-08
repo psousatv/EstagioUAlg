@@ -90,6 +90,7 @@ try {
             SELECT COALESCE(SUM(f.fact_valor), 0)
             FROM factura f 
             WHERE f.fact_proces_check = proces_check
+            AND f.fact_tipo IN ('FTN', 'FTC', 'NC')
             AND YEAR(f.fact_data) = $anoCorrente) AS faturado
             FROM processo
             INNER JOIN procedimento proc ON proc.proced_cod = proces_proced_cod

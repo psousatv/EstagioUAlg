@@ -32,6 +32,7 @@ $qryOrcamento = "SELECT
       FROM factura f
       INNER JOIN processo p ON p.proces_check = f.fact_proces_check
       WHERE YEAR(f.fact_data) = :anoCorrente
+      AND f.fact_tipo IN ('FTN', 'FTC', 'NC')
       GROUP BY p.proces_orc_check
       ) fs ON fs.proces_orc_check = o.orc_check
       WHERE o.orc_ano = :anoCorrente

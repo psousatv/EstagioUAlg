@@ -77,18 +77,15 @@ function formatNested(processo) {
         }
       });
      
-      //console.table(processo.faturas);
-      //console.table(pedidosMap);
-
 
     // Monta linhas de pedidos, faturas e reembolsos
     Object.values(pedidosMap).forEach(item => {
         const pedidoText = item.pedido
-            ? [item.pedido.historico_num, item.pedido.historico_doc, item.pedido.historico_dataemissao, formatCurrency(item.pedido.valor)]
+            ? [item.pedido.historico_num, item.pedido.historico_doc, item.pedido.historico_dataemissao, formatCurrency(item.pedido.historico_valor)]
             : ['', '', '', ''];
 
         const faturasText = item.faturas
-            .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.valor)].join(' / '))
+            .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.fact_valor)].join(' / '))
             .join('<br>');
 
         if (item.reembolsos.length === 0) {
@@ -97,8 +94,8 @@ function formatNested(processo) {
                     <td>${pedidoText[0]}</td>
                     <td>${pedidoText[1]}</td>
                     <td>${pedidoText[2]}</td>
-                    <td class="text-end">${pedidoText[3]}</td>
-                    <td>${faturasText}</td>
+                    <td class="text-right">${pedidoText[3]}</td>
+                    <td class="text-right">${faturasText}</td>
                     <td></td><td></td><td></td><td></td>
                 </tr>`;
         } else {
@@ -107,7 +104,7 @@ function formatNested(processo) {
                     reemb.historico_num,
                     reemb.historico_doc,
                     reemb.historico_dataemissao,
-                    formatCurrency(reemb.valor)
+                    formatCurrency(reemb.historico_valor)
                 ];
 
                 html += `
@@ -115,12 +112,12 @@ function formatNested(processo) {
                         <td>${pedidoText[0]}</td>
                         <td>${pedidoText[1]}</td>
                         <td>${pedidoText[2]}</td>
-                        <td class="text-end">${pedidoText[3]}</td>
-                        <td>${faturasText}</td>
+                        <td class="text-right">${pedidoText[3]}</td>
+                        <td class="text-right">${faturasText}</td>
                         <td>${reembText[0]}</td>
                         <td>${reembText[1]}</td>
                         <td>${reembText[2]}</td>
-                        <td class="text-end">${reembText[3]}</td>
+                        <td class="text-right">${reembText[3]}</td>
                     </tr>`;
             });
         }
@@ -128,17 +125,17 @@ function formatNested(processo) {
 
     // Linhas de faturas órfãs
     faturasOrfaos.forEach(f => {
-        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.valor)];
+        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.fact_valor)];
         html += `<tr>
                     <td></td><td></td><td></td><td></td>
-                    <td class="text-end">${fText.join(' / ')}</td>
+                    <td class="text-right">${fText.join(' / ')}</td>
                     <td></td><td></td><td></td><td></td>
                 </tr>`;
     });
 
     // Linhas de reembolsos órfãos
     reembolsosOrfaos.forEach(r => {
-        const reembText = [r.historico_num, r.historico_doc, r.historico_dataemissao, formatCurrency(r.valor)];
+        const reembText = [r.historico_num, r.historico_doc, r.historico_dataemissao, formatCurrency(r.historico_valor)];
         html += `<tr>
                     <td></td><td></td><td></td><td></td>
                     <td></td><td></td><td></td><td></td>
@@ -168,6 +165,8 @@ function formatNested(processo) {
           logo: json.logo
         }));
 
+        console.table(json);
+
         // Título da candidatura
         $('#titulo').html(`
           <div>
@@ -196,57 +195,49 @@ function formatNested(processo) {
         
         // Somatórios de todos os processos
         const totalAdjudicado = processos
-        .reduce((sumProc, p) => sumProc + (p.historico?.filter(h => h.historico_descr_cod===14 && (h.valor||0) > 0).reduce((s,h) => s + h.valor,0) || 0), 0);
+        .reduce((sumProc, p) => sumProc + 
+        (p.historico?.filter(h => h.historico_descr_cod===14 && (h.historico_valor||0) > 0)
+        .reduce((s,h) => s + h.historico_valor,0) || 0), 0);
 
         //const totalFaturas = processos
-        //.reduce((sumProc, p) => sumProc + (p.faturas?.filter(f => (f.valor||0) > 0).reduce((s,f) => s + f.valor,0) || 0), 0);
+        //.reduce((sumProc, p) => sumProc + (p.faturas?.filter(f => (f.fact_valor||0) > 0).reduce((s,f) => s + f.fact_valor,0) || 0), 0);
         
-        const tiposValidos = ['FTN', 'NC'];
-
-        const totalFaturas = processos.reduce((sumProc, p) => {
-          const total = (p.faturas || [])
-            .filter(f => (f.valor || 0) > 0 && tiposValidos.includes((f.fact_tipo || '').toUpperCase()))
-            .reduce((s, f) => s + f.valor, 0);
-
-          return sumProc + total;
-        }, 0);
-
         const totalPedidos = processos
-          .reduce((sumProc, p) => 
-            sumProc + (
-              p.historico
-                ?.filter(h => 
-                  h.historico_descr_cod === 91 &&
-                  (h.valor || 0) > 0
-                )
-                .reduce((s, h) => s + h.valor, 0) || 0
-            ), 
-          0);
+        .reduce((sumProc, p) => 
+          sumProc + (
+            p.historico
+              ?.filter(h => 
+                h.historico_descr_cod === 91 && 
+                (h.historico_valor || 0) > 0
+              )
+              .reduce((s, h) => s + h.historico_valor, 0) || 0
+          ),
+        0);
 
         const totalReembolsos = processos
-          .reduce((sumProc, p) => 
-            sumProc + (
-              p.historico
-                ?.filter(h => 
-                  h.historico_descr_cod === 92 &&
-                  (h.valor || 0) > 0
-                )
-                .reduce((s, h) => s + h.valor, 0) || 0
-            ), 
-          0);
+        .reduce((sumProc, p) => 
+          sumProc + (
+            p.historico
+              ?.filter(h => 
+                h.historico_descr_cod === 92 && 
+                (h.historico_valor || 0) > 0
+              )
+              .reduce((s, h) => s + h.historico_valor, 0) || 0
+          ),
+        0);
 
         // Valores da Candidatura
         $('#valores').html(`
           <table class="table table-striped table-md">
             <tr>
-              <td class="bg-primary text-white">Investimento</td>
-              <td class="bg-primary text-white text-end">${formatCurrency(json.elegivel)}</td>
-              <td class="bg-secondary text-white">Apoio </td>
-              <td class="bg-secondary text-white text-end">${formatCurrency(json.elegivel * json.taxa)}</td>  
+              <td class="bg-primary text-white">Investimento Aprovado</td>
+              <td class="bg-primary text-white text-right">${formatCurrency(json.elegivel)}</td>
+              <td class="bg-secondary text-white">Apoio Previsto</td>
+              <td class="bg-secondary text-white text-right">${formatCurrency(json.elegivel * json.taxa)}</td>  
               <td class="bg-success text-white">Pedido </td>
-              <td class="bg-success text-white text-end">${formatCurrency(totalPedidos)}</td>
+              <td class="bg-success text-white text-right">${formatCurrency(totalPedidos)}</td>
               <td class="bg-info text-white">Pago </td>
-              <td class="bg-info text-white text-end">${formatCurrency(totalReembolsos * json.taxa)}</td>
+              <td class="bg-info text-white text-right">${formatCurrency(totalReembolsos * json.taxa)}</td>
             </tr>
           </table>
         `);
@@ -282,8 +273,8 @@ function formatNested(processo) {
         className: 'dt-body-right',
         render: function(data, type, row) {
           const totalAdjudicado = row.historico
-            ?.filter(h => h.historico_descr_cod === 14 && (h.valor || 0) > 0)
-            .reduce((sum, h) => sum + h.valor, 0) || 0;
+            ?.filter(h => h.historico_descr_cod === 14 && (h.historico_valor || 0) > 0)
+            .reduce((sum, h) => sum + h.historico_valor, 0) || 0;
       
           return formatCurrency(totalAdjudicado);
         }
@@ -292,13 +283,11 @@ function formatNested(processo) {
         data: null,
         className: 'dt-body-right',
         render: function(data, type, row) {
-          const tiposValidos = ['FTN', 'NC'];
-          const totalPedidos = row.historico
-          ?.filter(h => h.historico_descr_cod === 91 
-            && (h.valor || 0) > 0 
-            && !(h.historico_num?.includes("Ad")))
-          .reduce((sum, h) => sum + (h.valor || 0), 0) || 0;     
-          return formatCurrency(totalPedidos);
+          const tiposValidos = ['FTN', 'FTC', 'NC'];
+          const totalFaturas = row.faturas 
+          ?.filter(f => tiposValidos.includes(f.fact_tipo))
+          .reduce((sum, f) => sum + (f.fact_valor || 0), 0) || 0;
+          return formatCurrency(totalFaturas);
         }
       },
       { 
@@ -307,9 +296,9 @@ function formatNested(processo) {
         render: function(data, type, row) {
           const totalReembolsos = row.historico 
           ?.filter(h => h.historico_descr_cod === 92 
-            && (h.valor || 0) > 0 
+            && (h.historico_valor || 0) > 0 
             && !(h.historico_num?.includes("Ad")))
-          .reduce((sum, h) => sum + (h.valor || 0), 0) || 0;
+          .reduce((sum, h) => sum + (h.historico_valor || 0), 0) || 0;
           return formatCurrency(totalReembolsos);
         }
       },
