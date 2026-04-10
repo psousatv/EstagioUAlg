@@ -1,4 +1,5 @@
-fetch('dados/orcamentoNested2.php')
+
+fetch('dados/listaAquisicoes.php')
     .then(res => res.json())
     .then(data => renderTabela(data));
 
@@ -11,7 +12,7 @@ function renderTabela(data) {
     const rubrica = data[0];
 
     // Título
-    document.getElementById('tituloRubrica').innerHTML =
+    document.getElementById('listaAquisicoes').innerHTML =
         `Rubrica <strong>${rubrica.rub_cod}</strong> — ${rubrica.rub_rubrica}`;
 
     let html = `
