@@ -106,7 +106,7 @@ const App = {
       html += `
         <div class="card">
 
-          <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="card-header d-flex justify-content-between align-items-center small">
 
             <button class="btn btn-link text-left w-100"
               onclick="app.toggleEntidade('${id}', ${e.ent_cod})">
@@ -166,7 +166,7 @@ const App = {
   // =========================
   renderProcessos(processos) {
     let html = `
-      <table class="table table-sm table-bordered table-hover">
+      <table class="table table-sm table-bordered table-hover small">
         <thead>
           <tr>
             <th>PADM</th>
@@ -202,7 +202,7 @@ const App = {
       return '<span class="text-muted">Sem faturas</span>';
     }
 
-    let html = `<table class="table table-sm mb-0">`;
+    let html = `<table class="table table-sm mb-0 small">`;
 
     faturas.forEach(f => {
       html += `
