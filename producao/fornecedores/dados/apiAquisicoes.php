@@ -65,7 +65,7 @@ class AquisicoesAPI {
                 YEAR(p.proces_data_adjudicacao) AS ano_adjudicado,
 
                 COALESCE(SUM(
-                    CASE WHEN h.historico_descr_cod = 14 
+                    CASE WHEN h.historico_descr_cod = 14 OR h.historico_descr_cod = 9
                     THEN h.historico_valor END
                 ),0) AS adjudicado
 
@@ -93,7 +93,7 @@ class AquisicoesAPI {
                 p.proces_nome,
                 YEAR(p.proces_data_adjudicacao)
 
-            ORDER BY p.proces_nome
+            ORDER BY ano_adjudicado DESC, p.proces_nome
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -120,7 +120,8 @@ class AquisicoesAPI {
                 fact_expediente AS expediente,
                 fact_num AS fatura,
                 fact_data AS fatura_data,
-                fact_valor AS fatura_valor
+                fact_valor AS fatura_valor,
+                fact_obs AS factura_observacoes
             FROM factura
             WHERE fact_data >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
         ";

@@ -32,11 +32,29 @@ const App = {
       }, 250);
     });
 
+    // ✅ EXPORT EXCEL (FIXED)
     $(document).on('click', '.btn-export-excel', (e) => {
-      const id = $(e.currentTarget).data('id');
-      const entidade = this.entidadesCache.find(x => x.ent_cod == id);
+      e.stopPropagation();
 
-      if (entidade) this.exportExcel(entidade);
+      const id = $(e.currentTarget).data('id');
+
+      const entidade = this.entidadesCache.find(
+        x => String(x.ent_cod) === String(id)
+      );
+
+      if (entidade) {
+        this.exportExcel(entidade);
+      } else {
+        console.warn('Entidade não encontrada:', id);
+      }
+    });
+
+    // ✅ TOGGLE ROW (sem onclick inline)
+    $(document).on('click', '.entidade-row', (e) => {
+      const id = $(e.currentTarget).data('target');
+      const entCod = $(e.currentTarget).data('ent');
+
+      this.toggleEntidade(id, entCod);
     });
   },
 
@@ -67,7 +85,7 @@ const App = {
   },
 
   // =========================
-  // FILTER CORE
+  // FILTER
   // =========================
   aplicarFiltro() {
     const filtro = $('#frmFornecedor').val().trim().toLowerCase();
@@ -82,18 +100,31 @@ const App = {
   },
 
   // =========================
-  // RENDER MASTER
+  // RENDER
   // =========================
   render() {
-    $('#listaAquisicoes').html(this.renderEntidades(this.entidadesVisiveis));
+    $('#listaAquisicoes').html(
+      this.renderEntidades(this.entidadesVisiveis)
+    );
+
     this.renderGrafico(this.entidadesVisiveis);
   },
 
   // =========================
-  // ENTIDADES
+  // ENTIDADES (TABLE)
   // =========================
   renderEntidades(entidades) {
-    let html = `<div class="accordion">`;
+    let html = `
+      <table class="table table-sm table-bordered table-hover bg-white small">
+        <thead class="thead-light">
+          <tr>
+            <th>Entidade</th>
+            <th class="text-right">Total</th>
+            <th style="width:120px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
 
     entidades.forEach(e => {
       const id = `ent_${e.ent_cod}`;
@@ -104,40 +135,42 @@ const App = {
       }, 0);
 
       html += `
-        <div class="card">
+        <tr class="entidade-row"
+            data-target="${id}"
+            data-ent="${e.ent_cod}"
+            style="cursor:pointer">
 
-          <div class="card-header d-flex justify-content-between align-items-center small">
+          <td>${this.escapeHtml(e.entidade)}</td>
 
-            <button class="btn btn-link text-left w-100"
-              onclick="app.toggleEntidade('${id}', ${e.ent_cod})">
-              ${this.escapeHtml(e.entidade)}
-            </button>
+          <td class="text-right font-weight-bold">
+            ${this.formatMoney(total)}
+          </td>
 
-            <div class="font-weight-bold mr-2">
-              ${this.formatMoney(total)}
-            </div>
-
+          <td>
             <button class="btn btn-sm btn-success btn-export-excel"
               data-id="${e.ent_cod}">
               Excel
             </button>
+          </td>
+        </tr>
 
-          </div>
-
-          <div id="${id}" class="collapse">
-            <div class="card-body">
+        <tr id="${id}" class="collapse">
+          <td colspan="3" class="p-0">
+            <div class="p-2">
               ${this.renderProcessos(e.processos || [])}
             </div>
-          </div>
-
-        </div>
+          </td>
+        </tr>
       `;
     });
 
-    html += `</div>`;
+    html += `</tbody></table>`;
     return html;
   },
 
+  // =========================
+  // TOGGLE
+  // =========================
   toggleEntidade(id, entCod) {
     if (this.entidadeAberta && this.entidadeAberta !== id) {
       $(`#${this.entidadeAberta}`).collapse('hide');
@@ -149,7 +182,6 @@ const App = {
     el.collapse('toggle');
     this.entidadeAberta = isOpen ? null : id;
 
-    // sempre usa dataset visível (corrige bug)
     const entidade =
       this.entidadesVisiveis.find(e => e.ent_cod == entCod) ||
       this.entidadesCache.find(e => e.ent_cod == entCod);
@@ -274,55 +306,84 @@ const App = {
   // EXCEL
   // =========================
   exportExcel(entidade) {
-    const wb = XLSX.utils.book_new();
-    const processos = entidade.processos || [];
+  if (typeof XLSX === 'undefined') {
+    alert('Biblioteca XLSX não carregada!');
+    return;
+  }
 
-    XLSX.utils.book_append_sheet(
-      wb,
-      XLSX.utils.json_to_sheet(processos.map(p => ({
+  const wb = XLSX.utils.book_new();
+  const processos = entidade.processos || [];
+
+  // =========================
+  // PROCESSOS
+  // =========================
+  const sheetProcessos = processos.map(p => ({
+    Entidade: entidade.entidade,
+    PADM: p.padm,
+    Regime: p.regime,
+    Designacao: p.designacao,
+    Ano: p.ano_adjudicado,
+    Adjudicado: Number(p.adjudicado || 0)
+  }));
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.json_to_sheet(sheetProcessos),
+    "Processos"
+  );
+
+  // =========================
+  // FATURAS (FLATTEN)
+  // =========================
+  const faturas = [];
+
+  processos.forEach(p => {
+    (p.faturas || []).forEach(f => {
+      faturas.push({
         Entidade: entidade.entidade,
         PADM: p.padm,
-        Regime: p.regime,
         Designacao: p.designacao,
         Ano: p.ano_adjudicado,
-        Adjudicado: Number(p.adjudicado || 0)
-      }))),
-      "Processos"
-    );
-
-    const faturas = [];
-
-    processos.forEach(p => {
-      (p.faturas || []).forEach(f => {
-        faturas.push({
-          Entidade: entidade.entidade,
-          Processo: p.padm,
-          Designacao: p.designacao,
-          Ano: p.ano_adjudicado,
-          Fatura: f.fatura,
-          Data: f.fatura_data,
-          Valor: Number(f.fatura_valor || 0)
-        });
+        Fatura: f.fatura,
+        Data: f.fatura_data,
+        Valor: Number(f.fatura_valor || 0),
+        Observações: f.fatura_observacoes,
       });
     });
+  });
 
-    XLSX.utils.book_append_sheet(
-      wb,
-      XLSX.utils.json_to_sheet(faturas),
-      "Faturas"
-    );
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.json_to_sheet(faturas),
+    "Faturas"
+  );
 
-    XLSX.utils.book_append_sheet(
-      wb,
-      XLSX.utils.json_to_sheet([
-        { Indicador: "Entidade", Valor: entidade.entidade },
-        { Indicador: "Total Processos", Valor: processos.length }
-      ]),
-      "Resumo"
-    );
+  // =========================
+  // RESUMO
+  // =========================
+  const total = processos.reduce((acc, p) => {
+    const v = Number(p.adjudicado);
+    return acc + (isNaN(v) ? 0 : v);
+  }, 0);
 
-    XLSX.writeFile(wb, `AUDITORIA_${this.sanitize(entidade.entidade)}.xlsx`);
-  },
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.json_to_sheet([
+      { Indicador: "Entidade", Valor: entidade.entidade },
+      { Indicador: "Total Processos", Valor: processos.length },
+      { Indicador: "Total Adjudicado", Valor: total }
+    ]),
+    "Resumo"
+  );
+
+  // =========================
+  // EXPORT
+  // =========================
+  XLSX.writeFile(
+    wb,
+    `AUDITORIA_${this.sanitize(entidade.entidade)}.xlsx`
+  );
+},
 
   // =========================
   // UTILS
