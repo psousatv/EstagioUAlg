@@ -47,43 +47,43 @@ class AquisicoesAPI {
     public function getFaturasAll($ano = '') {
 
         $sql = "
-            SELECT
-                f.fact_ent_cod,
-                f.fact_proces_check,
-                f.fact_num,
-                f.fact_data,
-                f.fact_valor,
-                f.fact_obs,
+                SELECT
+                    f.fact_ent_cod,
+                    f.fact_proces_check,
+                    f.fact_num,
+                    f.fact_data,
+                    f.fact_valor,
+                    f.fact_obs,
 
-                p.proces_padm AS padm,
-                pr.proced_regime AS regime,
-                p.proces_nome AS designacao,
+                    p.proces_padm AS padm,
+                    pr.proced_regime AS regime,
+                    p.proces_nome AS designacao,
 
-                SUM(
-                    CASE 
-                        WHEN h.historico_descr_cod IN (9)
-                        THEN h.historico_valor 
-                        ELSE 0 
-                    END
-                ) AS adjudicado
+                    SUM(
+                        CASE 
+                            WHEN h.historico_descr_cod IN (100)
+                            THEN h.historico_valor 
+                            ELSE 0 
+                        END
+                    ) AS adjudicado
 
-            FROM factura f
+                FROM factura f
 
-            LEFT JOIN processo p
-                ON p.proces_check = f.fact_proces_check
+                LEFT JOIN processo p
+                    ON p.proces_check = f.fact_proces_check
 
-            LEFT JOIN procedimento pr
-                ON pr.proced_cod = p.proces_proced_cod
+                LEFT JOIN procedimento pr
+                    ON pr.proced_cod = p.proces_proced_cod
 
-            LEFT JOIN historico h
-                ON h.historico_proces_check = p.proces_check
+                LEFT JOIN historico h
+                    ON h.historico_proces_check = p.proces_check
 
-            WHERE YEAR(f.fact_data) IN (
+                WHERE YEAR(f.fact_data) IN (
                     YEAR(CURDATE()),
                     YEAR(CURDATE()) - 1
                 )
                 AND f.fact_tipo IN ('FTN', 'FTC', 'RPR', 'NC')
-        ";
+            ";
 
         // filtro opcional por ano
         if (!empty($ano)) {

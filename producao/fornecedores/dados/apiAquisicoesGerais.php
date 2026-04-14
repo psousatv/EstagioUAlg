@@ -42,7 +42,7 @@ class AquisicoesAPI {
     }
 
     // =========================
-    // FATURAS + PROCESSOS (FILTRADOS)
+    // FATURAS + PROCESSOS
     // =========================
     public function getFaturasAll($ano = '') {
 
@@ -61,7 +61,7 @@ class AquisicoesAPI {
 
                 SUM(
                     CASE 
-                        WHEN h.historico_descr_cod = 9 OR h.historico_descr_cod = 14
+                        WHEN h.historico_descr_cod IN (9,14)
                         THEN h.historico_valor 
                         ELSE 0 
                     END
@@ -78,9 +78,14 @@ class AquisicoesAPI {
             LEFT JOIN historico h
                 ON h.historico_proces_check = p.proces_check
 
-            WHERE f.fact_data >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            WHERE YEAR(f.fact_data) IN (
+                    YEAR(CURDATE()),
+                    YEAR(CURDATE()) - 1
+                )
+                AND f.fact_tipo IN ('FTN', 'FTC', 'RPR', 'NC')
         ";
 
+        // filtro opcional por ano
         if (!empty($ano)) {
             $sql .= " AND YEAR(f.fact_data) = :ano ";
         }
@@ -98,7 +103,7 @@ class AquisicoesAPI {
                 p.proces_nome
         ";
 
-        // 🔥 FILTRA SÓ PROCESSOS COM VALOR
+        // ✅ só processos com valor
         $sql .= " HAVING adjudicado > 0 ";
 
         $sql .= " ORDER BY f.fact_data DESC ";
@@ -140,10 +145,12 @@ try {
             $mapEnt = [];
 
             foreach ($entidades as $e) {
+
                 $e['processos'] = [];
-                $e['total_atual'] = 0; //Faturado no Ano
-                $e['total_anterior'] = 0; //Faturado no Ano Atual
-                $e['total_faturado'] = 0; //Faturado Total
+                $e['total_anoAtual'] = 0;
+                $e['total_anoAnterior'] = 0;
+                $e['total_faturado'] = 0;
+
                 $mapEnt[$e['ent_cod']] = $e;
             }
 
@@ -187,19 +194,19 @@ try {
 
                 if ($anoFatura == $anoAtual) {
                     // ano atual
-                    $mapEnt[$ent]['total_atual'] += (float) $f['fact_valor'];
+                    $mapEnt[$ent]['total_anoAtual'] += (float) $f['fact_valor'];
                     $mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
 
                 } elseif ($anoFatura == $anoAnterior) {
                     // ano anterior
-                    $mapEnt[$ent]['total_anterior'] += (float) $f['fact_valor'];
-                    $mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
+                    $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
+                    //$mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
                 }
 
             }
 
             // =========================
-            // NORMALIZAR + FILTRAR
+            // RESULTADO FINAL
             // =========================
             $result = [];
 
@@ -208,10 +215,8 @@ try {
                 // normalizar processos
                 $e['processos'] = array_values($e['processos']);
 
-                // 🚫 descartar entidades sem faturação
-                if ($e['total_faturado'] <= 0) {
-                    continue;
-                }
+                // remover entidades sem faturação
+                if ($e['total_faturado'] <= 0) continue;
 
                 $result[] = $e;
             }
