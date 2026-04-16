@@ -5,9 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
-<meta name="author" content="" />
+<meta name="author" content="Paulo Sousa" />
 
-<title>Compras Gerais</title>
+<title>Fornecimentos</title>
 <link
   rel="icon"
   type="image/png"
@@ -15,13 +15,12 @@
   href="../../templates/favicon.png"/>
 
 <!-- CSS -->
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet">
 <!-- Bootstrap -->
 <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-<!-- GLOBAL -->
-<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 <!-- Fontawesome -->
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
-
 <!-- Datables -->
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
 
@@ -38,7 +37,7 @@
 
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="../../index.html">Compras Gerais</a>
+        <a class="navbar-brand" href="../../index.html">Fornecimentos</a>
         <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
     
         <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
@@ -65,8 +64,14 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Interface</div>
 
+                        <div class="sb-sidenav-menu-heading">Principal</div>
+                        <a class="nav-link" href="../../index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
+                        </a>
+
+                        <div class="sb-sidenav-menu-heading">Interface</div>
                         <div class="nav-link menu-api active" data-api="geral" style="cursor:pointer">
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Geral
@@ -81,6 +86,39 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Protocolos
                         </div>
+
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Pages
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                    Authentication
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="login.html">Login</a>
+                                        <a class="nav-link" href="register.html">Register</a>
+                                        <a class="nav-link" href="password.html">Forgot Password</a>
+                                    </nav>
+                                </div>
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
+                                    Error
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="401.html">401 Page</a>
+                                        <a class="nav-link" href="404.html">404 Page</a>
+                                        <a class="nav-link" href="500.html">500 Page</a>
+                                    </nav>
+                                </div>
+                            </nav>
+                        </div>
+
                     </div>
                 </div>
             </nav>
@@ -128,12 +166,12 @@
 </div><!-- Fim Sidenav -->
 
     <!-- JQuery - Deve Ser incluido antes do Global -->
-    <script src="../../vendors/jquery/jquery.js"></script>
+    <script src="../../vendors/jquery/jquery.min.js"></script>    
+    <!-- Bootstrap -->
+    <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
     <!-- Global -->
     <script src="../../global/js/scripts.js"></script>
-    
-    <!-- Bootstrap -->
-    i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+
     <!-- Fontawesome -->
     <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
     <script src="../../vendors/fonts/all.min.js"></script>
