@@ -15,10 +15,10 @@
   href="../../templates/favicon.png"/>
 
 <!-- CSS -->
-<!-- GLOBAL -->
-<link href="../../global/css/styles.css" rel="stylesheet">
 <!-- Bootstrap -->
 <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 <!-- Fontawesome -->
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
 <!-- Datables -->
@@ -64,61 +64,44 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-
+        
+                        <!-- Principal -->
                         <div class="sb-sidenav-menu-heading">Principal</div>
                         <a class="nav-link" href="../../index.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-
+        
+                        <!-- Interface (só título) -->
                         <div class="sb-sidenav-menu-heading">Interface</div>
-                        <div class="nav-link menu-api active" data-api="geral" style="cursor:pointer">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Geral
-                        </div>
-
-                        <div class="nav-link menu-api" data-api="presenciais" style="cursor:pointer">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Presenciais
-                        </div>
-
-                        <div class="nav-link menu-api" data-api="protocolos" style="cursor:pointer">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Protocolos
-                        </div>
-
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Pages
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        <!-- podes adicionar links aqui se quiseres -->
+        
+                        <!-- Compras (accordion) -->
+                        <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapseCompras" role="button" aria-expanded="false">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
+                            Compras
                         </a>
-                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Authentication
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="login.html">Login</a>
-                                        <a class="nav-link" href="register.html">Register</a>
-                                        <a class="nav-link" href="password.html">Forgot Password</a>
-                                    </nav>
+                        <div class="collapse" id="collapseCompras" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+        
+                                <div class="nav-link menu-api active" data-api="geral" style="cursor:pointer">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Geral
                                 </div>
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Error
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="401.html">401 Page</a>
-                                        <a class="nav-link" href="404.html">404 Page</a>
-                                        <a class="nav-link" href="500.html">500 Page</a>
-                                    </nav>
+        
+                                <div class="nav-link menu-api" data-api="presenciais" style="cursor:pointer">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Presenciais
                                 </div>
+        
+                                <div class="nav-link menu-api" data-api="protocolos" style="cursor:pointer">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Protocolos
+                                </div>
+        
                             </nav>
                         </div>
-
+        
                     </div>
                 </div>
             </nav>

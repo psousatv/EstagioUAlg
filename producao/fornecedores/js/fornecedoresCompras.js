@@ -294,7 +294,7 @@ const App = {
     processos.forEach(p => {
 
       html += `
-        <tr>
+        <tr onclick="redirectProcesso(${this.escapeHtml(p.proces_check)})">
           <td>${this.escapeHtml(p.padm)}</td>
           <td>${this.escapeHtml(p.regime)}</td>
           <td>${this.escapeHtml(p.designacao)}</td>
@@ -641,5 +641,14 @@ const App = {
     return `hsl(${h % 360},70%,60%)`;
   }
 };
+
+
+// Redireciona para o processo
+function redirectProcesso(codigoProcesso){
+  const obrasURL = `../../producao/processos/processoResults.html?codigoProcesso=${codigoProcesso}`;
+  window.location.href = obrasURL;
+}
+
+
 
 $(document).ready(() => App.init());
