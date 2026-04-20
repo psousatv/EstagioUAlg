@@ -389,6 +389,14 @@ const App = {
           { label: anoAnterior, data: anterior, backgroundColor: 'rgba(255,99,132,0.6)' },
           { label: anoAtual, data: atual, backgroundColor: 'rgba(54,162,235,0.6)' }
         ]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: `Fornecedor: ${entidade.entidade}`
+          }
+        }
       }
     });
   },
