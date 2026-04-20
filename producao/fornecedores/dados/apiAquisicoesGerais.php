@@ -44,7 +44,7 @@ class AquisicoesAPI {
     // =========================
     // FATURAS + PROCESSOS
     // =========================
-    public function getFaturasAll($ano = '') {
+    public function getFaturasAll() {
 
         $sql = "
             SELECT
@@ -55,8 +55,10 @@ class AquisicoesAPI {
                 f.fact_valor,
                 f.fact_obs,
 
-                p.proces_padm AS padm,
                 pr.proced_regime AS regime,
+                p.proces_orc_actividade AS atividade,
+                CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
+                p.proces_padm AS padm,
                 p.proces_nome AS designacao,
 
                 SUM(
@@ -78,19 +80,16 @@ class AquisicoesAPI {
             LEFT JOIN historico h
                 ON h.historico_proces_check = p.proces_check
 
-            WHERE YEAR(f.fact_data) IN (
+            LEFT JOIN rubricas r
+                ON r.rub_cod = p.proces_rub_cod
+
+            WHERE 
+                YEAR(f.fact_data) IN (
                     YEAR(CURDATE()),
                     YEAR(CURDATE()) - 1
                 )
                 AND f.fact_tipo IN ('FTN', 'FTC', 'RPR', 'NC')
-        ";
 
-        // filtro opcional por ano
-        if (!empty($ano)) {
-            $sql .= " AND YEAR(f.fact_data) = :ano ";
-        }
-
-        $sql .= "
             GROUP BY
                 f.fact_ent_cod,
                 f.fact_proces_check,
@@ -101,19 +100,13 @@ class AquisicoesAPI {
                 p.proces_padm,
                 pr.proced_regime,
                 p.proces_nome
+
+            HAVING adjudicado > 0
+
+            ORDER BY f.fact_data DESC
         ";
 
-        // ✅ só processos com valor
-        $sql .= " HAVING adjudicado > 0 ";
-
-        $sql .= " ORDER BY f.fact_data DESC ";
-
         $stmt = $this->db->prepare($sql);
-
-        if (!empty($ano)) {
-            $stmt->bindValue(':ano', $ano);
-        }
-
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -134,10 +127,9 @@ try {
         case 'full':
 
             $fornecedor = $_GET['frmFornecedor'] ?? '';
-            $ano = $_GET['anoCorrente'] ?? '';
 
             $entidades = $api->getEntidades($fornecedor);
-            $faturas   = $api->getFaturasAll($ano);
+            $faturas   = $api->getFaturasAll();
 
             // =========================
             // MAP ENTIDADES
@@ -155,6 +147,12 @@ try {
             }
 
             // =========================
+            // DATAS
+            // =========================
+            $anoAtual = (int) date('Y');
+            $anoAnterior = $anoAtual - 1;
+
+            // =========================
             // MAP (ENTIDADE → PROCESSO → FATURA)
             // =========================
             foreach ($faturas as $f) {
@@ -162,11 +160,9 @@ try {
                 $ent = $f['fact_ent_cod'];
                 $proc = $f['fact_proces_check'];
 
-                if (!isset($mapEnt[$ent])) {
-                    continue;
-                }
+                if (!isset($mapEnt[$ent])) continue;
 
-                // criar processo (se não existir)
+                // criar processo
                 if (!isset($mapEnt[$ent]['processos'][$proc])) {
 
                     $mapEnt[$ent]['processos'][$proc] = [
@@ -182,27 +178,27 @@ try {
                 $mapEnt[$ent]['processos'][$proc]['faturas'][] = [
                     'fatura' => $f['fact_num'],
                     'fatura_data' => $f['fact_data'],
-                    'fatura_valor' => floatval($f['fact_valor']),
-                    'fatura_observacoes' => $f['fact_obs']
+                    'fatura_valor' => (float) $f['fact_valor'],
+                    'fatura_observacoes' => $f['fact_obs'],
+                    'fatura_atividade' => $f['atividade'],
+                    'fatura_rubrica' => $f['rubrica']
                 ];
 
-                // acumular total entidade
-                $anoAtual = date('Y');
-                $anoAnterior = $anoAtual - 1;
-
+                // =========================
+                // TOTAIS POR ANO
+                // =========================
                 $anoFatura = (int) substr($f['fact_data'], 0, 4);
 
-                if ($anoFatura == $anoAtual) {
-                    // ano atual
+                if ($anoFatura === $anoAtual) {
+
                     $mapEnt[$ent]['total_anoAtual'] += (float) $f['fact_valor'];
                     $mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
 
-                } elseif ($anoFatura == $anoAnterior) {
-                    // ano anterior
-                    $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
-                    //$mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
-                }
+                } elseif ($anoFatura === $anoAnterior) {
 
+                    $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
+
+                }
             }
 
             // =========================
@@ -212,10 +208,8 @@ try {
 
             foreach ($mapEnt as $e) {
 
-                // normalizar processos
                 $e['processos'] = array_values($e['processos']);
 
-                // remover entidades sem faturação
                 if ($e['total_faturado'] <= 0) continue;
 
                 $result[] = $e;

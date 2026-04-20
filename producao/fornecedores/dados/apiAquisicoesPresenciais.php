@@ -55,8 +55,10 @@ class AquisicoesAPI {
                 f.fact_valor,
                 f.fact_obs,
 
-                p.proces_padm AS padm,
                 pr.proced_regime AS regime,
+                p.proces_orc_actividade AS atividade,
+                CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
+                p.proces_padm AS padm,
                 p.proces_nome AS designacao,
 
                 SUM(
@@ -77,6 +79,9 @@ class AquisicoesAPI {
 
             LEFT JOIN historico h
                 ON h.historico_proces_check = p.proces_check
+            
+            LEFT JOIN rubricas r
+            ON r.rub_cod = p.proces_rub_cod
 
             WHERE YEAR(f.fact_data) IN (
                     YEAR(CURDATE()),
