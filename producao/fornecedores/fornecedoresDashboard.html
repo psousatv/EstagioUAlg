@@ -38,7 +38,7 @@
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="../../index.html">Fornecimentos</a>
-        <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+        <!--div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div-->
     
         <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
           <div class="d-flex align-items-center justify-content-between small">
@@ -189,7 +189,65 @@
 
             <!-- LISTAS -->
             <div class="row">
-                <div class="col-12" id="listaAquisicoes"></div>
+                <div class="col-6" id="listaAquisicoes"></div>
+                <div class="col-6">
+                    <!--div class="col-lg-6 mb-2"-->
+                        <div class="card small">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <!-- Cronologia de Processos Ativos -->
+                            <b>Cronologia de Processos Ativos</b>
+                            <div>
+                            <a href="javascript:void(0)" onclick="imprimirCronos()" 
+                                class="text-dark mr-2" title="Imprimir">
+                                <i class="fas fa-print"></i>
+                            </a>
+                        
+                            <a href="javascript:void(0)" onclick="exportarCronosPDF()" 
+                                class="text-danger mr-2" title="Exportar PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        
+                            <a href="javascript:void(0)" onclick="exportarCronosExcel()" 
+                                class="text-success" title="Exportar Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                            </div>
+                        </div>        
+                        <div class="card-body" id="lstCronos">
+                            <div class="text-muted">A carregar...</div>
+                        </div>
+                        </div>
+                    <!--/div-->
+
+                    <!--div class="col-lg-6 mb-2"-->
+                        <div class="card small mt-2">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <!-- Relação de Vistorias Vencidas e Vincendas -->
+                            <b>Relação de Vistorias Vencidas e Vincendas</b>
+                            <div>
+                            <a href="javascript:void(0)" onclick="imprimirVistorias()" 
+                                class="text-dark mr-2" title="Imprimir">
+                                <i class="fas fa-print"></i>
+                            </a>
+                        
+                            <a href="javascript:void(0)" onclick="exportarVistoriasPDF()" 
+                                class="text-danger mr-2" title="Exportar PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        
+                            <a href="javascript:void(0)" onclick="exportarVistoriasExcel()" 
+                                class="text-success" title="Exportar Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body" id="lstVistorias">
+                            <div class="text-muted">A carregar...</div>
+                        </div>
+                        </div>
+                    <!--/div-->
+                </div>
             </div>
 
             </div>
@@ -223,7 +281,10 @@
 
     <!-- JS de Página -->
     <script src="js/fornecedoresDashboard.js"></script>
-
+    <script src="../comum/funcoes.js" defer></script>
+    <!--script src="producao/processos/js/processosSearch.js"></script-->
+    <script src="../comum/js/cronosProcessos.js" defer></script>
+    <script src="../comum/js/vistoriasProcessos.js" defer></script>
     
 </body>
 </html>

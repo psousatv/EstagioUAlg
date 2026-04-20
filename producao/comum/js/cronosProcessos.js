@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadCronos() {
 
     try {
-        const response = await fetch("producao/comum/dados/cronosProcessos.php");
+        //const response = await fetch("producao/comum/dados/cronosProcessos.php");
+        const response = await fetch("../comum/dados/cronosProcessos.php");
         const text = await response.text();
         const processos = JSON.parse(text);
 
