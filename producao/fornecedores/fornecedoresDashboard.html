@@ -105,154 +105,139 @@
 
         <div id="layoutSidenav_content">
             <div class="container-fluid">
-            <div class="mt-2"></div>
-
-            <!-- KPIs -->
-            <div class="row mb-3" id="kpis">
-                <div class="col-md-3">
-                <div class="card text-white bg-primary">
-                    <div class="card-body">
-                    <div class="small">Total Entidades</div>
-                    <div id="kpiEntidades" class="h5">0</div>
-                    </div>
-                </div>
-                </div>
-            
-                <div class="col-md-3">
-                <div class="card text-white bg-success">
-                    <div class="card-body">
-                    <div class="small">Total Ano Atual</div>
-                    <div id="kpiAtual" class="h5">0€</div>
-                    </div>
-                </div>
-                </div>
-            
-                <div class="col-md-3">
-                <div class="card text-white bg-warning">
-                    <div class="card-body">
-                    <div class="small">Total Ano Anterior</div>
-                    <div id="kpiAnterior" class="h5">0€</div>
-                    </div>
-                </div>
-                </div>
-            
-                <div class="col-md-3">
-                <div class="card text-white bg-dark">
-                    <div class="card-body">
-                    <div class="small">Top Fornecedor</div>
-                    <div id="kpiTopFornecedor" class="h6">-</div>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-            <!-- FILTROS -->
-            <div class="row mb-3">
-                <div class="col-md-4">
-                <label>Fornecedor</label>
-                <input type="text" id="frmFornecedor" class="form-control">
-                </div>
-
-                <!--
-                <div class="col-md-3">
-                <label>Ano</label>
-                <input type="number" id="anoCorrente" class="form-control" value="">
-                </div>
-                -->
-
-                <div class="col-md-4 align-self-end">
-                    <div class="d-flex">
-                  
-                      <button id="btnFiltrar" class="btn btn-primary mr-2">
-                        Aplicar
-                      </button>
-                  
-                      <button id="btnLimpar" class="btn btn-info mr-2">
-                        <i class="fas fa-broom"></i>
-                      </button>
-                  
-                      <button id="btnExportAll" class="btn btn-success mr-2">
-                        <i class="fas fa-file-excel"></i> Exportar Tudo
-                      </button>
-                  
-                    </div>
-                  </div>
-
-            </div>
-
-            <!-- GRÁFICO -->
-            <div id="boxGrafico" class="row mb-3 bg-white" style="display:none;">
-                <div class="col-12">
-                <canvas id="graficoTotais" height="100"></canvas>
-                </div>
-            </div>
-
-            <!-- LISTAS -->
-            <div class="row">
-                <div class="col-6" id="listaAquisicoes"></div>
-                <div class="col-6">
-                    <!--div class="col-lg-6 mb-2"-->
-                        <div class="card small">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <!-- Cronologia de Processos Ativos -->
-                            <b>Cronologia de Processos Ativos</b>
-                            <div>
-                            <a href="javascript:void(0)" onclick="imprimirCronos()" 
-                                class="text-dark mr-2" title="Imprimir">
-                                <i class="fas fa-print"></i>
-                            </a>
-                        
-                            <a href="javascript:void(0)" onclick="exportarCronosPDF()" 
-                                class="text-danger mr-2" title="Exportar PDF">
-                                <i class="fas fa-file-pdf"></i>
-                            </a>
-                        
-                            <a href="javascript:void(0)" onclick="exportarCronosExcel()" 
-                                class="text-success" title="Exportar Excel">
-                                <i class="fas fa-file-excel"></i>
-                            </a>
+          
+              <div class="mt-2"></div>
+                   
+              <!-- 🔥 GRID PRINCIPAL -->
+              <div class="row">
+          
+                <!-- ===================== -->
+                <!-- COLUNA 1 -->
+                <!-- ===================== -->
+                <div class="col-md-6">
+                    <!-- KPIs -->
+                    <div class="row mb-3" id="kpis">
+                    
+                        <div class="col-md-6 mb-2">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                            <div class="small">Total Entidades</div>
+                            <div id="kpiEntidades" class="h5">0</div>
                             </div>
-                        </div>        
+                        </div>
+                        </div>
+            
+                        <div class="col-md-6 mb-2">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                            <div class="small">Total Ano Atual</div>
+                            <div id="kpiAtual" class="h5">0€</div>
+                            </div>
+                        </div>
+                        </div>
+            
+                        <div class="col-md-6 mb-2">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                            <div class="small">Total Ano Anterior</div>
+                            <div id="kpiAnterior" class="h5">0€</div>
+                            </div>
+                        </div>
+                        </div>
+            
+                        <div class="col-md-6 mb-2">
+                        <div class="card text-white bg-dark">
+                            <div class="card-body">
+                            <div class="small">Top Fornecedor</div>
+                            <div id="kpiTopFornecedor" class="h6">-</div>
+                            </div>
+                        </div>
+                        </div>
+            
+                    </div>
+            
+                    <!-- CRONOLOGIA -->
+                    <div class="card small mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                        <b>Cronologia de Processos Ativos</b>
+                        <div>
+                            <a href="#" onclick="imprimirCronos()" class="text-dark mr-2"><i class="fas fa-print"></i></a>
+                            <a href="#" onclick="exportarCronosPDF()" class="text-danger mr-2"><i class="fas fa-file-pdf"></i></a>
+                            <a href="#" onclick="exportarCronosExcel()" class="text-success"><i class="fas fa-file-excel"></i></a>
+                        </div>
+                        </div>
                         <div class="card-body" id="lstCronos">
-                            <div class="text-muted">A carregar...</div>
+                        <div class="text-muted">A carregar...</div>
                         </div>
-                        </div>
-                    <!--/div-->
-
-                    <!--div class="col-lg-6 mb-2"-->
-                        <div class="card small mt-2">
+                    </div>
+            
+                    <!-- VISTORIAS -->
+                    <div class="card small">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <!-- Relação de Vistorias Vencidas e Vincendas -->
-                            <b>Relação de Vistorias Vencidas e Vincendas</b>
-                            <div>
-                            <a href="javascript:void(0)" onclick="imprimirVistorias()" 
-                                class="text-dark mr-2" title="Imprimir">
-                                <i class="fas fa-print"></i>
-                            </a>
-                        
-                            <a href="javascript:void(0)" onclick="exportarVistoriasPDF()" 
-                                class="text-danger mr-2" title="Exportar PDF">
-                                <i class="fas fa-file-pdf"></i>
-                            </a>
-                        
-                            <a href="javascript:void(0)" onclick="exportarVistoriasExcel()" 
-                                class="text-success" title="Exportar Excel">
-                                <i class="fas fa-file-excel"></i>
-                            </a>
-                            </div>
+                        <b>Relação de Vistorias Vencidas e Vincendas</b>
+                        <div>
+                            <a href="#" onclick="imprimirVistorias()" class="text-dark mr-2"><i class="fas fa-print"></i></a>
+                            <a href="#" onclick="exportarVistoriasPDF()" class="text-danger mr-2"><i class="fas fa-file-pdf"></i></a>
+                            <a href="#" onclick="exportarVistoriasExcel()" class="text-success"><i class="fas fa-file-excel"></i></a>
                         </div>
-                        
+                        </div>
                         <div class="card-body" id="lstVistorias">
-                            <div class="text-muted">A carregar...</div>
+                        <div class="text-muted">A carregar...</div>
                         </div>
-                        </div>
-                    <!--/div-->
+                    </div>                  
+          
                 </div>
-            </div>
+          
+                <!-- ===================== -->
+                <!-- COLUNA 2 -->
+                <!-- ===================== -->
+                <div class="col-md-6">
 
+                    <!-- FILTROS -->
+                    <div class="row mb-3 align-items-end">
+
+                        <!-- Input -->
+                        <div class="col-md-8">
+                        <input type="text"
+                                id="frmFornecedor"
+                                class="form-control"
+                                placeholder="Selecione uma Entidade">
+                        </div>
+                    
+                        <!-- Botões -->
+                        <div class="col-md-4">
+                        <div class="d-flex">
+                            <button id="btnFiltrar" class="btn btn-primary mr-2">
+                            Aplicar
+                            </button>
+                    
+                            <button id="btnLimpar" class="btn btn-info mr-2">
+                            <i class="fas fa-broom"></i>
+                            </button>
+                    
+                            <button id="btnExportAll" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i> Tudo
+                            </button>
+                        </div>
+                        </div>
+                    
+                    </div>
+                    
+                    <!-- GRÁFICO -->
+                    <div id="boxGrafico" class="row mb-3 bg-white" style="display:none;">
+                        <div class="col-12">
+                        <canvas id="graficoTotais" height="100"></canvas>
+                        </div>
+                    </div>
+            
+                    <!-- LISTA -->
+                    <div id="listaAquisicoes"></div>
+          
+                </div>
+          
+              </div>
             </div>
-        
-        </div><!-- Fim Sidenav Content -->
+          </div>
 
     </div><!-- Fim Sidenav Lateral -->
 </div><!-- Fim Sidenav -->

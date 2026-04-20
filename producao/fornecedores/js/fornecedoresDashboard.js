@@ -346,6 +346,12 @@ const App = {
     if (entidade && !isOpen) {
       this.renderChart(entidade);
       $('#boxGrafico').show();
+
+    // 👉 Render processos + faturas noutra div
+    //$('#listaAquisicoesFaturas').html(
+    //  this.buildProcessos(entidade.processos || [])
+    //);
+
     }
   },
 
