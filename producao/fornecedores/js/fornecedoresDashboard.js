@@ -185,33 +185,45 @@ const App = {
 
     let atual = 0;
     let anterior = 0;
+    let atividadeAA = 0;
+    let atividadeSAR = 0;
   
     let topEntidade = null;
-    let topValor = 0;
+    let topEntidadeValor = 0;
   
     entidades.forEach(e => {
   
       const valorAtual = Number(e.total_anoAtual || 0);
       const valorAnterior = Number(e.total_anoAnterior || 0);
+
+      const valorAA = Number(e.total_atividadeAA || 0);
+      const valorSAR = Number(e.total_atividadeSAR || 0);
   
       atual += valorAtual;
       anterior += valorAnterior;
+      atividadeAA += valorAA;
+      atividadeSAR += valorSAR;
+
   
       // ✔ cálculo do TOP fornecedor
-      if (valorAtual > topValor) {
-        topValor = valorAtual;
+      if (valorAtual > topEntidadeValor) {
+        topEntidadeValor = valorAtual;
         topEntidade = e.entidade;
       }
+
     });
   
+    $('#kpiAA').text(this.money(atividadeAA));
+    $('#kpiSAR').text(this.money(atividadeSAR));
     $('#kpiEntidades').text(entidades.length);
     $('#kpiAtual').text(this.money(atual));
     $('#kpiAnterior').text(this.money(anterior));
     $('#kpiTopFornecedor').text(
       topEntidade
-        ? `${topEntidade} (${this.money(topValor)})`
+        ? `${topEntidade} (${this.money(topEntidadeValor)})`
         : '-'
     );
+    
 
   },
 

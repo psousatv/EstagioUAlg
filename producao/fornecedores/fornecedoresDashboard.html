@@ -73,33 +73,43 @@
                         </a>
         
                         <!-- Interface (só título) -->
-                        <div class="sb-sidenav-menu-heading">Interface</div>
+                        <div class="sb-sidenav-menu-heading">Listagens</div>
                         <!-- podes adicionar links aqui se quiseres -->
-        
+                        
+                        <div class="nav-link menu-api active" data-api="geral" style="cursor:pointer">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-print"></i></div>
+                            Geral
+                        </div>
+                        <div class="nav-link menu-api" data-api="presenciais" style="cursor:pointer">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            Presenciais
+                        </div>
+                        <div class="nav-link menu-api" data-api="protocolos" style="cursor:pointer">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            Protocolos
+                        </div>
+                        
                         <!-- Listagens (Accordion) -->
+                         <!--
                         <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapseCompras" role="button" aria-expanded="false">
-                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-print"></i></div>
                             Listagens
                         </a>
                         <div class="collapse" id="collapseCompras" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <div class="nav-link menu-api active" data-api="geral" style="cursor:pointer">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                    Geral
-                                </div>
-                                <div class="nav-link menu-api" data-api="presenciais" style="cursor:pointer">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                    Presenciais
-                                </div>
-                                <div class="nav-link menu-api" data-api="protocolos" style="cursor:pointer">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                    Protocolos
-                                </div>
+                                
                             </nav>
                         </div>
-        
+                        -->
+                        
                     </div>
                 </div>
+
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    Não Credenciado
+                </div>
+
             </nav>
         </div>
 
@@ -121,8 +131,26 @@
                         <div class="col-md-6 mb-2">
                         <div class="card text-white bg-primary">
                             <div class="card-body">
+                            <div class="small">Abastecimento de Água</div>
+                            <div id="kpiAA" class="h5 text-right">0€</div>
+                            </div>
+                        </div>
+                        </div>
+            
+                        <div class="col-md-6 mb-2">
+                        <div class="card text-white bg-dark">
+                            <div class="card-body">
+                            <div class="small">Águas Residuais Domésticas</div>
+                            <div id="kpiSAR" class="h5 text-right">0€</div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                        <div class="card text-white bg-secondary">
+                            <div class="card-body">
                             <div class="small">Total Entidades</div>
-                            <div id="kpiEntidades" class="h5">0</div>
+                            <div id="kpiEntidades" class="h5 text-right">0</div>
                             </div>
                         </div>
                         </div>
@@ -131,7 +159,7 @@
                         <div class="card text-white bg-success">
                             <div class="card-body">
                             <div class="small">Total Ano Atual</div>
-                            <div id="kpiAtual" class="h5">0€</div>
+                            <div id="kpiAtual" class="h5 text-right">0€</div>
                             </div>
                         </div>
                         </div>
@@ -140,7 +168,7 @@
                         <div class="card text-white bg-warning">
                             <div class="card-body">
                             <div class="small">Total Ano Anterior</div>
-                            <div id="kpiAnterior" class="h5">0€</div>
+                            <div id="kpiAnterior" class="h5 text-right">0€</div>
                             </div>
                         </div>
                         </div>
@@ -208,15 +236,15 @@
                         <div class="col-md-4">
                         <div class="d-flex">
                             <button id="btnFiltrar" class="btn btn-primary mr-2">
-                            Aplicar
+                            Procurar
                             </button>
                     
                             <button id="btnLimpar" class="btn btn-info mr-2">
-                            <i class="fas fa-broom"></i>
+                                <i class="fa-solid fa-repeat"></i>
                             </button>
                     
                             <button id="btnExportAll" class="btn btn-success">
-                            <i class="fas fa-file-excel"></i> Tudo
+                            <i class="fas fa-file-excel"></i>
                             </button>
                         </div>
                         </div>

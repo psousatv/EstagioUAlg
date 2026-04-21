@@ -140,6 +140,8 @@ try {
 
                 $e['processos'] = [];
                 $e['total_anoAtual'] = 0;
+                $e['total_atividadeAA'] = 0;
+                $e['total_atividadeSAR'] = 0;
                 $e['total_anoAnterior'] = 0;
                 $e['total_faturado'] = 0;
 
@@ -197,6 +199,18 @@ try {
                 } elseif ($anoFatura === $anoAnterior) {
 
                     $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
+
+                }
+                // =========================
+                // TOTAIS POR ATIVIDADE
+                // =========================
+                if ($f['atividade'] === 'AR - Águas Residuais') {
+
+                    $mapEnt[$ent]['total_atividadeSAR'] += (float) $f['fact_valor'];
+
+                } else {
+
+                    $mapEnt[$ent]['total_atividadeAA'] += (float) $f['fact_valor'];
 
                 }
             }
