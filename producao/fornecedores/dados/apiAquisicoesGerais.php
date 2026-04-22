@@ -50,6 +50,7 @@ class AquisicoesAPI {
             SELECT
                 f.fact_ent_cod,
                 f.fact_proces_check,
+                f.fact_expediente,
                 f.fact_num,
                 f.fact_data,
                 f.fact_valor,
@@ -93,13 +94,18 @@ class AquisicoesAPI {
             GROUP BY
                 f.fact_ent_cod,
                 f.fact_proces_check,
+                f.fact_expediente,
                 f.fact_num,
                 f.fact_data,
                 f.fact_valor,
                 f.fact_obs,
                 p.proces_padm,
                 pr.proced_regime,
-                p.proces_nome
+                p.proces_nome,
+                p.proces_orc_actividade,
+                r.rub_tipo,
+                r.rub_rubrica,
+                r.rub_item
 
             HAVING adjudicado > 0
 
@@ -124,6 +130,9 @@ try {
 
     switch ($action) {
 
+        // =========================
+        // FULL DATA
+        // =========================
         case 'full':
 
             $fornecedor = $_GET['frmFornecedor'] ?? '';
@@ -140,9 +149,10 @@ try {
 
                 $e['processos'] = [];
                 $e['total_anoAtual'] = 0;
+                $e['total_anoAnterior'] = 0;
                 $e['total_atividadeAA'] = 0;
                 $e['total_atividadeSAR'] = 0;
-                $e['total_anoAnterior'] = 0;
+                $e['total_atividadeAmbas'] = 0;
                 $e['total_faturado'] = 0;
 
                 $mapEnt[$e['ent_cod']] = $e;
@@ -155,16 +165,16 @@ try {
             $anoAnterior = $anoAtual - 1;
 
             // =========================
-            // MAP (ENTIDADE → PROCESSO → FATURA)
+            // PROCESSAMENTO FATURAS
             // =========================
             foreach ($faturas as $f) {
 
-                $ent = $f['fact_ent_cod'];
+                $ent  = $f['fact_ent_cod'];
                 $proc = $f['fact_proces_check'];
 
                 if (!isset($mapEnt[$ent])) continue;
 
-                // criar processo
+                // criar processo se não existir
                 if (!isset($mapEnt[$ent]['processos'][$proc])) {
 
                     $mapEnt[$ent]['processos'][$proc] = [
@@ -178,6 +188,7 @@ try {
 
                 // adicionar fatura
                 $mapEnt[$ent]['processos'][$proc]['faturas'][] = [
+                    'fatura_expediente' => $f['fact_expediente'],
                     'fatura' => $f['fact_num'],
                     'fatura_data' => $f['fact_data'],
                     'fatura_valor' => (float) $f['fact_valor'],
@@ -187,31 +198,26 @@ try {
                 ];
 
                 // =========================
-                // TOTAIS POR ANO
+                // ANO
                 // =========================
                 $anoFatura = (int) substr($f['fact_data'], 0, 4);
 
                 if ($anoFatura === $anoAtual) {
-
                     $mapEnt[$ent]['total_anoAtual'] += (float) $f['fact_valor'];
                     $mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
-
                 } elseif ($anoFatura === $anoAnterior) {
-
                     $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
-
                 }
+
                 // =========================
-                // TOTAIS POR ATIVIDADE
+                // ATIVIDADES
                 // =========================
                 if ($f['atividade'] === 'AR - Águas Residuais') {
-
                     $mapEnt[$ent]['total_atividadeSAR'] += (float) $f['fact_valor'];
-
-                } else {
-
+                } elseif ($f['atividade'] === 'AA - Águas de Abastecimento') {
                     $mapEnt[$ent]['total_atividadeAA'] += (float) $f['fact_valor'];
-
+                } else {
+                    $mapEnt[$ent]['total_atividadeAmbas'] += (float) $f['fact_valor'];
                 }
             }
 

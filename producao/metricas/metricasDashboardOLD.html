@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Candidaturas</title>
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="../../templates/favicon.png"/>
+
+<!-- CSS -->
+<!-- Bootstrap -->
+<link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<!-- Fontawesome -->
+<!--<link href="../../vendors/font-awesome/all.min.css" rel="stylesheet" type="text/css">-->
+<link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- Datables -->
+<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+<!-- GLOBAL -->
+<link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+
+<style>
+    /* Adiciona uma imagem em 'background' a toda a página */
+    body  {
+      background-image: url('../../global/imagens/bgPages.jpg');
+      background-size: cover;
+    }
+</style>
+
+</head>
+
+<body>
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="../../index.html">Indicadores</a>
+        <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
+            
+        <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+          <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
+          </div>
+        </div>
+    
+        <!-- Logged -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Login</a>
+                <a class="dropdown-item" href="#">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    
+    <div id="layoutSidenav_content">
+        <h1 class="mt-2"></h1>
+        <div class="container-fluid">
+
+            <!-- Dashboard Cards -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-header">
+                            <i class="fas fa-euro"></i> Indicadores 
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Em Curso -->
+                            <div class="row mt-1">
+                                <div class="col-12">
+                                    <div class="col-3 px-3 py-1 bg-primary text-white fw-bold rounded">Em Curso</div>
+                                    <div class="mt-1"></div>
+                                    <div class="row" id="botoesEmCurso"></div>
+                                    <div class="mt-1"></div>
+                                    <div class="row" id="tabelaEmCurso"></div>
+                                </div>
+                            </div>
+                            <!-- Plano de Investimentos -->
+                            <div class="row mt-1">
+                                <div class="col-12">
+                                    <div class="col-3 px-3 py-1 bg-primary text-white fw-bold rounded">Plano de Investimentos</div>
+                                    <div class="mt-1"></div>
+                                    <div class="row" id="botoesPInvestimentos"></div>
+                                    <div class="mt-1"></div>
+                                    <div class="row" id="tabelaPInvestimentos"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Tabela de Candidaturas -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-table mr-1"></i> Investimentos
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-striped" id="tabela" width="100%">
+                                    <thead class="small text-center">
+                                        <tr>
+                                            <th class="text-left">Obra</th>
+                                            <th class="text-right">Estado</th>
+                                            <th class="text-right">Livre 01</th>
+                                            <th class="text-right">Livre 02</th>
+                                            <th class="text-right">Livre 03</th>
+                                            <th class="text-right">Livre 04</th>
+                                            <th class="text-right">Livre 05</th>
+                                            <th class="text-right">Livre 06</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="small">
+                                        <!-- Linhas preenchidas pelo JS -->
+                                    </tbody>
+                                    <tfoot class="small">
+                                        <tr>
+                                            <th class="text-left">Total:</th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                            <th class="text-right"></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>           
+        
+    </div>
+</div>
+
+    <!-- JQuery - Deve Ser incluido antes do Global -->
+    <script src="../../vendors/jquery/jquery.js"></script>
+    <!-- Global -->
+    <script src="../../global/js/scripts.js"></script>
+    
+    <!-- Bootstrap -->
+    i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Fontawesome -->
+    <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
+    <script src="../../vendors/fonts/all.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../../vendors/datatables/datatables.min.js"></script>
+    <!-- Charts -->
+    <script src="../../vendors/charts/chart.umd.min.js"></script>
+
+<!-- JS de Página -->
+    <script src="js/metricasIndicadores.js"></script>
+
+</body>
+</html>

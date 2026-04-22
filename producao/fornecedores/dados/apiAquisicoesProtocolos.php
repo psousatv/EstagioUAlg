@@ -44,82 +44,75 @@ class AquisicoesAPI {
     // =========================
     // FATURAS + PROCESSOS
     // =========================
-    public function getFaturasAll($ano = '') {
+    public function getFaturasAll() {
 
         $sql = "
-                SELECT
-                    f.fact_ent_cod,
-                    f.fact_proces_check,
-                    f.fact_num,
-                    f.fact_data,
-                    f.fact_valor,
-                    f.fact_obs,
+            SELECT
+                f.fact_ent_cod,
+                f.fact_proces_check,
+                f.fact_expediente,
+                f.fact_num,
+                f.fact_data,
+                f.fact_valor,
+                f.fact_obs,
 
-                    pr.proced_regime AS regime,
-                    p.proces_orc_actividade AS atividade,
-                    CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
-                    p.proces_padm AS padm,
-                    p.proces_nome AS designacao,
+                pr.proced_regime AS regime,
+                p.proces_orc_actividade AS atividade,
+                CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
+                p.proces_padm AS padm,
+                p.proces_nome AS designacao,
 
-                    SUM(
-                        CASE 
-                            WHEN h.historico_descr_cod IN (100)
-                            THEN h.historico_valor 
-                            ELSE 0 
-                        END
-                    ) AS adjudicado
+                SUM(
+                    CASE 
+                        WHEN h.historico_descr_cod IN (100)
+                        THEN h.historico_valor 
+                        ELSE 0 
+                    END
+                ) AS adjudicado
 
-                FROM factura f
+            FROM factura f
 
-                LEFT JOIN processo p
-                    ON p.proces_check = f.fact_proces_check
+            LEFT JOIN processo p
+                ON p.proces_check = f.fact_proces_check
 
-                LEFT JOIN procedimento pr
-                    ON pr.proced_cod = p.proces_proced_cod
+            LEFT JOIN procedimento pr
+                ON pr.proced_cod = p.proces_proced_cod
 
-                LEFT JOIN historico h
-                    ON h.historico_proces_check = p.proces_check
-                
-                    
-                LEFT JOIN rubricas r
+            LEFT JOIN historico h
+                ON h.historico_proces_check = p.proces_check
+
+            LEFT JOIN rubricas r
                 ON r.rub_cod = p.proces_rub_cod
 
-                WHERE YEAR(f.fact_data) IN (
+            WHERE 
+                YEAR(f.fact_data) IN (
                     YEAR(CURDATE()),
                     YEAR(CURDATE()) - 1
                 )
                 AND f.fact_tipo IN ('FTN', 'FTC', 'RPR', 'NC')
-            ";
 
-        // filtro opcional por ano
-        if (!empty($ano)) {
-            $sql .= " AND YEAR(f.fact_data) = :ano ";
-        }
-
-        $sql .= "
             GROUP BY
                 f.fact_ent_cod,
                 f.fact_proces_check,
+                f.fact_expediente,
                 f.fact_num,
                 f.fact_data,
                 f.fact_valor,
                 f.fact_obs,
                 p.proces_padm,
                 pr.proced_regime,
-                p.proces_nome
+                p.proces_nome,
+                p.proces_orc_actividade,
+                r.rub_tipo,
+                r.rub_rubrica,
+                r.rub_item
+
+            HAVING adjudicado > 0
+
+            ORDER BY f.fact_data DESC
         ";
 
-        // ✅ só processos com valor
-        $sql .= " HAVING adjudicado > 0 ";
-
-        $sql .= " ORDER BY f.fact_data DESC ";
-
         $stmt = $this->db->prepare($sql);
-
-        if (!empty($ano)) {
-            $stmt->bindValue(':ano', $ano);
-        }
-
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -137,13 +130,15 @@ try {
 
     switch ($action) {
 
+        // =========================
+        // FULL DATA
+        // =========================
         case 'full':
 
             $fornecedor = $_GET['frmFornecedor'] ?? '';
-            $ano = $_GET['anoCorrente'] ?? '';
 
             $entidades = $api->getEntidades($fornecedor);
-            $faturas   = $api->getFaturasAll($ano);
+            $faturas   = $api->getFaturasAll();
 
             // =========================
             // MAP ENTIDADES
@@ -155,24 +150,31 @@ try {
                 $e['processos'] = [];
                 $e['total_anoAtual'] = 0;
                 $e['total_anoAnterior'] = 0;
+                $e['total_atividadeAA'] = 0;
+                $e['total_atividadeSAR'] = 0;
+                $e['total_atividadeAmbas'] = 0;
                 $e['total_faturado'] = 0;
 
                 $mapEnt[$e['ent_cod']] = $e;
             }
 
             // =========================
-            // MAP (ENTIDADE → PROCESSO → FATURA)
+            // DATAS
+            // =========================
+            $anoAtual = (int) date('Y');
+            $anoAnterior = $anoAtual - 1;
+
+            // =========================
+            // PROCESSAMENTO FATURAS
             // =========================
             foreach ($faturas as $f) {
 
-                $ent = $f['fact_ent_cod'];
+                $ent  = $f['fact_ent_cod'];
                 $proc = $f['fact_proces_check'];
 
-                if (!isset($mapEnt[$ent])) {
-                    continue;
-                }
+                if (!isset($mapEnt[$ent])) continue;
 
-                // criar processo (se não existir)
+                // criar processo se não existir
                 if (!isset($mapEnt[$ent]['processos'][$proc])) {
 
                     $mapEnt[$ent]['processos'][$proc] = [
@@ -186,29 +188,37 @@ try {
 
                 // adicionar fatura
                 $mapEnt[$ent]['processos'][$proc]['faturas'][] = [
+                    'fatura_expediente' => $f['fact_expediente'],
                     'fatura' => $f['fact_num'],
                     'fatura_data' => $f['fact_data'],
-                    'fatura_valor' => floatval($f['fact_valor']),
-                    'fatura_observacoes' => $f['fact_obs']
+                    'fatura_valor' => (float) $f['fact_valor'],
+                    'fatura_observacoes' => $f['fact_obs'],
+                    'fatura_atividade' => $f['atividade'],
+                    'fatura_rubrica' => $f['rubrica']
                 ];
 
-                // acumular total entidade
-                $anoAtual = date('Y');
-                $anoAnterior = $anoAtual - 1;
-
+                // =========================
+                // ANO
+                // =========================
                 $anoFatura = (int) substr($f['fact_data'], 0, 4);
 
-                if ($anoFatura == $anoAtual) {
-                    // ano atual
+                if ($anoFatura === $anoAtual) {
                     $mapEnt[$ent]['total_anoAtual'] += (float) $f['fact_valor'];
                     $mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
-
-                } elseif ($anoFatura == $anoAnterior) {
-                    // ano anterior
+                } elseif ($anoFatura === $anoAnterior) {
                     $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
-                    //$mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
                 }
 
+                // =========================
+                // ATIVIDADES
+                // =========================
+                if ($f['atividade'] === 'AR - Águas Residuais') {
+                    $mapEnt[$ent]['total_atividadeSAR'] += (float) $f['fact_valor'];
+                } elseif ($f['atividade'] === 'AA - Águas de Abastecimento') {
+                    $mapEnt[$ent]['total_atividadeAA'] += (float) $f['fact_valor'];
+                } else {
+                    $mapEnt[$ent]['total_atividadeAmbas'] += (float) $f['fact_valor'];
+                }
             }
 
             // =========================
@@ -218,10 +228,8 @@ try {
 
             foreach ($mapEnt as $e) {
 
-                // normalizar processos
                 $e['processos'] = array_values($e['processos']);
 
-                // remover entidades sem faturação
                 if ($e['total_faturado'] <= 0) continue;
 
                 $result[] = $e;

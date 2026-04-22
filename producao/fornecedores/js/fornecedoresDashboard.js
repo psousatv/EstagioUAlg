@@ -52,11 +52,15 @@ const App = {
     });
 
     $(document).on('click', '.entidade-row', (e) => {
-      this.toggleEntidade(
-        $(e.currentTarget).data('target'),
-        $(e.currentTarget).data('ent')
-      );
+
+      const entCod = $(e.currentTarget).data('ent');
+      const entidade = this.state.entidadesCache.find(e => e.ent_cod == entCod);
+    
+      if (entidade) {
+        this.selectEntidade(entidade);
+      }
     });
+
   },
 
   // =========================
@@ -117,18 +121,20 @@ const App = {
   applyFilter() {
 
     const filtro = $('#frmFornecedor').val().toLowerCase().trim();
-
-    this.state.entidadesVisiveis = filtro
+  
+    const resultado = filtro
       ? this.state.entidadesCache.filter(e =>
           (e.entidade || '').toLowerCase().includes(filtro)
         )
       : this.state.entidadesCache;
-
+  
+    this.state.entidadesVisiveis = resultado;
+  
     this.render();
-
-    // ✔ gráfico só aparece com filtro ativo
-    if (filtro && this.state.entidadesVisiveis.length) {
-      this.hideChart();
+  
+    // 👉 se só há 1 entidade, comportamento igual ao clique
+    if (resultado.length === 1) {
+      this.selectEntidade(resultado[0]);
     } else {
       this.hideChart();
     }
@@ -178,7 +184,8 @@ const App = {
 
     $('#listaAquisicoes').html(this.buildTable(data));
 
-    this.hideChart();
+    //this.hideChart();
+
   },
 
   updateKPIs(entidades) {
@@ -187,6 +194,7 @@ const App = {
     let anterior = 0;
     let atividadeAA = 0;
     let atividadeSAR = 0;
+    let atividadeAmbas = 0;
   
     let topEntidade = null;
     let topEntidadeValor = 0;
@@ -195,36 +203,73 @@ const App = {
   
       const valorAtual = Number(e.total_anoAtual || 0);
       const valorAnterior = Number(e.total_anoAnterior || 0);
-
+  
       const valorAA = Number(e.total_atividadeAA || 0);
       const valorSAR = Number(e.total_atividadeSAR || 0);
+      const valorAmbas = Number(e.total_atividadeAmbas || 0);
   
       atual += valorAtual;
       anterior += valorAnterior;
       atividadeAA += valorAA;
       atividadeSAR += valorSAR;
-
+      atividadeAmbas += valorAmbas;
   
-      // ✔ cálculo do TOP fornecedor
       if (valorAtual > topEntidadeValor) {
         topEntidadeValor = valorAtual;
         topEntidade = e.entidade;
       }
-
+  
     });
   
-    $('#kpiAA').text(this.money(atividadeAA));
-    $('#kpiSAR').text(this.money(atividadeSAR));
-    $('#kpiEntidades').text(entidades.length);
-    $('#kpiAtual').text(this.money(atual));
-    $('#kpiAnterior').text(this.money(anterior));
-    $('#kpiTopFornecedor').text(
-      topEntidade
+    // 🔥 NOVO (substitui os $('#kpiXXX'))
+    const kpis = {
+      AA: atividadeAA,
+      SAR: atividadeSAR,
+      Ambas: atividadeAmbas,
+      Entidades: entidades.length,
+      Atual: atual,
+      Anterior: anterior,
+      TopFornecedor: topEntidade
         ? `${topEntidade} (${this.money(topEntidadeValor)})`
         : '-'
-    );
-    
+    };
+  
+    $('#kpis').html(this.buildKPIs(kpis));
+  },
 
+  buildKPIs(kpis) {
+
+    const configs = [
+      { key: 'AA', label: 'Abastecimento de Água', class: 'bg-primary', format: 'money' },
+      { key: 'SAR', label: 'Águas Residuais Domésticas', class: 'bg-dark', format: 'money' },
+      { key: 'Ambas', label: 'Ambas as Atividades (AA + SAR)', class: 'bg-primary', format: 'money' },
+      { key: 'Entidades', label: 'Total Entidades', class: 'bg-secondary', format: 'number' },
+      { key: 'Atual', label: 'Total Ano Atual', class: 'bg-success', format: 'money' },
+      { key: 'Anterior', label: 'Total Ano Anterior', class: 'bg-warning', format: 'money' },
+      { key: 'TopFornecedor', label: 'Top Fornecedor', class: 'bg-dark', format: 'text' }
+    ];
+  
+    return configs.map(c => {
+  
+      let valor = kpis[c.key];
+  
+      if (c.format === 'money') valor = this.money(valor);
+      if (c.format === 'number') valor = valor ?? 0;
+      if (c.format === 'text') valor = valor || '-';
+  
+      return `
+        <div class="col-md-4 mb-2">
+          <div class="card text-white ${c.class}">
+            <div class="card-body">
+              <div class="small">${c.label}</div>
+              <div class="${c.format === 'text' ? 'h6' : 'h5 text-right'}">
+                ${valor}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
   },
 
   // =========================
@@ -338,6 +383,33 @@ const App = {
     `;
   },
 
+  selectEntidade(entidade) {
+
+  // 1. filtra estado
+  this.state.entidadesVisiveis = [entidade];
+
+  // 2. render normal (IMPORTANTE)
+  this.render();
+
+  // 3. KPIs
+  this.updateKPIs([entidade]);
+
+  // 4. gráfico
+  this.renderChart(entidade);
+  $('#boxGrafico').show();
+
+  // 5. abrir processos automaticamente (IMPORTANTE)
+  setTimeout(() => {
+
+    const firstRow = $('#listaAquisicoes .collapse').first();
+
+    if (firstRow.length) {
+      firstRow.addClass('show');
+    }
+
+  }, 0);
+},
+
   // =========================
   // TOGGLE + CHART
   // =========================
@@ -355,14 +427,17 @@ const App = {
 
     const entidade = this.state.entidadesVisiveis.find(e => e.ent_cod == entCod);
 
-    if (entidade && !isOpen) {
-      this.renderChart(entidade);
-      $('#boxGrafico').show();
+    //if (entidade && !isOpen) {
+    //  this.selectEntidade(entidade);
+    //  this.renderChart(entidade);
+    //  $('#boxGrafico').show();
 
     // 👉 Render processos + faturas noutra div
     //$('#listaAquisicoesFaturas').html(
     //  this.buildProcessos(entidade.processos || [])
     //);
+    if (entidade) {
+      this.selectEntidade(entidade);
 
     }
   },
@@ -458,10 +533,12 @@ const App = {
         (p.faturas || []).forEach(f => {
 
           rows.push({
+            Regime: p.regime,
             Entidade: e.entidade,
             Processo: p.designacao,
             Atividade: f.fatura_atividade,
             Rubrica: f.fatura_rubrica,
+            Expediente: f.fatura_expediente,
             Data: f.fatura_data,
             Fatura: f.fatura,
             Valor: f.fatura_valor
@@ -487,6 +564,10 @@ const App = {
     return new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 2
     }).format(v || 0) + '€';
+  },
+
+  expediente(str) {
+    return `${str[0]}.${str.slice(1, 6)}.${str.slice(6)}`;
   },
 
   escape(t) {

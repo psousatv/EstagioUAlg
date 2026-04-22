@@ -7,7 +7,7 @@
 <meta name="description" content="" />
 <meta name="author" content="" />
 
-<title>Candidaturas</title>
+<title>KPIs</title>
 <link
   rel="icon"
   type="image/png"
@@ -61,91 +61,113 @@
     
     <div id="layoutSidenav_content">
         <h1 class="mt-2"></h1>
-        <div class="container-fluid">
+        <div class="container-fluid p-4">
 
-            <!-- Dashboard Cards -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-
-                        <div class="card-header">
-                            <i class="fas fa-euro"></i> Indicadores 
-                        </div>
-
-                        <div class="card-body">
-                            <!-- Em Curso -->
-                            <div class="row mt-1">
-                                <div class="col-12">
-                                    <div class="col-3 px-3 py-1 bg-primary text-white fw-bold rounded">Em Curso</div>
-                                    <div class="mt-1"></div>
-                                    <div class="row" id="botoesEmCurso"></div>
-                                    <div class="mt-1"></div>
-                                    <div class="row" id="tabelaEmCurso"></div>
-                                </div>
-                            </div>
-                            <!-- Plano de Investimentos -->
-                            <div class="row mt-1">
-                                <div class="col-12">
-                                    <div class="col-3 px-3 py-1 bg-primary text-white fw-bold rounded">Plano de Investimentos</div>
-                                    <div class="mt-1"></div>
-                                    <div class="row" id="botoesPInvestimentos"></div>
-                                    <div class="mt-1"></div>
-                                    <div class="row" id="tabelaPInvestimentos"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <h3 class="mb-4">💧 Dashboard Águas em Baixa</h3>
+          
+            <!-- KPI CARDS -->
+            <div class="row mb-4">
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div>Água Segura</div>
+                  <div class="kpi text-success">99.2%</div>
+                  <small class="trend-up">▲ +0.3%</small>
                 </div>
-            </div>
-        
-            <!-- Tabela de Candidaturas -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-table mr-1"></i> Investimentos
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-striped" id="tabela" width="100%">
-                                    <thead class="small text-center">
-                                        <tr>
-                                            <th class="text-left">Obra</th>
-                                            <th class="text-right">Estado</th>
-                                            <th class="text-right">Livre 01</th>
-                                            <th class="text-right">Livre 02</th>
-                                            <th class="text-right">Livre 03</th>
-                                            <th class="text-right">Livre 04</th>
-                                            <th class="text-right">Livre 05</th>
-                                            <th class="text-right">Livre 06</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="small">
-                                        <!-- Linhas preenchidas pelo JS -->
-                                    </tbody>
-                                    <tfoot class="small">
-                                        <tr>
-                                            <th class="text-left">Total:</th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                            <th class="text-right"></th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div>Água Não Faturada</div>
+                  <div class="kpi text-danger">28%</div>
+                  <small class="trend-down">▼ -2%</small>
                 </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div>Reclamações</div>
+                  <div class="kpi text-warning">4.2</div>
+                  <small class="trend-down">▼ -0.5</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div>Cobertura de Custos</div>
+                  <div class="kpi text-warning">92%</div>
+                  <small class="trend-up">▲ +1%</small>
+                </div>
+              </div>
             </div>
-        </div>           
-        
-    </div>
-</div>
-
+          
+            <!-- GRÁFICO PRINCIPAL -->
+            <div class="row mb-4">
+              <div class="col-md-8">
+                <div class="card p-3">
+                  <h6>Abastecimento vs Perdas</h6>
+                  <canvas id="volumeChart"></canvas>
+                </div>
+              </div>
+          
+              <div class="col-md-4">
+                <div class="card p-3">
+                  <h6>Eficiência Operacional</h6>
+                  <p>ANF: <strong class="text-danger">28%</strong></p>
+                  <p>Rendimento hídrico: <strong>72%</strong></p>
+                  <p>Energia: <strong>0.65 kWh/m³</strong></p>
+                </div>
+              </div>
+            </div>
+          
+            <!-- SANEAMENTO + CLIENTE -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="card p-3">
+                  <h6>Saneamento</h6>
+                  <p>Tratamento: <strong>94%</strong></p>
+                  <p>Eficiência DBO: <strong class="text-success">91%</strong></p>
+                  <p>Ocorrências: <strong class="text-danger">6/mês</strong></p>
+                </div>
+              </div>
+          
+              <div class="col-md-6">
+                <div class="card p-3">
+                  <h6>Cliente</h6>
+                  <p>Reclamações: <strong>4.2 /1000</strong></p>
+                  <p>Tempo resposta: <strong class="text-danger">8 dias</strong></p>
+                  <p>Novas ligações: <strong class="text-success">6 dias</strong></p>
+                </div>
+              </div>
+            </div>
+          
+            <!-- SUSTENTABILIDADE -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card p-3">
+                  <h6>Sustentabilidade</h6>
+                  <div class="row">
+                    <div class="col-md-4">
+                      Energia
+                      <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 65%">0.65</div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      Reutilização
+                      <div class="progress">
+                        <div class="progress-bar bg-info" style="width: 8%">8%</div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      Lamas valorizadas
+                      <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 70%">70%</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+          
     <!-- JQuery - Deve Ser incluido antes do Global -->
     <script src="../../vendors/jquery/jquery.js"></script>
     <!-- Global -->
@@ -161,8 +183,8 @@
     <!-- Charts -->
     <script src="../../vendors/charts/chart.umd.min.js"></script>
 
-<!-- JS de Página -->
-    <script src="js/metricasIndicadores.js"></script>
+  <!-- JS de Página -->
+  <script src="js/metricasIndicadores.js"></script>
 
 </body>
 </html>
