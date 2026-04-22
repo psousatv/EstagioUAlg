@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadVistorias() {
 
     try {
-        const response =  await fetch("../comum/dados/vistoriasProcessos.php");
+        const response =  await fetch("producao/comum/dados/vistoriasProcessos.php");
         const text =  await response.text();
         const processos = JSON.parse(text);
 

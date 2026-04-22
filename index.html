@@ -135,8 +135,48 @@
         </div>
 
       </div> <!-- row -->
+
+      <div class="row">
+        <div class="col">
+          <!-- CRONOLOGIA -->
+          <div class="card small mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+            <b>Cronologia de Processos Ativos</b>
+            <div>
+                <a href="#" onclick="imprimirCronos()" class="text-dark mr-2"><i class="fas fa-print"></i></a>
+                <a href="#" onclick="exportarCronosPDF()" class="text-danger mr-2"><i class="fas fa-file-pdf"></i></a>
+                <a href="#" onclick="exportarCronosExcel()" class="text-success"><i class="fas fa-file-excel"></i></a>
+            </div>
+            </div>
+            <div class="card-body" id="lstCronos">
+            <div class="text-muted">A carregar...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <!-- VISTORIAS -->
+          <div class="card small">
+            <div class="card-header d-flex justify-content-between align-items-center">
+            <b>Relação de Vistorias Vencidas e Vincendas</b>
+            <div>
+                <a href="#" onclick="imprimirVistorias()" class="text-dark mr-2"><i class="fas fa-print"></i></a>
+                <a href="#" onclick="exportarVistoriasPDF()" class="text-danger mr-2"><i class="fas fa-file-pdf"></i></a>
+                <a href="#" onclick="exportarVistoriasExcel()" class="text-success"><i class="fas fa-file-excel"></i></a>
+            </div>
+            </div>
+            <div class="card-body" id="lstVistorias">
+            <div class="text-muted">A carregar...</div>
+            </div>
+          </div>      
+        </div>
+      </div>
+
     </div> <!-- card-body -->
   </div> <!-- card-box -->
+
+  
+
 </div> <!-- container-fluid -->
 
 <script src="vendors/jquery/jquery.min.js"></script>
@@ -152,11 +192,11 @@
 <script src="vendors/pdf/xlsx.full.min.js"></script>
 
 
-<!--
+
 <script src="producao/comum/funcoes.js" defer></script>
 <script src="producao/comum/js/cronosProcessos.js" defer></script>
 <script src="producao/comum/js/vistoriasProcessos.js" defer></script>
--->
+
 
 </body>
 </html>

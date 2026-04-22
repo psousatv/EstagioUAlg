@@ -309,10 +309,12 @@ const App = {
           <td class="text-right">${this.money(e.total_anoAtual)}</td>
 
           <td>
-            <button class="btn btn-sm btn-success btn-export-excel"
-              data-id="${e.ent_cod}">
-              Exportar
-            </button>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-sm btn-success btn-export-excel"
+                data-id="${e.ent_cod}">
+                <i class="fas fa-file-excel"></i>
+              </button>
+            </div>
           </td>
         </tr>
 
@@ -348,6 +350,7 @@ const App = {
                 <table class="table table-sm mb-0">
                   <thead>
                     <tr>
+                      <th>Expediente</th>
                       <th>Data</th>
                       <th>Fatura</th>
                       <th>Valor</th>
@@ -358,6 +361,7 @@ const App = {
                   <tbody>
                     ${faturas.map(f => `
                       <tr>
+                        <td>${this.expediente(f.fatura_expediente) || ''}</td>
                         <td>${f.fatura_data || ''}</td>
                         <td>${this.escape(f.fatura)}</td>
                         <td class="text-right">${this.money(f.fatura_valor)}</td>
@@ -372,7 +376,8 @@ const App = {
 
             return `
               <tr onclick="redirectProcesso(${p.proces_check})">
-                <td>${this.escape(p.padm)}</td>
+                <td>${this.escape(p.regime)}</td>  
+                <td>${this.escape(p.padm)}</td>  
                 <td>${this.escape(p.designacao)}</td>
                 <td colspan="3">${faturasHtml}</td>
               </tr>
