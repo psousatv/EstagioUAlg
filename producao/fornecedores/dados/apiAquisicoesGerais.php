@@ -64,7 +64,7 @@ class AquisicoesAPI {
 
                 SUM(
                     CASE 
-                        WHEN h.historico_descr_cod IN (9,14)
+                        WHEN h.historico_descr_cod IN (9, 14)
                         THEN h.historico_valor 
                         ELSE 0 
                     END

@@ -79,7 +79,7 @@ class AquisicoesAPI {
                 ON pr.proced_cod = p.proces_proced_cod
 
             LEFT JOIN historico h
-                ON h.historico_proces_check = p.proces_check
+                ON h.historico_proces_check = f.fact_proces_check
 
             LEFT JOIN rubricas r
                 ON r.rub_cod = p.proces_rub_cod

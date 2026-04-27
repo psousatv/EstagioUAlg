@@ -157,7 +157,7 @@ table = $('#processosNested').DataTable({
   searching: false,
   select: true,
   columnDefs: [{ className: "dt-head-center", targets: "_all" }],
-  order: [[6, 'asc']],
+  order: [[0, 'asc']], // ordenado pelo regime de procedimento
   columns: [
     { data: 'regime' },
     { 

@@ -57,7 +57,7 @@ try {
         WHERE orc_rubrica = :itemProcurado
         AND orc_ano = :anoCorrente
         GROUP BY orc_check
-        ORDER BY tipo, regime";
+        ORDER BY regime, tipo";
 
     $stmtOrc = $myConn->prepare($sqlOrcamento);
     $stmtOrc->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
