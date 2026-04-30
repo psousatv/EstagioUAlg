@@ -8,17 +8,17 @@ const ctx = document.getElementById('volumeChart');
               datasets: [
                 {
                   label: 'Previsto',
-                  data: [199, 210, 234, 347, 341, 341, 390, 227, 235, 227, 235],
+                  data: [199, 209, 242, 233, 346, 341, 341, 390, 227, 235, 227, 235],
                   backgroundColor: 'rgba(54, 162, 235, 0.6)'
                 },
                 {
                   label: 'Faturado',
-                  data: [220, 230, 50],
+                  data: [220, 230, 50, 63],
                   backgroundColor: 'rgba(75, 192, 192, 0.6)'
                 },
                 {
                   label: 'Realização (%)',
-                  data: [110, 110, 77],
+                  data: [110, 110, 77, 64],
                   type: 'line',
                   borderColor: 'red',
                   yAxisID: 'y1'
@@ -27,6 +27,12 @@ const ctx = document.getElementById('volumeChart');
             },
             options: {
               responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Plano Geral de Obras'
+                }
+              },
               scales: {
                 y: {
                   beginAtZero: true,

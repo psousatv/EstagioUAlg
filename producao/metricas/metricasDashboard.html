@@ -59,108 +59,130 @@
         </ul>
       </nav>
     
-    <div id="layoutSidenav_content">
-        <h1 class="mt-2"></h1>
-        <div class="container-fluid p-4">
-
-            <!--h3 class="mb-4">💧 Dashboard Águas em Baixa</h3-->
-          
-            <!-- KPI CARDS -->
-            <div class="row mb-4">
-              <div class="col-md-3">
-                <div class="card p-3">
-                  <div>Água Segura</div>
-                  <div class="kpi text-success">99.2%</div>
-                  <small class="trend-up">▲ +0.3%</small>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="card p-3">
-                  <div>Água Não Faturada</div>
-                  <div class="kpi text-danger">28%</div>
-                  <small class="trend-down">▼ -2%</small>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="card p-3">
-                  <div>Reclamações</div>
-                  <div class="kpi text-warning">4.2</div>
-                  <small class="trend-down">▼ -0.5</small>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="card p-3">
-                  <div>Cobertura de Custos</div>
-                  <div class="kpi text-warning">92%</div>
-                  <small class="trend-up">▲ +1%</small>
-                </div>
-              </div>
+    <div id="layoutSidenav_content">        
+      <div class="container-fluid">
+            
+        <!-- KPI CARDS -->
+          <!--
+        <div class="row mt-2">
+          <div class="col-md-3">
+            <div class="card p-3">
+              <div>Água Segura</div>
+              <div class="kpi text-success">99.2%</div>
+              <small class="trend-up">▲ +0.3%</small>
             </div>
-          
-            <!-- GRÁFICO PRINCIPAL -->
-            <div class="row mb-4">
-              <div class="col-md-8">
-                <div class="card p-3">
-                  <h6>Plano Geral de Obras</h6>
-                  <canvas id="volumeChart"></canvas>
-                </div>
-              </div>
-          
-              <div class="col-md-4">
-
-                <div class="card p-3 mb-2">
-                  <h6>Plano Geral de Obras</h6>
-                  <p>Candidatura - AA: <strong class="text-success">99,00%</strong></p>
-                  <p>Candidatura - AR: <strong class="text-danger">20,47%</strong></p>
-                  <p>Outras: <strong class="text-primary">53,62%</strong></p>
-                </div>
-
-                <div class="card p-3 mb-2">
-                  <h6>Plano de Investimentos</h6>
-                  <p>Empreitadas: <strong class="text-success">76,88%</strong></p>
-                  <p>Serviços: <strong class="text-primary">0,00%</strong></p>
-                </div>
-          
-                <div class="card p-3">
-                  <h6>Cliente</h6>
-                  <p>Reclamações: <strong>4.2 /1000</strong></p>
-                  <p>Tempo resposta: <strong class="text-danger">8 dias</strong></p>
-                  <p>Novas ligações: <strong class="text-success">6 dias</strong></p>
-                </div>
-
-              </div>              
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3">
+              <div>Água Não Faturada</div>
+              <div class="kpi text-danger">28%</div>
+              <small class="trend-down">▼ -2%</small>
             </div>
-                  
-            <!-- SUSTENTABILIDADE -->
-            <div class="row mt-2">
-              <div class="col-md-12">
-                <div class="card p-3">
-                  <h6>Sustentabilidade</h6>
-                  <div class="row">
-                    <div class="col-md-4">
-                      Energia
-                      <div class="progress">
-                        <div class="progress-bar bg-warning" style="width: 65%">0.65</div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      Reutilização
-                      <div class="progress">
-                        <div class="progress-bar bg-info" style="width: 8%">8%</div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      Lamas valorizadas
-                      <div class="progress">
-                        <div class="progress-bar bg-success" style="width: 70%">70%</div>
-                      </div>
-                    </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3">
+              <div>Reclamações</div>
+              <div class="kpi text-warning">4.2</div>
+              <small class="trend-down">▼ -0.5</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3">
+              <div>Cobertura de Custos</div>
+              <div class="kpi text-warning">92%</div>
+              <small class="trend-up">▲ +1%</small>
+            </div>
+          </div>
+        </div>
+        -->
+        
+        <h3>EM CONSTRUÇÃO</h3>
+
+        <!-- GRÁFICO PRINCIPAL -->
+        <div class="row mt-2">
+          <div class="col-md-8">
+            <div class="card p-3" style="height: 580px">
+              <canvas id="volumeChart"></canvas>
+            </div>
+          </div>
+      
+          <div class="col-md-4">
+
+            <div class="card p-3">
+              <h6>Plano Geral de Obras</h6>
+              <p>Candidatura - AA: <strong class="text-success">99,00%</strong></p>
+              <p>Candidatura - AR: <strong class="text-danger">20,47%</strong></p>
+              <p>Outras: <strong class="text-primary">53,62%</strong></p>
+            </div>
+
+            <div class="card p-3 mt-2">
+              <h6>Plano de Investimentos</h6>
+              <p>Empreitadas: <strong class="text-success">76,88%</strong></p>
+              <p>Serviços: <strong class="text-primary">0,00%</strong></p>
+            </div>
+      
+            <!--
+            <div class="card p-3 mt-2">
+              <h6>Cliente</h6>
+              <p>Reclamações: <strong>4.2 /1000</strong></p>
+              <p>Tempo resposta: <strong class="text-danger">8 dias</strong></p>
+              <p>Novas ligações: <strong class="text-success">6 dias</strong></p>
+            </div>
+            -->
+
+          </div>
+        <!-- FIM GRÁFICO PRINCIPAL -->             
+        </div>
+              
+        <!-- OBRAS EM CURSO -->
+          <div class="row mt-2">
+
+          <div class="col-md-6">
+            <div class="card p-2">
+              <h6>Obras Em Curso</h6>
+              <div class="row">
+                <div class="col-md-6 small">
+                  E200 - Eliminação de Intrusões Salinas
+                  <div class="progress">
+                    <div class="progress-bar bg-warning" style="width: 30%">29,72%</div>
+                  </div>
+                </div>
+        
+                <div class="col-md-6 small">
+                  E201 - Ligação da EEARD em Vale Caranguejo e a CE IVC - Lagoas
+                  <div class="progress">
+                    <div class="progress-bar bg-success" style="width: 100%">100%</div>
                   </div>
                 </div>
               </div>
             </div>
-          
           </div>
+
+          <div class="col-md-6">
+            <div class="card p-2">
+              <h6>Obras a Encerrar</h6>
+              <div class="row">
+                <div class="col-md-6 small">
+                  E177 - Substituição Condutas - MD
+                  <div class="progress">
+                    <div class="progress-bar bg-info" style="width: 96%">95,68%</div>
+                  </div>
+                </div>
+        
+                <div class="col-md-6 small">
+                  E203 - Substituição Condutas - MEN
+                  <div class="progress">
+                    <div class="progress-bar bg-info" style="width: 99%">98,77%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        <!-- FIM OBRAS EM CURSO/TERMINADAS -->
+        </div> 
+
+      </div>
           
     <!-- JQuery - Deve Ser incluido antes do Global -->
     <script src="../../vendors/jquery/jquery.js"></script>
@@ -168,7 +190,7 @@
     <script src="../../global/js/scripts.js"></script>
     
     <!-- Bootstrap -->
-    i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
     <!-- Fontawesome -->
     <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
     <script src="../../vendors/fonts/all.min.js"></script>

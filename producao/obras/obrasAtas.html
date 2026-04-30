@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Atas</title>
+  
+  <!-- Bootstrap -->
+  <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <!-- Fontawesome -->
+  <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="icon" type="image/png" sizes="16x16" href="../../templates/favicon.png"/>
+
+  <style>
+
+    /* ================= LAYOUT (NOVO) ================= */
+    .pagina {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .col-esquerda,
+    .col-direita {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ================= TEU CSS ORIGINAL ================= */
+
+    .nivel {
+      margin-left: 15px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .icon {
+      width: 22px;
+      display: inline-block;
+    }
+
+    .label {
+      transition: opacity 0.2s ease;
+    }
+
+    .faded .label {
+      opacity: 0.4;
+    }
+
+    .desenvolvimento {
+      margin-left: 30px;
+      font-size: 0.95rem;
+      cursor: default;
+    }
+
+    .desenvolvimento[data-estado="Tratado"] {
+      color: #198754;
+    }
+
+    .desenvolvimento[data-estado="Pendente"] {
+      color: #6c757d;
+    }
+
+    .desenvolvimento[data-estado="Parcial"] {
+      color: #ffc107;
+    }
+
+    .desenvolvimento::before {
+      content: "• ";
+      margin-right: 5px;
+    }
+
+    #identificaPresentes {
+      align-items: flex-start;
+    }
+
+    .coluna {
+      min-width: 150px;
+    }
+
+    .coluna ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .validacao-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+    }
+
+  </style>
+
+</head>
+
+<body class="p-2">
+
+<!-- ================= NOVO WRAPPER 2 COLUNAS ================= -->
+<div class="pagina">
+
+    <!-- ================= CABEÇALHO ================= -->
+    <div id="ata" class="card mt-2 p-3 bg-primary text-white">
+        <div id="identificaAta" style="height: 120px">
+            <h5>ATA DE ... </h5>
+        </div>
+    </div>
+
+    <div id="obra" class="card mt-2 p-3 bg-secondary text-white">
+        <div id="identificaObra" style="height: 120px">
+            <h6>Obra: Esta obra</h6>
+            <h6>Local: Ali</h6>
+            <h6>Data: quando se realizou</h6>
+            <h6>Hora: às horas agendadas</h6>
+            <h6>Assunto: Reunião de Obra Mensal / Reunião Semanal de Produção</h6>
+        </div>
+    </div>   
+
+  <!-- COLUNA ESQUERDA -->
+  <div class="col-esquerda">
+
+    <div id="presencas" class="card mt-2 p-3 bg-warning">
+        <h6>PRESENÇAS: </h6>
+        <div id="identificaPresentes" class="d-flex gap-4">
+
+            <div class="coluna">
+                <h6>Nome</h6>
+                <ul>
+                    <li>João A</li>
+                    <li>Maria B</li>
+                    <li>Pedro C</li>
+                </ul>
+            </div>
+
+            <div class="coluna">
+                <h6>Empresa</h6>
+                <ul>
+                    <li>ABC Lda</li>
+                    <li>XYZ SA</li>
+                    <li>Tech Solutions</li>
+                </ul>
+            </div>
+
+            <div class="coluna">
+                <h6>Contatos</h6>
+                <ul>
+                    <li>999999990</li>
+                    <li>999999991</li>
+                    <li>999999992</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+  </div>
+
+  <!-- COLUNA DIREITA -->
+  <div class="col-direita">
+
+    <div id="topicos" class="card mt-2 p-3">
+
+        <h6>ASSUNTOS: </h6>
+
+        <div id="topico-1">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>01 - Segurança - Acompanhamento do Relatório de Segurança</span>
+                <span><strong>(2)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+
+            <div class="nivel assunto">
+                <span class="icon"></span>
+                <span class="label"><strong>Assunto 1</strong>
+                    <span>(1)</span>
+                </span>
+
+                <div class="nivel subassunto hidden">
+                    <span class="icon"></span>
+                    <span class="label">Sub-Assunto 1
+                        <span>(2)</span>
+                    </span>
+
+                    <div class="nivel desenvolvimento hidden" data-estado="Tratado">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </div>
+
+                    <div class="nivel desenvolvimento hidden" data-estado="Pendente">
+                        Cras elementum ultrices diam.
+                    </div>
+                </div>
+            </div>
+
+            <div class="nivel assunto mt-2">
+                <span class="icon"></span>
+                <span class="label"><strong>Assunto 2</strong>
+                    <span>(1)</span>
+                </span>
+
+                <div class="nivel desenvolvimento hidden" data-estado="Tratado">
+                    Proin porttitor, orci nec nonummy molestie.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TÓPICO 2 -->
+        <div class="mt-2" id="topico-2">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>02 - Projeto - Alterações ao Projeto</span>
+                <span><strong>(2)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>            
+            
+            <!-- ASSUNTO -->
+            <div class="nivel assunto">
+                <span class="icon"></span>
+                <span class="label"><strong>Assunto 1</strong>
+                    <span>(1)</span>
+                </span>
+                            
+                <!-- SUB-ASSUNTO -->
+                <div class="nivel subassunto hidden">
+                <span class="icon"></span>
+                <span class="label">Sub-Assunto 1
+                    <span>(2)</span>
+                </span>
+            
+                <div class="nivel desenvolvimento hidden" data-estado="Tratado">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
+                    Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
+                    Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
+                </div>
+            
+                <div class="nivel desenvolvimento hidden" data-estado="Tratado">
+                    Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
+                    Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.
+
+                    Donec eget tellus non erat lacinia fermentum. Donec in velit vel ipsum auctor pulvinar. Proin ullamcorper urna et felis.
+                </div>
+                </div>
+            </div>
+            
+            <!-- ASSUNTO SEM SUB -->
+            <div class="nivel assunto mt-2">
+                <span class="icon"></span>
+                <span class="label"><strong>Assunto 2</strong>
+                    <span>(1)</span>
+                </span>
+            
+                <div class="nivel desenvolvimento hidden" data-estado="Tratado">
+                    Donec eget tellus non erat lacinia fermentum. Donec in velit vel ipsum auctor pulvinar. Proin ullamcorper urna et felis.
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-2" id="topico-3">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>03 - Desenvolvimento da Obra</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-4">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>04 - Auto(s)</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-5">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>05 - Aprovação de Materiais (PAMs)</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-6">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>06 - Ensaios a Realizar</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-7">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>07 - Trabalhos Complementares</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-8">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>08 - Acompanhamento Financeiro</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-9">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>09 - Outros Assuntos</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+        <div class="mt-2" id="topico-10">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-grid">
+                <span>10 - Observações</span>
+                <span><strong>(0)</strong></span>
+                <i class="fa-solid fa-circle-plus"></i>
+            </button>
+        </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ================= VALIDAÇÃO (FORA DAS COLUNAS) ================= -->
+<div id="validacao" class="card mt-2 p-3 bg-info">
+
+    <h6>VALIDAÇÕES:</h6>
+
+    <div id="validaAta" class="validacao-grid">
+
+        <div class="coluna">
+            <h6>Nome</h6>
+            <ul>
+                <li>Diretor de Obra</li>
+            </ul>
+        </div>
+
+        <div class="coluna">
+            <h6>Data</h6>
+            <ul>
+                <li>dd-mm-aaaa</li>
+            </ul>
+        </div>
+
+        <div class="coluna">
+            <h6>Controlo</h6>
+            <ul>
+                <li>ver como</li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="../../vendors/jquery/jquery.js"></script>
+<script src="../../global/js/scripts.js"></script>
+<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+
+<script>
+    /* ================= EXPANSÃO ================= */
+    
+    // Assunto
+    document.querySelectorAll('.assunto').forEach(el => {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+    
+        const sub = this.querySelector(':scope > .subassunto');
+        const dev = this.querySelector(':scope > .desenvolvimento');
+    
+        if (sub) sub.classList.toggle('hidden');
+        else if (dev) dev.classList.toggle('hidden');
+      });
+    });
+    
+    // Sub-Assunto
+    document.querySelectorAll('.subassunto').forEach(el => {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+    
+        const devs = this.querySelectorAll(':scope > .desenvolvimento');
+        devs.forEach(d => d.classList.toggle('hidden'));
+      });
+    });
+    
+    
+    /* ================= ESTADOS ================= */
+    
+    function getEstado(container) {
+      const devs = container.querySelectorAll(
+        ':scope > .desenvolvimento, :scope > .subassunto .desenvolvimento'
+      );
+    
+      let total = devs.length;
+      let tratados = 0;
+    
+      devs.forEach(d => {
+        if (d.dataset.estado === "Tratado") tratados++;
+      });
+    
+      if (total === 0) return "Pendente";
+      if (tratados === 0) return "Pendente";
+      if (tratados === total) return "Tratado";
+      return "Parcial";
+    }
+    
+    
+    /* ================= ÍCONES ================= */
+    
+    function getIcon(estado) {
+      switch (estado) {
+        case "Tratado":
+          return '<i class="fa-solid fa-circle-check text-success"></i>';
+    
+        case "Parcial":
+          return '<i class="fa-solid fa-circle-exclamation text-warning"></i>';
+    
+        default:
+          return '<i class="fa-regular fa-circle text-secondary"></i>';
+      }
+    }
+    
+    
+    /* ================= APLICAR UI ================= */
+    
+    function aplicarEstados() {
+    
+      // SUB-ASSUNTOS
+      document.querySelectorAll('.subassunto').forEach(sub => {
+        const estado = getEstado(sub);
+        sub.dataset.estado = estado;
+    
+        const icon = sub.querySelector(':scope > .icon');
+        if (icon) icon.innerHTML = getIcon(estado);
+    
+        sub.classList.remove("faded");
+        if (estado === "Tratado") sub.classList.add("faded");
+      });
+    
+      // ASSUNTOS
+      document.querySelectorAll('.assunto').forEach(assunto => {
+        const estado = getEstado(assunto);
+        assunto.dataset.estado = estado;
+    
+        const icon = assunto.querySelector(':scope > .icon');
+        if (icon) icon.innerHTML = getIcon(estado);
+    
+        assunto.classList.remove("faded");
+      });
+    }
+    
+    
+    /* ================= INIT ================= */
+    
+    aplicarEstados();
+    </script>
+
+</body>
+</html>
