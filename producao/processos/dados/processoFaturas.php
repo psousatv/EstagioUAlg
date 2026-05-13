@@ -9,7 +9,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 $processoFaturas = "SELECT *
                     FROM factura
                     WHERE fact_proces_check = '" .$codigoProcesso. "'
-                    AND fact_tipo IN ('FTN', 'FTC', 'NC')
+                    AND fact_tipo IN ('FTN', 'FTC', 'NC', 'REF')
                     ORDER BY fact_auto_num DESC";
 
 $stmt = $myConn->query($processoFaturas);
@@ -55,12 +55,20 @@ foreach($data as $row)
   $numero = substr($row['fact_expediente'], 1, 5);
   $ano = substr($row['fact_expediente'], 6, 7);
   $expediente = $tipo. "." .$numero. "." .$ano;
-  $subtotal = $row['fact_valor'] - $row['fact_duovalor'];
-  $pagar = $subtotal - $row['fact_duocga'];
-  $elegivel = $row['fact_valor'] + $row['fact_iva'] ;
-  $fundo = $row['fact_finan_fundo'];
-  $privado = $row['fact_finan_max_elegivel'] - $row['fact_finan_fundo'];
 
+  if ($row['fact_valor'] < 0) {
+
+    $subtotal = $pagar = $elegivel = $fundo = $privado = 0;
+
+  } else {
+
+      $subtotal = $row['fact_valor'] - $row['fact_duovalor'];
+      $pagar = $subtotal - $row['fact_duocga'];
+      $elegivel = $row['fact_valor'] + $row['fact_iva'];
+      $fundo = $row['fact_finan_fundo'];
+      $privado = $row['fact_finan_max_elegivel'] - $row['fact_finan_fundo'];
+  }
+  
   echo "
     <tr>
       <td class='text-left'>".$expediente."</td>

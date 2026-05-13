@@ -22,26 +22,32 @@ $(document).ready(function () {
 function formatNested(processo) {
   if (!processo) return 'Sem registros';
 
-  let html = `<table class="table table-sm table-bordered table-dark">
-      <thead>
-        <tr>
-          <th colspan="4">Pedidos</th>
-          <th>Faturas</th>
-          <th colspan="4">Reembolsos</th>
-        </tr>
-        <tr>
-          <th>Número</th>
-          <th>Expediente</th>
-          <th>Data</th>
-          <th>Valor</th>
-          <th>Expediente / Data / Número / Auto / Valor</th>
-          <th>Número</th>
-          <th>Expediente</th>
-          <th>Data</th>
-          <th>Valor</th>
-        </tr>
-      </thead>
-      <tbody>`;
+  let html = `<table class="table table-sm table-bordered small">
+                <thead>
+                  <tr>
+                      <th class="table-dark text-center" colspan="4">Pedidos</th>
+                      <th class="table-info text-center" colspan="4">Reembolsos</th>
+                      <th class="table-success text-center">Balanço</th>
+                      <th class="table-warning text-center">Faturas</th>
+                  </tr>
+                  <tr>
+                      <!-- PEDIDOS -->
+                      <th class="table-dark">Número</th>
+                      <th class="table-dark">Expediente</th>
+                      <th class="table-dark">Data</th>
+                      <th class="table-dark text-right">Valor</th>
+                      <!-- REEMBOLSOS -->
+                      <th class="table-info">Número</th>
+                      <th class="table-info">Expediente</th>
+                      <th class="table-info">Data</th>
+                      <th class="table-info text-right">Valor</th>
+                      <!-- BALANÇO -->
+                      <th class="table-success text-right">Valor</th>
+                      <!-- FATURAS -->
+                      <th class="table-warning">Expediente / Data / Número / Auto / Valor</th>
+                  </tr>
+                </thead>
+            <tbody>`;
 
       const { pedidosMap, faturasOrfaos, reembolsosOrfaos } = (processo.historico || []).reduce(
         (acc, h) => {
@@ -88,15 +94,18 @@ function formatNested(processo) {
             .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.fact_valor)].join(' / '))
             .join('<br>');
 
+            
+
         if (item.reembolsos.length === 0) {
             html += `
                 <tr>
-                    <td>${pedidoText[0]}</td>
-                    <td>${pedidoText[1]}</td>
-                    <td>${pedidoText[2]}</td>
-                    <td class="text-right">${pedidoText[3]}</td>
-                    <td class="text-right">${faturasText}</td>
-                    <td></td><td></td><td></td><td></td>
+                    <td class="table-dark text-white">${pedidoText[0]}</td>
+                    <td class="table-dark text-white">${pedidoText[1]}</td>
+                    <td class="table-dark text-white">${pedidoText[2]}</td>
+                    <td class="table-dark text-white text-right">${pedidoText[3]}</td>
+                    <td></td><td></td><td></td><td></td><td></td>
+                    <td class="table-warning">${faturasText}</td>
+                    
                 </tr>`;
         } else {
             item.reembolsos.forEach(reemb => {
@@ -107,17 +116,26 @@ function formatNested(processo) {
                     formatCurrency(reemb.historico_valor)
                 ];
 
+                const saldo = reemb.historico_valor >= 0
+                  ? 0
+                  : reemb.historico_valor - item.pedido.historico_valor;
+
+                const saldoClass = saldo >= 0
+                    ? 'table-success'
+                    : 'table-danger';
+
                 html += `
                     <tr>
-                        <td>${pedidoText[0]}</td>
-                        <td>${pedidoText[1]}</td>
-                        <td>${pedidoText[2]}</td>
-                        <td class="text-right">${pedidoText[3]}</td>
-                        <td class="text-right">${faturasText}</td>
-                        <td>${reembText[0]}</td>
-                        <td>${reembText[1]}</td>
-                        <td>${reembText[2]}</td>
-                        <td class="text-right">${reembText[3]}</td>
+                      <td class="table-dark text-white">${pedidoText[0]}</td>
+                      <td class="table-dark text-white">${pedidoText[1]}</td>
+                      <td class="table-dark text-white">${pedidoText[2]}</td>
+                      <td class="table-dark text-white text-right">${pedidoText[3]}</td>
+                      <td class="table-info">${reembText[0]}</td>
+                      <td class="table-info">${reembText[1]}</td>
+                      <td class="table-info">${reembText[2]}</td>
+                      <td class="table-info text-right">${reembText[3]}</td>
+                      <td class="${saldoClass} text-right">${formatCurrency(saldo)}</td>
+                      <td class="table-warning">${faturasText}</td>
                     </tr>`;
             });
         }
@@ -128,8 +146,8 @@ function formatNested(processo) {
         const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.fact_valor)];
         html += `<tr>
                     <td></td><td></td><td></td><td></td>
-                    <td class="text-right">${fText.join(' / ')}</td>
-                    <td></td><td></td><td></td><td></td>
+                    <td></td><td></td><td></td><td></td><td></td>
+                    <td class="table-danger">${fText.join(' / ')}</td>
                 </tr>`;
     });
 
@@ -138,8 +156,9 @@ function formatNested(processo) {
         const reembText = [r.historico_num, r.historico_doc, r.historico_dataemissao, formatCurrency(r.historico_valor)];
         html += `<tr>
                     <td></td><td></td><td></td><td></td>
-                    <td></td><td></td><td></td><td></td>
-                    <td>${reembText.join(' / ')}</td>
+                    <td class="table-danger">${reembText.join(' / ')}</td>
+                    <td></td><td></td><td></td><td></td><td></td>
+                    
                 </tr>`;
     });
 

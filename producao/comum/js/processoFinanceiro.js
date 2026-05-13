@@ -150,6 +150,10 @@ window.ProcessoObra = (() => {
     }
 
     // ---------------- Gráfico ----------------
+
+    // variável global privada do módulo
+    let graficoObra = null;
+
     async function criarGrafico(codigoProcesso, canvasId) {
         try {
             const url = `../obras/dados/obraPlanoPagamentosAutos.php?codigoProcesso=${codigoProcesso}`;
@@ -159,39 +163,119 @@ window.ProcessoObra = (() => {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
 
-            let labels = [], previstoAcum = [], realizadoAcum = [], previstoMensal = [], realizadoMensal = [];
-            let acumPrevisto = 0, acumRealizado = 0;
+            // destruir gráfico anterior
+            if (graficoObra) {
+                graficoObra.destroy();
+            }
+
+            let labels = [],
+                previstoAcum = [],
+                realizadoAcum = [],
+                previstoMensal = [],
+                realizadoMensal = [];
+
+            let acumPrevisto = 0,
+                acumRealizado = 0;
 
             data.forEach(item => {
                 labels.push(item.auto_num);
+
                 acumPrevisto += Number(item.valor_previsto);
                 acumRealizado += Number(item.valor_faturado);
+
                 previstoAcum.push(acumPrevisto);
                 realizadoAcum.push(acumRealizado);
+
                 previstoMensal.push(Number(item.valor_previsto));
-                realizadoMensal.push(Math.min(Number(item.valor_faturado), Number(item.valor_previsto)));
+
+                realizadoMensal.push(
+                    Math.min(
+                        Number(item.valor_faturado),
+                        Number(item.valor_previsto)
+                    )
+                );
             });
 
-            new Chart(canvas, {
+            // guardar referência
+            graficoObra = new Chart(canvas, {
                 data: {
                     labels,
                     datasets: [
-                        { label: 'Previsto Acumulado', type:'line', data: previstoAcum, borderColor:'rgba(255,99,132,1)', backgroundColor:'rgba(255,99,132,0.15)', fill:true, tension:0.3, yAxisID:'y' },
-                        { label: 'Realizado Acumulado', type:'line', data: realizadoAcum, borderColor:'rgba(0,181,204,1)', backgroundColor:'rgba(0,181,204,0.15)', fill:true, tension:0.3, yAxisID:'y' },
-                        { label: 'Previsto Mensal', type:'bar', data: previstoMensal, backgroundColor:'rgba(200,200,200,0.5)', yAxisID:'y1' },
-                        { label: 'Realizado Mensal', type:'bar', data: realizadoMensal, backgroundColor:'rgba(0,123,255,0.8)', yAxisID:'y1' }
+                        {
+                            label: 'Previsto Acumulado',
+                            type: 'line',
+                            data: previstoAcum,
+                            borderColor: 'rgba(255,99,132,1)',
+                            backgroundColor: 'rgba(255,99,132,0.15)',
+                            fill: true,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Realizado Acumulado',
+                            type: 'line',
+                            data: realizadoAcum,
+                            borderColor: 'rgba(0,181,204,1)',
+                            backgroundColor: 'rgba(0,181,204,0.15)',
+                            fill: true,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Previsto Mensal',
+                            type: 'bar',
+                            data: previstoMensal,
+                            backgroundColor: 'rgba(200,200,200,0.5)',
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Realizado Mensal',
+                            type: 'bar',
+                            data: realizadoMensal,
+                            backgroundColor: 'rgba(0,123,255,0.8)',
+                            yAxisID: 'y1'
+                        }
                     ]
                 },
                 options: {
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    interaction:{mode:'index',intersect:false},
-                    scales:{
-                        y:{beginAtZero:true, position:'left', title:{display:true,text:'Acumulado'}},
-                        y1:{beginAtZero:true, position:'right', grid:{drawOnChartArea:false}, title:{display:true,text:'Mensal'}},
-                        x:{stacked:true}
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
                     },
-                    plugins:{legend:{position:'top'}, tooltip:{enabled:true}}
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Acumulado'
+                            }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Mensal'
+                            }
+                        },
+                        x: {
+                            stacked: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    }
                 }
             });
 
