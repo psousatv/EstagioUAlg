@@ -86,64 +86,135 @@ function formatNested(processo) {
 
     // Monta linhas de pedidos, faturas e reembolsos
     Object.values(pedidosMap).forEach(item => {
-        const pedidoText = item.pedido
-            ? [item.pedido.historico_num, item.pedido.historico_doc, item.pedido.historico_dataemissao, formatCurrency(item.pedido.historico_valor)]
-            : ['', '', '', ''];
 
-        const faturasText = item.faturas
-            .map(f => [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.fact_valor)].join(' / '))
-            .join('<br>');
-
-            
-
-        if (item.reembolsos.length === 0) {
-            html += `
-                <tr>
-                    <td class="table-dark text-white">${pedidoText[0]}</td>
-                    <td class="table-dark text-white">${pedidoText[1]}</td>
-                    <td class="table-dark text-white">${pedidoText[2]}</td>
-                    <td class="table-dark text-white text-right">${pedidoText[3]}</td>
-                    <td></td><td></td><td></td><td></td><td></td>
-                    <td class="table-warning">${faturasText}</td>
-                    
-                </tr>`;
-        } else {
-            item.reembolsos.forEach(reemb => {
-                const reembText = [
-                    reemb.historico_num,
-                    reemb.historico_doc,
-                    reemb.historico_dataemissao,
-                    formatCurrency(reemb.historico_valor)
-                ];
-
-                const saldo = reemb.historico_valor >= 0
+      // -------------------------
+      // PEDIDO
+      // -------------------------
+      const pedidoText = item.pedido
+          ? [
+              item.pedido.historico_num,
+              item.pedido.historico_doc,
+              item.pedido.historico_dataemissao,
+              formatCurrency(item.pedido.historico_valor)
+          ]
+          : ['', '', '', ''];
+  
+      // -------------------------
+      // FATURAS NORMAIS
+      // -------------------------
+      const faturasNormais = item.faturas.map(f => [
+          formatExpediente(f.fact_expediente),
+          f.fact_data,
+          `${f.fact_tipo}_${f.fact_num}`,
+          `AM_${f.fact_auto_num}`,
+          formatCurrency(f.fact_valor)
+      ].join(' / '));
+  
+      // -------------------------
+      // REEMBOLSOS CANCELADOS
+      // Se valor negativo + expediente cancelado
+      // aparecem também em FATURAS
+      // -------------------------
+      const cancelamentos = item.reembolsos
+          .filter(r =>
+              r.historico_valor < 0 &&
+              r.historico_doc &&
+              r.historico_doc.toLowerCase().includes('cancel')
+          )
+          .map(r => [
+              r.historico_num,
+              'CANCELADO'
+          ].join(' -> '));
+  
+      // -------------------------
+      // JUNTA FATURAS + CANCELAMENTOS
+      // -------------------------
+      const faturasText = [
+          ...faturasNormais,
+          ...cancelamentos
+      ].join('<br>');
+  
+      // -------------------------
+      // SEM REEMBOLSOS
+      // -------------------------
+      if (item.reembolsos.length === 0) {
+  
+          html += `
+              <tr>
+                  <td class="table-dark text-white">${pedidoText[0]}</td>
+                  <td class="table-dark text-white">${pedidoText[1]}</td>
+                  <td class="table-dark text-white">${pedidoText[2]}</td>
+                  <td class="table-dark text-white text-right">${pedidoText[3]}</td>
+  
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+  
+                  <td></td>
+  
+                  <td class="table-warning">
+                      ${faturasText}
+                  </td>
+              </tr>
+          `;
+  
+      } else {
+  
+          // -------------------------
+          // COM REEMBOLSOS
+          // -------------------------
+          item.reembolsos.forEach(reemb => {
+  
+              const reembText = [
+                  reemb.historico_num,
+                  reemb.historico_doc,
+                  reemb.historico_dataemissao,
+                  formatCurrency(reemb.historico_valor)
+              ];
+  
+              const saldo = reemb.historico_valor >= 0
                   ? reemb.historico_valor - item.pedido.historico_valor
                   : 0;
-
-                const saldoClass = saldo >= 0
-                    ? 'table-success'
-                    : 'table-danger';
-
-                html += `
-                    <tr>
+  
+              const saldoClass = saldo >= 0
+                  ? 'table-success'
+                  : 'table-danger';
+  
+              html += `
+                  <tr>
+  
+                      <!-- PEDIDOS -->
                       <td class="table-dark text-white">${pedidoText[0]}</td>
                       <td class="table-dark text-white">${pedidoText[1]}</td>
                       <td class="table-dark text-white">${pedidoText[2]}</td>
                       <td class="table-dark text-white text-right">${pedidoText[3]}</td>
+  
+                      <!-- REEMBOLSOS -->
                       <td class="table-info">${reembText[0]}</td>
                       <td class="table-info">${reembText[1]}</td>
                       <td class="table-info">${reembText[2]}</td>
                       <td class="table-info text-right">${reembText[3]}</td>
-                      <td class="${saldoClass} text-right">${formatCurrency(saldo)}</td>
-                      <td class="table-warning">${faturasText}</td>
-                    </tr>`;
-            });
-        }
+  
+                      <!-- SALDO -->
+                      <td class="${saldoClass} text-right">
+                          ${formatCurrency(saldo)}
+                      </td>
+  
+                      <!-- FATURAS -->
+                      <td class="table-warning">
+                          ${faturasText}
+                      </td>
+  
+                  </tr>
+              `;
+          });
+      }
     });
 
     // Linhas de faturas órfãs
     faturasOrfaos.forEach(f => {
-        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_num, f.fact_auto_num, formatCurrency(f.fact_valor)];
+        const fText = [formatExpediente(f.fact_expediente), f.fact_data, f.fact_tipo + "_" + f.fact_num, "AM_" + f.fact_auto_num, formatCurrency(f.fact_valor)];
         html += `<tr>
                     <td></td><td></td><td></td><td></td>
                     <td></td><td></td><td></td><td></td><td></td>
