@@ -117,8 +117,8 @@ function formatNested(processo) {
                 ];
 
                 const saldo = reemb.historico_valor >= 0
-                  ? 0
-                  : reemb.historico_valor - item.pedido.historico_valor;
+                  ? reemb.historico_valor - item.pedido.historico_valor
+                  : 0;
 
                 const saldoClass = saldo >= 0
                     ? 'table-success'
