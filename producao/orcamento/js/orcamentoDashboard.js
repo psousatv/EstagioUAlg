@@ -27,11 +27,8 @@ function cartoes(endereco) {
             if (previsto_percent > 0.85) {
                 classeCartao = 'bg-danger text-white';
                 iconeCartao = 'fa fa-thumbs-down';
-            } else if (previsto_percent > 0.70) {
-                classeCartao = 'bg-warning text-dark';
-                iconeCartao = 'fa fa-exclamation-triangle';
-            } else if (previsto_percent > 0.50) {
-                classeCartao = 'bg-primary text-white';
+            } else if (previsto_percent > 0.60) {
+                classeCartao = 'bg-warning text-white';
                 iconeCartao = 'fa fa-cog fa-spin';
             } else {
                 classeCartao = 'bg-success text-white';
