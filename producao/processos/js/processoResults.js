@@ -1,18 +1,25 @@
 
-var processoCodigo = []
+var processoCodigo = [];
+var variaveis = [];
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
 function processoSelected() { 
 
   var params = new URLSearchParams(window.location.search);
-  var codigo = params.get("codigoProcesso"); 
+  var codigo = params.get("codigoProcesso");
+  var item = 11;
+  var ano = 2026;
+  //var item = params.get("codigoProcesso");
+  //var ano = params.get("codigoProcesso");
+
   
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("processoSelected").innerHTML = this.responseText;
       processoCodigo.push(codigo);
+      variaveis.push(codigo, item, ano);
     }
   }
 
@@ -93,7 +100,7 @@ function relacoesProcesso(codigo) {
     }
   }
 
-  xmlhttp.open("GET","dados/processoRelacoes.php?codigoProcesso="+codigo,true);
+  xmlhttp.open("GET","dados/processoRelacoes.php?codigoProcesso=" + codigo, true);
   xmlhttp.send();
 };
 
@@ -156,7 +163,12 @@ function redirectObras(){
   //window.open(obrasURL, "_blank");
   window.location.href = obrasURL;
 };
-
+//Orçamento
+function redirectOrcamento(){
+  var obrasURL = "../../producao/orcamento/orcamentoNested.html?itemProcurado=" + variaveis[1] + "&anoCorrente=" + variaveis[2];
+  //window.open(obrasURL, "_blank");
+  window.location.href = obrasURL;
+};
 function redirectHome(){
   var URL = "../../producao/obras/processoSearch.html";
   //window.open(URL, "_blank");

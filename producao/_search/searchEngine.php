@@ -24,6 +24,7 @@ function gerarTabelaProcessos(array $data): void {
 $nomeProcesso = $_GET['nomeProcesso'] ?? null;
 $nomeFornecedor = $_GET['nomeFornecedor'] ?? null;
 $codigoProcessoAdministrativo = $_GET['codigoProcessoAdministrativo'] ?? null;
+$encomendaFornecedor = $_GET['encomendaFornecedor'] ?? null;
 
 if ($nomeProcesso) {
     $query = "SELECT proces_check, proces_padm, proces_nome, ent_nome, ent_nif 
@@ -48,14 +49,15 @@ if ($nomeProcesso) {
     $stmt->execute([':valor' => "%$nomeFornecedor%"]);
     gerarTabelaProcessos($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-} elseif ($codigoProcessoAdministrativo) {
+} elseif ($encomendaFornecedor) {
     $query = "SELECT proces_check, proces_padm, proces_nome, ent_nome, ent_nif
               FROM processo
+              INNER JOIN historico ON historico_proces_check = proces_check
               INNER JOIN entidade ent ON ent_cod = proces_ent_cod
-              WHERE proces_padm LIKE :valor
+              WHERE historico_num LIKE :encomenda
               ORDER BY proces_nome ASC";
 
     $stmt = $myConn->prepare($query);
-    $stmt->execute([':valor' => "%$codigoProcessoAdministrativo%"]);
+    $stmt->execute([':encomenda' => "%$encomendaFornecedor%"]);
     gerarTabelaProcessos($stmt->fetchAll(PDO::FETCH_ASSOC));
 }

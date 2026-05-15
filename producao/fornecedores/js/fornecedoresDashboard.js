@@ -572,7 +572,9 @@ const App = {
   },
 
   expediente(str) {
-    return `${str[0]}.${str.slice(1, 6)}.${str.slice(6)}`;
+    return str
+      ? `${str[0]}.${str.slice(1, 6)}.${str.slice(6)}`
+      : '';
   },
 
   escape(t) {

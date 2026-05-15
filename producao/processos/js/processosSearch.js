@@ -56,6 +56,20 @@ function procuraProcessoAdministrativo(codigoProcessoAdministrativo) {
 
 };
 
+// Procurar por Encomenda a Fornecedor
+function procuraEncomendaFornecedor(encomendaFornecedor) {
+  var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("showResultsForm").innerHTML = this.responseText;
+      }
+    }
+
+    //document.getElementById("detailsWrapper").style.display = "none";
+    xmlhttp.open("GET","../_search/searchEngine.php?encomendaFornecedor="+encomendaFornecedor,true);
+    xmlhttp.send();  
+};
+
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
 function redirectProcesso(codigo) {
