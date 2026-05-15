@@ -193,7 +193,7 @@ const App = {
     let atual = 0;
     let anterior = 0;
     let atividadeAA = 0;
-    let atividadeSAR = 0;
+    let atividadeARD = 0;
     let atividadeAmbas = 0;
   
     let topEntidade = null;
@@ -205,13 +205,13 @@ const App = {
       const valorAnterior = Number(e.total_anoAnterior || 0);
   
       const valorAA = Number(e.total_atividadeAA || 0);
-      const valorSAR = Number(e.total_atividadeSAR || 0);
+      const valorARD = Number(e.total_atividadeARD || 0);
       const valorAmbas = Number(e.total_atividadeAmbas || 0);
   
       atual += valorAtual;
       anterior += valorAnterior;
       atividadeAA += valorAA;
-      atividadeSAR += valorSAR;
+      atividadeARD += valorARD;
       atividadeAmbas += valorAmbas;
   
       if (valorAtual > topEntidadeValor) {
@@ -224,7 +224,7 @@ const App = {
     // 🔥 NOVO (substitui os $('#kpiXXX'))
     const kpis = {
       AA: atividadeAA,
-      SAR: atividadeSAR,
+      ARD: atividadeARD,
       Ambas: atividadeAmbas,
       Entidades: entidades.length,
       Atual: atual,
@@ -241,8 +241,8 @@ const App = {
 
     const configs = [
       { key: 'AA', label: 'Abastecimento de Água', class: 'bg-primary', format: 'money' },
-      { key: 'SAR', label: 'Águas Residuais Domésticas', class: 'bg-dark', format: 'money' },
-      { key: 'Ambas', label: 'Ambas as Atividades (AA + SAR)', class: 'bg-primary', format: 'money' },
+      { key: 'ARD', label: 'Águas Residuais Domésticas', class: 'bg-dark', format: 'money' },
+      { key: 'Ambas', label: 'Ambas as Atividades (AA + ARD)', class: 'bg-primary', format: 'money' },
       { key: 'Entidades', label: 'Total Entidades', class: 'bg-secondary', format: 'number' },
       { key: 'Atual', label: 'Total Ano Atual', class: 'bg-success', format: 'money' },
       { key: 'Anterior', label: 'Total Ano Anterior', class: 'bg-warning', format: 'money' },
