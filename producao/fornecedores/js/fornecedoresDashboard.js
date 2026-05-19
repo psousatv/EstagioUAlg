@@ -272,7 +272,7 @@ const App = {
     }).join('');
   },
 
-  // =========================
+ // =========================
   // TABLE
   // =========================
   buildTable(entidades) {
@@ -281,17 +281,19 @@ const App = {
     const anoAnterior = anoAtual - 1;
 
     let html = `
-      <table class="table table-sm table-bordered table-hover bg-white small">
-        <thead>
-          <tr>
-            <th>Entidade</th>
-            <th>Processos</th>
-            <th>${anoAnterior}</th>
-            <th>${anoAtual}</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div class="table-wrapper">
+        <table class="table table-sm table-bordered table-hover bg-white small mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Entidade</th>
+              <th>Processos</th>
+              <th>${anoAnterior}</th>
+              <th>${anoAtual}</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
     `;
 
     entidades.forEach(e => {
@@ -326,7 +328,13 @@ const App = {
       `;
     });
 
-    return html + '</tbody></table>';
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    return html;
   },
 
   // =========================
