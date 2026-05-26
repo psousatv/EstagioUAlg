@@ -2,93 +2,134 @@ let anoCorrente = new Date().getFullYear();
 
 // Cabeçalhos personalizados
 const cabecalhos = [
-    "",  
-    "Detalhes",  
+    "",
+    "Detalhes",
     "SE",
     "Orçamento",
     "Descritivo",
     "Valor Publicado",
+    "Valor Adjudicado",
     "Valor Faturado"
 ];
 
-// Função para inicializar o ano e carregar a tabela
+// =========================
+// INIT
+// =========================
 function anoDefault() {
     document.getElementById('anoCorrente').value = anoCorrente;
     carregarTabela(anoCorrente);
 }
 
-// Função para alterar o ano
 function mudaAno() {
     const anoFormulario = document.getElementById('anoCorrente').value;
+
     if (!validaAno(anoFormulario)) {
         document.getElementById('anoCorrente').value = anoCorrente;
         return;
     }
+
     anoCorrente = anoFormulario;
     carregarTabela(anoCorrente);
 }
 
-// Função para carregar os dados da tabela
+// =========================
+// LOAD DATA
+// =========================
 function carregarTabela(ano) {
+
     const url = 'dados/setoresEspeciais.php?anoCorrente=' + ano;
-    $.getJSON(url, function(dados) {
+
+    $.getJSON(url, function (dados) {
+
+        // guarda global para export
+        window._dadosSetoresEspeciais = dados;
+
         if (!dados || !dados.listagem || !dados.listagem.length) {
             $('#listaDetalhes').html('<p>Nenhum dado encontrado.</p>');
             $('#titulo').html('');
             return;
         }
 
-        // Preenche título
+        // =========================
+        // TITULO
+        // =========================
         $('#titulo').html(`
             <div class="btn btn-primary col-md-8 d-grid small text-white text-left" id="tituloDetalhe">
                 ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
             </div>
-            
+
             <div class="btn btn-primary">
-            <a class="text-white" href="setoresEspeciais.html"><i class="fa-solid fa-rotate"></i></a>
+                <a class="text-white" href="setoresEspeciais.html">
+                    <i class="fa-solid fa-rotate"></i>
+                </a>
             </div>
 
+            <div class="btn btn-success" id="btnExport">
+                <i class="fa fa-file-excel"></i>
+            </div>
         `);
 
-        // Monta a tabela principal
-        let linhasHTML = '';
-        dados.listagem.forEach(item => {
-            linhasHTML += '<tr>';
+        // bind export
+        $('#btnExport').off('click').on('click', function () {
+            exportSetoresEspeciais(window._dadosSetoresEspeciais);
+        });
 
-            // Adiciona a nova célula de cor no início da linha
+        // =========================
+        // TABELA
+        // =========================
+        let linhasHTML = '';
+
+        dados.listagem.forEach(item => {
+
             let cor = '';
-            if (item.estado === 'Em Curso') {
+
+            if (item.estado === 'Publicado') {
+                cor = 'background-color: red;';
+            } else if (item.estado === 'Em Curso') {
                 cor = 'background-color: green;';
-            } else if (item.estado === 'Em Preparação') {
-                cor = 'background-color: orange;';
+            }  else if (item.estado === 'Em Preparação') {
+                cor = 'background-color: yellow;';
             } else {
-                cor = 'background-color: transparent;';
+                cor = 'background-color: blue;';
             }
 
-            // Adiciona a célula a cor
+            linhasHTML += '<tr>';
+
+            // coluna estado (cor)
             linhasHTML += `
-                <td style=" ${cor}" title="${item.estado}"></td>
+                <td style="${cor}" title="${item.estado}"></td>
             `;
 
-            // Coluna Detalhes com ícone
-            linhasHTML += `<td class="text-center">
-                            <i class="fas fa-info-circle text-primary fa-2x" style="cursor:pointer;" 
-                                onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos)})' title="Mais detalhes"></i>
-                        </td>`;
+            // detalhes
+            linhasHTML += `
+                <td class="text-center">
+                    <i class="fas fa-info-circle text-primary fa-2x"
+                       style="cursor:pointer;"
+                       onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos || [])})'
+                       title="Mais detalhes"></i>
+                </td>
+            `;
 
-            // Ignora algumas colunas 
-            const valores = Object.keys(item).filter(key => 
-                key !== 'se_check' && 
+            // restantes colunas
+            const valores = Object.keys(item).filter(key =>
+                key !== 'se_check' &&
                 key !== 'data_publicacao' &&
                 key !== 'estado' &&
-                key !== 'processos').map(key => item[key]);
+                key !== 'processos'
+            ).map(key => item[key]);
 
-            // Adiciona os valores às células da tabela
             valores.forEach((valor, idx) => {
-                if (cabecalhos[idx + 2] === "Valor Publicado" || cabecalhos[idx + 2] === "Valor Faturado") {
+
+                if (cabecalhos[idx + 2] === "Valor Publicado" ||
+                    cabecalhos[idx + 2] === "Valor Adjudicado" ||
+                    cabecalhos[idx + 2] === "Valor Faturado") {
+
                     valor = formatCurrency(valor);
+
                     linhasHTML += `<td class="text-right">${valor}</td>`;
+
                 } else {
+
                     linhasHTML += `<td>${valor}</td>`;
                 }
             });
@@ -96,87 +137,162 @@ function carregarTabela(ano) {
             linhasHTML += '</tr>';
         });
 
-       // Cria o HTML da tabela
-       const tabelaHTML = `
-       <div class="table-responsive small" style="max-height:800px;">
-           <table class="table table-striped table-bordered mb-0 p-0 table-sm">
-               <thead class="sticky-top bg-white">
-                   <tr>${cabecalhos.map((th, index) => index === 0 ? 
-                    `<th style="width: 3px; min-width: 3px; max-width: 3px; padding: 0; margin: 0; border: none;">
-                    ${th}</th>` : `<th>${th}</th>`).join('')}</tr>
-               </thead>
-               <tbody>${linhasHTML}</tbody>
-           </table>
-       </div>
-   `;
+        // =========================
+        // TABLE HTML
+        // =========================
+        const tabelaHTML = `
+            <div class="table-responsive small" style="max-height:800px;">
+                <table class="table table-striped table-bordered mb-0 p-0 table-sm">
 
-        // Exibe a tabela
+                    <thead class="sticky-top table-dark">
+                        <tr>
+                            ${cabecalhos.map((th, index) =>
+                                index === 0
+                                    ? `<th style="width:3px;padding:0;border:none;">${th}</th>`
+                                    : `<th>${th}</th>`
+                            ).join('')}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${linhasHTML}
+                    </tbody>
+
+                </table>
+            </div>
+        `;
+
         $('#listaDetalhes').html(tabelaHTML);
 
-        // Força a largura da primeira coluna após a tabela ser renderizada
-        document.querySelectorAll('table td:first-child, table th:first-child').forEach(function(td) {
-            td.style.width = '5px';
-            td.style.minWidth = '5px';
-            td.style.maxWidth = '5px';
-            td.style.padding = '0';
-        });
-
+        // ajusta primeira coluna
+        document.querySelectorAll('table td:first-child, table th:first-child')
+            .forEach(td => {
+                td.style.width = '5px';
+                td.style.minWidth = '5px';
+                td.style.maxWidth = '5px';
+                td.style.padding = '0';
+            });
     });
 }
 
-
-// Função abrir o Modal para visualizar detalhes (clicando no ícone)
+// =========================
+// MODAL DETALHES
+// =========================
 function verDetalhes(linhaSE, processos) {
-    if (!processos || processos.length === 0) {
+
+    if (!processos || !processos.length) {
         alert("Nenhum processo encontrado para essa linha.");
         return;
     }
 
     let processosHTML = '';
+
     processos.forEach(proc => {
-        processosHTML += ` 
+
+        processosHTML += `
             <tr>
-                <td>${proc.proces_contrato}</td>
-                <td>${proc.proced_regime}</td>
-                <td>${proc.proces_padm}</td>
-                <td>${proc.proces_nome}</td>
+                <td>${proc.proces_contrato || ''}</td>
+                <td>${proc.proced_regime || ''}</td>
+                <td>${proc.proces_padm || ''}</td>
+                <td>${proc.proces_nome || ''}</td>
                 <td class="text-right">${formatCurrency(proc.proces_val_max)}</td>
+                <td class="text-right">${formatCurrency(proc.proces_val_adjudicacoes)}</td>
                 <td class="text-right">${formatCurrency(proc.proces_val_faturacao)}</td>
                 <td class="text-center">
-                    <i class="fas fa-info-circle text-primary fa-2x" style="cursor:pointer;" 
-                    onclick='redirectProcesso(${proc.proces_check})' title="Mais detalhes"></i>
+                    <i class="fas fa-info-circle text-primary fa-2x"
+                       style="cursor:pointer;"
+                       onclick='redirectProcesso(${proc.proces_check})'
+                       title="Mais detalhes"></i>
                 </td>
             </tr>
         `;
-        
-        //console.table(proc);
-
     });
 
-    // Adiciona o HTML gerado à tabela no modal
     $('#processosBody').html(processosHTML);
-    
-    // Exibe o modal
+
     $('#modalDetalhes').modal('show');
 
-    // Foca no primeiro botão ou elemento interativo dentro do modal (pode ser o botão de fechar, por exemplo)
     $('#modalDetalhes .modal-header button').focus();
 }
 
-// Função para fechar o modal
 function fecharModal() {
-    $('#modalDetalhes').modal('hide'); // Fecha o modal
+    $('#modalDetalhes').modal('hide');
 }
 
-// Formatação de valores monetários
+// =========================
+// EXPORT EXCEL
+// =========================
+function exportSetoresEspeciais(dados, filename = 'SETORES_ESPECIAIS') {
+
+    if (!dados || !dados.listagem) return;
+
+    const wb = XLSX.utils.book_new();
+    const rows = [];
+
+    dados.listagem.forEach(linha => {
+
+        const processos = linha.processos || [];
+
+        if (!processos.length) {
+
+            rows.push({
+                LinhaSE: linha.linha_se,
+                Estado: linha.estado,
+                Orcamento: linha.linha_orcamento || '',
+                Descritivo: linha.descritivo || '',
+                ValorPublicado: linha.valor_publicado || 0,
+                Processo_Contrato: '',
+                Processo_Regime: '',
+                Processo_PADM: '',
+                Processo_Nome: '',
+                Processo_ValorMax: '',
+                Processo_ValorAdj: '',
+                Processo_ValorFaturacao: ''
+            });
+
+            return;
+        }
+
+        processos.forEach(proc => {
+
+            rows.push({
+                LinhaSE: linha.linha_se,
+                Estado: linha.estado,
+                Orcamento: linha.linha_orcamento || '',
+                Descritivo: linha.descritivo || '',
+                ValorPublicado: linha.valor_publicado || 0,
+                Processo_Contrato: proc.proces_contrato || '',
+                Processo_Regime: proc.proced_regime || '',
+                Processo_PADM: proc.proces_padm || '',
+                Processo_Nome: proc.proces_nome || '',
+                Processo_ValorMax: proc.proces_val_max || 0,
+                Processo_ValorAdj: proc.proces_val_adjudicacoes || 0,
+                Processo_ValorFaturacao: proc.proces_val_faturacao || 0
+            });
+        });
+    });
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+
+    XLSX.utils.book_append_sheet(wb, ws, 'SetoresEspeciais');
+
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+}
+
+// =========================
+// UTILS
+// =========================
 function formatCurrency(valor) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(valor || 0);
+    return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(valor || 0);
 }
 
-// Redireciona para o processo
 function redirectProcesso(codigoProcesso) {
-    var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso=" + codigoProcesso;
-    window.location.href = obrasURL;
+    window.location.href =
+        "../../producao/processos/processoResults.html?codigoProcesso=" + codigoProcesso;
 }
 
+// =========================
 window.onload = anoDefault;

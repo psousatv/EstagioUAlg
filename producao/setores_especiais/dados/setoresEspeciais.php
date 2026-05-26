@@ -43,6 +43,7 @@ try {
         p.proces_nome,
         p.proces_val_max,
         p.proces_val_faturacao,
+        p.proces_val_adjudicacoes,
         po.proced_regime,
         p.proces_proced_cod
     FROM setores_especiais s
@@ -72,6 +73,7 @@ try {
         if (!isset($resumoValores[$linha_se])) {
             $resumoValores[$linha_se] = [
                 'total_val_faturacao' => 0,
+                'total_val_adjudicado' => 0,
                 'total_val_max' => 0
             ];
         }
@@ -79,6 +81,7 @@ try {
         // Somar os valores de faturação e valor máximo
         if ($processo['proced_regime'] == 'Setores Especiais'){
             $resumoValores[$linha_se]['total_val_faturacao'] += $processo['proces_val_faturacao'];
+            $resumoValores[$linha_se]['total_val_adjudicado'] += $processo['proces_val_adjudicacoes'];
             $resumoValores[$linha_se]['total_val_max'] += $processo['proces_val_max'];    
         }
         
@@ -98,8 +101,10 @@ try {
         // Adicionar o total_faturacao diretamente
         if (isset($resumoValores[$linha_se])) {
             $setor['total_faturacao'] = $resumoValores[$linha_se]['total_val_faturacao'];
+            $setor['total_adjudicado'] = $resumoValores[$linha_se]['total_val_adjudicado'];
         } else {
             $setor['total_faturacao'] = 0;
+            $setor['total_adjudicado'] = 0;
         }
 
         // Adicionar os processos correspondentes à linha_se como uma nova coluna
@@ -117,6 +122,7 @@ try {
             'data_publicacao' => $setor['data_publicacao'],
             'descritivo' => $setor['descritivo'],
             'valor_publicado' => $setor['valor_publicado'],
+            'total_adjudicado' => $setor['total_adjudicado'],  // Adicionando após 'valor_publicado'
             'total_faturacao' => $setor['total_faturacao'],  // Adicionando após 'valor_publicado'
             'estado' => $setor['estado'],
             'processos' => $setor['processos']  // Adicionando 'processos' após 'estado'
