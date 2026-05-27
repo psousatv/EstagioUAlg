@@ -3,13 +3,13 @@ let anoCorrente = new Date().getFullYear();
 // Cabeçalhos personalizados
 const cabecalhos = [
     "",
-    "Detalhes",
     "SE",
     "Orçamento",
     "Descritivo",
     "Publicado",
     "Comprometido",
-    "Faturado"
+    "Faturado",
+    "Detalhes"
 ];
 
 // =========================
@@ -100,16 +100,6 @@ function carregarTabela(ano) {
                 <td style="${cor}" title="${item.estado}"></td>
             `;
 
-            // detalhes
-            linhasHTML += `
-                <td class="text-center">
-                    <i class="fas fa-info-circle text-primary fa-2x"
-                       style="cursor:pointer;"
-                       onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos || [])})'
-                       title="Mais detalhes"></i>
-                </td>
-            `;
-
             // restantes colunas
             const valores = Object.keys(item).filter(key =>
                 key !== 'se_check' &&
@@ -120,9 +110,9 @@ function carregarTabela(ano) {
 
             valores.forEach((valor, idx) => {
 
-                if (cabecalhos[idx + 2] === "Publicado" ||
-                    cabecalhos[idx + 2] === "Comprometido" ||
-                    cabecalhos[idx + 2] === "Faturado") {
+                if (cabecalhos[idx + 1] === "Publicado" ||
+                    cabecalhos[idx + 1] === "Comprometido" ||
+                    cabecalhos[idx + 1] === "Faturado") {
 
                     valor = formatCurrency(valor);
 
@@ -134,6 +124,17 @@ function carregarTabela(ano) {
                 }
             });
 
+            // detalhes
+            linhasHTML += `
+                <td class="text-center">
+                    <i class="fas fa-info-circle text-primary fa-2x"
+                       style="cursor:pointer;"
+                       onclick='verDetalhes("${item.linha_se}", ${JSON.stringify(item.processos || [])})'
+                       title="Mais detalhes"></i>
+                </td>
+            `;
+            
+            // Fecho
             linhasHTML += '</tr>';
         });
 
