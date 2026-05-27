@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadCronos() {
 
     try {
-        //const response = await fetch("producao/comum/dados/cronosProcessos.php");
+
         const response = await fetch("producao/comum/dados/cronosProcessos.php");
         const text = await response.text();
         const processos = JSON.parse(text);
@@ -17,7 +17,9 @@ async function loadCronos() {
         renderCronos(processos);
 
     } catch (error) {
+
         console.error("Erro ao carregar cronos:", error);
+
         document.getElementById("lstCronos").innerHTML =
             `<div class="text-danger">Erro ao carregar dados.</div>`;
     }
@@ -32,31 +34,78 @@ function renderCronos(processos) {
 
     const lista = processos.map(proc => {
 
+        //console.table(proc);
+
+        // =========================
+        // PRAZO
+        // =========================
         const prazo = parseInt(proc.proces_prz_exec) || 0;
 
-        const dataAdjudicacao = proc.proces_data_adjudicacao
-            ? new Date(proc.proces_data_adjudicacao + "T00:00:00")
+        // =========================
+        // DATAS (FORMATO ISO DO PHP)
+        // =========================
+        const dataAdjudicacao = proc.data_adjudicacao
+            ? new Date(proc.data_adjudicacao)
             : null;
 
-        const dataContrato = proc.proces_data_contrato
-            ? new Date(proc.proces_data_contrato + "T00:00:00")
+        const dataContrato = proc.data_contrato
+            ? new Date(proc.data_contrato)
             : null;
 
-        const dataConsignacao = proc.proces_data_csgn
-            ? new Date(proc.proces_data_csgn + "T00:00:00")
+        const dataConsignacao = proc.data_consignacao
+            ? new Date(proc.data_consignacao)
             : null;
 
-        // Prioridade: Consignacao > Contrato > Adjudicacao > Hoje
-        const dataBase = dataConsignacao || dataContrato || dataAdjudicacao || hoje;
+        const dataPSeguranca = proc.data_pss
+            ? new Date(proc.data_pss)
+            : null;
 
+        // =========================
+        // DATA BASE
+        // =========================
+        let dataBase = hoje;
+
+        /*
+            REGRA:
+
+            - Se PSeguranca existe e é posterior à Consignacao → usa PSeguranca
+            - Caso contrário → usa Consignacao
+            - Fallback → Contrato → Adjudicação → Hoje
+        */
+        if (proc.proces_cpv_sigla === "SF") {
+                dataBase = dataAdjudicacao || hoje;
+        } else if (proc.proces_cpv_sigla === "EMP") {
+            if (
+                dataPSeguranca &&
+                dataConsignacao &&
+                dataPSeguranca > dataConsignacao
+            ) {
+                dataBase = dataPSeguranca;
+            } else if (dataConsignacao) {
+                dataBase = dataConsignacao;
+            } else if (dataContrato) {
+                dataBase = dataContrato;
+            } else if (dataAdjudicacao) {
+                dataBase = dataAdjudicacao;
+            }
+        }
+
+        // =========================
+        // DATA TERMO
+        // =========================
         const dataTermo = new Date(dataBase);
         dataTermo.setDate(dataTermo.getDate() + prazo);
 
+        // =========================
+        // DIAS RESTANTES
+        // =========================
         const diasRestantes = Math.ceil(
             (dataTermo - hoje) / (1000 * 60 * 60 * 24)
         );
 
-        // Badge
+        // =========================
+        // BADGES
+        // =========================
         let textoBadge = "";
         let classeBadge = "";
 
@@ -73,13 +122,13 @@ function renderCronos(processos) {
             textoBadge = "Conforme";
             classeBadge = "badge-success";
         }
-
         return {
             ...proc,
+            prazo,
             dataAdjudicacao,
             dataContrato,
             dataConsignacao,
-            prazo,
+            dataPSeguranca,
             dataBase,
             dataTermo,
             diasRestantes,
@@ -89,41 +138,49 @@ function renderCronos(processos) {
 
     }).sort((a, b) => a.dataTermo - b.dataTermo);
 
-   // Tabela small + sticky
+    // =========================
+    // TABELA
+    // =========================
     let html = `
     <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
         <table class="table table-sm table-hover table-bordered align-middle">
-            <thead class="thead-light" style="position: sticky; top: 0; z-index: 10;">
+
+            <thead class="thead-light"
+                   style="position: sticky; top: 0; z-index: 10;">
+
                 <tr class="small">
+
                     <th style="width: 75px;">Estado</th>
                     <th>Processo</th>
-                    <th style="width: 75px;">Início</th>   <!-- largura fixa -->
+                    <th style="width: 90px;">Início</th>
                     <th style="width: 50px;" class="text-end">Prazo</th>
-                    <th style="width: 75px;">Termo</th>   <!-- largura fixa -->
-                    <th style="width: 50px;">Faltam</th>
-                    
+                    <th style="width: 90px;">Termo</th>
+                    <th style="width: 60px;">Faltam</th>
+
                 </tr>
+
             </thead>
+
             <tbody>
     `;
 
     lista.forEach(proc => {
 
-    html += `
-        <tr class="small">
-            <td style="width: 75px;">
-                <span class="badge ${proc.classeBadge}">
-                    ${proc.textoBadge}
-                </span>
-            </td>
-            <td>${proc.proces_nome}</td>
-            <td style="width: 75px;">${formatDate(proc.dataBase)}</td>
-            <td style="width: 50px;" class="text-end">${proc.prazo}</td>
-            <td style="width: 75px;">${formatDate(proc.dataTermo)}</td>
-            <td style="width: 50px;">${proc.diasRestantes}</td>
-            
-        </tr>
-    `;
+        html += `
+            <tr class="small">
+
+                <td>
+                    <span class="badge ${proc.classeBadge}">
+                        ${proc.textoBadge}
+                    </span>
+                </td>
+                <td>${proc.proces_nome}</td>
+                <td>${formatDate(proc.dataBase)}</td>
+                <td class="text-end">${proc.prazo}</td>
+                <td>${formatDate(proc.dataTermo)}</td>
+                <td>${proc.diasRestantes}</td>
+            </tr>
+        `;
     });
 
     html += `
@@ -132,14 +189,15 @@ function renderCronos(processos) {
     </div>
     `;
 
-
     container.innerHTML = html;
 }
 
+// =========================
+// FORMAT DATE (de-DE)
+// =========================
 function formatDate(date) {
+
     if (!date) return "—";
-    const dia = String(date.getDate()).padStart(2, '0');
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const ano = date.getFullYear();
-    return `${dia}-${mes}-${ano}`;
+
+    return new Intl.DateTimeFormat('de-DE').format(date);
 }

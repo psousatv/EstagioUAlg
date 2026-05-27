@@ -7,9 +7,9 @@ const cabecalhos = [
     "SE",
     "Orçamento",
     "Descritivo",
-    "Valor Publicado",
-    "Valor Adjudicado",
-    "Valor Faturado"
+    "Publicado",
+    "Comprometido",
+    "Faturado"
 ];
 
 // =========================
@@ -85,7 +85,7 @@ function carregarTabela(ano) {
 
             if (item.estado === 'Publicado') {
                 cor = 'background-color: red;';
-            } else if (item.estado === 'Em Curso') {
+            } else if (item.estado === 'Em Curso' || item.estado === 'Finalizado' || item.estado === 'Encerrada') {
                 cor = 'background-color: green;';
             }  else if (item.estado === 'Em Preparação') {
                 cor = 'background-color: yellow;';
@@ -120,9 +120,9 @@ function carregarTabela(ano) {
 
             valores.forEach((valor, idx) => {
 
-                if (cabecalhos[idx + 2] === "Valor Publicado" ||
-                    cabecalhos[idx + 2] === "Valor Adjudicado" ||
-                    cabecalhos[idx + 2] === "Valor Faturado") {
+                if (cabecalhos[idx + 2] === "Publicado" ||
+                    cabecalhos[idx + 2] === "Comprometido" ||
+                    cabecalhos[idx + 2] === "Faturado") {
 
                     valor = formatCurrency(valor);
 
@@ -240,14 +240,14 @@ function exportSetoresEspeciais(dados, filename = 'SETORES_ESPECIAIS') {
                 Estado: linha.estado,
                 Orcamento: linha.linha_orcamento || '',
                 Descritivo: linha.descritivo || '',
-                ValorPublicado: linha.valor_publicado || 0,
-                Processo_Contrato: '',
-                Processo_Regime: '',
-                Processo_PADM: '',
-                Processo_Nome: '',
-                Processo_ValorMax: '',
-                Processo_ValorAdj: '',
-                Processo_ValorFaturacao: ''
+                Publicado: linha.valor_publicado || 0,
+                Contrato: '',
+                Regime: '',
+                PADM: '',
+                Nome: '',
+                Maximo: '',
+                Comprometido: '',
+                Faturacao: ''
             });
 
             return;
@@ -260,14 +260,14 @@ function exportSetoresEspeciais(dados, filename = 'SETORES_ESPECIAIS') {
                 Estado: linha.estado,
                 Orcamento: linha.linha_orcamento || '',
                 Descritivo: linha.descritivo || '',
-                ValorPublicado: linha.valor_publicado || 0,
-                Processo_Contrato: proc.proces_contrato || '',
-                Processo_Regime: proc.proced_regime || '',
-                Processo_PADM: proc.proces_padm || '',
-                Processo_Nome: proc.proces_nome || '',
-                Processo_ValorMax: proc.proces_val_max || 0,
-                Processo_ValorAdj: proc.proces_val_adjudicacoes || 0,
-                Processo_ValorFaturacao: proc.proces_val_faturacao || 0
+                Publicado: linha.valor_publicado || 0,
+                Contrato: proc.proces_contrato || '',
+                Regime: proc.proced_regime || '',
+                PADM: proc.proces_padm || '',
+                Nome: proc.proces_nome || '',
+                Maximo: proc.proces_val_max || 0,
+                Comprometido: proc.proces_val_adjudicacoes || 0,
+                Faturacao: proc.proces_val_faturacao || 0
             });
         });
     });

@@ -12,16 +12,30 @@ try {
         throw new Exception("Ligação PDO não encontrada.");
     }
 
-    $sql = "SELECT proces_check,
-                   proces_nome,
-                   proces_data_adjudicacao,
-                   proces_data_contrato,
-                   proces_data_csgn,
-                   proces_prz_exec
-            FROM processo
+    $sql = "SELECT 
+                p.proces_check,
+                p.proces_cpv_sigla,
+                p.proces_nome,
+                p.proces_prz_exec,
+                h.data_adjudicacao,
+                h.data_contrato,
+                h.data_consignacao,
+                h.data_pss
+            FROM processo p
+            LEFT JOIN (
+                SELECT
+                    historico_proces_check,
+                    MAX(CASE WHEN historico_descr_cod = 14 THEN historico_dataemissao ELSE 0 END) AS data_adjudicacao,
+                    MAX(CASE WHEN historico_descr_cod = 17 THEN historico_dataemissao ELSE 0 END) AS data_contrato,
+                    MAX(CASE WHEN historico_descr_cod = 18 THEN historico_dataemissao ELSE 0 END) AS data_consignacao,
+                    MAX(CASE WHEN historico_descr_cod = 60 THEN historico_dataemissao ELSE 0 END) AS data_pss
+                FROM historico
+                GROUP BY historico_proces_check
+                ) h ON h.historico_proces_check = p.proces_check
             WHERE proces_estado_nome = :estado
             AND proces_report_valores = :reporta
-            ORDER BY proces_cpv_sigla ASC";
+            AND h.data_adjudicacao > 0
+            ORDER BY p.proces_cpv_sigla, p.proces_check";
 
     $stmt = $myConn->prepare($sql);
     //$stmt->bindParam(':estado', 'Em Curso', PDO::PARAM_STR);
