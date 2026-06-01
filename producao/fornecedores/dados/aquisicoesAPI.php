@@ -1,24 +1,26 @@
 <?php
 
-class AquisicoesAPI {
-
+class AquisicoesAPI
+{
     private PDO $db;
 
-    private array $tipos = [
-        'geral' => [9, 14],
-        'presenciais' => [9],
-        'protocolos' => [100]
+    private array $tiposRegime = [
+        'setores_especiais' => ['Setores Especiais'],
+        'geral'             => ['Geral'],
+        'excluida'          => ['Contratação Excluída'],
+        'materiais'         => ['Critérios Materiais']
     ];
 
-    public function __construct(PDO $conn) {
+    public function __construct(PDO $conn)
+    {
         $this->db = $conn;
     }
 
-    // =========================
+    // ==================================================
     // ENTIDADES
-    // =========================
-    public function getEntidades(string $fornecedor = ''): array {
-
+    // ==================================================
+    public function getEntidades(string $fornecedor = ''): array
+    {
         $sql = "
             SELECT
                 e.ent_cod,
@@ -32,12 +34,16 @@ class AquisicoesAPI {
             $sql .= " AND e.ent_nome LIKE :fornecedor ";
         }
 
-        $sql .= " ORDER BY e.ent_nome ";
+        $sql .= " ORDER BY e.ent_nome";
 
         $stmt = $this->db->prepare($sql);
 
         if (!empty($fornecedor)) {
-            $stmt->bindValue(':fornecedor', "%{$fornecedor}%");
+            $stmt->bindValue(
+                ':fornecedor',
+                '%' . $fornecedor . '%',
+                PDO::PARAM_STR
+            );
         }
 
         $stmt->execute();
@@ -45,14 +51,24 @@ class AquisicoesAPI {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =========================
+    // ==================================================
     // FATURAS
-    // =========================
-    public function getFaturasAll(string $tipo): array {
+    // ==================================================
+    public function getFaturasAll(string $tipo): array
+    {
+        $regimes = $this->tiposRegime[$tipo]
+            ?? $this->tiposRegime['setores_especiais'];
 
-        $historicos = $this->tipos[$tipo] ?? [9,14];
+        $placeholders = [];
+        $params = [];
 
-        $in = implode(',', array_map('intval', $historicos));
+        foreach ($regimes as $i => $regime) {
+
+            $placeholder = ":regime{$i}";
+
+            $placeholders[] = $placeholder;
+            $params[$placeholder] = $regime;
+        }
 
         $sql = "
             SELECT
@@ -65,18 +81,14 @@ class AquisicoesAPI {
                 f.fact_obs,
 
                 pr.proced_regime AS regime,
-                p.proces_orc_actividade AS atividade,
+
                 CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
+                p.proces_orc_actividade AS atividade,
+
                 p.proces_padm AS padm,
                 p.proces_nome AS designacao,
 
-                SUM(
-                    CASE
-                        WHEN h.historico_descr_cod IN ($in)
-                        THEN h.historico_valor
-                        ELSE 0
-                    END
-                ) AS adjudicado
+                SUM(h.historico_valor) AS adjudicado
 
             FROM factura f
 
@@ -97,7 +109,17 @@ class AquisicoesAPI {
                     YEAR(CURDATE()),
                     YEAR(CURDATE()) - 1
                 )
-                AND f.fact_tipo IN ('FTN', 'FTC', 'RPR', 'NC')
+
+                AND f.fact_tipo IN (
+                    'FTN',
+                    'FTC',
+                    'RPR',
+                    'NC'
+                )
+
+                AND pr.proced_regime IN (
+                    " . implode(',', $placeholders) . "
+                )
 
             GROUP BY
                 f.fact_ent_cod,
@@ -107,20 +129,30 @@ class AquisicoesAPI {
                 f.fact_data,
                 f.fact_valor,
                 f.fact_obs,
-                p.proces_padm,
                 pr.proced_regime,
-                p.proces_nome,
                 p.proces_orc_actividade,
+                p.proces_padm,
+                p.proces_nome,
                 r.rub_tipo,
                 r.rub_rubrica,
                 r.rub_item
 
             HAVING adjudicado > 0
 
-            ORDER BY f.fact_data DESC
+            ORDER BY
+                f.fact_data DESC
         ";
 
         $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $placeholder => $value) {
+            $stmt->bindValue(
+                $placeholder,
+                $value,
+                PDO::PARAM_STR
+            );
+        }
+
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

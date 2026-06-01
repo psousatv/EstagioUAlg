@@ -10,98 +10,133 @@ try {
     $api = new AquisicoesAPI($myConn);
 
     $action = $_GET['action'] ?? '';
-    $tipo = $_GET['tipo'] ?? 'geral';
 
     if ($action !== 'full') {
-        echo json_encode(['error' => 'invalid action']);
+
+        echo json_encode([
+            'error' => 'invalid action'
+        ]);
+
         exit;
     }
 
-    $fornecedor = $_GET['frmFornecedor'] ?? '';
+    $tipo = $_GET['tipo'] ?? 'setores_especiais';
+
+    $fornecedor = trim(
+        $_GET['frmFornecedor'] ?? ''
+    );
 
     $entidades = $api->getEntidades($fornecedor);
+
     $faturas = $api->getFaturasAll($tipo);
 
-    // =========================
-    // BUILD MAP (ISTO FALTAVA)
-    // =========================
-    $mapEnt = [];
+    $mapEntidades = [];
 
-    foreach ($entidades as $e) {
+    foreach ($entidades as $entidade) {
 
-        $e['processos'] = [];
-        $e['total_anoAtual'] = 0;
-        $e['total_anoAnterior'] = 0;
-        $e['total_atividadeAA'] = 0;
-        $e['total_atividadeARD'] = 0;
-        $e['total_atividadeAmbas'] = 0;
-        $e['total_faturado'] = 0;
+        $entidade['processos'] = [];
 
-        $mapEnt[$e['ent_cod']] = $e;
+        $entidade['total_anoAtual'] = 0;
+        $entidade['total_anoAnterior'] = 0;
+
+        $entidade['total_atividadeAA'] = 0;
+        $entidade['total_atividadeARD'] = 0;
+        $entidade['total_atividadeAmbas'] = 0;
+
+        $entidade['total_faturado'] = 0;
+
+        $mapEntidades[$entidade['ent_cod']] = $entidade;
     }
 
     $anoAtual = (int) date('Y');
     $anoAnterior = $anoAtual - 1;
 
-    foreach ($faturas as $f) {
+    foreach ($faturas as $fatura) {
 
-        $ent = $f['fact_ent_cod'];
-        $proc = $f['fact_proces_check'];
+        $entCod = $fatura['fact_ent_cod'];
+        $procCheck = $fatura['fact_proces_check'];
 
-        if (!isset($mapEnt[$ent])) continue;
+        if (!isset($mapEntidades[$entCod])) {
+            continue;
+        }
 
-        if (!isset($mapEnt[$ent]['processos'][$proc])) {
+        if (!isset($mapEntidades[$entCod]['processos'][$procCheck])) {
 
-            $mapEnt[$ent]['processos'][$proc] = [
-                'proces_check' => $proc,
-                'padm' => $f['padm'],
-                'regime' => $f['regime'],
-                'designacao' => $f['designacao'],
+            $mapEntidades[$entCod]['processos'][$procCheck] = [
+
+                'proces_check' => $procCheck,
+                'padm' => $fatura['padm'],
+                'regime' => $fatura['regime'],
+                'designacao' => $fatura['designacao'],
                 'faturas' => []
             ];
         }
 
-        $mapEnt[$ent]['processos'][$proc]['faturas'][] = [
-            'fatura_expediente' => $f['fact_expediente'],
-            'fatura' => $f['fact_num'],
-            'fatura_data' => $f['fact_data'],
-            'fatura_valor' => (float) $f['fact_valor'],
-            'fatura_observacoes' => $f['fact_obs'],
-            'fatura_atividade' => $f['atividade'],
-            'fatura_rubrica' => $f['rubrica']
+        $mapEntidades[$entCod]['processos'][$procCheck]['faturas'][] = [
+
+            'fatura_expediente' => $fatura['fact_expediente'],
+            'fatura' => $fatura['fact_num'],
+            'fatura_data' => $fatura['fact_data'],
+            'fatura_valor' => (float)$fatura['fact_valor'],
+            'fatura_observacoes' => $fatura['fact_obs'],
+            'fatura_atividade' => $fatura['atividade'],
+            'fatura_rubrica' => $fatura['rubrica']
         ];
 
-        $anoFatura = (int) substr($f['fact_data'], 0, 4);
+        $valor = (float)$fatura['fact_valor'];
+
+        $anoFatura = (int)date(
+            'Y',
+            strtotime($fatura['fact_data'])
+        );
 
         if ($anoFatura === $anoAtual) {
-            $mapEnt[$ent]['total_anoAtual'] += (float) $f['fact_valor'];
-            $mapEnt[$ent]['total_faturado'] += (float) $f['fact_valor'];
-        } elseif ($anoFatura === $anoAnterior) {
-            $mapEnt[$ent]['total_anoAnterior'] += (float) $f['fact_valor'];
+
+            $mapEntidades[$entCod]['total_anoAtual'] += $valor;
+            $mapEntidades[$entCod]['total_faturado'] += $valor;
+        }
+        elseif ($anoFatura === $anoAnterior) {
+
+            $mapEntidades[$entCod]['total_anoAnterior'] += $valor;
         }
 
-        if ($f['atividade'] === 'AA - Águas de Abastecimento') {
-            $mapEnt[$ent]['total_atividadeAA'] += (float) $f['fact_valor'];
-        } elseif ($f['atividade'] === 'AR - Águas Residuais') {
-            $mapEnt[$ent]['total_atividadeARD'] += (float) $f['fact_valor'];
-        } else {
-            $mapEnt[$ent]['total_atividadeAmbas'] += (float) $f['fact_valor'];
+        switch ($fatura['atividade']) {
+
+            case 'AA - Águas de Abastecimento':
+                $mapEntidades[$entCod]['total_atividadeAA'] += $valor;
+                break;
+
+            case 'AR - Águas Residuais':
+                $mapEntidades[$entCod]['total_atividadeARD'] += $valor;
+                break;
+
+            default:
+                $mapEntidades[$entCod]['total_atividadeAmbas'] += $valor;
+                break;
         }
     }
 
-    $result = [];
+    $resultado = [];
 
-    foreach ($mapEnt as $e) {
-        $e['processos'] = array_values($e['processos']);
+    foreach ($mapEntidades as $entidade) {
 
-        if ($e['total_faturado'] <= 0) continue;
+        $entidade['processos'] = array_values(
+            $entidade['processos']
+        );
 
-        $result[] = $e;
+        if ($entidade['total_faturado'] <= 0) {
+            continue;
+        }
+
+        $resultado[] = $entidade;
     }
 
-    echo json_encode([
-        'data' => $result
-    ], JSON_UNESCAPED_UNICODE);
+    echo json_encode(
+        [
+            'data' => $resultado
+        ],
+        JSON_UNESCAPED_UNICODE
+    );
 
 } catch (Exception $e) {
 

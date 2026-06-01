@@ -6,7 +6,7 @@ const App = {
   // STATE
   // =========================
   state: {
-    tipo: 'geral',
+    tipo: 'setores_especiais',
     chart: null,
     entidadesCache: [],
     entidadesVisiveis: [],
@@ -29,7 +29,7 @@ const App = {
   initUI() {
 
     $('.menu-api').removeClass('active');
-    $('.menu-api[data-api="geral"]').addClass('active');
+    $('.menu-api[data-api="setores_especiais"]').addClass('active');
   },
 
   // =========================
@@ -222,6 +222,7 @@ const App = {
 
     if (!data.length) {
 
+
       $('#listaAquisicoes').html(
         '<p>Sem resultados</p>'
       );
@@ -257,20 +258,15 @@ const App = {
 
     entidades.forEach(e => {
 
-      const valorAtual =
-        Number(e.total_anoAtual || 0);
+      const valorAtual = Number(e.total_anoAtual || 0);
 
-      const valorAnterior =
-        Number(e.total_anoAnterior || 0);
+      const valorAnterior = Number(e.total_anoAnterior || 0);
 
-      const valorAA =
-        Number(e.total_atividadeAA || 0);
+      const valorAA = Number(e.total_atividadeAA || 0);
 
-      const valorARD =
-        Number(e.total_atividadeARD || 0);
+      const valorARD = Number(e.total_atividadeARD || 0);
 
-      const valorAmbas =
-        Number(e.total_atividadeAmbas || 0);
+      const valorAmbas = Number(e.total_atividadeAmbas || 0);
 
       atual += valorAtual;
       anterior += valorAnterior;
@@ -382,17 +378,8 @@ const App = {
           <div class="card text-white ${c.class}">
             <div class="card-body">
 
-              <div class="small">
-                ${c.label}
-              </div>
-
-              <div class="${
-                c.format === 'text'
-                  ? 'h6'
-                  : 'h5 text-right'
-              }">
-                ${valor}
-              </div>
+              <div class="small">${c.label}</div>
+              <div class="${c.format === 'text' ? 'h6' : 'h5 text-right'}">${valor}</div>
 
             </div>
           </div>
@@ -437,41 +424,22 @@ const App = {
       const id = `ent_${e.ent_cod}`;
 
       html += `
-        <tr class="entidade-row"
-            data-target="${id}"
-            data-ent="${e.ent_cod}">
+        <tr class="entidade-row" data-target="${id}" data-ent="${e.ent_cod}">
+
+          <td>${this.escape(e.entidade)}</td>
+          <td>${(e.processos || []).length}</td>
+          <td class="text-right">${this.money(e.total_anoAnterior)}</td>
+          <td class="text-right">${this.money(e.total_anoAtual)}</td>
 
           <td>
-            ${this.escape(e.entidade)}
-          </td>
-
-          <td>
-            ${(e.processos || []).length}
-          </td>
-
-          <td class="text-right">
-            ${this.money(e.total_anoAnterior)}
-          </td>
-
-          <td class="text-right">
-            ${this.money(e.total_anoAtual)}
-          </td>
-
-          <td>
-
             <div class="d-flex justify-content-center">
-
               <button
-                class="btn btn-sm btn-success btn-export-excel"
-                data-id="${e.ent_cod}">
-
+                class="btn btn-sm btn-success btn-export-excel" data-id="${e.ent_cod}">
                 <i class="fas fa-file-excel"></i>
-
               </button>
-
             </div>
-
           </td>
+
         </tr>
 
         <tr id="${id}" class="collapse">
@@ -520,6 +488,8 @@ const App = {
 
           ${processos.map(p => {
 
+            console.table(p);
+
             const faturas = p.faturas || [];
 
             const faturasHtml = faturas.length
@@ -546,37 +516,12 @@ const App = {
 
                       <tr>
 
-                        <td>
-                          ${this.expediente(
-                            f.fatura_expediente
-                          ) || ''}
-                        </td>
-
-                        <td>
-                          ${f.fatura_data || ''}
-                        </td>
-
-                        <td>
-                          ${this.escape(f.fatura)}
-                        </td>
-
-                        <td class="text-right">
-                          ${this.money(
-                            f.fatura_valor
-                          )}
-                        </td>
-
-                        <td>
-                          ${this.escape(
-                            f.fatura_atividade || ''
-                          )}
-                        </td>
-
-                        <td>
-                          ${this.escape(
-                            f.fatura_rubrica || ''
-                          )}
-                        </td>
+                        <td>${this.expediente(f.fatura_expediente) || ''}</td>
+                        <td>${f.fatura_data || ''}</td>
+                        <td>${this.escape(f.fatura)}</td>
+                        <td class="text-right">${this.money(f.fatura_valor)}</td>
+                        <td>${this.escape(f.fatura_atividade || '')}</td>
+                        <td>${this.escape(f.fatura_rubrica || '')}</td>
 
                       </tr>
 
@@ -596,19 +541,9 @@ const App = {
             return `
               <tr onclick="redirectProcesso(${p.proces_check})">
 
-                <td>
-                  ${this.escape(p.regime || '')}
-                </td>
-
-                <td>
-                  ${this.escape(p.padm || '')}
-                </td>
-
-                <td>
-                  ${this.escape(
-                    p.designacao || ''
-                  )}
-                </td>
+                <td>${this.escape(p.regime || '')}</td>
+                <td>${this.escape(p.padm || '')}</td>
+                <td>${this.escape(p.designacao || '')}</td>
 
                 <td colspan="3">
                   ${faturasHtml}
@@ -635,7 +570,6 @@ const App = {
     this.render();
 
     this.updateKPIs([entidade]);
-
     this.renderChart(entidade);
 
     $('#boxGrafico').show();
@@ -801,45 +735,46 @@ const App = {
 
     const rows = [];
 
+    const anoAtual = new Date().getFullYear();
+
     entidades.forEach(e => {
 
-      (e.processos || []).forEach(p => {
+        (e.processos || []).forEach(p => {
 
-        (p.faturas || []).forEach(f => {
+            (p.faturas || []).forEach(f => {
 
-          rows.push({
+                const anoFatura = new Date(f.fatura_data).getFullYear();
 
-            Regime: p.regime,
+                if (anoFatura !== anoAtual) {
+                    return;
+                }
 
-            Entidade: e.entidade,
+                rows.push({
+                    Regime: p.regime,
+                    Entidade: e.entidade,
+                    Atividade: f.fatura_atividade,
+                    Rubrica: f.fatura_rubrica,
+                    Expediente: this.expediente(f.fatura_expediente),
+                    Data: f.fatura_data,
+                    Fatura: f.fatura,
+                    Valor: f.fatura_valor
+                });
 
-            Processo: p.designacao,
+            });
 
-            Atividade: f.fatura_atividade,
-
-            Rubrica: f.fatura_rubrica,
-
-            Expediente: f.fatura_expediente,
-
-            Data: f.fatura_data,
-
-            Fatura: f.fatura,
-
-            Valor: f.fatura_valor
-          });
         });
-      });
+
     });
 
     XLSX.utils.book_append_sheet(
-      wb,
-      XLSX.utils.json_to_sheet(rows),
-      'Dados'
+        wb,
+        XLSX.utils.json_to_sheet(rows),
+        'Dados'
     );
 
     XLSX.writeFile(
-      wb,
-      `${filename}.xlsx`
+        wb,
+        `${filename}.xlsx`
     );
   },
 

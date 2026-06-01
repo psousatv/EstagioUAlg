@@ -89,6 +89,7 @@ class AquisicoesAPI {
                     YEAR(CURDATE()),
                     YEAR(CURDATE()) - 1
                 )
+                AND pr.proced_regime = 'Geral'
                 AND f.fact_tipo IN ('FTN', 'FTC', 'RPR', 'NC')
 
             GROUP BY

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>PAMs</title>
+  
+  <!-- Bootstrap -->
+  <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <!-- Fontawesome -->
+  <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="icon" type="image/png" sizes="16x16" href="../../templates/favicon.png"/>
+
+  <style>
+
+    /* ================= LAYOUT (NOVO) ================= */
+    .pagina {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .col-esquerda,
+    .col-direita {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ================= TEU CSS ORIGINAL ================= */
+
+    .nivel {
+      margin-left: 15px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .icon {
+      width: 22px;
+      display: inline-block;
+    }
+
+    .label {
+      transition: opacity 0.2s ease;
+    }
+
+    .faded .label {
+      opacity: 0.4;
+    }
+
+    .desenvolvimento {
+      margin-left: 30px;
+      font-size: 0.95rem;
+      cursor: default;
+    }
+
+    .desenvolvimento[data-estado="Tratado"] {
+      color: #198754;
+    }
+
+    .desenvolvimento[data-estado="Pendente"] {
+      color: #6c757d;
+    }
+
+    .desenvolvimento[data-estado="Parcial"] {
+      color: #ffc107;
+    }
+
+    .desenvolvimento::before {
+      content: "• ";
+      margin-right: 5px;
+    }
+
+    #identificaPresentes {
+      align-items: flex-start;
+    }
+
+    .coluna {
+      min-width: 150px;
+    }
+
+    .coluna ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .validacao-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+    }
+
+  </style>
+
+</head>
+
+<body class="p-2">
+
+<!-- ================= WRAPPER 2 COLUNAS ================= -->
+<div class="pagina">
+
+    <!-- ================= CABEÇALHO ================= -->
+    <div id="ata" class="card mt-2 p-3 bg-primary text-white">
+      <div id="identificaPAM" style="height: 120px">
+          <h5>Proposta de Aprovação de Materiais</h5>
+          <h6>Data: </h6>
+          <h6>Item: </h6>
+      </div>
+    </div>
+
+    <div id="obra" class="card mt-2 p-3 bg-secondary text-white">
+      <div id="identificaObra" style="height: 120px">
+        <h6>Obra: Esta obra</h6>
+        <h6>Local: Ali</h6>
+      </div>
+    </div>   
+
+  <!-- COLUNA ESQUERDA -->
+  <div class="col-esquerda">
+
+    <div id="drag_and_drop" class="card mt-2 p-3 bg-warning">
+      <h6>Arraste o documento para aqui </h6>
+    </div>
+
+    </div>
+
+    <!-- COLUNA DIREITA -->
+    <div class="col-direita">
+
+      <div id="topicos" class="card mt-2 p-3">
+        <div id="legenda" class="card p-3">
+          
+          <div class="d-flex gap-4 p2">
+              <div class="coluna bg-success text-center">Tratado</div>
+              <div class="coluna bg-warning text-center">Pendente</div>
+              <div class="coluna"></div>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCRIPTS ================= -->
+<script src="../../vendors/jquery/jquery.js"></script>
+<script src="../../global/js/scripts.js"></script>
+<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
