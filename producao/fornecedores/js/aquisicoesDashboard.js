@@ -751,6 +751,8 @@ const App = {
 
                 rows.push({
                     Regime: p.regime,
+                    Contrato: p.contrato,
+                    Procedimento: p.procedimento,
                     Entidade: e.entidade,
                     Atividade: f.fatura_atividade,
                     Rubrica: f.fatura_rubrica,

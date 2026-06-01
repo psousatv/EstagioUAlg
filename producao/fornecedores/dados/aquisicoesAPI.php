@@ -81,6 +81,8 @@ class AquisicoesAPI
                 f.fact_obs,
 
                 pr.proced_regime AS regime,
+                pr.proced_contrato AS contrato,
+                pr.proced_escolha AS procedimento,
 
                 CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
                 p.proces_orc_actividade AS atividade,
@@ -130,6 +132,8 @@ class AquisicoesAPI
                 f.fact_valor,
                 f.fact_obs,
                 pr.proced_regime,
+                pr.proced_contrato,
+                pr.proced_escolha,
                 p.proces_orc_actividade,
                 p.proces_padm,
                 p.proces_nome,

@@ -67,6 +67,8 @@ try {
                 'proces_check' => $procCheck,
                 'padm' => $fatura['padm'],
                 'regime' => $fatura['regime'],
+                'contrato' => $fatura['contrato'],
+                'procedimento' => $fatura['procedimento'],
                 'designacao' => $fatura['designacao'],
                 'faturas' => []
             ];
