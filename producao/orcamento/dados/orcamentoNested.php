@@ -27,37 +27,35 @@ try {
 
     // === ORÇAMENTO ===
     $sqlOrcamento = "SELECT
-        orc_check,
-        orc_ano AS ano,
-        orc_tipo AS tipo,
-        orc_regime AS regime,
-        orc_conta_descritiva AS descritivo,
-        orc_valor_previsto AS orcamento,
-        SUM(orc_valor_previsto) AS total_orcamento,
-
-        (
-        SELECT COALESCE(SUM(h14.historico_valor), 0) 
-        FROM historico h14
-        LEFT JOIN processo p ON p.proces_orc_check = orc_check
-        WHERE h14.historico_proces_check = p.proces_check
-        
-        AND (h14.historico_descr_cod = 14
-        OR h14.historico_descr_cod = 9)
-        ) AS total_adjudicado,
-
-        (
-        SELECT COALESCE(SUM(f.fact_valor), 0) 
-        FROM factura f
-        LEFT JOIN processo p ON p.proces_orc_check = orc_check
-        WHERE f.fact_proces_check = p.proces_check
-        AND YEAR(f.fact_data) = :anoCorrente
-        ) AS total_faturado
-
-        FROM orcamento
-        WHERE orc_rubrica = :itemProcurado
-        AND orc_ano = :anoCorrente
-        GROUP BY orc_check
-        ORDER BY regime, tipo";
+                        orc_check,
+                        orc_ano AS ano,
+                        orc_tipo AS tipo,
+                        orc_regime AS regime,
+                        orc_conta_descritiva AS descritivo,
+                        orc_valor_previsto AS orcamento,
+                        COALESCE(SUM(orc_valor_previsto), 0) AS total_orcamento,
+                        (SELECT 
+                            COALESCE(SUM(h.historico_valor), 0) 
+                        FROM historico h
+                        LEFT JOIN processo p ON p.proces_orc_check = orc_check
+                        WHERE h.historico_proces_check = p.proces_check
+                        AND h.historico_descr_cod IN (9, 14)
+                        AND p.proces_report_valores = 1
+                        ) AS total_adjudicado,
+                        (SELECT 
+                            COALESCE(SUM(f.fact_valor), 0) 
+                        FROM factura f
+                        LEFT JOIN processo p ON p.proces_orc_check = orc_check
+                        WHERE f.fact_proces_check = p.proces_check
+                        AND YEAR(f.fact_data) = $anoCorrente
+                        AND f.fact_tipo IN ('FTN','FTC','NC')
+                        AND p.proces_report_valores = 1
+                        ) AS total_faturado
+                        FROM orcamento
+                        WHERE orc_rubrica = :itemProcurado
+                        AND orc_ano = :anoCorrente
+                        GROUP BY orc_check
+                        ORDER BY regime, tipo";
 
     $stmtOrc = $myConn->prepare($sqlOrcamento);
     $stmtOrc->bindParam(':itemProcurado', $itemProcurado, PDO::PARAM_INT);
@@ -73,31 +71,46 @@ try {
         $placeholders = implode(',', array_fill(0, count($orcIds), '?'));
 
         $sqlProcessos = "SELECT
-            proces_check,
-            proces_orc_check,
-            proces_linha_orc AS linha_orcamento,
-            proces_linha_se AS linha_se,
-            proces_padm AS padm,
-            proc.proced_regime AS regime,
-            proces_nome AS designacao,
-            proces_val_max AS val_max,
-            (
-            SELECT COALESCE(SUM(h14.historico_valor), 0) 
-            FROM historico h14 
-            WHERE h14.historico_proces_check = proces_check
-            AND (h14.historico_descr_cod = 14 OR h14.historico_descr_cod = 9)) AS adjudicado,
-            (
-            SELECT COALESCE(SUM(f.fact_valor), 0)
-            FROM factura f 
-            WHERE f.fact_proces_check = proces_check
-            AND f.fact_tipo IN ('FTN', 'FTC', 'NC')
-            AND YEAR(f.fact_data) = $anoCorrente) AS faturado
-            FROM processo
-            INNER JOIN procedimento proc ON proc.proced_cod = proces_proced_cod
-            WHERE proces_orc_check IN ($placeholders)
-            AND proces_report_valores = 1
-            GROUP BY proces_check
-            ORDER BY proces_nome";
+                            proces_check,
+                            proces_orc_check,
+                            proces_linha_orc AS linha_orcamento,
+                            proces_linha_se AS linha_se,
+                            proces_padm AS padm,
+                            proc.proced_regime AS regime,
+                            proces_nome AS designacao,
+                            proces_val_max AS val_max,
+                            proces_report_valores,
+                            COALESCE(h.adjudicado, 0) AS adjudicado,
+                            COALESCE(f.faturado, 0) AS faturado
+                        FROM processo
+                        LEFT JOIN (
+                            SELECT
+                                h.historico_proces_check,
+                                SUM(h.historico_valor) AS adjudicado
+                            FROM historico h
+                            INNER JOIN processo p
+                                ON p.proces_check = h.historico_proces_check
+                            AND p.proces_report_valores = 1
+                            WHERE h.historico_descr_cod IN (9,14)
+                            GROUP BY h.historico_proces_check
+                        ) h ON h.historico_proces_check = proces_check
+                        LEFT JOIN (
+                            SELECT
+                                f.fact_proces_check,
+                                SUM(f.fact_valor) AS faturado
+                            FROM factura f
+                            INNER JOIN processo p
+                                ON p.proces_check = f.fact_proces_check
+                            AND p.proces_report_valores = 1
+                            WHERE f.fact_tipo IN ('FTN','FTC','NC')
+                            AND YEAR(f.fact_data) = $anoCorrente
+                            GROUP BY f.fact_proces_check
+                        ) f ON f.fact_proces_check = proces_check
+                        LEFT JOIN procedimento proc
+                            ON proc.proced_cod = proces_proced_cod
+                        WHERE proces_orc_check IN ($placeholders)
+                        AND proces_report_valores = 1
+                        ORDER BY proces_nome;";
 
         $stmtProc = $myConn->prepare($sqlProcessos);
         $stmtProc->execute($orcIds);

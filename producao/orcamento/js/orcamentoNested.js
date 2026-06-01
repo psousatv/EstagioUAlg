@@ -83,6 +83,8 @@ table = $('#processosNested').DataTable({
       const rubrica = json.rubrica || {};
       const data = json.data || [];
 
+      console.table(data);
+
       // Ordenar pelo tipo
       data.sort((a, b) => a.tipo.localeCompare(b.tipo));
 
