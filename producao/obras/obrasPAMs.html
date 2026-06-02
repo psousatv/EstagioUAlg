@@ -111,25 +111,24 @@
 <div class="pagina">
 
     <!-- ================= CABEÇALHO ================= -->
-    <div id="ata" class="card mt-2 p-3 bg-primary text-white">
-      <div id="identificaPAM" style="height: 120px">
-          <h5>Proposta de Aprovação de Materiais</h5>
-          <h6>Data: </h6>
-          <h6>Item: </h6>
-      </div>
+    <div class="card mt-2 p-3 bg-primary text-white" style="height: 200px" id="identificaPAM">
+      <h5>Proposta de Aprovação de Materiais</h5>          
+        
+      <input class="form-control input-sm" id="data" type="text" placeholder="Data">
+      <input class="form-control input-sm mt-2" id="descreve" type="text" placeholder="Descrição">
+      <input class="form-control input-sm mt-2" id="item" type="text" placeholder="Indique o item">
+      
     </div>
 
-    <div id="obra" class="card mt-2 p-3 bg-secondary text-white">
-      <div id="identificaObra" style="height: 120px">
+    <div class="card mt-2 p-3 bg-secondary text-white"  style="height: 200px" id="identificaObra">
         <h6>Obra: Esta obra</h6>
         <h6>Local: Ali</h6>
-      </div>
     </div>   
 
   <!-- COLUNA ESQUERDA -->
   <div class="col-esquerda">
 
-    <div id="drag_and_drop" class="card mt-2 p-3 bg-warning">
+    <div id="drag_and_drop" class="card mt-2 p-3 bg-info">
       <h6>Arraste o documento para aqui </h6>
     </div>
 
