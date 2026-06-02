@@ -488,7 +488,7 @@ const App = {
 
           ${processos.map(p => {
 
-            console.table(p);
+            //console.table(p);
 
             const faturas = p.faturas || [];
 

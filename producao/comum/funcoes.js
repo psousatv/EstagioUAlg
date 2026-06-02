@@ -204,3 +204,88 @@ function exportarVistoriasExcel() {
 
     XLSX.writeFile(wb, "vistoriasProcessos.xlsx");
 }
+
+const Exportador = {
+
+    // =========================
+    // ENTRY POINT
+    // =========================
+    async exportar(tipo) {
+  
+      try {
+  
+        const url = `../aquisicoes/dados/apiPresenciais.php?tipo=${tipo}`;
+  
+        const res = await fetch(url);
+        const data = await res.json();
+  
+        if (data.erro) {
+          throw new Error(data.mensagem);
+        }
+  
+        const ano = new Date().getFullYear();
+  
+        const filename =
+          tipo === 'presenciais'
+            ? `Presenciais_${ano}`
+            : `Outros_Gastos_${ano}`;
+  
+        this.exportToExcel(data, filename);
+  
+      } catch (err) {
+        console.error(err);
+        alert('Erro na exportação');
+      }
+    },
+  
+    // =========================
+    // EXCEL EXPORT
+    // =========================
+    exportToExcel(data, filename) {
+  
+      const wb = XLSX.utils.book_new();
+  
+      const rows = data.map(item => ({
+        Aquisicao: item.historico_descr_nome,
+        ProcessoNome: item.proces_nome,
+        Regime: item.proced_regime,
+        Contrato: item.proced_contrato,
+        Rubrica: item.rub_rubrica,
+        TipoRubrica: item.rub_tipo,
+        Entidade: item.ent_nome,
+        Data: item.historico_dataemissao,
+        Documento: item.historico_doc,
+        Numero: item.historico_num,
+        Valor: item.historico_valor,
+        Observacoes: item.historico_obs
+        
+      }));
+  
+      const ws = XLSX.utils.json_to_sheet(rows);
+  
+      XLSX.utils.book_append_sheet(wb, ws, 'Dados');
+  
+      XLSX.writeFile(wb, `${filename}.xlsx`);
+    }
+  
+  };
+  
+  // =========================
+  // CLICK GLOBAL MENU
+  // =========================
+  document.addEventListener('click', function (e) {
+  
+    const el = e.target.closest('.menu-api');
+    if (!el) return;
+  
+    const tipo = el.dataset.api;
+  
+    if (tipo === 'presenciais') {
+      Exportador.exportar('presenciais');
+    }
+  
+    if (tipo === 'outros') {
+      Exportador.exportar('outros');
+    }
+  
+  });
