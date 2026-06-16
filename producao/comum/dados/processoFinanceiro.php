@@ -50,13 +50,13 @@ try {
     // =========================
     // REALIZADO (com condição extra)
     // =========================
-    $colExcluiRealizado = "fact_tipo IN ('FTN','FTC','NC')";
+    $colIncluiRealizado = "fact_tipo IN ('FTN', 'FTC', 'NC', 'REF', 'IND')";
 
     $sqlRealizado = gerarPivotQuery(
         'factura',
         'fact_auto_data',
         'fact_valor',
-        $colExcluiRealizado,
+        $colIncluiRealizado,
         'fact_proces_check'
     );
 

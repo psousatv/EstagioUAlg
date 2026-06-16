@@ -102,14 +102,22 @@ function formatNested(processo) {
       // -------------------------
       // FATURAS NORMAIS
       // -------------------------
-      const faturasNormais = item.faturas.map(f => [
-          formatExpediente(f.fact_expediente),
-          f.fact_data,
-          `${f.fact_tipo}_${f.fact_num}`,
-          `AM_${f.fact_auto_num}`,
-          formatCurrency(f.fact_valor)
-      ].join(' / '));
+      //const faturasNormais = item.faturas.map(f => [
+      //    formatExpediente(f.fact_expediente),
+      //    f.fact_data,
+      //    `${f.fact_tipo}_${f.fact_num}`,
+      //    `AM_${f.fact_auto_num}`,
+      //    formatCurrency(f.fact_valor)
+      //].join(' / '));
   
+      const faturasNormais = item.faturas.map(f => [
+        formatExpediente(f.fact_expediente),
+        f.fact_data,
+        `${f.fact_tipo}_${f.fact_num}`,
+        `${f.fact_auto_num}`,
+        formatCurrency(f.fact_valor)
+      ].join(' / '));
+
       // -------------------------
       // REEMBOLSOS CANCELADOS
       // Se valor negativo + expediente cancelado
@@ -373,7 +381,7 @@ function formatNested(processo) {
         data: null,
         className: 'dt-body-right',
         render: function(data, type, row) {
-          const tiposValidos = ['FTN', 'FTC', 'NC'];
+          const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND'];
           const totalFaturas = row.faturas 
           ?.filter(f => tiposValidos.includes(f.fact_tipo))
           .reduce((sum, f) => sum + (f.fact_valor || 0), 0) || 0;

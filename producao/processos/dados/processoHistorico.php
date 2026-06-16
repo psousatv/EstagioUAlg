@@ -14,11 +14,11 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Considerar a adjudicação na 'execução' se não for empreitada [FSE]
 $fases = [
     "enquadramento" => [0, 1, 2, 3, 51, 52, 53, 54],
-    "procedimento" => [4, 5, 6, 7, 8, 10, 11, 12, 13, 80, 81, 82],
-    "adjudicação" => [14, 16, 44],
-    "contrato" => [17, 19, 40],
+    "procedimento" => [4, 5, 6, 7, 8, 10, 11, 12, 80, 81, 82],
+    "adjudicação" => [13, 14, 44],
+    "contrato" => [16, 17, 19, 40],
     "preparacao_execucao" => [60, 61, 62, 63, 64],
-    "execucao" => [9, 14, 18, 21, 22, 24, 55],
+    "execucao" => [9, 18, 21, 22, 24, 55],
     "financiamento" => [91, 92],
     "garantia" => [25, 26, 27, 28, 30, 42, 42, 43],
     "contas_finais" => [23, 29]

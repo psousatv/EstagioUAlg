@@ -19,7 +19,7 @@ $queryOLD = "SELECT
          FROM processo
          INNER JOIN candidaturas_submetidas cs ON cs.candsub_codigo = proces_cand
          INNER JOIN historico h ON h.historico_proces_check = proces_check
-         WHERE proces_cand NOT LIKE '%n.a.%' AND proces_report_valores = 1 AND h.historico_num NOT LIKE '%Ad%'
+         WHERE proces_cand NOT LIKE '%n.a.%' AND proces_report_valores = 1 
          GROUP BY proces_cand
          ORDER BY YEAR(cs.candsub_dt_inicio) DESC ";
 
@@ -61,7 +61,7 @@ LEFT JOIN (
         historico_proces_check,
         SUM(CASE WHEN historico_descr_cod = 14 THEN historico_valor ELSE 0 END) AS adjudicado,
         SUM(CASE WHEN historico_descr_cod = 91 THEN historico_valor ELSE 0 END) AS pedido,
-        SUM(CASE WHEN historico_descr_cod = 92 AND historico_num NOT LIKE '%Ad%' THEN historico_valor ELSE 0 END) AS recebido
+        SUM(CASE WHEN historico_descr_cod = 92 THEN historico_valor ELSE 0 END) AS recebido
     FROM historico
     GROUP BY historico_proces_check
 ) ha 
@@ -70,7 +70,7 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT
         fact_proces_check,
-        SUM(CASE WHEN fact_tipo IN ('FTN','FTC','NC') THEN fact_valor ELSE 0 END) AS faturado
+        SUM(CASE WHEN fact_tipo IN ('FTN', 'FTC', 'NC', 'REF', 'IND') THEN ROUND((fact_valor + fact_iva), 2) ELSE 0 END) AS faturado
     FROM factura
     GROUP BY fact_proces_check
 ) fp 
