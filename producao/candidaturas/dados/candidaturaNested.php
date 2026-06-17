@@ -101,7 +101,9 @@ try {
                 fact_expediente,
                 fact_auto_num,
                 fact_num,
-                COALESCE(fact_valor, 0) AS fact_valor
+                COALESCE(fact_valor, 0) AS fact_valor,
+                COALESCE(fact_finan_max_elegivel, 0) AS fact_elegivel,
+                COALESCE(fact_finan_fundo, 0) AS fact_fundo
             FROM factura
             WHERE fact_proces_check = ?
             ORDER BY fact_auto_num, fact_data";

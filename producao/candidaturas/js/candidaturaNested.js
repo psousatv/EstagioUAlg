@@ -1,18 +1,35 @@
 let processosGlobais = [];
 let table;
 
-function formatCurrency(value) {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-};
+//function formatCurrency(value) {
+//  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+//};
 
-function formatExpediente(str) {
-  if (typeof str !== 'string') return '';
+//function formatExpediente(str) {
+//  if (typeof str !== 'string') return '';
+//
+//  const clean = str.replace(/[^A-Za-z0-9]/g, '');
+//  return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
+//    return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
+//  });
+//}
 
-  const clean = str.replace(/[^A-Za-z0-9]/g, '');
-  return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
-    return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
-  });
+function formatCurrency(value){
+
+  return new Intl.NumberFormat(
+    'de-DE',
+    {
+      minimumFractionDigits: 2
+    }
+  ).format(value || 0) + '€';
 }
+
+function formatExpediente(str){
+  return str
+    ? `${str[0]}.${str.slice(1, 6)}.${str.slice(6)}`
+    : '';
+}
+
 
 function cleanPdfText(text) {
   if (!text) return "";
@@ -1065,7 +1082,7 @@ function exportAllPDF() {
 
       const faturas = (p.faturas && p.faturas.length)
         ? p.faturas.map(f =>
-            `${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)}`
+            `${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)} - Fundo: ${formatCurrency(f.fact_fundo)}`
           ).join("\n")
         : "Sem faturas";
 
@@ -1139,7 +1156,8 @@ function exportAllExcel() {
           Pedido: g.totalPedido,
           Processo: p.processo.designacao,
           Fatura: '-',
-          Valor: '-'
+          Valor: '-',
+          Fundo:  '_'
         });
 
       } else {
@@ -1152,7 +1170,8 @@ function exportAllExcel() {
             Processo: p.processo.designacao,
             Fatura: `${f.fact_tipo}_${f.fact_num}`,
             Data: f.fact_data,
-            Valor: f.fact_valor
+            Valor: f.fact_valor,
+            Fundo: f.fact_fundo
           });
 
         });
