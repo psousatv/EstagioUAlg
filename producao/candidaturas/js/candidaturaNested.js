@@ -1,21 +1,34 @@
+let processosGlobais = [];
+let table;
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+};
+
+function formatExpediente(str) {
+  if (typeof str !== 'string') return '';
+
+  const clean = str.replace(/[^A-Za-z0-9]/g, '');
+  return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
+    return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
+  });
+}
+
+function cleanPdfText(text) {
+  if (!text) return "";
+
+  return String(text)
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&/g, "&") // protege contra lixo residual
+    .trim();
+}
 
 $(document).ready(function () {
   const queryParams = getQueryParams();
-
-  let table;
-
-  function formatCurrency(value) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-  };
-
-  function formatExpediente(str) {
-    if (typeof str !== 'string') return '';
-  
-    const clean = str.replace(/[^A-Za-z0-9]/g, '');
-    return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
-      return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
-    });
-  }
 
   // Nested row: apenas os itens financeiros do processo clicado
   function formatNested(processo) {
@@ -98,17 +111,6 @@ $(document).ready(function () {
             ]
             : ['', '', '', ''];
     
-        // -------------------------
-        // FATURAS NORMAIS
-        // -------------------------
-        //const faturasNormais = item.faturas.map(f => [
-        //    formatExpediente(f.fact_expediente),
-        //    f.fact_data,
-        //    `${f.fact_tipo}_${f.fact_num}`,
-        //    `AM_${f.fact_auto_num}`,
-        //    formatCurrency(f.fact_valor)
-        //].join(' / '));
-    
         const faturasNormais = item.faturas.map(f => [
           formatExpediente(f.fact_expediente),
           f.fact_data,
@@ -139,7 +141,7 @@ $(document).ready(function () {
         const faturasText = [
             ...faturasNormais,
             ...cancelamentos
-        ].join('<br>');
+        ].join('\n');
     
         // -------------------------
         // SEM REEMBOLSOS
@@ -366,7 +368,10 @@ $(document).ready(function () {
           logo: json.logo
         }));
 
+        processosGlobais = processos
+
         //console.table(json);
+        console.table(processosGlobais);
 
         // Título da candidatura
         $('#titulo').html(`
@@ -444,7 +449,30 @@ $(document).ready(function () {
         `);
         
         // Cartões
-        $('#reembolsos').html(renderReembolsosCards(processos));
+        // ================================
+        // BOTÕES EXPORTAÇÃO GLOBAL
+        // ================================
+        const exportAllBtns = `
+        <div class="d-flex justify-content-end gap-2 mb-2">
+
+        <button id="exportALLPDF"
+                class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                title="Exportar PDF">
+
+          <i class="fa-solid fa-file-pdf"></i>
+        </button>
+
+        <button id="exportALLExcel"
+                class="btn btn-success btn-sm d-flex align-items-center gap-1"
+                title="Exportar Excel">
+
+          <i class="fa-solid fa-file-excel"></i>
+        </button>
+
+      </div>
+      `;
+
+      $('#reembolsos').html(exportAllBtns + (renderReembolsosCards(processos) ||  '<p>Sem dados.</p>'));
 
         return processos;
       },
@@ -673,6 +701,12 @@ $(document).ready(function () {
   $(document).on('click', '#modalExportPDF', function () {modalExportPDF();});
   $(document).on('click', '#modalExportExcel', function () {modalExportExcel();});
 
+  // ================================
+  // EXPORTAÇÃO GLOBAL
+  // ================================
+  $(document).on('click', '#exportALLPDF', function () {exportAllPDF();});
+  $(document).on('click', '#exportALLExcel', function () {exportAllExcel();});
+
 });
 
 // Query params
@@ -691,12 +725,144 @@ function redirectProcesso(codigoProcesso){
   window.location.href = obrasURL;
 }
 
+function getReembolsosAgrupadosDetalhado(processos) {
+
+  const grupos = {};
+
+  processos.forEach(processo => {
+
+    const historico = processo.historico || [];
+    const faturas = processo.faturas || [];
+
+    // ---------------------------
+    // HISTÓRICO (PEDIDOS / REEMBOLSOS)
+    // ---------------------------
+    historico.forEach(h => {
+
+      if (h.historico_num && !String(h.historico_num).startsWith('PP')) return;
+
+      const key = h.historico_num || 'ORFAO';
+
+      if (!grupos[key]) {
+        grupos[key] = {
+          key,
+          totalPedido: 0,
+          totalReembolso: 0,
+          processos: {}
+        };
+      }
+
+      // PEDIDO
+      if (h.historico_descr_cod === 91) {
+        grupos[key].totalPedido += (h.historico_valor || 0);
+      }
+
+      // REEMBOLSO
+      if (h.historico_descr_cod === 92) {
+        grupos[key].totalReembolso += (h.historico_valor || 0);
+      }
+
+      // ---------------------------
+      // ASSOCIAR PROCESSO AO GRUPO
+      // ---------------------------
+      if (!grupos[key].processos[processo.padm]) {
+        grupos[key].processos[processo.padm] = {
+          processo,
+          faturas: []
+        };
+      }
+    });
+
+    // ---------------------------
+    // ASSOCIAR FATURAS AO PROCESSO
+    // ---------------------------
+    faturas.forEach(f => {
+
+      const key = f.fact_finan_pp;
+
+      if (!key) return;
+
+      const grupo = grupos[key];
+
+      if (!grupo) return;
+
+      if (grupo.processos[processo.padm]) {
+        grupo.processos[processo.padm].faturas.push(f);
+      }
+    });
+
+  });
+
+  return Object.values(grupos).sort((a, b) => {
+
+    if (a.key === 'ORFAO') return 1;
+    if (b.key === 'ORFAO') return -1;
+
+    return String(a.key).localeCompare(String(b.key), 'pt');
+  });
+}
+
 function modalExportPDF() {
-  //const { jsPDF } = window.jspdf;
-  //const doc = new jsPDF();
 
-  const doc = new window.jspdf.jsPDF();
+  const doc = new window.jspdf.jsPDF({
+    orientation: "landscape",
+    unit: "mm"
+  });
 
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  // ==================================
+  // DADOS CANDIDATURA
+  // ==================================
+  const candidatura =
+    processosGlobais?.[0]?.candidatura ||
+    "Candidatura não definida";
+
+  const estado =
+    processosGlobais?.[0]?.estado || "";
+
+  const designacao =
+    processosGlobais?.[0]?.nome ||
+    processosGlobais?.[0]?.designacao ||
+    "";
+
+  const dataGeracao =
+    new Date().toLocaleDateString("pt-PT");
+
+  // ==================================
+  // HEADER
+  // ==================================
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+
+  doc.text("DETALHE DE REEMBOLSOS", 14, 10);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+
+  doc.text(
+    `Candidatura: ${candidatura}${estado ? " | " + estado : ""}`,
+    14,
+    16
+  );
+
+  if (designacao) {
+    doc.text(
+      `Designação: ${designacao}`,
+      14,
+      21
+    );
+  }
+
+  doc.text(
+    `Gerado em: ${dataGeracao}`,
+    pageWidth - 55,
+    10
+  );
+
+  // ==================================
+  // DADOS
+  // ==================================
   const rows = [];
 
   $('#modalReembolsosBody .border.rounded').each(function () {
@@ -712,36 +878,70 @@ function modalExportPDF() {
     ]);
   });
 
-  doc.text("Detalhe Reembolsos", 14, 10);
-
+  // ==================================
+  // TABELA
+  // ==================================
   doc.autoTable({
-    startY: 15,
-    head: [["Processo", "Pedido", "Reembolsos", "Faturas"]],
+
+    startY: 28,
+
+    head: [[
+      "Processo",
+      "Pedido",
+      "Reembolsos",
+      "Faturas"
+    ]],
+
     body: rows,
+
+    theme: "grid",
 
     styles: {
       fontSize: 8,
       cellPadding: 2,
-      overflow: 'linebreak'
+      overflow: "linebreak",
+      valign: "top"
+    },
+
+    headStyles: {
+      fillColor: [23, 162, 184],
+      textColor: 255,
+      fontStyle: "bold"
     },
 
     columnStyles: {
-      0: { cellWidth: 40, halign: 'left' },  // Processo (mais pequeno)
-      1: { cellWidth: 52, halign: 'left' },  // Pedido
-      2: { cellWidth: 52, halign: 'left' },  // Reembolsos
-      3: { cellWidth: 52, halign: 'left' }   // Faturas
+      0: { cellWidth: 45 },
+      1: { cellWidth: 65 },
+      2: { cellWidth: 65 },
+      3: { cellWidth: 95 }
     }
   });
+
+  // ==================================
+  // FOOTER
+  // ==================================
+  const pages = doc.getNumberOfPages();
+
+  for (let i = 1; i <= pages; i++) {
+
+    doc.setPage(i);
+
+    doc.setFontSize(8);
+
+    doc.text(
+      `Página ${i} / ${pages}`,
+      pageWidth - 30,
+      200
+    );
+  }
 
   doc.save("modal-reembolsos.pdf");
 }
 
 function modalExportExcel() {
-
   const rows = [];
 
   $('#modalReembolsosBody .border.rounded').each(function () {
-
     const title = $(this).find('h6').text().trim();
     const cards = $(this).find('.card-body');
 
@@ -759,4 +959,213 @@ function modalExportExcel() {
   XLSX.utils.book_append_sheet(wb, ws, "Modal");
 
   XLSX.writeFile(wb, "modal-reembolsos.xlsx");
+}
+
+function exportAllPDF() {
+
+  const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
+
+  const doc = new window.jspdf.jsPDF({
+    orientation: "landscape",
+    unit: "mm"
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  let startY = 28;
+
+  // ================================
+  // HEADER
+  // ================================
+  const addHeader = () => {
+
+    const candidatura =
+      processosGlobais?.[0]?.candidatura ||
+      processosGlobais?.[0]?.codigo_candidatura ||
+      "Candidatura não definida";
+
+    const estado =
+      processosGlobais?.[0]?.estado || "";
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("RELATÓRIO DE REEMBOLSOS", 14, 10);
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `Candidatura: ${candidatura} ${estado ? "| " + estado : ""}`,
+      14,
+      16
+    );
+
+    const data = new Date().toLocaleDateString('pt-PT');
+
+    doc.text(
+      `Gerado em: ${data}`,
+      pageWidth - 60,
+      10
+    );
+
+    doc.setDrawColor(180);
+    doc.line(10, 19, pageWidth - 10, 19);
+  };
+
+  addHeader();
+
+  // ================================
+  // LOOP GRUPOS
+  // ================================
+  dados.forEach(g => {
+
+    const isAnulado = (g.totalPedido + g.totalReembolso === 0);
+
+    const blockHeight = 8; // 🔥 MAIS COMPACTO
+
+    // PAGE BREAK
+    if (startY + 30 > 190) {
+      doc.addPage();
+      startY = 28;
+      addHeader();
+    }
+
+    // ================================
+    // BLOCO DO GRUPO (COMPACTO)
+    // ================================
+    doc.setFillColor(235, 235, 235);
+    doc.rect(10, startY - 3, pageWidth - 20, blockHeight, "F");
+
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica", "bold");
+
+    doc.text(
+      `${g.key === 'ORFAO' ? 'Órfão' : g.key}`,
+      14,
+      startY + 2
+    );
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)} ${isAnulado ? "| ANULADO" : ""}`,
+      55,
+      startY + 2
+    );
+
+    startY += blockHeight - 2; // 🔥 MAIS JUNTO À TABELA
+
+    // ================================
+    // TABELA
+    // ================================
+    const rows = [];
+
+    Object.values(g.processos || {}).forEach(p => {
+
+      const faturas = (p.faturas && p.faturas.length)
+        ? p.faturas.map(f =>
+            `${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)}`
+          ).join("\n")
+        : "Sem faturas";
+
+      rows.push([
+        p.processo?.padm || '',
+        p.processo?.designacao || '',
+        faturas
+      ]);
+    });
+
+    doc.autoTable({
+      startY: startY,
+
+      head: [["Processo", "Designação", "Faturas"]],
+      body: rows,
+
+      theme: "grid",
+
+      margin: { top: 0 }, // 🔥 colado ao bloco
+
+      styles: {
+        fontSize: 7.5,
+        cellPadding: 1.5,
+        overflow: "linebreak",
+        valign: "top"
+      },
+
+      headStyles: {
+        fillColor: [23, 162, 184],
+        textColor: 255
+      },
+
+      columnStyles: {
+        0: { cellWidth: 30 },
+        1: { cellWidth: 80 },
+        2: { cellWidth: 150 }
+      }
+    });
+
+    startY = doc.lastAutoTable.finalY + 8; // 🔥 espaço reduzido entre grupos
+  });
+
+  // ================================
+  // FOOTER
+  // ================================
+  const pages = doc.getNumberOfPages();
+
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.text(`Página ${i} / ${pages}`, pageWidth - 30, 200);
+  }
+
+  doc.save("relatorio_reembolsos.pdf");
+}
+
+function exportAllExcel() {
+
+  const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
+
+  const rows = [];
+
+  dados.forEach(g => {
+
+    Object.values(g.processos).forEach(p => {
+
+      if (!p.faturas.length) {
+
+        rows.push({
+          Reembolso: g.key,
+          Pedido: g.totalPedido,
+          Processo: p.processo.designacao,
+          Fatura: '-',
+          Valor: '-'
+        });
+
+      } else {
+
+        p.faturas.forEach(f => {
+
+          rows.push({
+            Reembolso: g.key,
+            Pedido: g.totalPedido,
+            Processo: p.processo.designacao,
+            Fatura: `${f.fact_tipo}_${f.fact_num}`,
+            Data: f.fact_data,
+            Valor: f.fact_valor
+          });
+
+        });
+      }
+
+    });
+
+  });
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(wb, ws, "Reembolsos");
+
+  XLSX.writeFile(wb, "reembolsos_detalhado.xlsx");
 }
