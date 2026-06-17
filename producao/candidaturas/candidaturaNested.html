@@ -73,31 +73,35 @@
           <table class="table table-sm" id="titulo"></table>
         </div>
       </div>
-
-
-      
-      
+          
       <!-- DataTables Nested -->
       <div class="row">
         <div class="col col-md-12">
           <div class="card">
 
             <div class="card-header">
-              <div class="row align-items-center">  
-                <!-- Valores à esquerda -->
-                <div class="col-10 d-flex justify-content-start" id="valores">
-                  <!-- Valores inseridos pelo JS -->
-                </div>
-            
-                <!-- Logo à direita -->
-                <div class="col-2 d-flex justify-content-end" id="logo">
-                  <!-- Logo inserido pelo JS -->
-                </div>
-              </div>
+              <div class="card-header">
+
+                <!-- LINHA 1: VALORES + LOGO -->
+                <div class="row align-items-center">
               
-              <!-- Cartões -->
-              <div class="col-10 d-flex justify-content-start" id="reembolsos">
-                <!-- Valores inseridos pelo JS -->
+                  <div class="col-10 d-flex justify-content-start" id="valores">
+                    <!-- Valores inseridos pelo JS -->
+                  </div>
+              
+                  <div class="col-2 d-flex justify-content-end" id="logo">
+                    <!-- Logo inserido pelo JS -->
+                  </div>
+              
+                </div>
+              
+                <!-- LINHA 2: CARTÕES REEMBOLSOS -->
+                <div class="row mt-2">
+                  <div class="col-12" id="reembolsos">
+                    <!-- Cartões inseridos pelo JS -->
+                  </div>
+                </div>
+              
               </div>
 
             </div>
@@ -121,6 +125,25 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL -->
+
+  <div class="modal fade" id="modalReembolsos" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+  
+        <div class="modal-header">
+          <h5 class="modal-title">Detalhe do Pedido</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+        <div class="modal-body" id="modalReembolsosBody">
+          <!-- Conteúdo dinâmico -->
+        </div>
+  
+      </div>
     </div>
   </div>
 
