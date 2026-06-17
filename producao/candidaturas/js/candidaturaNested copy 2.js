@@ -311,7 +311,7 @@ $(document).ready(function () {
           : "bg-warning text-dark";
       
         html += `
-          <div class="col-6 col-sm-3 col-md-2 col-lg-1-5 mt-1">
+          <div class="col-6 col-sm-3 col-md-2 col-lg-1-5">
       
             <div class="card border-info shadow-sm h-100 reembolso-card"
                  data-key="${g.key}">
@@ -366,7 +366,7 @@ $(document).ready(function () {
           logo: json.logo
         }));
 
-        //console.table(json);
+        console.table(json);
 
         // Título da candidatura
         $('#titulo').html(`
@@ -547,7 +547,7 @@ $(document).ready(function () {
   
           <div class="row">
   
-            <!-- PEDIDO -->
+            <!-- ================= PEDIDO ================= -->
             <div class="col-md-4">
               <div class="card border-dark h-100">
                 <div class="card-header bg-dark text-white p-1 small">
@@ -555,17 +555,19 @@ $(document).ready(function () {
                 </div>
   
                 <div class="card-body small">
+  
                   ${pedido ? `
                     <div><b>Nº:</b> ${pedido.historico_num}</div>
                     <div><b>Expediente:</b> ${pedido.historico_doc || '-'}</div>
                     <div><b>Data:</b> ${pedido.historico_dataemissao || '-'}</div>
                     <div><b>Valor:</b> ${formatCurrency(pedido.historico_valor)}</div>
                   ` : `<span class="text-muted">Sem pedido</span>`}
+  
                 </div>
               </div>
             </div>
   
-            <!-- REEMBOLSOS -->
+            <!-- ================= REEMBOLSOS ================= -->
             <div class="col-md-4">
               <div class="card border-info h-100">
                 <div class="card-header bg-info text-white p-1 small">
@@ -573,19 +575,23 @@ $(document).ready(function () {
                 </div>
   
                 <div class="card-body small">
+  
                   ${reembolsos.length ? reembolsos.map(r => `
                     <div class="border-bottom mb-1 pb-1">
+  
                       <div><b>Nº:</b> ${r.historico_num}</div>
                       <div><b>Expediente:</b> ${r.historico_doc || '-'}</div>
                       <div><b>Data:</b> ${r.historico_dataemissao || '-'}</div>
                       <div><b>Valor:</b> ${formatCurrency(r.historico_valor)}</div>
+  
                     </div>
                   `).join('') : '<span class="text-muted">Sem reembolsos</span>'}
+  
                 </div>
               </div>
             </div>
   
-            <!-- FATURAS -->
+            <!-- ================= FATURAS ================= -->
             <div class="col-md-4">
               <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark p-1 small">
@@ -593,51 +599,32 @@ $(document).ready(function () {
                 </div>
   
                 <div class="card-body small">
+  
                   ${faturas.length ? faturas.map(f => `
                     <div class="border-bottom mb-1 pb-1">
+  
                       <div><b>Expediente:</b> ${formatExpediente(f.fact_expediente)}</div>
                       <div><b>Data:</b> ${f.fact_data || '-'}</div>
                       <div><b>Doc:</b> ${f.fact_tipo}_${f.fact_num}</div>
                       <div><b>Auto:</b> ${f.fact_auto_num || '-'}</div>
                       <div><b>Valor:</b> ${formatCurrency(f.fact_valor)}</div>
+  
                     </div>
                   `).join('') : '<span class="text-muted">Sem faturas</span>'}
+  
                 </div>
               </div>
             </div>
   
           </div>
+  
         </div>
       `;
     });
   
-    // ================================
-    // BOTÕES EXPORTAÇÃO MODAL
-    // ================================
-    const exportBtns = `
-      <div class="d-flex justify-content-end gap-2 mb-2">
-
-      <button id="modalExportPDF"
-              class="btn btn-danger btn-sm d-flex align-items-center gap-1"
-              title="Exportar PDF">
-
-        <i class="fa-solid fa-file-pdf"></i>
-      </button>
-
-      <button id="modalExportExcel"
-              class="btn btn-success btn-sm d-flex align-items-center gap-1"
-              title="Exportar Excel">
-
-        <i class="fa-solid fa-file-excel"></i>
-      </button>
-
-    </div>
-    `;
-  
-    $('#modalReembolsosBody').html(exportBtns + (html || '<p>Sem dados.</p>'));
+    $('#modalReembolsosBody').html(html || '<p>Sem dados.</p>');
   
     new bootstrap.Modal(document.getElementById('modalReembolsos')).show();
-
   });
 
   // Toggle nested row
@@ -667,12 +654,6 @@ $(document).ready(function () {
     redirectProcesso(rowData.proces_check);
   });
 
-  // ================================
-  // EXPORTAÇÃO MODAL (PDF + EXCEL)
-  // ================================
-  $(document).on('click', '#modalExportPDF', function () {modalExportPDF();});
-  $(document).on('click', '#modalExportExcel', function () {modalExportExcel();});
-
 });
 
 // Query params
@@ -689,74 +670,4 @@ function getQueryParams() {
 function redirectProcesso(codigoProcesso){
   const obrasURL = `../../producao/processos/processoResults.html?codigoProcesso=${codigoProcesso}`;
   window.location.href = obrasURL;
-}
-
-function modalExportPDF() {
-  //const { jsPDF } = window.jspdf;
-  //const doc = new jsPDF();
-
-  const doc = new window.jspdf.jsPDF();
-
-  const rows = [];
-
-  $('#modalReembolsosBody .border.rounded').each(function () {
-
-    const title = $(this).find('h6').text().trim();
-    const cards = $(this).find('.card-body');
-
-    rows.push([
-      title,
-      cards.eq(0).text().trim(),
-      cards.eq(1).text().trim(),
-      cards.eq(2).text().trim()
-    ]);
-  });
-
-  doc.text("Detalhe Reembolsos", 14, 10);
-
-  doc.autoTable({
-    startY: 15,
-    head: [["Processo", "Pedido", "Reembolsos", "Faturas"]],
-    body: rows,
-
-    styles: {
-      fontSize: 8,
-      cellPadding: 2,
-      overflow: 'linebreak'
-    },
-
-    columnStyles: {
-      0: { cellWidth: 40, halign: 'left' },  // Processo (mais pequeno)
-      1: { cellWidth: 52, halign: 'left' },  // Pedido
-      2: { cellWidth: 52, halign: 'left' },  // Reembolsos
-      3: { cellWidth: 52, halign: 'left' }   // Faturas
-    }
-  });
-
-  doc.save("modal-reembolsos.pdf");
-}
-
-function modalExportExcel() {
-
-  const rows = [];
-
-  $('#modalReembolsosBody .border.rounded').each(function () {
-
-    const title = $(this).find('h6').text().trim();
-    const cards = $(this).find('.card-body');
-
-    rows.push({
-      Processo: title,
-      Pedido: cards.eq(0).text().trim(),
-      Reembolsos: cards.eq(1).text().trim(),
-      Faturas: cards.eq(2).text().trim()
-    });
-  });
-
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(wb, ws, "Modal");
-
-  XLSX.writeFile(wb, "modal-reembolsos.xlsx");
 }
