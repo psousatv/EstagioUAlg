@@ -15,19 +15,13 @@ let table;
 //}
 
 function formatCurrency(value){
-
-  return new Intl.NumberFormat(
-    'de-DE',
-    {
-      minimumFractionDigits: 2
-    }
-  ).format(value || 0) + '€';
+  return new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(value || 0) + '€';
 }
 
 function formatExpediente(str){
-  return str
-    ? `${str[0]}.${str.slice(1, 6)}.${str.slice(6)}`
-    : '';
+  return str 
+  ? `${str[0]}.${str.slice(1, 6)}.${str.slice(6)}`
+  : '';
 }
 
 
@@ -448,48 +442,53 @@ $(document).ready(function () {
               .reduce((s, h) => s + h.historico_valor, 0) || 0
           ),
         0);
-
-        // Valores da Candidatura
-        $('#valores').html(`
-          <table class="table table-striped table-md">
-            <tr>
-              <td class="bg-primary text-white">Investimento Aprovado</td>
-              <td class="bg-primary text-white text-right">${formatCurrency(json.elegivel)}</td>
-              <td class="bg-secondary text-white">Apoio Previsto</td>
-              <td class="bg-secondary text-white text-right">${formatCurrency(json.elegivel * json.taxa)}</td>  
-              <td class="bg-success text-white">Pedido </td>
-              <td class="bg-success text-white text-right">${formatCurrency(totalPedidos)}</td>
-              <td class="bg-info text-white">Pago </td>
-              <td class="bg-info text-white text-right">${formatCurrency(totalReembolsos * json.taxa)}</td>
-            </tr>
-          </table>
-        `);
         
-        // Cartões
         // ================================
         // BOTÕES EXPORTAÇÃO GLOBAL
         // ================================
         const exportAllBtns = `
-        <div class="d-flex justify-content-end gap-2 mb-2">
+        <div class="d-flex align-items-center gap-3">
+        
+          <button id="exportALLPDF"
+            class="btn btn-danger btn-lg d-flex align-items-center gap-2 shadow-sm"
+            title="Exportar PDF">
+            <i class="fa-solid fa-file-pdf"></i>
+          </button>
+        
+          <button id="exportALLExcel"
+            class="btn btn-success btn-lg d-flex align-items-center gap-2 shadow-sm"
+            title="Exportar Excel">
+            <i class="fa-solid fa-file-excel"></i>
+          </button>
+        
+        </div>
+        `;
 
-        <button id="exportALLPDF"
-                class="btn btn-danger btn-sm d-flex align-items-center gap-1"
-                title="Exportar PDF">
+        // Valores da Candidatura
+        $('#valores').html(`
+          <div>
+            <table class="table table-striped table-md mb-2">
+              <tr>
+                <td class="bg-primary text-white">Investimento Aprovado</td>
+                <td class="bg-primary text-white text-right">${formatCurrency(json.elegivel)}</td>
+        
+                <td class="bg-secondary text-white">Apoio Previsto</td>
+                <td class="bg-secondary text-white text-right">${formatCurrency(json.elegivel * json.taxa)}</td>
+        
+                <td class="bg-success text-white">Pedido</td>
+                <td class="bg-success text-white text-right">${formatCurrency(totalPedidos)}</td>
+        
+                <td class="bg-info text-white">Pago</td>
+                <td class="bg-info text-white text-right">${formatCurrency(totalReembolsos * json.taxa)}</td>
+              </tr>
+            </table>
+          </div>
+        `);
 
-          <i class="fa-solid fa-file-pdf"></i>
-        </button>
-
-        <button id="exportALLExcel"
-                class="btn btn-success btn-sm d-flex align-items-center gap-1"
-                title="Exportar Excel">
-
-          <i class="fa-solid fa-file-excel"></i>
-        </button>
-
-      </div>
-      `;
-
-      $('#reembolsos').html(exportAllBtns + (renderReembolsosCards(processos) ||  '<p>Sem dados.</p>'));
+        $('#exportar').html(exportAllBtns);
+        
+        // Cartões
+        $('#reembolsos').html( renderReembolsosCards(processos) );
 
         return processos;
       },
