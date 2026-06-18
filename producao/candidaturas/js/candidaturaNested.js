@@ -1,18 +1,6 @@
 let processosGlobais = [];
 let table;
 
-//function formatCurrency(value) {
-//  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-//};
-
-//function formatExpediente(str) {
-//  if (typeof str !== 'string') return '';
-//
-//  const clean = str.replace(/[^A-Za-z0-9]/g, '');
-//  return clean.replace(/^([A-Za-z])(\d+)/, (_, l, n) => {
-//    return `${l}.${n.slice(0,5)}.${n.slice(5,7)}`;
-//  });
-//}
 
 function formatCurrency(value){
   return new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(value || 0) + '€';
@@ -382,7 +370,7 @@ $(document).ready(function () {
         processosGlobais = processos
 
         //console.table(json);
-        console.table(processosGlobais);
+        //console.table(processosGlobais);
 
         // Título da candidatura
         $('#titulo').html(`
@@ -905,7 +893,7 @@ function modalExportPDF() {
       "Processo",
       "Pedido",
       "Reembolsos",
-      "Faturas"
+      "Faturação"
     ]],
 
     body: rows,
@@ -988,6 +976,13 @@ function exportAllPDF() {
 
   const pageWidth = doc.internal.pageSize.getWidth();
 
+  // ================================
+  // LAYOUT BASE (OBRIGATÓRIO)
+  // ================================
+  const marginLeft = 10;
+  const marginRight = 10;
+  const tableWidth = pageWidth - marginLeft - marginRight;
+
   let startY = 28;
 
   // ================================
@@ -1003,20 +998,20 @@ function exportAllPDF() {
     const estado =
       processosGlobais?.[0]?.estado || "";
 
+    const data = new Date().toLocaleDateString("pt-PT");
+
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("RELATÓRIO DE REEMBOLSOS", 14, 10);
+    doc.text("RELATÓRIO DE REEMBOLSOS", marginLeft, 10);
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
 
     doc.text(
       `Candidatura: ${candidatura} ${estado ? "| " + estado : ""}`,
-      14,
+      marginLeft,
       16
     );
-
-    const data = new Date().toLocaleDateString('pt-PT');
 
     doc.text(
       `Gerado em: ${data}`,
@@ -1025,40 +1020,40 @@ function exportAllPDF() {
     );
 
     doc.setDrawColor(180);
-    doc.line(10, 19, pageWidth - 10, 19);
+    doc.line(marginLeft, 19, pageWidth - marginRight, 19);
   };
 
   addHeader();
 
   // ================================
-  // LOOP GRUPOS
+  // LOOP DOS GRUPOS
   // ================================
   dados.forEach(g => {
 
     const isAnulado = (g.totalPedido + g.totalReembolso === 0);
 
-    const blockHeight = 8; // 🔥 MAIS COMPACTO
-
     // PAGE BREAK
-    if (startY + 30 > 190) {
+    if (startY > 170) {
       doc.addPage();
       startY = 28;
       addHeader();
     }
 
     // ================================
-    // BLOCO DO GRUPO (COMPACTO)
+    // HEADER DO GRUPO (ALINHADO À TABELA)
     // ================================
+    const headerY = startY;
+
     doc.setFillColor(235, 235, 235);
-    doc.rect(10, startY - 3, pageWidth - 20, blockHeight, "F");
+    doc.rect(marginLeft, headerY - 3, tableWidth, 8, "F");
 
     doc.setFontSize(8.5);
     doc.setFont("helvetica", "bold");
 
     doc.text(
       `${g.key === 'ORFAO' ? 'Órfão' : g.key}`,
-      14,
-      startY + 2
+      marginLeft + 4,
+      headerY + 2
     );
 
     doc.setFontSize(8);
@@ -1066,62 +1061,121 @@ function exportAllPDF() {
 
     doc.text(
       `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)} ${isAnulado ? "| ANULADO" : ""}`,
-      55,
-      startY + 2
+      marginLeft + 40,
+      headerY + 2
     );
 
-    startY += blockHeight - 2; // 🔥 MAIS JUNTO À TABELA
+    // posição da tabela sempre alinhada ao bloco
+    const tableStartY = headerY + 10;
 
     // ================================
-    // TABELA
+    // LINHAS
     // ================================
     const rows = [];
 
     Object.values(g.processos || {}).forEach(p => {
 
+      const pedidos = (p.processo?.historico || [])
+        .filter(h =>
+          h.historico_descr_cod === 91 &&
+          String(h.historico_num) === String(g.key)
+        );
+
+      const pedidoValor = pedidos
+        .reduce((sum, h) => sum + (h.historico_valor || 0), 0);
+
+      const pedidoRef = pedidos.length
+        ? pedidos.map(h =>
+            `${h.historico_num || ''} ${h.historico_doc || ''}`
+          ).join(" | ")
+        : "-";
+
+      const reembolsos = (p.processo?.historico || [])
+        .filter(h =>
+          h.historico_descr_cod === 92 &&
+          String(h.historico_num) === String(g.key)
+        );
+
+      const reembolsosValor = reembolsos
+        .reduce((sum, r) => sum + (r.historico_valor || 0), 0);
+
+      const reembolsoRef = reembolsos.length
+        ? reembolsos.map(r =>
+            `${r.historico_num || ''} ${r.historico_doc || ''}`
+          ).join(" | ")
+        : "-";
+
       const faturas = (p.faturas && p.faturas.length)
         ? p.faturas.map(f =>
-            `${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)} - Fundo: ${formatCurrency(f.fact_fundo)}`
+            `${formatExpediente(f.fact_expediente)}_${f.fact_data} - ${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)} - Fundo: ${formatCurrency(f.fact_fundo || 0)}`
           ).join("\n")
         : "Sem faturas";
 
       rows.push([
         p.processo?.padm || '',
         p.processo?.designacao || '',
+        [
+          `Pedido: ${pedidoRef} - Valor: ${formatCurrency(pedidoValor || 0)}`,
+          `Reembolso: ${reembolsoRef} - Valor: ${formatCurrency(reembolsosValor || 0)}`
+        ].join("\n"),
         faturas
       ]);
     });
 
+    // ================================
+    // AUTO TABLE
+    // ================================
     doc.autoTable({
-      startY: startY,
 
-      head: [["Processo", "Designação", "Faturas"]],
+      startY: tableStartY,
+
+      head: [["Processo", "Designação", "Movimentos", "Faturação"]],
+
       body: rows,
 
       theme: "grid",
 
-      margin: { top: 0 }, // 🔥 colado ao bloco
+      margin: {
+        left: marginLeft,
+        right: marginRight
+      },
 
       styles: {
-        fontSize: 7.5,
-        cellPadding: 1.5,
+        fontSize: 7.2,
+        cellPadding: 1.4,
         overflow: "linebreak",
-        valign: "top"
+        valign: "top",
+        halign: "left",
+        lineColor: [220, 220, 220],
+        lineWidth: 0.1
       },
 
       headStyles: {
         fillColor: [23, 162, 184],
-        textColor: 255
+        textColor: 255,
+        fontStyle: "bold",
+        halign: "left",
+        valign: "middle"
+      },
+
+      bodyStyles: {
+        halign: "left",
+        valign: "top"
+      },
+
+      alternateRowStyles: {
+        fillColor: [250, 250, 250]
       },
 
       columnStyles: {
-        0: { cellWidth: 30 },
+        0: { cellWidth: 22 },
         1: { cellWidth: 80 },
-        2: { cellWidth: 150 }
+        2: { cellWidth: 80 },
+        3: { cellWidth: 95 }
       }
     });
 
-    startY = doc.lastAutoTable.finalY + 8; // 🔥 espaço reduzido entre grupos
+    startY = doc.lastAutoTable.finalY + 8;
   });
 
   // ================================
@@ -1146,12 +1200,44 @@ function exportAllExcel() {
 
   dados.forEach(g => {
 
+
+    console.table(dados);
+
     Object.values(g.processos).forEach(p => {
+
+    // ✔ referência (nº do pedido / documento)
+    const pedidos = (p.processo?.historico || [])
+      .filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
+      );
+      const pedidoRef = pedidos.length
+        ? pedidos
+            .map(h =>
+              `${h.historico_num || ''} ${h.historico_doc || ''}`
+            )
+            .join(" | ")
+        : "-";
+      
+    // ✔ referência (nº do reembolso / documento)
+    const reembolsos = (p.processo?.historico || [])
+    .filter(h =>
+      h.historico_descr_cod === 92 &&
+      String(h.historico_num) === String(g.key)
+    );
+    const reembolsoRef = pedidos.length
+      ? reembolsos
+          .map(h =>
+            `${h.historico_num || ''} ${h.historico_doc || ''}`
+          )
+          .join(" | ")
+      : "-";
 
       if (!p.faturas.length) {
 
         rows.push({
-          Reembolso: g.key,
+          RefPedido: pedidoRef,
+          RefReembolso: reembolsoRefRef,
           Pedido: g.totalPedido,
           Processo: p.processo.designacao,
           Fatura: '-',
@@ -1164,11 +1250,12 @@ function exportAllExcel() {
         p.faturas.forEach(f => {
 
           rows.push({
-            Reembolso: g.key,
-            Pedido: g.totalPedido,
+            Pedido: pedidoRef,
+            Reembolso: reembolsoRef,
             Processo: p.processo.designacao,
-            Fatura: `${f.fact_tipo}_${f.fact_num}`,
             Data: f.fact_data,
+            Fatura: `${f.fact_tipo}_${f.fact_num}`,
+            Expediente: formatExpediente(f.fact_expediente),
             Valor: f.fact_valor,
             Fundo: f.fact_fundo
           });
