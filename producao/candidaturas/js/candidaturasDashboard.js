@@ -198,9 +198,11 @@ $(document).ready(function () {
             });
 
             // 🔹 Cartões
+            var containerOutroEstado = $('#cartoesCandidaturaOutroEstado');
             var containerCurso = $('#cartoesCandidaturaEmCurso');
             var containerEncerrada = $('#cartoesCandidaturaEncerrada');
 
+            containerOutroEstado.empty();
             containerCurso.empty();
             containerEncerrada.empty();
 
@@ -258,8 +260,10 @@ $(document).ready(function () {
 
                 if (dados.estado === 'Em Curso') {
                     containerCurso.append(cartao);
-                } else {
+                } else if(dados.estado === 'Encerrada') {
                     containerEncerrada.append(cartao);
+                } else {
+                    containerOutroEstado.append(cartao);
                 }
             });
 
@@ -344,7 +348,7 @@ function veIndicador() {
                         
                         <thead>
                             <tr>
-                                <th rowspan="2">Programa</th>
+                                <th rowspan="2">Aviso</th>
                                 <th rowspan="2">Candidatura</th>
                                 <th rowspan="2">Processo</th>
                                 <th colspan="2">Valores</th>
@@ -381,7 +385,7 @@ function veIndicador() {
             const table = $(`#${tableId}`).DataTable({
                 data: groupData,
                 columns: [
-                    { data: 'programa' },
+                    { data: 'aviso' },
                     { data: 'candidatura' },
                     { data: 'processo_nome' },
 

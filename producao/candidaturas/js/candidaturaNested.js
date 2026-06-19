@@ -377,7 +377,7 @@ $(document).ready(function () {
           <div>
             <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
               ${json.estado || ''}: ${json.candidatura || ''} 
-              - ${json.designacao || ''} - Apoio de ${json.taxa * 100 || ''}%
+              - ${json.designacao || ''}
             </div>
             <div class="btn btn-warning">
               <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
@@ -385,9 +385,6 @@ $(document).ready(function () {
             <div class="btn btn-primary">
               <a class="text-white" href="candidaturasDashboard.html"><i class="fa-solid fa-search"></i></a>
             </div>
-          </div>
-          <div class="mt-2">
-            <b>Breve descrição da Candiatura - a do Aviso</b>
           </div>
         `);
 
@@ -474,9 +471,82 @@ $(document).ready(function () {
         `);
 
         $('#exportar').html(exportAllBtns);
+
+        $('#historico').html(`
+          <div class="row g-3 align-items-stretch">
+
+            <!-- CARTÃO 1 -->
+            <div class="col-md-4">
+              <div class="card small text-left shadow-sm h-100">
+                <div class="card-body">
+
+                  <div class="mb-2">
+                    <strong>Aviso: ${json.aviso || ''}</strong>
+                    <div>Abertura: ${json.abertura || ''} - Fecho: ${json.fecho || ''}</div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="fw-bold">Prioridade: ${json.prioridade || ''}</div>
+                    <div>Tipologia: ${json.tipologia_intervencao || ''}</div>
+                  </div>
+
+                  <div>
+                    <div class="fw-bold">Objetivo: ${json.objetivo || ''}</div>
+                    <div>Ação: ${json.tipologia_acao || ''}</div>
+                    <div>Taxa de Cofinanciamento: ${json.taxa * 100 || 0 }%</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- CARTÃO 2 -->
+            <div class="col-md-4">
+              <div class="card small text-left shadow-sm h-100">
+                <div class="card-body">
+
+                  <div class="mb-2">
+                    <strong>Candidatura:</strong>
+                    <div>Estado: ${json.estado || ''}</div>
+                    <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="fw-bold">Submissão: ${json.submissao || ''}</div>
+                    <div>Aprovação: ${json.aprovacao || ''}</div>
+                    <div class="fw-bold">Termo de Aceitação: ${json.aceitacao || ''}</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- CARTÃO 3 -->
+            <div class="col-md-4">
+              <div class="card small text-left shadow-sm h-100">
+                <div class="card-body">
+
+                  <div class="mb-2">
+                    <strong>Indicadores:</strong>
+                    <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="fw-bold">Submissão: ${json.submissao || ''}</div>
+                    <div>Aprovação: ${json.aprovacao || ''}</div>
+                    <div class="fw-bold">Termo de Aceitação: ${json.aceitacao || ''}</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `);
         
+
         // Cartões
-        $('#reembolsos').html( renderReembolsosCards(processos) );
+        $('#reembolsos').html(renderReembolsosCards(processos) );
 
         return processos;
       },
