@@ -376,8 +376,7 @@ $(document).ready(function () {
         $('#titulo').html(`
           <div>
             <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
-              ${json.estado || ''}: ${json.candidatura || ''} 
-              - ${json.designacao || ''}
+              ${json.candidatura || ''} - ${json.designacao || ''}
             </div>
             <div class="btn btn-warning">
               <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
@@ -506,8 +505,7 @@ $(document).ready(function () {
                 <div class="card-body">
 
                   <div class="mb-2">
-                    <strong>Candidatura:</strong>
-                    <div>Estado: ${json.estado || ''}</div>
+                    <strong>Candidatura: ${json.estado || ''}</strong>                    
                     <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
                   </div>
 
@@ -527,7 +525,7 @@ $(document).ready(function () {
                 <div class="card-body">
 
                   <div class="mb-2">
-                    <strong>Indicadores:</strong>
+                    <strong>Indicadores: Em Construção</strong>
                     <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
                   </div>
 
