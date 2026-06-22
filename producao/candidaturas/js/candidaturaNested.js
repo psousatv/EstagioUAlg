@@ -525,14 +525,52 @@ $(document).ready(function () {
                 <div class="card-body">
 
                   <div class="mb-2">
-                    <strong>Indicadores: Em Construção</strong>
-                    <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
+                    <strong>Indicadores: Em Construção - Tornar Dinâmico</strong>
                   </div>
 
                   <div class="mb-2">
-                    <div class="fw-bold">Submissão: ${json.submissao || ''}</div>
-                    <div>Aprovação: ${json.aprovacao || ''}</div>
-                    <div class="fw-bold">Termo de Aceitação: ${json.aceitacao || ''}</div>
+                  <table class="table table-sm table-hover table-bordered small align-middle id="tabelaIndicador">
+                    <thead>
+                      <tr>
+                        <th>Indicador</th>
+                        <th>Unidade</th>
+                        <th>Meta</th>
+                        <th>Execução</th>
+                        <th>%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                          <td>RCO 30 ITI</td>
+                          <td>Km</td>
+                          <td class="text-right">5,11</td>
+                          <td class="text-right">0</td>
+                          <td class="text-right">0,00%</td>
+                      </tr>
+                      <tr>
+                          <td>RCR 75 ITI</td>
+                          <td>Un</td>
+                          <td class="text-right">1</td>
+                          <td class="text-right">1</td>
+                          <td class="text-right">100,00%</td>
+                      </tr>
+                      <tr>
+                          <td>RCR 41 ITI</td>
+                          <td>Pessoas</td>
+                          <td class="text-right">145</td>
+                          <td class="text-right">0</td>
+                          <td class="text-right">0,00%</td>
+                      </tr>
+                      <tr>
+                          <td>RCR 43 ITI</td>
+                          <td>m3/ano</td>
+                          <td class="text-right">Perdas</td>
+                          <td class="text-right">Aplicável?</td>
+                          <td class="text-right">0,00%</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
                   </div>
 
                 </div>

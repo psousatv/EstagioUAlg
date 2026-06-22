@@ -403,12 +403,12 @@ function veIndicador() {
                     {
                         data: 'KmRede_previsto',
                         className: 'dt-body-right',
-                        render: data => Formatters.number.format(Number(data) || 0) + ' km'
+                        render: data => Formatters.number.format(Number(data) || 0)
                     },
                     {
                         data: 'KmRede_executado',
                         className: 'dt-body-right',
-                        render: data => Formatters.number.format(Number(data) || 0) + ' km'
+                        render: data => Formatters.number.format(Number(data) || 0)
                     },
 
                     {
@@ -440,8 +440,8 @@ function veIndicador() {
                     $(api.column(5).footer()).html(Formatters.number.format(soma(5)) + ' km').addClass('text-right');
                     $(api.column(6).footer()).html(Formatters.number.format(soma(6)) + ' km').addClass('text-right');
 
-                    $(api.column(7).footer()).html(Formatters.currency.format(soma(7))).addClass('text-right');
-                    $(api.column(8).footer()).html(Formatters.currency.format(soma(8))).addClass('text-right');
+                    $(api.column(7).footer()).html(Formatters.number.format(soma(7))).addClass('text-right');
+                    $(api.column(8).footer()).html(Formatters.number.format(soma(8))).addClass('text-right');
                 }
             });
 
