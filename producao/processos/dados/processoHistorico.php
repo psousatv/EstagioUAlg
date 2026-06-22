@@ -20,7 +20,7 @@ $fases = [
     "preparacao_execucao" => [60, 61, 62, 63, 64],
     "execucao" => [9, 18, 21, 22, 24, 55],
     "financiamento" => [91, 92],
-    "garantia" => [25, 26, 27, 28, 30, 42, 42, 43],
+    "garantia" => [25, 26, 27, 28, 30, 40, 41, 42, 43],
     "contas_finais" => [23, 29]
 ];
 
