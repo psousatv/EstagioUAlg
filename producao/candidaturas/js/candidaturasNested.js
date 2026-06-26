@@ -365,7 +365,7 @@ $(document).ready(function () {
   // Inicializa DataTable principal
   table = $('#processosNested').DataTable({
     ajax: {
-      url: 'dados/candidaturaNested.php',
+      url: 'dados/candidaturasNested.php',
       dataSrc: function (json) {
         // Retorna todos os processos como linhas
         const processos = json.processos.map(proc => ({
@@ -384,60 +384,72 @@ $(document).ready(function () {
         //console.table(json);
         //console.table(processosGlobais);
 
-        // Título da candidatura
-        $('#titulo').html(`
-          <div>
-            <div class="btn btn-primary col-md-10 d-grid small text-white text-left">
-              ${json.candidatura || ''} - ${json.designacao || ''}
-            </div>
-            <div class="btn btn-warning">
-              <a href="candidaturaNested.html?itemProcurado=${json.candidatura}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
-            </div>
-            <div class="btn btn-primary">
-              <a class="text-white" href="candidaturasDashboard.html"><i class="fa-solid fa-search"></i></a>
-            </div>
-          </div>
-        `);
-
-        // Logotipo da Candidatura
+        // Caminho para o Logotipo da Candidatura
         const path = "../../global/imagens";
 
-        $('#logo').html(`
-          <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;"></img>
+        // Título da candidatura
+        $('#titulo').html(`
+          <div class="row w-100 align-items-center">
+
+          <!-- 2/3: Título + botões -->
+          <div class="col-10 d-flex align-items-center gap-2">
+
+            <!-- Título -->
+            <div class="btn btn-primary flex-grow-1 text-white text-start d-flex align-items-center">
+              ${json.candidatura || ''} - ${json.designacao || ''}
+            </div>
+
+            <!-- Botão 1 -->
+            <div class="btn btn-warning d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
+              <a href="candidaturasNested.html?itemProcurado=${json.candidatura}" class="text-dark">
+                <i class="fa-solid fa-rotate fa-lg"></i>
+              </a>
+            </div>
+
+            <!-- Botão 2 -->
+            <div class="btn btn-primary d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
+              <a class="text-white" href="candidaturasGeral.html?itemProcurado=${json.candidatura}">
+                <i class="fa-solid fa-arrow-left fa-lg"></i>
+              </a>
+            </div>
+
+          </div>
+
+          <!-- 1/3: Logotipo -->
+          <div class="col-2 d-flex justify-content-end align-items-center">
+            <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
+          </div>
+
+        </div>
         `);
-        
+
         // Somatórios de todos os processos
         const totalAdjudicado = processos
-        .reduce((sumProc, p) => sumProc + 
-        (p.historico?.filter(h => h.historico_descr_cod===14 && (h.historico_valor||0) > 0)
-        .reduce((s,h) => s + h.historico_valor,0) || 0), 0);
+          .reduce((sumProc, p) => sumProc + 
+          (p.historico
+            ?.filter(h => h.historico_descr_cod===14 && (h.historico_valor||0) > 0)
+            .reduce((s,h) => s + h.historico_valor,0) || 0
+          ), 0
+        );
 
         //const totalFaturas = processos
         //.reduce((sumProc, p) => sumProc + (p.faturas?.filter(f => (f.fact_valor||0) > 0).reduce((s,f) => s + f.fact_valor,0) || 0), 0);
         
         const totalPedidos = processos
-        .reduce((sumProc, p) => 
-          sumProc + (
-            p.historico
-              ?.filter(h => 
-                h.historico_descr_cod === 91 && 
-                (h.historico_valor || 0) > 0
-              )
-              .reduce((s, h) => s + h.historico_valor, 0) || 0
-          ),
-        0);
+          .reduce((sumProc, p) => sumProc + 
+          (p.historico
+            ?.filter(h => h.historico_descr_cod === 91 && (h.historico_valor || 0) > 0)
+            .reduce((s, h) => s + h.historico_valor, 0) || 0
+          ), 0
+        );
 
         const totalReembolsos = processos
-        .reduce((sumProc, p) => 
-          sumProc + (
-            p.historico
-              ?.filter(h => 
-                h.historico_descr_cod === 92 && 
-                (h.historico_valor || 0) > 0
-              )
-              .reduce((s, h) => s + h.historico_valor, 0) || 0
-          ),
-        0);
+          .reduce((sumProc, p) => sumProc + 
+          (p.historico
+            ?.filter(h => h.historico_descr_cod === 92 && (h.historico_valor || 0) > 0)
+            .reduce((s, h) => s + h.historico_valor, 0) || 0
+          ), 0
+        );
         
         // ================================
         // BOTÕES EXPORTAÇÃO GLOBAL
@@ -462,136 +474,54 @@ $(document).ready(function () {
 
         // Valores da Candidatura
         $('#valores').html(`
-          <div>
-            <table class="table table-striped table-md mb-2">
-              <tr>
-                <td class="bg-primary text-white">Investimento Aprovado</td>
-                <td class="bg-primary text-white text-right">${formatCurrency(json.elegivel)}</td>
+          <div class="row w-100 align-items-center">
         
-                <td class="bg-secondary text-white">Apoio Previsto</td>
-                <td class="bg-secondary text-white text-right">${formatCurrency(json.elegivel * json.taxa)}</td>
+            <!-- MÉTRICAS -->
+            <div class="col-9 d-flex gap-3">
         
-                <td class="bg-success text-white">Pedido</td>
-                <td class="bg-success text-white text-right">${formatCurrency(totalPedidos)}</td>
+              <div class="flex-fill bg-primary text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
+                <div>Investimento Aprovado</div>
+                <div class="fw-bold text-nowrap">
+                  ${formatCurrency(json.elegivel)}
+                </div>
+              </div>
         
-                <td class="bg-info text-white">Pago</td>
-                <td class="bg-info text-white text-right">${formatCurrency(totalReembolsos * json.taxa)}</td>
-              </tr>
-            </table>
+              <div class="flex-fill bg-secondary text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
+                <div>Apoio Previsto</div>
+                <div class="fw-bold text-nowrap">
+                  ${formatCurrency(json.elegivel * json.taxa)}
+                </div>
+              </div>
+        
+              <div class="flex-fill bg-success text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
+                <div>Pedido</div>
+                <div class="fw-bold text-nowrap">
+                  ${formatCurrency(totalPedidos)}
+                </div>
+              </div>
+        
+              <div class="flex-fill bg-info text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
+                <div>Pago</div>
+                <div class="fw-bold text-nowrap">
+                  ${formatCurrency(totalReembolsos * json.taxa)}
+                </div>
+              </div>
+        
+            </div>
+        
+            <!-- BOTÕES -->
+            <div class="col-3 d-flex justify-content-end align-items-center gap-2">
+        
+              ${exportAllBtns}
+        
+            </div>
+        
           </div>
         `);
 
-        $('#exportar').html(exportAllBtns);
-
-        $('#historico').html(`
-          <div class="row g-3 align-items-stretch">
-
-            <!-- CARTÃO 1 -->
-            <div class="col-md-4">
-              <div class="card small text-left shadow-sm h-100">
-                <div class="card-body">
-
-                  <div class="mb-2">
-                    <strong>Aviso: ${json.aviso || ''}</strong>
-                    <div>Abertura: ${json.abertura || ''} - Fecho: ${json.fecho || ''}</div>
-                  </div>
-
-                  <div class="mb-2">
-                    <div class="fw-bold">Prioridade: ${json.prioridade || ''}</div>
-                    <div>Tipologia: ${json.tipologia_intervencao || ''}</div>
-                  </div>
-
-                  <div>
-                    <div class="fw-bold">Objetivo: ${json.objetivo || ''}</div>
-                    <div>Ação: ${json.tipologia_acao || ''}</div>
-                    <div>Taxa de Cofinanciamento: ${json.taxa * 100 || 0 }%</div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            <!-- CARTÃO 2 -->
-            <div class="col-md-4">
-              <div class="card small text-left shadow-sm h-100">
-                <div class="card-body">
-
-                  <div class="mb-2">
-                    <strong>Candidatura: ${json.estado || ''}</strong>                    
-                    <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
-                  </div>
-
-                  <div class="mb-2">
-                    <div class="fw-bold">Submissão: ${json.submissao || ''}</div>
-                    <div>Aprovação: ${json.aprovacao || ''}</div>
-                    <div class="fw-bold">Termo de Aceitação: ${json.aceitacao || ''}</div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            <!-- CARTÃO 3 -->
-            <div class="col-md-4">
-              <div class="card small text-left shadow-sm h-100">
-                <div class="card-body">
-
-                  <div class="mb-2">
-                    <strong>Indicadores: Em Construção - Tornar Dinâmico</strong>
-                  </div>
-
-                  <div class="mb-2">
-                  <table class="table table-sm table-hover table-bordered small align-middle id="tabelaIndicador">
-                    <thead>
-                      <tr>
-                        <th>Indicador</th>
-                        <th>Unidade</th>
-                        <th>Meta</th>
-                        <th>Execução</th>
-                        <th>%</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                          <td>RCO 30 ITI</td>
-                          <td>Km</td>
-                          <td class="text-right">5,11</td>
-                          <td class="text-right">0</td>
-                          <td class="text-right">0,00%</td>
-                      </tr>
-                      <tr>
-                          <td>RCR 75 ITI</td>
-                          <td>Un</td>
-                          <td class="text-right">1</td>
-                          <td class="text-right">1</td>
-                          <td class="text-right">100,00%</td>
-                      </tr>
-                      <tr>
-                          <td>RCR 41 ITI</td>
-                          <td>Pessoas</td>
-                          <td class="text-right">145</td>
-                          <td class="text-right">0</td>
-                          <td class="text-right">0,00%</td>
-                      </tr>
-                      <tr>
-                          <td>RCR 43 ITI</td>
-                          <td>m3/ano</td>
-                          <td class="text-right">Perdas</td>
-                          <td class="text-right">Aplicável?</td>
-                          <td class="text-right">0,00%</td>
-                      </tr>
-                      
-                    </tbody>
-                  </table>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-          </div>
-        `);
-        
+        //$('#logo').html(`
+        //  <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;"></img>
+        //`);
 
         // Cartões
         $('#reembolsos').html(renderReembolsosCards(processos) );

@@ -14,7 +14,7 @@ function intVal(i) {
 
 // Redireciona ao selecionar uma candidatura
 function candidaturaRedirected(itemProcurado) {
-    var URL = "candidaturaNested.html?itemProcurado=" + encodeURIComponent(itemProcurado); // alterar para candidaturaNested
+    var URL = "candidaturasGeral.html?itemProcurado=" + encodeURIComponent(itemProcurado); // alterar para candidaturaNested
     window.location.href = URL;
 }
 

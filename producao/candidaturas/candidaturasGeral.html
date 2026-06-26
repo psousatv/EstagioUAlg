@@ -23,8 +23,6 @@
 <!-- Fontawesome -->
 <link href="../../vendors/fonts/fontawesome.min.css" rel="stylesheet" type="text/css">
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
-<!-- Datables -->
-<link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 
@@ -74,71 +72,22 @@
         </div>
       </div>
           
-      <!-- DataTables Nested -->
+      
       <div class="row">
         <div class="col col-md-12">
           <div class="card">
-
-            <div class="card-header">
-              <div class="card-header">
-
-                <!-- LINHA 1: VALORES + LOGO -->
-                <div class="row align-items-center">
-                  <div class="col-12" id="historico"></div>
-                  <div class="col-8 d-flex justify-content-start mt-2" id="valores"></div>
-                  <div class="col-2 d-flex justify-content-center" id="exportar"></div>
-                  <div class="col-2 d-flex justify-content-end" id="logo"></div>
-                </div>
-              
-                <!-- LINHA 2: CARTÕES REEMBOLSOS -->
-                <div class="row mt-2">
-                  <div class="col-12" id="reembolsos">
-                    <!-- Cartões inseridos pelo JS -->
-                  </div>
-                </div>
-              
-              </div>
-
-            </div>
-
             <div class="card-body">
-              <table id="processosNested" class="display" style="width:100%">
-                <thead>
-                  <tr>
-                    <th>PADM</th>
-                    <th>Processo</th>
-                    <th>Adjudicado</th>
-                    <th>Faturado</th>
-                    <th>Reembolsado</th>
-                    <th>Detalhes</th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-            
+
+                <!-- LINHA 1: VALORES -->
+                <div class="row ">
+                  <div class="col-12" id="historico"></div>
+                </div>
+              
+            </div>          
           </div>
         </div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- MODAL -->
-
-  <div class="modal fade" id="modalReembolsos" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-  
-        <div class="modal-header">
-          <h5 class="modal-title">Detalhe do Pedido</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-  
-        <div class="modal-body" id="modalReembolsosBody">
-          <!-- Conteúdo dinâmico -->
-        </div>
-  
-      </div>
     </div>
   </div>
 
@@ -152,8 +101,6 @@
 <!-- Fontawesome -->
 <script src="../../vendors/fonts/fontawesome.min.js"></script>
 <script src="../../vendors/fonts/all.min.js"></script>
-<!-- Datatables -->
-<script src="../../vendors/datatables/datatables.min.js"></script>
 <!-- Charts -->
 <script src="../../vendors/charts/chart.umd.min.js"></script>
 <!-- jsPDF autoTable -->
@@ -163,7 +110,7 @@
 <script src="../../vendors/pdf/xlsx.full.min.js"></script>
 
 <!--script src="js/orcamentoResults.js"></script-->
-<script src="js/candidaturaNested.js"></script>
+<script src="js/candidaturasGeral.js"></script>
 
 
 </body>
