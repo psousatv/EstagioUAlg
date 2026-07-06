@@ -5,11 +5,7 @@ $codigoProcesso = isset($_GET['codigoProcesso'])
     ? intval($_GET['codigoProcesso'])
     : 0;
 
-$descritivos = [
-    1, 4, 5, 9, 10, 11, 12, 13,
-    14, 16, 17, 18, 19, 26, 27,
-    28, 29, 30
-];
+$descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 
 /**
  * 1️⃣ Buscar dados
@@ -18,47 +14,49 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
 {
     $placeholders = implode(',', array_fill(0, count($descritivos), '?'));
 
-        $sql = "
+    $sql = "
+        SELECT
+            p2.proced_regime AS regime,
+            p2.proced_contrato AS contrato,
+            p2.proced_escolha AS procedimento,
+
+            d.descr_cod AS codigo,
+            d.descr_nome AS documento,
+
+            h.historico_dataemissao AS data_documento,
+            h.historico_datamov AS data_validacao_documento,
+            h.historico_valor AS valor_documento,
+            h.historico_doc AS referencias,
+            h.historico_notas AS notas
+
+        FROM descritivos d
+
+        LEFT JOIN (
+            SELECT *
+            FROM (
                 SELECT
-                    p2.proced_regime AS regime,
-                    p2.proced_contrato AS contrato,
-                    p2.proced_escolha AS procedimento,
+                    h1.*,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h1.historico_descr_cod
+                        ORDER BY h1.historico_datamov DESC
+                    ) AS rn
+                FROM historico h1
+                WHERE h1.historico_proces_check = ?
+            ) x
+            WHERE x.rn = 1
+        ) h
+            ON h.historico_descr_cod = d.descr_cod
 
-                    d.descr_cod AS codigo,
-                    d.descr_nome AS documento,
+        LEFT JOIN processo p1
+            ON p1.proces_check = h.historico_proces_check
 
-                    h1.historico_dataemissao AS data_documento,
-                    h1.historico_datamov AS data_validacao_documento,
-                    h1.historico_valor AS valor_documento,
-                    h1.historico_doc AS referencias,
-                    h1.historico_notas AS notas
+        LEFT JOIN procedimento p2
+            ON p2.proced_cod = p1.proces_proced_cod
 
-                FROM descritivos d
+        WHERE d.descr_cod IN ($placeholders)
 
-                LEFT JOIN historico h1
-                    ON h1.historico_descr_cod = d.descr_cod
-                    AND h1.historico_proces_check = ?
-
-                LEFT JOIN processo p1
-                    ON p1.proces_check = h1.historico_proces_check
-
-                LEFT JOIN procedimento p2
-                    ON p2.proced_cod = p1.proces_proced_cod
-
-                WHERE d.descr_cod IN ($placeholders)
-
-                GROUP BY
-                    d.descr_cod,
-                    d.descr_nome,
-                    p2.proced_regime,
-                    p2.proced_contrato,
-                    p2.proced_escolha,
-                    h1.historico_dataemissao,
-                    h1.historico_datamov,
-                    h1.historico_valor,
-                    h1.historico_doc,
-                    h1.historico_notas
-                ";
+        ORDER BY d.descr_cod
+    ";
 
     $stmt = $conn->prepare($sql);
 
@@ -67,7 +65,6 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
     $stmt->execute($params);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 }
 
 /**
@@ -127,39 +124,78 @@ function criarContexto(array $resultados): array
 }
 
 /**
- * 3️⃣ Definir fases + regra do movimento 4
+ * 3️⃣ Definir fases + regra do movimento 4 + Excessões pelo tipo de procedimento
  */
 function definirFases(array $ctx): array
 {
     $fasesBase = [
+
         'Aquisição de Serviços' => [1, 4, 5, 10, 13, 14, 16, 17, 19, 28],
         'Aquisição de Bens'     => [1, 4, 5, 10, 13, 14, 16, 17, 19, 27],
         'Empreitada'            => [1, 4, 5, 10, 13, 14, 16, 17, 18, 19, 26, 29, 30],
+
+    ];
+
+    /**
+     * Movimentos a ignorar
+     */
+    $dispensas = [
+
+        'Ajuste Direto Simplificado' => [5, 11, 12, 13, 16, 17, 18, 19, 26, 27, 28, 29, 30],
+        'Aquisição de Serviços'      => [11, 12, 19, 26, 27, 29, 30],
+        'Aquisição de Bens'          => [11, 12, 19, 26, 28, 29, 30],
+        'Empreitada'                 => [11, 12, 27, 28],
+
     ];
 
     if ($ctx['erro']) {
+
         return [[], [
             'erro' => true,
             'mensagem' => $ctx['mensagem']
         ]];
+
     }
 
+    /**
+     * Fases base pelo tipo de contrato
+     */
     $movimentos = $fasesBase[$ctx['contrato']] ?? [];
-
-    
 
     /**
      * Regra:
      * movimento 4 < 10000 remove 17
      */
-    if ($ctx['valorMovimento4'] < 10000) {
-        $movimentos = array_values(
-            array_diff($movimentos, [17])
-        );
+    if (
+        isset($ctx['valorMovimento4']) &&
+        $ctx['valorMovimento4'] < 10000
+    ) {
+
+        $movimentos = array_diff($movimentos, [17]);
+
     }
 
-    return [$movimentos, null];
+    /**
+     * Aplicar exceções do procedimento
+     */
+    if (
+        !empty($ctx['proc']) &&
+        isset($dispensas[$ctx['proc']])
+    ) {
 
+        $movimentos = array_diff(
+            $movimentos,
+            $dispensas[$ctx['proc']]
+        );
+
+    }
+
+    /**
+     * Reindexar array
+     */
+    $movimentos = array_values($movimentos);
+
+    return [$movimentos, null];
 }
 
 /**
