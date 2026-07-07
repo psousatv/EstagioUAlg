@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    loadBaseGov();
+    loadValidacoes();
 });
 
-async function loadBaseGov() {
+async function loadValidacoes() {
 
     try {
         const response =  await fetch("producao/comum/dados/processosDJUR.php");
@@ -13,18 +13,18 @@ async function loadBaseGov() {
             throw new Error("Resposta não é um array JSON válido.");
         }
 
-        renderBaseGov(processos);
+        renderValidacao(processos);
 
     } catch (error) {
         console.error("Erro ao carregar os Dados:", error);
-        document.getElementById("lstBaseGov").innerHTML =
+        document.getElementById("lstValidacao").innerHTML =
             `<div class="text-danger">Erro ao carregar dados.</div>`;
     }
 }
 
-function renderBaseGov(processos) {
+function renderValidacao(processos) {
 
-    const container = document.getElementById("lstBaseGov");
+    const container = document.getElementById("lstValidacao");
     container.innerHTML = "";
 
     const hoje = new Date();
@@ -82,7 +82,8 @@ function renderBaseGov(processos) {
                     <th style="width: 100px;">Entidade</th>
                     <th style="width: 75px;">Fase</th>
                     <th>Processo</th>
-                    <th style="width: 75px;">Registo</th>   <!-- largura fixa -->
+                    <th style="width: 75px;">Registo</th>
+                    <th style="width: 75px;">Movimento</th>
                     <th style="width: 50px;">Dias</th>
                     <th style="width: 75px;">Estado</th>
                     
@@ -103,6 +104,7 @@ function renderBaseGov(processos) {
             </td>
             <td>${proc.proces_nome}</td>
             <td style="width: 75px;">${formatDate(proc.dataBase)}</td>
+            <td style="width: 75px;">${proc.movimento}</td>
             <td style="width: 50px;">${proc.diasRestantes}</td>
             <td style="width: 75px;">
                 <span class="badge ${proc.classeBadge}">

@@ -16,6 +16,7 @@ try {
                    CONCAT('(', proces_estado, ') ', proces_estado_nome) AS proces_estado_nome,
                    proces_nome,
                    e.ent_nome AS entidade,
+                   h.historico_descr_nome AS movimento,
                    h.historico_dataemissao AS agendamento,
                    h.historico_datamov,
                    h.historico_doc,
@@ -26,7 +27,7 @@ try {
             JOIN entidade e ON e.ent_cod = proces_ent_Cod
             WHERE proces_report_valores = 1
             AND h.historico_datamov <= :hoje
-            AND h.historico_descr_nome = 'BaseGov'
+            AND h.historico_doc = 'ParaVerificacao'
             AND h.historico_valor = 0
             ORDER BY h.historico_dataemissao, e.ent_nome";
 

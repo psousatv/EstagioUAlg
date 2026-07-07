@@ -208,15 +208,15 @@ function exportarVistoriasExcel() {
 }
 
 // BASEGOV
-function imprimirBaseGov() {
+function imprimirEmValidacao() {
     // Seleciona todas as linhas do tbody gerado pelo renderBaseGov()
-    const linhas = Array.from(document.querySelectorAll("#lstBaseGov tbody tr"));
+    const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
 
     // Começa o HTML da tabela de impressão
     let html = `
         <html>
         <head>
-            <title>Relação de Processos a Aguardar Publicação BaseGov>
+            <title>Relação de Processos a Aguardar Validação>
             <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
@@ -228,7 +228,7 @@ function imprimirBaseGov() {
             </style>
         </head>
         <body>
-            <h4>Relação de Processos a Aguardar Publicação BaseGov</h4>
+            <h4>Relação de Processos a Aguardar Validação</h4>
             <table>
                 <thead>
                     <tr>
@@ -262,12 +262,12 @@ function imprimirBaseGov() {
     janela.print();
 }
 
-async function exportarBaseGovPDF() {
+async function exportarValidacaoPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'a4');
 
     // Seleciona todas as linhas
-    const linhas = Array.from(document.querySelectorAll("#lstBaseGov tbody tr"));
+    const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
 
     // Monta array de arrays para o autoTable
     const dados = linhas.map(tr => {
@@ -275,9 +275,9 @@ async function exportarBaseGovPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Dias", "Estado"];
+    const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Movimento", "Dias", "Estado"];
 
-    doc.text("Processos a Aguardar Publicação", 40, 30);
+    doc.text("Processos a Aguardar Validação", 40, 30);
 
     doc.autoTable({
         head: [cabecalho],
@@ -304,11 +304,11 @@ async function exportarBaseGovPDF() {
         }
     });
 
-    doc.save("processosBaseGov.pdf");
+    doc.save("processosValidacao.pdf");
 }
 
-function exportarBaseGovExcel() {
-    const linhas = Array.from(document.querySelectorAll("#lstBaseGov tbody tr"));
+function exportarValidacaoExcel() {
+    const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
 
     // Cria array de arrays com o conteúdo
     const dados = linhas.map(tr => {
@@ -316,14 +316,14 @@ function exportarBaseGovExcel() {
     });
 
     // Adiciona cabeçalho
-    dados.unshift(["Entidade", "Estado", "Processo", "Registo", "Dias"]);
+    dados.unshift(["Entidade", "Fase", "Processo", "Registo", "Movimento", "Dias", "Estado"]);
 
     // Converte para workbook
     const ws = XLSX.utils.aoa_to_sheet(dados);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "BaseGov");
 
-    XLSX.writeFile(wb, "processosBaseGov.xlsx");
+    XLSX.writeFile(wb, "processosValidacao.xlsx");
 }
 
 const Exportador = {
