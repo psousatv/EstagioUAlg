@@ -233,10 +233,11 @@ function imprimirBaseGov() {
                 <thead>
                     <tr>
                         <th>Entidade</th>
-                        <th>Estado</th>
+                        <th>Fase</th>
                         <th>Processo</th>
-                        <th>Preparado</th>
+                        <th>Registo</th>
                         <th>Dias</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -274,7 +275,7 @@ async function exportarBaseGovPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Estado", "Processo", "Preparado", "Dias"];
+    const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Dias", "Estado"];
 
     doc.text("Processos a Aguardar Publicação", 40, 30);
 
@@ -315,7 +316,7 @@ function exportarBaseGovExcel() {
     });
 
     // Adiciona cabeçalho
-    dados.unshift(["Entidade", "Estado", "Processo", "Preparado", "Dias"]);
+    dados.unshift(["Entidade", "Estado", "Processo", "Registo", "Dias"]);
 
     // Converte para workbook
     const ws = XLSX.utils.aoa_to_sheet(dados);

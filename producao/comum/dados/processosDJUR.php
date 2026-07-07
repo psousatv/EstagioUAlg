@@ -13,6 +13,7 @@ try {
     }
 
     $sql = "SELECT proces_check,
+                   CONCAT('(', proces_estado, ') ', proces_estado_nome) AS proces_estado_nome,
                    proces_nome,
                    e.ent_nome AS entidade,
                    h.historico_dataemissao AS agendamento,
