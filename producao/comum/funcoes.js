@@ -77,7 +77,7 @@ async function exportarCronosPDF() {
         body: dados,
         startY: 50,
         styles: { fontSize: 9 },
-        headStyles: { fillColor: [220, 220, 220] },
+        headStyles: { fillColor: [0, 0, 255] },
         margin: { top: 40, left: 20, right: 20 }
     });
 
@@ -180,7 +180,7 @@ async function exportarVistoriasPDF() {
         body: dados,
         startY: 50,
         styles: { fontSize: 9 },
-        headStyles: { fillColor: [220, 220, 220] },
+        headStyles: { fillColor: [0, 0, 255] },
         margin: { top: 40, left: 20, right: 20 }
     });
 
