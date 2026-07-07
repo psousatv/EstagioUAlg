@@ -25,12 +25,13 @@ function imprimirCronos() {
             <table>
                 <thead>
                     <tr>
-                        <th>Estado</th>
+                        <th>Fase</th>
                         <th>Processo</th>
                         <th>Inicio</th>
                         <th>Prazo</th>
                         <th>Termo</th>
-                        <th>Faltam</th>
+                        <th>Dias</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,7 +69,7 @@ async function exportarCronosPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Estado", "Processo", "Início", "Prazo", "Termo", "Faltam"];
+    const cabecalho = ["Fase", "Processo", "Início", "Prazo", "Termo", "Dias", "Estado"];
 
     doc.text("Cronologia dos Processos Ativos", 40, 30);
 
@@ -81,7 +82,7 @@ async function exportarCronosPDF() {
         margin: { top: 40, left: 20, right: 20 }
     });
 
-    doc.save("vistoriasCronosProcessos.pdf");
+    doc.save("cronosProcessos.pdf");
 }
 
 
@@ -94,14 +95,14 @@ function exportarCronosExcel() {
     });
 
     // Adiciona cabeçalho
-    dados.unshift(["Estado", "Processo", "Início", "Prazo", "Termo", "Faltam"]);
+    dados.unshift(["Fase", "Processo", "Início", "Prazo", "Termo", "Dias", "Estado"]);
 
     // Converte para workbook
     const ws = XLSX.utils.aoa_to_sheet(dados);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Cronologia");
 
-    XLSX.writeFile(wb, "CronosProcessos.xlsx");
+    XLSX.writeFile(wb, "cronosProcessos.xlsx");
 }
 
 // VISTORIAS
@@ -133,7 +134,7 @@ function imprimirVistorias() {
                         <th>Estado</th>
                         <th>Processo</th>
                         <th>Previsto</th>
-                        <th>Faltam</th>
+                        <th>Dias</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -171,7 +172,7 @@ async function exportarVistoriasPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Estado", "Processo", "Previsto", "Faltam"];
+    const cabecalho = ["Entidade", "Estado", "Processo", "Previsto", "Dias"];
 
     doc.text("Lista de Vistorias", 40, 30);
 
@@ -196,7 +197,7 @@ function exportarVistoriasExcel() {
     });
 
     // Adiciona cabeçalho
-    dados.unshift(["Entidade", "Estado", "Processo", "Previsto", "Faltam"]);
+    dados.unshift(["Entidade", "Estado", "Processo", "Previsto", "Dias"]);
 
     // Converte para workbook
     const ws = XLSX.utils.aoa_to_sheet(dados);
@@ -235,7 +236,7 @@ function imprimirBaseGov() {
                         <th>Estado</th>
                         <th>Processo</th>
                         <th>Preparado</th>
-                        <th>Passaram</th>
+                        <th>Dias</th>
                     </tr>
                 </thead>
                 <tbody>

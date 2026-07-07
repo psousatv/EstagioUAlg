@@ -149,13 +149,14 @@ function renderCronos(processos) {
                    style="position: sticky; top: 0; z-index: 10;">
 
                 <tr class="small">
-
-                    <th style="width: 75px;">Estado</th>
+                
+                    <th style="width: 75px;">Fase</th>
                     <th>Processo</th>
                     <th style="width: 90px;">Início</th>
                     <th style="width: 50px;" class="text-end">Prazo</th>
                     <th style="width: 90px;">Termo</th>
-                    <th style="width: 60px;">Faltam</th>
+                    <th style="width: 60px;">Dias</th>
+                    <th style="width: 75px;">Estado</th>
 
                 </tr>
 
@@ -168,10 +169,10 @@ function renderCronos(processos) {
 
         html += `
             <tr class="small">
-
+                
                 <td>
-                    <span class="badge ${proc.classeBadge}">
-                        ${proc.textoBadge}
+                    <span class="badge badge-warning">
+                        ${proc.proces_estado_nome}
                     </span>
                 </td>
                 <td>${proc.proces_nome}</td>
@@ -179,6 +180,12 @@ function renderCronos(processos) {
                 <td class="text-end">${proc.prazo}</td>
                 <td>${formatDate(proc.dataTermo)}</td>
                 <td>${proc.diasRestantes}</td>
+                <td>
+                    <span class="badge ${proc.classeBadge}">
+                        ${proc.textoBadge}
+                    </span>
+                </td>
+                
             </tr>
         `;
     });
