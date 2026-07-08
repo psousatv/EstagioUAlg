@@ -96,7 +96,7 @@ $('#titulo').html(html);
   
         <!-- CARTÃO 1 -->
         <div class="col-md-4">
-          <div class="card small text-left shadow-sm h-100">
+          <div class="card border-info small text-left shadow-sm h-100">
             <div class="card-body">
   
               <div class="mb-2">
@@ -110,9 +110,9 @@ $('#titulo').html(html);
               </div>
   
               <div>
-                <div class="fw-bold">Objetivo: ${json.objetivo || ''}</div>
+                <div>Objetivo: ${json.objetivo || ''}</div>
                 <div>Ação: ${json.tipologia_acao || ''}</div>
-                <div>Taxa de Cofinanciamento: ${((json.taxa || 0) * 100).toFixed(2)}%</div>
+                <div class="font-weight-bold">Taxa de Cofinanciamento: ${((json.taxa || 0) * 100).toFixed(2)}%</div>
               </div>
   
             </div>
@@ -121,18 +121,18 @@ $('#titulo').html(html);
   
         <!-- CARTÃO 2 -->
         <div class="col-md-4">
-          <div class="card small text-left shadow-sm h-100">
-            <div class="card-body">
+          <div class="card border-primary small text-left shadow-sm h-100">
+            <div class="card-body font-weight-bold text-primary ">
   
               <div class="mb-2">
-                <strong>Candidatura: ${json.estado || ''}</strong>
+                <div>Candidatura: ${json.estado || ''}</div>
                 <div>Início: ${json.inicio || ''} - Termo: ${json.termo || ''}</div>
               </div>
   
               <div class="mb-2">
-                <div class="fw-bold">Submissão: ${json.submissao || ''}</div>
+                <div>Submissão: ${json.submissao || ''} </div>
                 <div>Aprovação: ${json.aprovacao || ''}</div>
-                <div class="fw-bold">Termo de Aceitação: ${json.aceitacao || ''}</div>
+                <div>Termo de Aceitação: ${json.aceitacao || ''}</div>
               </div>
   
             </div>
@@ -141,7 +141,7 @@ $('#titulo').html(html);
   
         <!-- CARTÃO 3 -->
         <div class="col-md-4">
-          <div class="card small text-left shadow-sm h-100">
+          <div class="card border-warning small text-left shadow-sm h-100">
             <div class="card-body">
   
               <div class="mb-2">
