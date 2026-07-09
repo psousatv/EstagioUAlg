@@ -1,4 +1,5 @@
 let processosGlobais = [];
+let pedidoExportacaoModal = [];
 let table;
 
 
@@ -591,134 +592,263 @@ $(document).ready(function () {
   $(document).on('click', '.reembolso-card', function () {
 
     const key = $(this).data('key');
+
+    pedidoExportacaoKey = key;
+
     const processos = table.rows().data().toArray();
-  
-    let html = '';
-  
-    processos.forEach(processo => {
-  
-      const pedido = (processo.historico || [])
-        .find(h =>
-          h.historico_descr_cod === 91 &&
-          String(h.historico_num) === String(key)
+
+    pedidoExportacaoModal = processos.filter(processo => {
+
+        const temPedido = (processo.historico || []).some(h =>
+            h.historico_descr_cod === 91 &&
+            String(h.historico_num) === String(key)
         );
-  
-      const reembolsos = (processo.historico || [])
-        .filter(h =>
-          h.historico_descr_cod === 92 &&
-          String(h.historico_num) === String(key)
+
+        const temReembolso = (processo.historico || []).some(h =>
+            h.historico_descr_cod === 92 &&
+            String(h.historico_num) === String(key)
         );
-  
-      const faturas = (processo.faturas || [])
-        .filter(f =>
-          String(f.fact_finan_pp) === String(key)
+
+        const temFatura = (processo.faturas || []).some(f =>
+            String(f.fact_finan_pp) === String(key)
         );
-  
-      if (!pedido && reembolsos.length === 0 && faturas.length === 0) return;
-  
-      html += `
-        <div class="border rounded p-3 mb-3">
-  
-          <h6 class="text-primary mb-2"
-            style="cursor:pointer; text-decoration: underline;"
-            onclick="redirectProcesso('${processo.proces_check}')">
-            Processo: ${processo.designacao} (${processo.padm})
-          </h6>
-  
-          <div class="row">
-  
-            <!-- PEDIDO -->
-            <div class="col-md-4">
-              <div class="card border-dark h-100">
-                <div class="card-header bg-dark text-white p-1 small">
-                  Pedido
-                </div>
-  
-                <div class="card-body small">
-                  ${pedido ? `
-                    <div><b>Nº:</b> ${pedido.historico_num}</div>
-                    <div><b>Expediente:</b> ${pedido.historico_doc || '-'}</div>
-                    <div><b>Data:</b> ${pedido.historico_dataemissao || '-'}</div>
-                    <div><b>Valor:</b> ${formatCurrency(pedido.historico_valor)}</div>
-                  ` : `<span class="text-muted">Sem pedido</span>`}
-                </div>
-              </div>
-            </div>
-  
-            <!-- REEMBOLSOS -->
-            <div class="col-md-4">
-              <div class="card border-info h-100">
-                <div class="card-header bg-info text-white p-1 small">
-                  Reembolsos
-                </div>
-  
-                <div class="card-body small">
-                  ${reembolsos.length ? reembolsos.map(r => `
-                    <div class="border-bottom mb-1 pb-1">
-                      <div><b>Nº:</b> ${r.historico_num}</div>
-                      <div><b>Expediente:</b> ${r.historico_doc || '-'}</div>
-                      <div><b>Data:</b> ${r.historico_dataemissao || '-'}</div>
-                      <div><b>Valor:</b> ${formatCurrency(r.historico_valor)}</div>
-                    </div>
-                  `).join('') : '<span class="text-muted">Sem reembolsos</span>'}
-                </div>
-              </div>
-            </div>
-  
-            <!-- FATURAS -->
-            <div class="col-md-4">
-              <div class="card border-warning h-100">
-                <div class="card-header bg-warning text-dark p-1 small">
-                  Faturas
-                </div>
-  
-                <div class="card-body small">
-                  ${faturas.length ? faturas.map(f => `
-                    <div class="border-bottom p-2 mb-2">
-                      <div><b>Expediente:</b> ${formatExpediente(f.fact_expediente)}</div>
-                      <div><b>Data:</b> ${f.fact_data || '-'}</div>
-                      <div><b>Doc:</b> ${f.fact_tipo}_${f.fact_num}</div>
-                      <div><b>Auto:</b> ${f.fact_auto_num || '-'}</div>
-                      <div><b>Valor:</b> ${formatCurrency(f.fact_valor)}</div>
-                    </div>
-                  `).join('') : '<span class="text-muted">Sem faturas</span>'}
-                </div>
-              </div>
-            </div>
-  
-          </div>
-        </div>
-      `;
+
+        return temPedido || temReembolso || temFatura;
+
     });
-  
-    // ================================
+
+
+
+    // =====================================================
+    // CONSTRUÇÃO DO MODAL
+    // =====================================================
+    let html = '';
+
+    pedidoExportacaoModal.forEach(processo => {
+
+
+        const pedido = (processo.historico || [])
+            .find(h =>
+                h.historico_descr_cod === 91 &&
+                String(h.historico_num) === String(key)
+            );
+
+
+        const reembolsos = (processo.historico || [])
+            .filter(h =>
+                h.historico_descr_cod === 92 &&
+                String(h.historico_num) === String(key)
+            );
+
+
+        const faturas = (processo.faturas || [])
+            .filter(f =>
+                String(f.fact_finan_pp) === String(key)
+            );
+
+
+        html += `
+        <div class="border rounded p-3 mb-3">
+
+            <h6 class="text-primary mb-2"
+                style="cursor:pointer; text-decoration: underline;"
+                onclick="redirectProcesso('${processo.proces_check}')">
+
+                Processo: ${processo.designacao} (${processo.padm})
+
+            </h6>
+
+
+            <div class="row">
+
+
+                <!-- PEDIDO -->
+                <div class="col-md-4">
+
+                    <div class="card border-dark h-100">
+
+                        <div class="card-header bg-dark text-white p-1 small">
+                            Pedido
+                        </div>
+
+
+                        <div class="card-body small">
+
+                            ${
+                            pedido
+                            ?
+                            `
+                            <div><b>Nº:</b> ${pedido.historico_num}</div>
+                            <div><b>Expediente:</b> ${pedido.historico_doc || '-'}</div>
+                            <div><b>Data:</b> ${pedido.historico_dataemissao || '-'}</div>
+                            <div><b>Valor:</b> ${formatCurrency(pedido.historico_valor)}</div>
+                            `
+                            :
+                            `
+                            <span class="text-muted">
+                                Sem pedido
+                            </span>
+                            `
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REEMBOLSOS -->
+                <div class="col-md-4">
+
+                    <div class="card border-info h-100">
+
+                        <div class="card-header bg-info text-white p-1 small">
+                            Reembolsos
+                        </div>
+
+
+                        <div class="card-body small">
+
+                            ${
+                            reembolsos.length
+                            ?
+                            reembolsos.map(r => `
+                            
+                                <div class="border-bottom mb-1 pb-1">
+
+                                    <div><b>Nº:</b> ${r.historico_num}</div>
+                                    <div><b>Expediente:</b> ${r.historico_doc || '-'}</div>
+                                    <div><b>Data:</b> ${r.historico_dataemissao || '-'}</div>
+                                    <div><b>Valor:</b> ${formatCurrency(r.historico_valor)}</div>
+
+                                </div>
+
+                            `).join('')
+                            :
+                            `
+                            <span class="text-muted">
+                                Sem reembolsos
+                            </span>
+                            `
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FATURAS -->
+                <div class="col-md-4">
+
+                    <div class="card border-warning h-100">
+
+                        <div class="card-header bg-warning text-dark p-1 small">
+                            Faturas
+                        </div>
+
+
+                        <div class="card-body small">
+
+                            ${
+                            faturas.length
+                            ?
+                            faturas.map(f => `
+
+                                <div class="border-bottom p-2 mb-2">
+
+                                    <div>
+                                        <b>Expediente:</b>
+                                        ${formatExpediente(f.fact_expediente)}
+                                    </div>
+
+                                    <div>
+                                        <b>Data:</b>
+                                        ${f.fact_data || '-'}
+                                    </div>
+
+                                    <div>
+                                        <b>Doc:</b>
+                                        ${f.fact_tipo}_${f.fact_num}
+                                    </div>
+
+                                    <div>
+                                        <b>Auto:</b>
+                                        ${f.fact_auto_num || '-'}
+                                    </div>
+
+                                    <div>
+                                        <b>Valor:</b>
+                                        ${formatCurrency(f.fact_valor)}
+                                    </div>
+
+                                </div>
+
+                            `).join('')
+                            :
+                            `
+                            <span class="text-muted">
+                                Sem faturas
+                            </span>
+                            `
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+        `;
+
+    });
+
+
+    // =====================================================
     // BOTÕES EXPORTAÇÃO MODAL
-    // ================================
+    // =====================================================
     const exportBtns = `
-      <div class="d-flex justify-content-end gap-2 mb-2">
+    <div class="d-flex justify-content-end gap-2 mb-2">
 
-      <button id="modalExportPDF"
-              class="btn btn-danger btn-sm d-flex align-items-center gap-1"
-              title="Exportar PDF">
+        <button id="modalExportPDF"
+                class="btn btn-danger btn-sm"
+                title="Exportar PDF">
 
-        <i class="fa-solid fa-file-pdf"></i>
-      </button>
+            <i class="fa-solid fa-file-pdf"></i>
 
-      <button id="modalExportExcel"
-              class="btn btn-success btn-sm d-flex align-items-center gap-1"
-              title="Exportar Excel">
+        </button>
 
-        <i class="fa-solid fa-file-excel"></i>
-      </button>
+
+        <button id="modalExportExcel"
+                class="btn btn-success btn-sm"
+                title="Exportar Excel">
+
+            <i class="fa-solid fa-file-excel"></i>
+
+        </button>
 
     </div>
     `;
-  
-    $('#modalReembolsosBody').html(exportBtns + (html || '<p>Sem dados.</p>'));
-  
-    new bootstrap.Modal(document.getElementById('modalReembolsos')).show();
 
-  });
+
+    $('#modalReembolsosBody')
+        .html(exportBtns + (html || '<p>Sem dados.</p>'));
+
+
+    new bootstrap.Modal(
+        document.getElementById('modalReembolsos')
+    ).show();
+
+
+});
 
   // Toggle nested row
   $('#processosNested tbody').on('click', 'td.details-control button', function () {
@@ -750,8 +880,8 @@ $(document).ready(function () {
   // ================================
   // EXPORTAÇÃO MODAL (PDF + EXCEL)
   // ================================
-  $(document).on('click', '#modalExportPDF', function () {modalExportPDF();});
-  $(document).on('click', '#modalExportExcel', function () {modalExportExcel();});
+  $(document).on('click', '#modalExportPDF', function () {modalExportPDF(pedidoExportacaoModal, pedidoExportacaoKey);});
+  $(document).on('click', '#modalExportExcel', function () {modalExportExcel(pedidoExportacaoModal, pedidoExportacaoKey);});
 
   // ================================
   // EXPORTAÇÃO GLOBAL
@@ -1024,6 +1154,216 @@ function exportAllPDF() {
 function exportAllExcel() {
 
   const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
+
+  const rows = [];
+
+  dados.forEach(g => {
+
+    Object.values(g.processos).forEach(p => {
+
+      const pedidos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const reembolsos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 92 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const pedidoRef = pedidos.length
+        ? pedidos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
+        : "-";
+
+      const reembolsoRef = reembolsos.length
+        ? reembolsos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
+        : "-";
+
+      if (!p.faturas || !p.faturas.length) {
+
+        rows.push({
+          Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
+          Pedido: pedidoRef,
+          Reembolso: reembolsoRef,
+          Processo: p.processo.designacao,
+          Fatura: "-",
+          Valor: "-"
+        });
+
+      } else {
+
+        p.faturas.forEach(f => {
+
+          rows.push({
+            Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
+            Pedido: pedidoRef,
+            Reembolso: reembolsoRef,
+            Processo: p.processo.designacao,
+            Data: f.fact_data,
+            Fatura: `${f.fact_tipo}_${f.fact_num}`,
+            Expediente: formatExpediente(f.fact_expediente),
+            Valor: f.fact_valor
+          });
+
+        });
+      }
+    });
+  });
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(wb, ws, "Reembolsos");
+
+  XLSX.writeFile(wb, "reembolsos_detalhado.xlsx");
+}
+
+// PARA O MODAL
+function modalExportPDF(processos, keySelecionada) {
+
+  const dados = getReembolsosAgrupadosDetalhado(processos)
+  .filter(g => String(g.key) === String(keySelecionada));
+
+  const doc = new window.jspdf.jsPDF({
+    orientation: "landscape",
+    unit: "mm"
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  const marginLeft = 10;
+  const marginRight = 10;
+  const tableWidth = pageWidth - marginLeft - marginRight;
+
+  let startY = 28;
+
+  const addHeader = () => {
+
+    const c = processosGlobais?.[0] || {};
+    const data = new Date().toLocaleDateString("pt-PT");
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("RELATÓRIO DE REEMBOLSOS", marginLeft, 10);
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `Candidatura: ${c.candidatura || c.codigo_candidatura || 'N/D'} ${c.estado ? '| ' + c.estado : ''}`,
+      marginLeft,
+      16
+    );
+
+    doc.text(`Gerado em: ${data}`, pageWidth - 60, 10);
+
+    doc.line(marginLeft, 19, pageWidth - marginRight, 19);
+  };
+
+  addHeader();
+
+  dados
+  .filter(g => g && g.processos && Object.keys(g.processos).length > 0)
+  .forEach(g => {
+
+    const isOrfao = g.key === 'ORFAO';
+
+    if (startY > 170) {
+      doc.addPage();
+      startY = 28;
+      addHeader();
+    }
+
+    const headerY = startY;
+
+    doc.setFillColor(isOrfao ? 255 : 235, isOrfao ? 245 : 235, isOrfao ? 200 : 235);
+    doc.rect(marginLeft, headerY - 3, tableWidth, 8, "F");
+
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica", "bold");
+
+    doc.text(
+      isOrfao ? "Faturas Órfão" : g.key,
+      marginLeft + 4,
+      headerY + 2
+    );
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)}`,
+      marginLeft + 40,
+      headerY + 2
+    );
+
+    const tableStartY = headerY + 10;
+
+    const rows = [];
+
+    Object.values(g.processos).forEach(p => {
+
+      const pedidos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const reembolsos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 92 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const pedidoValor = pedidos.reduce((s, h) => s + (h.historico_valor || 0), 0);
+      const reembolsoValor = reembolsos.reduce((s, h) => s + (h.historico_valor || 0), 0);
+
+      const faturas = (p.faturas || []).length
+        ? p.faturas.map(f =>
+            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)}`
+          ).join("\n")
+        : "Sem faturas";
+
+      rows.push([
+        p.processo.padm,
+        p.processo.designacao,
+        `P: ${formatCurrency(pedidoValor)} | R: ${formatCurrency(reembolsoValor)}`,
+        faturas
+      ]);
+    });
+
+    doc.autoTable({
+      startY: tableStartY,
+      head: [["Processo", "Designação", "Movimentos", "Faturação"]],
+      body: rows,
+      theme: "grid",
+      margin: { left: marginLeft, right: marginRight },
+      styles: { fontSize: 7.2, cellPadding: 1.4 },
+      headStyles: { fillColor: [23, 162, 184], textColor: 255 },
+      columnStyles: {
+        0: { cellWidth: 22 },
+        1: { cellWidth: 80 },
+        2: { cellWidth: 80 },
+        3: { cellWidth: 95 }
+      }
+    });
+
+    startY = doc.lastAutoTable.finalY + 8;
+  });
+
+  const pages = doc.getNumberOfPages();
+
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.text(`Página ${i} / ${pages}`, pageWidth - 30, 200);
+  }
+
+  doc.save("relatorio_reembolsos.pdf");
+}
+
+function modalExportExcel(processos, keySelecionada) {
+
+  const dados = getReembolsosAgrupadosDetalhado(processos)
+      .filter(g => String(g.key) === String(keySelecionada));
 
   const rows = [];
 
