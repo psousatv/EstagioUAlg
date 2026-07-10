@@ -37,7 +37,9 @@ try {
             candsub_max_elegivel AS elegivel,
             candsub_forfait AS defice_financeiro,
             candsub_fundo AS taxa,
-            ca.cand_logo AS logo
+            ca.cand_logo AS logo,
+            ca.cand_documento AS documento_aviso,
+            candsub_documento_aceitacao AS documento_aceitacao
         FROM candidaturas_submetidas
         INNER JOIN candidaturas_avisos ca ON ca.cand_aviso = candsub_aviso
         WHERE candsub_codigo = :itemProcurado";

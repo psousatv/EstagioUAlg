@@ -210,18 +210,23 @@ $(document).ready(function () {
 
                 let classeCartao, iconeCartao;
 
-                if (dados.faturado_recebido_percent < 0.50) {
-                    classeCartao = 'bg-danger text-white';
-                    iconeCartao = 'fa fa-thumbs-down';
-                } else if (dados.faturado_recebido_percent < 0.70) {
-                    classeCartao = 'bg-warning text-dark';
-                    iconeCartao = 'fa fa-exclamation-triangle';
-                } else if (dados.faturado_recebido_percent < 0.85) {
-                    classeCartao = 'bg-primary text-white';
-                    iconeCartao = 'fa fa-cog fa-spin';
+                if(dados.estado != 'Em Curso' && dados.estado != 'Encerrada'){
+                    classeCartao = 'bg-dark text-white';
+                    iconeCartao = 'fa fa-hourglass-half';
                 } else {
-                    classeCartao = 'bg-success text-white';
-                    iconeCartao = 'fa fa-smile';
+                    if (dados.faturado_recebido_percent < 0.50) {
+                        classeCartao = 'bg-danger text-white';
+                        iconeCartao = 'fa fa-thumbs-down';
+                    } else if (dados.faturado_recebido_percent < 0.70) {
+                        classeCartao = 'bg-warning text-dark';
+                        iconeCartao = 'fa fa-exclamation-triangle';
+                    } else if (dados.faturado_recebido_percent < 0.85) {
+                        classeCartao = 'bg-primary text-white';
+                        iconeCartao = 'fa fa-cog fa-spin';
+                    } else {
+                        classeCartao = 'bg-success text-white';
+                        iconeCartao = 'fa fa-smile';
+                    }
                 }
 
                 let cartao = `

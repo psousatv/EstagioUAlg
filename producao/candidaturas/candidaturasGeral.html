@@ -7,7 +7,7 @@
 <meta name="description" content="" />
 <meta name="author" content="" />
 
-<title>Candiatura - Detalhe</title>
+<title>Candidatura - Detalhe</title>
 
 <link
   rel="icon"
@@ -23,6 +23,8 @@
 <!-- Fontawesome -->
 <link href="../../vendors/fonts/fontawesome.min.css" rel="stylesheet" type="text/css">
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<!-- PageFlip - Virar páginas de documentos pdf -->
+<link href="../../vendors/pageflip/page-flip.css" rel="stylesheet">
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 
@@ -77,9 +79,14 @@
           <div class="card">
             <div class="card-body">
 
-                <!-- LINHA 1: HISTORICO -->
+                <!-- LINHA 1: Detalhes -->
                 <div class="row">
                   <div class="col-12" id="historico"></div>
+                </div>
+
+                <!-- LINHA 2: PDF em modo de livro -->
+                <div class="row">
+                  <div class="col-12" id="flipBook"></div>
                 </div>
               
             </div>          
@@ -107,6 +114,9 @@
 <script src="../../vendors/pdf/jspdf.plugin.autotable.min.js"></script>
 <!-- SheetJS (XLSX) -->
 <script src="../../vendors/pdf/xlsx.full.min.js"></script>
+<!-- PageFlip e visualizador de PDF  -->
+<script src="../../vendors/pdfjs/pdf.min.js"></script>
+<script src="../../vendors/pageflip/page-flip.browser.js"></script>
 
 <!--script src="js/orcamentoResults.js"></script-->
 <script src="js/candidaturasGeral.js"></script>
