@@ -36,6 +36,8 @@ $(document).ready(function () {
    RENDER TÍTULO
    ========================= */
 function renderTitulo(json){
+
+  console.log(json);
   
   const path = "../../global/imagens";
 
@@ -131,6 +133,11 @@ RENDER HISTÓRICO
               <div>Submissão: ${json.submissao || ''} </div>
               <div>Aprovação: ${json.aprovacao || ''}</div>
               <div>Termo de Aceitação: ${json.aceitacao || ''}</div>
+            </div>
+            
+            <div class="mb-2">
+              <div>Investimento Aprovado: ${formatCurrency(json.elegivel) || ''} </div>
+              <div>Apoio Aprovado: ${formatCurrency(json.elegivel * json.taxa) || ''}</div>
             </div>
 
           </div>

@@ -34,6 +34,7 @@ $query = "SELECT
     YEAR(cs.candsub_dt_inicio) AS inicio,
     YEAR(cs.candsub_dt_fim) AS termo,
     cs.candsub_max_elegivel AS elegivel,
+    ROUND(cs.candsub_forfait, 2),
     ROUND(cs.candsub_fundo, 2) AS taxa,
 
     COUNT(DISTINCT p.proces_check) AS processos,
