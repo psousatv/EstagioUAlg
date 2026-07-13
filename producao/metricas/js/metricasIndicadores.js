@@ -13,12 +13,12 @@ const ctx = document.getElementById('volumeChart');
                 },
                 {
                   label: 'Faturado',
-                  data: [220, 230, 50, 63],
+                  data: [220, 230, 50, 65, 125, 176],
                   backgroundColor: 'rgba(75, 192, 192, 0.6)'
                 },
                 {
                   label: 'Realização (%)',
-                  data: [110, 110, 77, 64],
+                  data: [110, 110, 77, 64, 60, 60],
                   type: 'line',
                   borderColor: 'red',
                   yAxisID: 'y1'
