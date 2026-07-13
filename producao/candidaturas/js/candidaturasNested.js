@@ -536,16 +536,23 @@ $(document).ready(function () {
     paging: false,
     searching: false,
     select: true,
+    order: [[1, 'asc']],   // <-- ordena pela Designação
     columnDefs: [{ className: "dt-head-center", targets: "_all" }],
     columns: [
       { data: 'padm' },
-      { 
+      {
         data: 'designacao',
         render: function(data, type, row) {
-          const totalPedidosLinha = row.historico?.length || 0;
-          return `${data} <span class="badge bg-info text-white">(${totalPedidosLinha})</span>`;
+    
+            if (type === 'sort' || type === 'type') {
+                return data;
+            }
+    
+            const totalPedidosLinha = row.historico?.length || 0;
+    
+            return `${data} <span class="badge bg-info text-white">(${totalPedidosLinha})</span>`;
         }
-      },
+    },
       { 
         data: null,
         className: 'dt-body-right',
