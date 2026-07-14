@@ -6,10 +6,11 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 
 //Resumo do Processo
 $processoResumo = "SELECT * FROM processo
-                  INNER JOIN procedimento ON proced_cod = proces_proced_cod
-                  INNER JOIN entidade ON ent_cod = proces_ent_cod
-                  INNER JOIN 18cpv1 ON cpv1_cod = proces_18cpv1
-                  INNER JOIN 18cpv2 ON cpv2_cod = proces_18cpv2
+                  LEFT JOIN procedimento ON proced_cod = proces_proced_cod
+                  LEFT JOIN entidade ON ent_cod = proces_ent_cod
+                  LEFT JOIN 18cpv1 ON cpv1_cod = proces_18cpv1
+                  LEFT JOIN 18cpv2 ON cpv2_cod = proces_18cpv2
+                  LEFT JOIN departamento ON dep_cod = proces_departamento
                   WHERE proces_cod > 0 AND proces_check = '" .$codigoProcesso. "'";
 
 $stmt = $myConn->query($processoResumo);
@@ -76,11 +77,13 @@ foreach($data as $row)
   <fieldset class="border p-3 mb-3">
     <legend class="badge bg-info text-white">Orçamento</legend>
     <div class="row small text-justify">
-    <div class="col-md-2 text-primary"><b>Orçamentos: </b></div>
+    <div class="col-md-2 text-primary"><b>Departamento: </b></div>
+      <div class="col-md-10 text-primary">'.$row['dep_nome'].' ['.$row['dep_sigla'].']</div>
+    <div class="col-md-2 text-primary"><b>Orçamento: </b></div>
       <div class="col-md-10 text-primary">'.$row['proces_orc_ano'].' ['.$row['proces_linha_orc'].']</div>
-      <div class="col-md-2 text-primary"><b>Área de Atuação: </b></div>
+    <div class="col-md-2 text-primary"><b>Área de Atuação: </b></div>
       <div class="col-md-10 text-primary">'.$row['proces_orc_actividade'].'</div>
-      <div class="col-md-2 text-primary"><b>Rubrica: </b></div> 
+    <div class="col-md-2 text-primary"><b>Rubrica: </b></div> 
       <div class="col-md-10 text-primary">
         ['.$row['proces_rub_cod'].'] - '.$row['proces_orc_rubrica'].'
         <mark class="bg-warning"><i class="fa-solid fa-binoculars" onclick="redirectInformacoesCPV('.$row['proces_rub_cod'].')"></i></mark>
