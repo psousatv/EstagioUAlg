@@ -54,19 +54,33 @@ function carregarTabela(ano) {
         // TITULO
         // =========================
         $('#titulo').html(`
-            <div class="btn btn-primary col-md-8 d-grid small text-white text-left" id="tituloDetalhe">
-                ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
-            </div>
+                <div class="col-10 d-flex align-items-center">
+                    <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
 
-            <div class="btn btn-primary">
-                <a class="text-white" href="setoresEspeciais.html">
-                    <i class="fa-solid fa-rotate"></i>
-                </a>
-            </div>
+                        <!-- Identificação -->
+                        <span class="text-white text-truncate flex-grow-1 pr-3">
+                            ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
+                        </span>
 
-            <div class="btn btn-success" id="btnExport">
-                <i class="fa fa-file-excel"></i>
-            </div>
+                        <!-- Botões -->
+                        <div class="d-flex gap-2 flex-shrink-0">
+
+                            <a href="setoresEspeciais.html"
+                                class="btn btn-secondary btn-sm mr-2"
+                                title="Atualizar">
+                                <i class="fa-solid fa-rotate text-light"></i>
+                            </a>
+
+                            <a class="btn btn-success btn-sm mr-2"
+                                id="btnExport"   
+                                title="Exportar para Excel">
+                               <i class="fa fa-file-excel text-light"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
         `);
 
         // bind export
