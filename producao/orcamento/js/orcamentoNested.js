@@ -99,15 +99,39 @@ table = $('#processosNested').DataTable({
 
       if (data.length > 0) {
         $('#titulo').html(`
-          <div class="btn btn-primary col-md-8 d-grid small text-white text-left">
-            ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
-          </div>
-          <div class="btn btn-warning">
-            <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=${data[0]["ano"]}" class="text-dark"><i class="fa-solid fa-rotate"></i></a>
-          </div>
-          <div class="btn btn-primary">
-            <a class="text-white" href="orcamentoDashboard.html"><i class="fa-solid fa-search"></i></a>
-          </div>
+            <div class="row w-100 align-items-center">
+
+              <div class="col-10 d-flex align-items-center">
+                <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
+
+                  <!-- Identificação -->
+                  <span class="text-white text-truncate flex-grow-1 pr-3">
+                  ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
+                  </span>
+
+                  <!-- Botões -->
+                  <div class="d-flex gap-2 flex-shrink-0">
+
+                    <a href="orcamentoDashboard.html"
+                      class="btn btn-info btn-sm mr-2"
+                      title="Detalhes">
+                      <i class="fa-solid fa-arrow-left text-light"></i>
+                    </a>
+
+                    <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=${data[0]["ano"]}"
+                      class="btn btn-secondary btn-sm mr-2"
+                      title="Atualizar">
+                      <i class="fa-solid fa-rotate text-light"></i>
+                    </a>
+
+                  </div>
+
+                </div>
+              </div>
+
+              
+
+            </div>
         `);
 
         const { totalOrcamento, totalAdjudicado, totalFaturado } = data.reduce(
@@ -127,21 +151,53 @@ table = $('#processosNested').DataTable({
 
         // Atualiza os valores na tabela
         $('#valoresRubrica').html(`
-          <table class="table table-striped table-md">
-            <tr>
-              <td class="bg-primary text-white">Orçamento</td>
-              <td class="bg-primary text-white text-right">${formatCurrency(totalOrcamento)}</td>
+          <div class="row">
 
-              <td class="bg-secondary text-white">Ajudicações</td>
-              <td class="bg-secondary text-white text-right">${formatCurrency(totalAdjudicado)}</td>
-              
-              <td class="bg-success text-white">Faturado</td>
-              <td class="bg-success text-white text-right">${formatCurrency(totalFaturado)}</td>
-              
-              <td class="bg-info text-white">Saldo</td>
-              <td class="bg-info text-white text-right">${formatCurrency(saldoTitulo)}</td>
-            </tr>
-          </table>
+              <div class="col-6 col-md-3 mb-2">
+                  <div class="card bg-primary text-white">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Orçamento</div>
+                          <div class="text-right font-weight-bold">
+                              ${formatCurrency(totalOrcamento)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-6 col-md-3 mb-2">
+                  <div class="card bg-secondary text-white">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Adjudicado</div>
+                          <div class="text-right font-weight-bold">
+                              ${formatCurrency(totalAdjudicado)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-6 col-md-3 mb-2">
+                  <div class="card bg-warning text-dark">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Faturado</div>
+                          <div class="text-right font-weight-bold">
+                              ${formatCurrency(totalFaturado)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-6 col-md-3 mb-2">
+                  <div class="card bg-success text-white">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Saldo</div>
+                          <div class="text-right font-weight-bold">
+                              ${formatCurrency(saldoTitulo)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+          </div>
         `);
         }
 

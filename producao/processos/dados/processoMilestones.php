@@ -236,10 +236,10 @@ function gerarHTMLStepper(array $pontos): void
 
             $status = 'conforme';
 
-            if ($i > 0 && $pontos[$i - 1]['data_doc'] != 0) {
+            if ($i > 0 && $pontos[$i - 1]['data_val'] != 0) {
 
-                $d1 = new DateTime($pt['data_doc']);
-                $d2 = new DateTime($pontos[$i - 1]['data_doc']);
+                $d1 = new DateTime($pt['data_val']);
+                $d2 = new DateTime($pontos[$i - 1]['data_val']);
 
                 $dias = $d1->diff($d2)->days;
 
@@ -265,20 +265,27 @@ function gerarHTMLStepper(array $pontos): void
                 data-bs-toggle="popover"
                 data-bs-trigger="focus"
                 data-bs-placement="top"
-                title="' . $pt['refer'] . ' - ' . $pt['data_val'] . ' - ' . $pt['notas'] . '"
+                title="' . ' [E:' . $pt['data_doc'] . ' - V:' . $pt['data_val'] . '] - ' . $pt['notas'] . '"
                 data-bs-content="' . $pt['data_val'] . '">
 
                 ' . ($i + 1) . $badge . '
             </div>
 
-            <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
+            <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : 
+                ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
                 . $pt['documento'] .
             '</div>
-
-            <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
-                . $pt['data_val'] .
+        <!--
+            <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : 
+                ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
+                . $pt['data_doc'] .
             '</div>
 
+            <div class="step-name badge bg-' . ($status === 'conforme' ? 'success' : 
+                ($status === 'desconforme' ? 'danger' : 'secondary')) . ' text-white">'
+                . $pt['data_val'] .
+            '</div>
+        -->
         </div>';
     }
 

@@ -14,10 +14,34 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($data as $row) {
 echo  '
-  <div class="col col-md-12 d-grid small">
-    <div class="btn btn-primary text-white text-left">'.$row["proces_padm"].'_'.$row["proces_nome"].'</div>
-      <div class="btn btn-warning" onclick="processoSelected('.$row["proces_check"].')"><i class="fa fa-solid fa-refresh"></i></div>  
-      <div class="btn btn-primary"><a class="text-white" href="processosSearch.html"><i class="fa fa-solid fa-search"></i></a></div>
-  </div>
+      <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2">
+
+        <span class="text-white text-truncate flex-grow-1 pr-2">
+            '.$row["proces_padm"].'_'.$row["proces_nome"].'
+        </span>
+
+        <div class="d-flex flex-shrink-0">
+
+            <button class="btn btn-secondary btn-sm py-0 px-2 mr-1"
+                    onclick="processoSelected('.$row["proces_check"].')"
+                    title="Atualizar">
+                <i class="fa fa-refresh"></i>
+            </button>
+
+            <a href="processosSearch.html"
+              class="btn btn-warning btn-sm py-0 px-2 mr-1"
+              title="Pesquisar">
+                <i class="fa fa-search"></i>
+            </a>
+
+            <button class="btn btn-light btn-sm py-0 px-2"
+                    onclick="processoSelected('.$row["proces_check"].')"
+                    title="Imprimir">
+                <i class="fa fa-print"></i>
+            </button>
+
+        </div>
+
+      </div>
 ';
 };

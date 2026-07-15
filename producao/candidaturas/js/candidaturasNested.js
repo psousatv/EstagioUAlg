@@ -390,38 +390,42 @@ $(document).ready(function () {
 
         // Título da candidatura
         $('#titulo').html(`
-          <div class="row w-100 align-items-center">
+            <div class="row w-100 align-items-center">
 
-          <!-- 2/3: Título + botões -->
-          <div class="col-10 d-flex align-items-center gap-2">
+              <div class="col-10 d-flex align-items-center">
+                <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
 
-            <!-- Título -->
-            <div class="btn btn-primary flex-grow-1 text-white text-start d-flex align-items-center">
-              ${json.candidatura || ''} - ${json.designacao || ''}
+                  <!-- Identificação -->
+                  <span class="text-white text-truncate flex-grow-1 pr-3">
+                    ${json.candidatura || ''} - ${json.designacao || ''}
+                  </span>
+
+                  <!-- Botões -->
+                  <div class="d-flex gap-2 flex-shrink-0">
+
+                    <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
+                      class="btn btn-info btn-sm mr-2"
+                      title="Detalhes">
+                      <i class="fa-solid fa-arrow-left text-light"></i>
+                    </a>
+
+                    <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
+                      class="btn btn-secondary btn-sm mr-2"
+                      title="Atualizar">
+                      <i class="fa-solid fa-rotate text-light"></i>
+                    </a>
+
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Logotipo -->
+              <div class="col-2 d-flex justify-content-end align-items-center">
+                <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
+              </div>
+
             </div>
-
-            <!-- Botão 1 -->
-            <div class="btn btn-warning d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
-              <a href="candidaturasNested.html?itemProcurado=${json.candidatura}" class="text-dark">
-                <i class="fa-solid fa-rotate fa-lg"></i>
-              </a>
-            </div>
-
-            <!-- Botão 2 -->
-            <div class="btn btn-primary d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
-              <a class="text-white" href="candidaturasGeral.html?itemProcurado=${json.candidatura}">
-                <i class="fa-solid fa-arrow-left fa-lg"></i>
-              </a>
-            </div>
-
-          </div>
-
-          <!-- 1/3: Logotipo -->
-          <div class="col-2 d-flex justify-content-end align-items-center">
-            <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
-          </div>
-
-        </div>
         `);
 
         // Somatórios de todos os processos

@@ -44,37 +44,41 @@ function renderTitulo(json){
   let html = `
   <div class="row w-100 align-items-center">
 
-  <div class="col-10 d-flex align-items-center gap-2">
+  <div class="col-10 d-flex align-items-center">
+    <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
 
-    <!-- Título -->
-    <div class="btn btn-primary flex-grow-1 text-white text-start d-flex align-items-center">
-      ${json.candidatura || ''} - ${json.designacao || ''}
-    </div>
+      <!-- Identificação -->
+      <span class="text-white text-truncate flex-grow-1 pr-3">
+        ${json.candidatura || ''} - ${json.designacao || ''}
+      </span>
 
-    <!-- Botão 1 -->
-    <div class="btn btn-warning d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
-      <a href="candidaturasNested.html?itemProcurado=${json.candidatura}" class="text-dark">
-        <i class="fa-solid fa-arrow-right fa-lg"></i>
-      </a>
-    </div>
-    
-    <!-- Botão 2 -->
-    <div class="btn btn-primary d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
-      <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}" class="text-white">
-        <i class="fa-solid fa-rotate fa-lg"></i>
-      </a>
-    </div>
+      <!-- Botões -->
+      <div class="d-flex gap-2 flex-shrink-0">
 
-    <!-- Botão 3 -->
-    <div class="btn btn-danger d-flex align-items-center justify-content-center" style="width:40px; height:40px;">
-      <a class="text-white" href="candidaturasDashboard.html">
-        <i class="fa-solid fa-search fa-lg"></i>
-      </a>
-    </div>
+        <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
+           class="btn btn-info btn-sm mr-2"
+           title="Detalhes">
+          <i class="fa-solid fa-arrow-right text-light"></i>
+        </a>
 
+        <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
+           class="btn btn-secondary btn-sm mr-2"
+           title="Atualizar">
+          <i class="fa-solid fa-rotate text-light"></i>
+        </a>
+
+        <a href="candidaturasDashboard.html"
+           class="btn btn-warning btn-sm"
+           title="Pesquisar">
+          <i class="fa-solid fa-search text-dark"></i>
+        </a>
+
+      </div>
+
+    </div>
   </div>
 
-  <!-- 1/3: Logotipo -->
+  <!-- Logotipo -->
   <div class="col-2 d-flex justify-content-end align-items-center">
     <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
   </div>
