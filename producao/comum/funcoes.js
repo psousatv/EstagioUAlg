@@ -216,7 +216,7 @@ function imprimirEmValidacao() {
     let html = `
         <html>
         <head>
-            <title>Relação de Processos a Aguardar Validação>
+            <title>Relação de Processos a Aguardar Alteração de Estado>
             <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
@@ -277,7 +277,7 @@ async function exportarValidacaoPDF() {
     // Cabeçalho
     const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Aguarda", "Dias", "Estado"];
 
-    doc.text("Processos a Aguardar Validação", 40, 30);
+    doc.text("Processos a Aguardar Alteração de Estado", 40, 30);
 
     doc.autoTable({
         head: [cabecalho],
@@ -297,7 +297,7 @@ async function exportarValidacaoPDF() {
             const footerY = pageHeight - 10;
     
             // Texto da página atual
-            let pageStr = "Por norma, a publicação deve ser feita até 20 dias após o último estádio de vínculo";
+            let pageStr = "*BaseGov, por norma, a publicação deve ser feita até 20 dias após o último estádio de vínculo";
                 
             // Desenha o texto do rodapé
             doc.text(pageStr, data.settings.margin.left, footerY);
