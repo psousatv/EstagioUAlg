@@ -207,7 +207,7 @@ function exportarVistoriasExcel() {
     XLSX.writeFile(wb, "vistoriasProcessos.xlsx");
 }
 
-// BASEGOV
+// ESTADIOS DE PROCESSOS
 function imprimirEmValidacao() {
     // Seleciona todas as linhas do tbody gerado pelo renderBaseGov()
     const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
@@ -235,7 +235,7 @@ function imprimirEmValidacao() {
                         <th>Entidade</th>
                         <th>Fase</th>
                         <th>Processo</th>
-                        <th>Registo</th>
+                        <th>Aguarda</th>
                         <th>Dias</th>
                         <th>Estado</th>
                     </tr>
@@ -275,7 +275,7 @@ async function exportarValidacaoPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Movimento", "Dias", "Estado"];
+    const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Aguarda", "Dias", "Estado"];
 
     doc.text("Processos a Aguardar Validação", 40, 30);
 
@@ -316,7 +316,7 @@ function exportarValidacaoExcel() {
     });
 
     // Adiciona cabeçalho
-    dados.unshift(["Entidade", "Fase", "Processo", "Registo", "Movimento", "Dias", "Estado"]);
+    dados.unshift(["Entidade", "Fase", "Processo", "Registo", "Aguarda", "Dias", "Estado"]);
 
     // Converte para workbook
     const ws = XLSX.utils.aoa_to_sheet(dados);

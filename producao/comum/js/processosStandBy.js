@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadValidacoes() {
 
     try {
-        const response =  await fetch("producao/comum/dados/processosDJUR.php");
+        const response =  await fetch("producao/comum/dados/processosStandBy.php");
         const text =  await response.text();
         const processos = JSON.parse(text);
 
@@ -83,7 +83,7 @@ function renderValidacao(processos) {
                     <th style="width: 75px;">Fase</th>
                     <th>Processo</th>
                     <th style="width: 75px;">Registo</th>
-                    <th style="width: 75px;">Movimento</th>
+                    <th style="width: 75px;">Aguarda</th>
                     <th style="width: 50px;">Dias</th>
                     <th style="width: 75px;">Estado</th>
                     

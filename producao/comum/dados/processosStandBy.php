@@ -27,12 +27,15 @@ try {
             JOIN entidade e ON e.ent_cod = proces_ent_Cod
             WHERE proces_report_valores = 1
             AND h.historico_datamov <= :hoje
-            AND h.historico_doc = 'ParaVerificacao'
             AND h.historico_valor = 0
+            AND h.historico_doc LIKE :estadio
             ORDER BY h.historico_dataemissao, e.ent_nome";
 
     $stmt = $myConn->prepare($sql);
-    $stmt->execute(['hoje' => date("Y-m-d")]);
+    $stmt->execute([
+        ':hoje'    => date("Y-m-d"),
+        ':estadio' => '%Aguarda%'
+    ]);
 
     $processos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
