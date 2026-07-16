@@ -54,33 +54,35 @@ function carregarTabela(ano) {
         // TITULO
         // =========================
         $('#titulo').html(`
-                <div class="col-10 d-flex align-items-center">
-                    <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
+            <div class="row no-gutters align-items-center mb-2">
 
-                        <!-- Identificação -->
-                        <span class="text-white text-truncate flex-grow-1 pr-3">
-                            ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
-                        </span>
+                <div class="col-10">
+                    <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+                    ${dados.titulo[0] || ''} - ${anoCorrente || ''} - ${dados.titulo[1] || ''}: Publicado a ${dados.listagem[0]['data_publicacao'] || ''}
+                    </div>
+                </div>
 
-                        <!-- Botões -->
-                        <div class="d-flex gap-2 flex-shrink-0">
+                <div class="col-2">
+                    <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
 
-                            <a href="setoresEspeciais.html"
-                                class="btn btn-secondary btn-sm mr-2"
-                                title="Atualizar">
-                                <i class="fa-solid fa-rotate text-light"></i>
-                            </a>
+                        <a href="setoresEspeciais.html"
+                            class="btn btn-secondary mr-1"
+                            style="padding: 6px 14px;"
+                            title="Atualizar">
+                            <i class="fa-solid fa-rotate text-light"></i>
+                        </a>
 
-                            <a class="btn btn-success btn-sm mr-2"
-                                id="btnExport"   
-                                title="Exportar para Excel">
-                               <i class="fa fa-file-excel text-light"></i>
-                            </a>
-
-                        </div>
+                        <a class="btn btn-success mr-1"
+                            style="padding: 6px 14px;"
+                            id="btnExport"   
+                            title="Exportar para Excel">
+                            <i class="fa fa-file-excel text-light"></i>
+                        </a>
 
                     </div>
                 </div>
+
+            </div>
         `);
 
         // bind export

@@ -390,42 +390,40 @@ $(document).ready(function () {
 
         // Título da candidatura
         $('#titulo').html(`
-            <div class="row w-100 align-items-center">
+          <div class="row no-gutters align-items-center mb-2">
 
-              <div class="col-10 d-flex align-items-center">
-                <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
+            <div class="col-8">
+                <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+                ${json.candidatura || ''} - ${json.designacao || ''}
+                </div>
+            </div>
 
-                  <!-- Identificação -->
-                  <span class="text-white text-truncate flex-grow-1 pr-3">
-                    ${json.candidatura || ''} - ${json.designacao || ''}
-                  </span>
+            <div class="col-2">
+                <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
 
-                  <!-- Botões -->
-                  <div class="d-flex gap-2 flex-shrink-0">
+                  <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
+                    class="btn btn-info mr-1"
+                    style="padding: 6px 14px;"
+                    title="Voltar">
+                    <i class="fa-solid fa-arrow-left text-light"></i>
+                  </a>
 
-                    <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
-                      class="btn btn-info btn-sm mr-2"
-                      title="Detalhes">
-                      <i class="fa-solid fa-arrow-left text-light"></i>
-                    </a>
-
-                    <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
-                      class="btn btn-secondary btn-sm mr-2"
-                      title="Atualizar">
-                      <i class="fa-solid fa-rotate text-light"></i>
-                    </a>
-
-                  </div>
+                  <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
+                    class="btn btn-secondary mr-1"
+                    style="padding: 6px 14px;"
+                    title="Atualizar">
+                    <i class="fa-solid fa-rotate text-light"></i>
+                  </a>                 
 
                 </div>
-              </div>
-
-              <!-- Logotipo -->
-              <div class="col-2 d-flex justify-content-end align-items-center">
-                <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
-              </div>
-
             </div>
+
+            <!-- Logotipo -->
+            <div class="col-2 d-flex justify-content-end align-items-center">
+              <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
+            </div>
+
+          </div>
         `);
 
         // Somatórios de todos os processos

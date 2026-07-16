@@ -98,40 +98,38 @@ table = $('#processosNested').DataTable({
       //console.table(data[0]["ano"]);
 
       if (data.length > 0) {
+        
         $('#titulo').html(`
-            <div class="row w-100 align-items-center">
+          <div class="row no-gutters align-items-center mb-2">
 
-              <div class="col-10 d-flex align-items-center">
-                <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2 w-100">
-
-                  <!-- Identificação -->
-                  <span class="text-white text-truncate flex-grow-1 pr-3">
-                  ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
-                  </span>
-
-                  <!-- Botões -->
-                  <div class="d-flex gap-2 flex-shrink-0">
-
-                    <a href="orcamentoDashboard.html"
-                      class="btn btn-info btn-sm mr-2"
-                      title="Detalhes">
-                      <i class="fa-solid fa-arrow-left text-light"></i>
-                    </a>
-
-                    <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=${data[0]["ano"]}"
-                      class="btn btn-secondary btn-sm mr-2"
-                      title="Atualizar">
-                      <i class="fa-solid fa-rotate text-light"></i>
-                    </a>
-
-                  </div>
-
+            <div class="col-10">
+                <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+                ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
                 </div>
-              </div>
-
-              
-
             </div>
+
+            <div class="col-2">
+              <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
+
+                <!-- Botões -->
+                <a href="orcamentoDashboard.html"
+                  class="btn btn-info mr-1"
+                  style="padding: 6px 14px;"
+                  title="Detalhes">
+                  <i class="fa-solid fa-arrow-left text-light"></i>
+                </a>
+
+                <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=${data[0]["ano"]}"
+                  class="btn btn-secondary mr-1"
+                  style="padding: 6px 14px;"
+                  title="Atualizar">
+                  <i class="fa-solid fa-rotate text-light"></i>
+                </a>
+
+              </div>
+            </div>
+
+          </div>
         `);
 
         const { totalOrcamento, totalAdjudicado, totalFaturado } = data.reduce(

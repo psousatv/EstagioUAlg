@@ -14,34 +14,41 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($data as $row) {
 echo  '
-      <div class="d-flex justify-content-between align-items-center bg-primary rounded px-2 py-1 mb-2">
+    <div class="row no-gutters align-items-center mb-2">
 
-        <span class="text-white text-truncate flex-grow-1 pr-2">
-            '.$row["proces_padm"].'_'.$row["proces_nome"].'
-        </span>
+        <div class="col-10">
+            <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+                '.$row["proces_padm"].'_'.$row["proces_nome"].'
+            </div>
+        </div>
 
-        <div class="d-flex flex-shrink-0">
+        <div class="col-2">
+            <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
 
-            <button class="btn btn-secondary btn-sm py-0 px-2 mr-1"
+                <button class="btn btn-secondary mr-1" 
+                    style="padding: 6px 14px;"
                     onclick="processoSelected('.$row["proces_check"].')"
                     title="Atualizar">
-                <i class="fa fa-refresh"></i>
+                <i class="fa fa-refresh fa-lg"></i>
             </button>
 
             <a href="processosSearch.html"
-              class="btn btn-warning btn-sm py-0 px-2 mr-1"
-              title="Pesquisar">
-                <i class="fa fa-search"></i>
+               class="btn btn-warning mr-1" 
+               style="padding: 6px 14px;"
+               title="Pesquisar">
+                <i class="fa fa-search fa-lg"></i>
             </a>
 
-            <button class="btn btn-light btn-sm py-0 px-2"
+            <button class="btn btn-light border" 
+                    style="padding: 6px 14px;"
                     onclick="processoSelected('.$row["proces_check"].')"
                     title="Imprimir">
-                <i class="fa fa-print"></i>
+                <i class="fa fa-print fa-lg"></i>
             </button>
 
+            </div>
         </div>
 
-      </div>
-';
+    </div>
+    ';
 };
