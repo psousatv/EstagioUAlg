@@ -665,7 +665,7 @@ $(document).ready(function () {
                 style="cursor:pointer; text-decoration: underline;"
                 onclick="redirectProcesso('${processo.proces_check}')">
 
-                Processo: ${processo.designacao} (${processo.padm})
+                Processo: ${processo.designacao} (${processo.proces_check})
 
             </h6>
 
@@ -955,8 +955,8 @@ function getReembolsosAgrupadosDetalhado(processos) {
         grupos[key].totalReembolso += (h.historico_valor || 0);
       }
 
-      if (!grupos[key].processos[processo.padm]) {
-        grupos[key].processos[processo.padm] = {
+      if (!grupos[key].processos[processo.proces_check]) {
+        grupos[key].processos[processo.proces_check] = {
           processo,
           faturas: []
         };
@@ -977,8 +977,8 @@ function getReembolsosAgrupadosDetalhado(processos) {
         };
       }
 
-      if (!grupos['ORFAO'].processos[processo.padm]) {
-        grupos['ORFAO'].processos[processo.padm] = {
+      if (!grupos['ORFAO'].processos[processo.proces_check]) {
+        grupos['ORFAO'].processos[processo.proces_check] = {
           processo,
           faturas: []
         };
@@ -1003,14 +1003,14 @@ function getReembolsosAgrupadosDetalhado(processos) {
       
       const grupo = grupos[key];
 
-      if (!grupo.processos[processo.padm]) {
-        grupo.processos[processo.padm] = {
+      if (!grupo.processos[processo.proces_check]) {
+        grupo.processos[processo.proces_check] = {
           processo,
           faturas: []
         };
       }
 
-      grupo.processos[processo.padm].faturas.push(f);
+      grupo.processos[processo.proces_check].faturas.push(f);
     });
 
   });
@@ -1120,7 +1120,7 @@ function exportAllPDF() {
 
       const faturas = (p.faturas || []).length
         ? p.faturas.map(f =>
-            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)}`
+            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num} - AM${f.fact_auto_num}: ${formatCurrency(f.fact_valor)}`
           ).join("\n")
         : "Sem faturas";
 
@@ -1329,7 +1329,7 @@ function modalExportPDF(processos, keySelecionada) {
 
       const faturas = (p.faturas || []).length
         ? p.faturas.map(f =>
-            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num} - ${formatCurrency(f.fact_valor)}`
+            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num}  - AM${f.fact_auto_num}: ${formatCurrency(f.fact_valor)}`
           ).join("\n")
         : "Sem faturas";
 
