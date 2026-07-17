@@ -36,171 +36,297 @@
 </head>
 
 <body>
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="../../index.html">Vistorias</a>
-        <div class="btn btn-info"><a class="text-white" href="../../index.html"><i class="fa fa-solid fa-house"></i></a></div>
-    
-        <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-          <div class="d-flex align-items-center justify-content-between small">
-            <div class="text-white">Copyright &copy; Paulo Sousa 2024</div>
-          </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand navbar-dark bg-dark shadow-sm">
+
+        <a class="navbar-brand" href="../../index.html">
+            <i class="fa fa-binoculars"></i>
+            Vistorias
+        </a>
+
+        <div class="ml-auto d-flex align-items-center">
+
+            <a class="btn btn-outline-light btn-sm mr-3" href="../../index.html">
+                <i class="fa fa-home"></i>
+            </a>
+
+            <span class="text-white-50 small">
+                Paulo Sousa © 2024
+            </span>
+
         </div>
-    
-        <!-- Logged -->
-        <ul class="navbar-nav ml-auto ml-md-0">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">Convidado</a><div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Login</a>
-                <a class="dropdown-item" href="#">Logout</a>
-            </div>
-          </li>
-        </ul>
+
     </nav>
-    
-    <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Principal</div>
-                        <a class="nav-link" href="../../index.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Dashboard
-                        </a>
-                        <div class="sb-sidenav-menu-heading">Interface</div>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                            Registos
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="../../producao/orcamento/">Orçamento</a>
-                                <a class="nav-link" href="../../producao/orcamento/">Orçamento</a>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Consultas
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Avisos
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Login</a>
-                                        <a class="nav-link" href="#">Register</a>
-                                        <a class="nav-link" href="#">Forgot Password</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Error
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/global/401.html">401 Page</a>
-                                        <a class="nav-link" href="/global/404.html">404 Page</a>
-                                        <a class="nav-link" href="/global/500.html">500 Page</a>
-                                    </nav>
-                                </div>
-                            </nav>
-                        </div>
-                        <div class="sb-sidenav-menu-heading">Addons</div>
-                        <a class="nav-link" href="../charts.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Charts
-                        </a>
-                        <a class="nav-link" href="../tables.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                            Tables
-                        </a>
-                    </div>
-                </div>
-                <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
-                    Não Credenciado
-                </div>
-            </nav>
-        </div>
 
-        <div id="layoutSidenav_content">
-            <div class="container-fluid">
+    <!-- CONTEÚDO -->
+    <div class="container-fluid py-4 vistorias-dasboard">
 
-                <!-- Título -->
-                <div class="row mb-3">
-            
-                    <div class="col">
-                        <h3 class="mb-0">
-                            <i class="fa fa-binoculars text-primary"></i>
-                            Vistorias
-                        </h3>
-                        <small class="text-white">Vistorias programadas, vencidas e agendadas</small>
-                    </div>
-            
-                </div>
-            
-                <!-- Colunas -->
-                <div class="row">
-            
-                    <!-- ===================== VENCIDAS ===================== -->
-                    <div class="col-lg-4 mb-4">
-                        <div class="card shadow-sm h-100 border-danger">
-                            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-                                <strong><i class="fa fa-exclamation-circle"></i> Vencidas</strong>
-                                <span id="totalVencidas" class="badge badge-light"> 0 </span>
-                            </div>
-                            <div class="card-body p-2" style="max-height:70vh; overflow-y:auto;">
-                                <div id="vencido"></div>
-                            </div>
-                        </div>
-                    </div>
-            
-                    <!-- ===================== PROGRAMADAS ===================== -->
-                    <div class="col-lg-4 mb-4">
-                        <div class="card shadow-sm h-100 border-success">
-                            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                                <strong><i class="fa fa-calendar"></i> Programadas</strong>
-                                <span id="totalProgramadas" class="badge badge-light"> 0 </span>
-                            </div>
-                            <div class="card-body p-2" style="max-height:70vh; overflow-y:auto;">
-                                <div id="programado"></div>
-                            </div>
-                        </div>
-                    </div>
-            
-                    <!-- ===================== AGENDADAS ===================== -->
-                    <div class="col-lg-4 mb-4">
-                        <div class="card shadow-sm h-100 border-primary">
-                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                                <strong><i class="fa fa-clock"></i> Agendadas</strong>
-                                <span id="totalAgendadas" class="badge badge-light"> 0 </span>
-                            </div>
-                            <div class="card-body p-2" style="max-height:70vh; overflow-y:auto;">
-                                <div id="agendado"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
+        <div class="container-fluid">
+
+            <!-- Título -->
+            <div class="row mb-3">
+                <div class="col">
+                    <h3 class="mb-0 text-white">Vistorias
+                        <small class="text-white-50 ml-2">| Programadas, vencidas e agendadas</small>
+                    </h3>
                 </div>
             </div>
-            
-            <!-- Mensagem de erro -->
+        
+            <!-- Pesquisa -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group shadow-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </div>
+        
+                        <input
+                            id="txtPesquisa"
+                            type="text"
+                            class="form-control"
+                            placeholder="Pesquisar por entidade, processo ou designação...">
+        
+                        <div class="input-group-append">
+                            <button
+                                class="btn btn-outline-secondary"
+                                id="btnLimpar">
+                                Limpar
+                            </button>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Cartões -->
+            <div class="row align-items-stretch">
+                <!-- ===================== RESUMO ===================== -->
+        
+                <div class="col-lg-3 mb-4 d-flex">
+                    <div class="card card-dashboard shadow-sm border-info h-100 w-100">
+
+                        <div class="card-header bg-info text-white">
+                            <strong><i class="fa fa-chart-pie"></i> Resumo</strong>
+                        </div>
+        
+                        <div class="card-body">
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr>
+                                    <th>Total</th>
+                                    <td class="text-right">
+                                        <span id="totalRegistos">0</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Vencidas</th>
+                                    <td class="text-right text-danger">
+                                        <span id="totalVencidasResumo">0</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Programadas</th>
+                                    <td class="text-right text-success">
+                                        <span id="totalProgramadasResumo">0</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Agendadas</th>
+                                    <td class="text-right text-primary">
+                                        <span id="totalAgendadasResumo">0</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Valor</th>
+                                    <td class="text-right font-weight-bold">
+                                        <span id="valorTotal">0 €</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+        
+                    </div>
+                </div>
+        
+                <!-- ===================== VENCIDAS ===================== -->
+                 <div class="col-lg-3 mb-4 d-flex">
+        
+                    <div class="card card-dashboard shadow-sm border-danger h-100 w-100">
+        
+                        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+        
+                            <strong>
+        
+                                <i class="fa fa-exclamation-circle"></i>
+        
+                                Vencidas
+        
+                            </strong>
+        
+                            <div>
+        
+                                <button
+                                    id="pdfVencidas"
+                                    class="btn btn-light btn-sm">
+        
+                                    <i class="fa fa-file-pdf text-danger"></i>
+        
+                                </button>
+        
+                                <button
+                                    id="xlsVencidas"
+                                    class="btn btn-light btn-sm">
+        
+                                    <i class="fa fa-file-excel text-success"></i>
+        
+                                </button>
+        
+                                <span
+                                    id="totalVencidas"
+                                    class="badge badge-light">
+        
+                                    0
+        
+                                </span>
+        
+                            </div>
+        
+                        </div>
+        
+                        <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
+        
+                            <div id="vencido"></div>
+        
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+                <!-- ===================== PROGRAMADAS ===================== -->
+        
+                <div class="col-lg-3 mb-4 d-flex">
+        
+                    <div class="card card-dashboard shadow-sm border-success h-100 w-100">
+        
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        
+                            <strong>
+        
+                                <i class="fa fa-calendar"></i>
+        
+                                Programadas
+        
+                            </strong>
+        
+                            <div>
+        
+                                <button
+                                    id="pdfProgramadas"
+                                    class="btn btn-light btn-sm">
+        
+                                    <i class="fa fa-file-pdf text-danger"></i>
+        
+                                </button>
+        
+                                <button
+                                    id="xlsProgramadas"
+                                    class="btn btn-light btn-sm">
+        
+                                    <i class="fa fa-file-excel text-success"></i>
+        
+                                </button>
+        
+                                <span
+                                    id="totalProgramadas"
+                                    class="badge badge-light">
+        
+                                    0
+        
+                                </span>
+        
+                            </div>
+        
+                        </div>
+        
+                        <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
+        
+                            <div id="programado"></div>
+        
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+                <!-- ===================== AGENDADAS ===================== -->
+        
+                <div class="col-lg-3 mb-4 d-flex">
+        
+                    <div class="card card-dashboard shadow-sm border-primary h-100 w-100">
+        
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        
+                            <strong>
+        
+                                <i class="fa fa-clock"></i>
+        
+                                Agendadas
+        
+                            </strong>
+        
+                            <div>
+        
+                                <button
+                                    id="pdfAgendadas"
+                                    class="btn btn-light btn-sm">
+        
+                                    <i class="fa fa-file-pdf text-danger"></i>
+        
+                                </button>
+        
+                                <button
+                                    id="xlsAgendadas"
+                                    class="btn btn-light btn-sm">
+        
+                                    <i class="fa fa-file-excel text-success"></i>
+        
+                                </button>
+        
+                                <span
+                                    id="totalAgendadas"
+                                    class="badge badge-light">
+        
+                                    0
+        
+                                </span>
+        
+                            </div>
+        
+                        </div>
+        
+                        <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
+        
+                            <div id="agendado"></div>
+        
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+            </div>
+        
             <div
                 id="lstErros"
-                class="alert alert-danger mt-3"
+                class="alert alert-danger"
                 style="display:none">
             </div>
+        
+        </div>
 
-        </div><!-- Fim Sidenav Content -->
-    </div><!-- Fim Sidenav Lateral -->
-</div><!-- Fim Sidenav -->
 
     <!-- JQuery - Deve Ser incluido antes do Global -->
     <script src="../../vendors/jquery/jquery.js"></script>
@@ -208,7 +334,7 @@
     <script src="../../global/js/scripts.js"></script>
     
     <!-- Bootstrap -->
-    i<script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
     <!-- Fontawesome -->
     <!--<script src="../../vendors/font-awesome/all.min.js"></script>-->
     <script src="../../vendors/fonts/all.min.js"></script>
@@ -216,6 +342,11 @@
     <script src="../../vendors/datatables/datatables.min.js"></script>
     <!-- Charts -->
     <script src="../../vendors/charts/chart.umd.min.js"></script>
+    <!-- jsPDF autoTable -->
+    <script src="../../vendors/pdf/jspdf.umd.min.js"></script>
+    <script src="../../vendors/pdf/jspdf.plugin.autotable.min.js"></script>
+    <!-- SheetJS (XLSX) -->
+    <script src="../../vendors/pdf/xlsx.full.min.js"></script>
 
 <!-- JS de Página -->
     <!--script src="js/main.js"></script-->
