@@ -10,13 +10,15 @@ $sqlVistorias = "SELECT
 				YEAR(historico_datamov) AS ano, 
 				MONTH(historico_datamov) AS mes,
 				historico_descr_nome AS tipo,
-				proces_orc_actividade AS actividade,
-				(SELECT historico_datamov FROM historico
-				WHERE historico_proces_check = proces_check AND historico_descr_cod = 26 
-				ORDER BY historico_datamov DESC LIMIT 1) AS recepcao,
-				(SELECT historico_datamov fROM historico
+				proces_orc_actividade AS actividade,(SELECT historico_datamov fROM historico
 				WHERE historico_proces_check = proces_check AND historico_descr_cod = 25 
 				ORDER BY historico_datamov DESC LIMIT 1) AS vistoria,
+				(SELECT historico_datamov FROM historico
+				WHERE historico_proces_check = proces_check AND historico_descr_cod = 26 
+				ORDER BY historico_datamov DESC LIMIT 1) AS provisoria,
+				(SELECT historico_datamov FROM historico
+				WHERE historico_proces_check = proces_check AND historico_descr_cod = 30 
+				ORDER BY historico_datamov DESC LIMIT 1) AS definitiva,
 				historico_valor AS valor,
 				historico_doc AS doc,
 				historico_num AS doc_num,

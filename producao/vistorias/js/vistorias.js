@@ -1,197 +1,272 @@
+const url = "dados/fornecedoresVistorias.php";
 
-//var params = new URLSearchParams(window.location.search);
-//var codigoProcesso = params.get("codigoProcesso"); 
-var url = "dados/fornecedoresVistorias.php";
-var resultados = [];
-var vistoriasProgramadas = [];
-var vistoriasAgendadas = [];
-var vistoriasVencidas = [];
+let resultados = [];
 
-//Funcção
-vistorias();
+/* ============================================================
+   Inicialização
+============================================================ */
 
-// Fetch JSON data from the PHP script
-function vistorias(){
-fetch(url)
-.then(response => {
-    if(!response.ok){
-        throw new Error (document.getElementById('lstErros').innerHTML = response.statusText);    
+document.addEventListener("DOMContentLoaded", vistorias);
+
+/* ============================================================
+   Carregar dados
+============================================================ */
+
+async function vistorias() {
+
+    try {
+
+        const response = await fetch(url);
+
+        if (!response.ok)
+            throw new Error(response.statusText);
+
+        resultados = await response.json();
+
+        document.getElementById("lstErros").style.display = "none";
+
+        const listas = classificarVistorias(resultados);
+
+        renderizarLista("vencido", listas.vencidas, "danger");
+        renderizarLista("programado", listas.programadas, "success");
+        renderizarLista("agendado", listas.agendadas, "primary");
+
+        actualizarContadores(listas);
+
     }
-    return response.json();
-})
-.then(returnedData => {
-    //resultados.push(...data);
-    document.getElementById("lstErros").style.display = "none";
+    catch (erro) {
 
-    resultados = resultados.concat(returnedData);
+        const erros = document.getElementById("lstErros");
 
-    var date = new Date();
-    var dia = date.getDate();
-    var ano = date.getFullYear();
-    var mes = date.getMonth()+1;
+        erros.style.display = "block";
+        erros.innerHTML = erro.message;
 
-    console.log("Date", date);
-    console.log("Ano", ano);
-    console.log("Mes", mes); 
+    }
 
+}
 
-    
+/* ============================================================
+   Classificação
+============================================================ */
 
-   resultados.forEach((resultado) =>{
-    //Programado - se o mês registado é o mês atual
-        if(
-            resultado["ano"] >= ano &&
-            resultado["mes"] > mes &&
-            resultado["doc"] == 'Programado' && 
-            resultado["obs"] == 'Programado') {
-                if(resultado["recepcao"] == null) {
-                    resultado["recepcao"] == 'n.a.'
-                };
-                vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
-        } else if (
-        // Agendadas - Se o mês registado é superior ao mês atual
-            //parseInt(resultado["mes"]) >= mes &&
-            resultado["doc"] != 'Programado' && 
-            resultado["obs"] == 'Agendado') {
-                if(resultado["recepcao"] == null) {
-                    resultado["recepcao"] == 'n.a.'
-                };
-                //vistoriasAgendadas.push(resultado["data_registo"]);
-                vistoriasAgendadas = vistoriasAgendadas.concat(resultado);
-                //console.log("Agendadas", resultado);
-        }else if (
-        // Vencidas - Se o mes registado é inferior ao mês atual
-            resultado["ano"] <= ano &&
-            resultado["doc"] == 'Programado' && 
-            resultado["obs"] == 'Programado') {
-                if(resultado["recepcao"] == null) {
-                    resultado["recepcao"] == 'n.a.'
-                };
-                vistoriasVencidas = vistoriasVencidas.concat(resultado);
-        } else {
-                 
-            vistoriasProgramadas = vistoriasProgramadas.concat(resultado);
-            };
-    });
+function classificarVistorias(lista) {
 
+    const hoje = new Date();
 
-    console.log("Programadas", vistoriasProgramadas);
-    console.log("Agendados", vistoriasAgendadas);
-    console.log("Vencidas", vistoriasVencidas);
+    const actual =
+        hoje.getFullYear() * 100 +
+        (hoje.getMonth() + 1);
 
-     // Envia os resultados para o Container correspondente
-     //Programados
-     var containerProgramado = document.getElementById('programado');
-     containerProgramado.innerHTML = "";
-     var vistoriasProgramadasNum = vistoriasProgramadas.length;
+    const resultado = {
+        vencidas: [],
+        programadas: [],
+        agendadas: []
+    };
 
-    vistoriasProgramadas.forEach((programado) => {
-        var listaProgramado = `
-            <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-120 justify-content-between">
-                <h5 class="mb-1">${programado['data_registo']}</h5>
-                <small class="badge badge-success">
-                    <i class="fa fa-binoculars" onclick="redirectProcesso(${programado['processo']})"></i>
-                </small>
-                </div>
-                <li class="mb-1 small">[${programado['processo']}] ${programado['designacao']}</li>
-                <ul>
-                    <li class="small"><b>Area: ${programado['actividade']}</b></li>
-                    <li class="small"><b>Entidade: ${programado['entidade']}</b></li>
-                    <li class="small"><b>Recepção Provisória: ${programado['recepcao']}</b></li>
-                    <li class="small"><b>Pedido: ${programado['doc']}</b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(programado["valor"]).toLocaleString('pt')}€ [${programado['doc_num']}]</b></li>
-                </ul>
-            </a>`;
-            
-        if(parseInt(programado["ano"]) > 0){
-            containerProgramado.innerHTML += listaProgramado;
-        }
-    });
+    lista.forEach(item => {
 
-    //Vencidos
-    var containerVencido = document.getElementById('vencido');
-    containerVencido.innerHTML = "";
-    var vistoriasVencidasNum = vistoriasVencidas.length;
- 
-    vistoriasVencidas.forEach((vencido) => {
+        item.provisoria = item.provisoria || "n.a.";
 
-        var listaVencido = `
-            <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-120 justify-content-between">
-                <h5 class="mb-1">${vencido['data_registo']}</h5>
-                <small class="badge badge-danger">
-                    <i class="fa fa-binoculars" onclick="redirectProcesso(${vencido['processo']})"></i>
-                </small>
-                </div>
-                <li class="mb-1 small">[${vencido['processo']}] ${vencido['designacao']}</li>
-                <ul>
-                    <li class="small"><b>Area: ${vencido['actividade']}</b></li>
-                    <li class="small"><b>Entidade: ${vencido['entidade']} </b></li>
-                    <li class="small"><b>Recepção Provisória: ${vencido['recepcao']} </b></li>
-                    <li class="small"><b>Pedido: ${vencido['doc']}</b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(vencido["valor"]).toLocaleString('pt')}€ [${vencido['doc_num']}] </b></li>
-                </ul>
-            </a>`;
-            
-        if(vencido["ano"] > 0){
-            containerVencido.innerHTML += listaVencido;
+        const ano = Number(item.ano);
+        const mes = Number(item.mes);
+
+        if (item.obs === "Agendado") {
+
+            resultado.agendadas.push(item);
+            return;
 
         }
-    });
 
-    //Agendados
-    var containerAgendado = document.getElementById('agendado');
-    containerAgendado.innerHTML = "";
-    var vistoriasAgendadasNum = vistoriasAgendadas.length;
- 
-    vistoriasAgendadas.forEach((agendado) => {
+        if (item.doc === "Programado" &&
+            item.obs === "Programado") {
 
-        var listaAgendado = `
-            <a class="list-group-item flex-column align-items-start">
-                <div class="d-flex w-120 justify-content-between">
-                <h5 class="mb-1">${agendado['data_registo']}</h5>
-                <small class="badge badge-primary">
-                    <i class="fa fa-binoculars" onclick="redirectProcesso(${agendado['processo']})"></i>
-                </small>
-                </div>
-                <li class="mb-1 small">[${agendado['processo']}] ${agendado['designacao']}</li>
-                <ul>
-                    <li class="small"><b>Area: ${agendado['actividade']}</b></li>
-                    <li class="small"><b>Area: ${agendado['tipo']} - ${agendado['actividade']}</b></li>
-                    <li class="small"><b>Entidade: ${agendado['entidade']}</b></li>
-                    <li class="small"><b>Recepção Provisória: ${agendado['recepcao']}</b></li>
-                    <li class="small"><b>Pedido: ${agendado['doc']}</b></li>
-                    <li class="small"><b>Custo Previsto: ${Number(agendado["valor"]).toLocaleString('pt')}€ [${agendado['doc_num']}] </b></li>
-                </ul>
-            </a>`;
-            
-        if(agendado["ano"] > 0){
-            containerAgendado.innerHTML += listaAgendado;
+            const data = ano * 100 + mes;
+
+            if (data < actual)
+                resultado.vencidas.push(item);
+            else
+                resultado.programadas.push(item);
+
         }
+
     });
 
-})
-    .catch(error => {
-        document.getElementById('lstErros').innerHTML = error;
-    });
-};
+    return resultado;
 
+}
 
-// Os resultados da Seleção é redirecionado para a processosResults.html
+/* ============================================================
+   Card
+============================================================ */
+
+function criarCard(item, badge, mostrarTipo = false) {
+
+    const area = mostrarTipo && item.tipo
+        ? `${item.tipo} - ${item.actividade ?? ""}`
+        : (item.actividade ?? "");
+
+    const valor = Number(item.valor || 0).toLocaleString(
+        "pt-PT",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+
+    return `
+            <div class="card mb-3 shadow-sm border-${badge}">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <div class="font-weight-bold">
+                                <i class="fa fa-calendar text-${badge}"></i>${item.data_registo}
+                            </div>
+                            <div class="mt-1">
+                                <strong>${item.designacao}</strong>
+                            </div>
+
+                            <small class="text-muted">Processo #${item.processo} * referente a: ${item.doc_num ?? ""}</small> 
+
+                        </div>
+
+                        <div>
+                            <button
+                                class="btn btn-outline-${badge} btn-sm"
+                                onclick="redirectProcesso(${item.processo})">
+                                <i class="fa fa-binoculars"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body py-2">
+                
+                    <div class="row small mb-1">
+                        
+                        <div class="col-4 font-weight-bold">Área</div>
+                            <div class="col-8">${area}</div>
+                        </div>  
+
+                        <div class="row small mb-1">
+                            <div class="col-4 font-weight-bold">Entidade</div>
+                            <div class="col-8">${item.entidade ?? ""}</div>
+                        </div>
+
+                        <div class="row small mb-1">
+                            <div class="col-4 font-weight-bold">Receção</div>
+                            <div class="col-8">${item.provisoria}</div>
+                        </div>
+
+                        <div class="row small mb-1">
+                            <div class="col-4 font-weight-bold">Pedido</div>
+                            <div class="col-8">${item.doc ?? ""}</div>
+                        </div>
+
+                        <div class="row small">
+                            <div class="col-4 font-weight-bold">Custo</div>
+                            <div class="col-8">${valor} €</div>
+                        </div>
+
+                </div>
+
+            </div>
+
+            `;
+
+}
+
+/* ============================================================
+   Render
+============================================================ */
+
+function renderizarLista(id, lista, badge) {
+
+    const container = document.getElementById(id);
+
+    if (!container)
+        return;
+
+    const html = [];
+
+    lista
+        .filter(item => Number(item.ano) > 0)
+        .forEach(item => {
+
+            html.push(
+
+                criarCard(
+                    item,
+                    badge,
+                    id === "agendado"
+                )
+
+            );
+
+        });
+
+    if (html.length === 0) {
+
+        html.push(`
+
+<div class="text-center text-muted p-4">
+    <i class="fa fa-check-circle fa-2x mb-2"></i>
+    <br>
+    Sem registos.
+</div>
+
+`);
+
+    }
+
+    container.innerHTML = html.join("");
+
+}
+
+/* ============================================================
+   Contadores
+============================================================ */
+
+function actualizarContadores(listas) {
+
+    document.getElementById("totalVencidas").innerHTML =
+        listas.vencidas.length;
+
+    document.getElementById("totalProgramadas").innerHTML =
+        listas.programadas.length;
+
+    document.getElementById("totalAgendadas").innerHTML =
+        listas.agendadas.length;
+
+}
+
+/* ============================================================
+   Processo
+============================================================ */
+
 function redirectProcesso(codigo) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
 
-      var params = codigo;
-      var URL = "../processos/processoResults.html?codigoProcesso=" + params;
-      //window.open(URL, "_blank");
-      window.location.href = URL;
-    }
-  }
+    const xmlhttp = new XMLHttpRequest();
 
-  xmlhttp.open("GET","../_search/searchEngine.php?codigoProcesso="+ codigo, true);
-  xmlhttp.send();
+    xmlhttp.onreadystatechange = function () {
 
-};
+        if (this.readyState === 4 &&
+            this.status === 200) {
+
+            window.location.href =
+                `../processos/processoResults.html?codigoProcesso=${codigo}`;
+
+        }
+
+    };
+
+    xmlhttp.open(
+        "GET",
+        `../_search/searchEngine.php?codigoProcesso=${codigo}`,
+        true
+    );
+
+    xmlhttp.send();
+
+}
