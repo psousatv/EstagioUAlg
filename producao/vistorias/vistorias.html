@@ -39,24 +39,14 @@
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand navbar-dark bg-dark shadow-sm">
-
-        <a class="navbar-brand" href="../../index.html">
-            <i class="fa fa-binoculars"></i>
-            Vistorias
-        </a>
+        <a class="navbar-brand" href="../../index.html">Vistorias</a>
 
         <div class="ml-auto d-flex align-items-center">
-
             <a class="btn btn-outline-light btn-sm mr-3" href="../../index.html">
                 <i class="fa fa-home"></i>
             </a>
-
-            <span class="text-white-50 small">
-                Paulo Sousa © 2024
-            </span>
-
+            <span class="text-white-50 small">Paulo Sousa © 2024</span>
         </div>
-
     </nav>
 
     <!-- CONTEÚDO -->
@@ -71,6 +61,9 @@
                         <small class="text-white-50 ml-2">| Programadas, vencidas e agendadas</small>
                     </h3>
                 </div>
+
+                <div id="lstErros" class="alert alert-danger" style="display:none"></div>
+        
             </div>
         
             <!-- Pesquisa -->
@@ -83,16 +76,14 @@
                             </span>
                         </div>
         
-                        <input
-                            id="txtPesquisa"
+                        <input id="txtPesquisa"
                             type="text"
                             class="form-control"
                             placeholder="Pesquisar por entidade, processo ou designação...">
         
                         <div class="input-group-append">
-                            <button
-                                class="btn btn-outline-secondary"
-                                id="btnLimpar">
+                            <button id="btnLimpar"
+                                class="btn btn-outline-warning">
                                 Limpar
                             </button>
                         </div>
@@ -103,8 +94,8 @@
         
             <!-- Cartões -->
             <div class="row align-items-stretch">
+
                 <!-- ===================== RESUMO ===================== -->
-        
                 <div class="col-lg-3 mb-4 d-flex">
                     <div class="card card-dashboard shadow-sm border-info h-100 w-100">
 
@@ -116,215 +107,125 @@
                             <table class="table table-sm table-borderless mb-0">
                                 <tr>
                                     <th>Total</th>
-                                    <td class="text-right">
-                                        <span id="totalRegistos">0</span>
-                                    </td>
+                                    <td class="text-right"><span id="totalRegistos">0</span></td>
                                 </tr>
                                 <tr>
                                     <th>Vencidas</th>
-                                    <td class="text-right text-danger">
-                                        <span id="totalVencidasResumo">0</span>
-                                    </td>
+                                    <td class="text-right text-danger"><span id="totalVencidasResumo">0</span></td>
                                 </tr>
                                 <tr>
                                     <th>Programadas</th>
-                                    <td class="text-right text-success">
-                                        <span id="totalProgramadasResumo">0</span>
-                                    </td>
+                                    <td class="text-right text-success"><span id="totalProgramadasResumo">0</span></td>
                                 </tr>
                                 <tr>
                                     <th>Agendadas</th>
-                                    <td class="text-right text-primary">
-                                        <span id="totalAgendadasResumo">0</span>
-                                    </td>
+                                    <td class="text-right text-primary"><span id="totalAgendadasResumo">0</span></td>
                                 </tr>
                                 <tr>
                                     <th>Valor</th>
-                                    <td class="text-right font-weight-bold">
-                                        <span id="valorTotal">0 €</span>
-                                    </td>
+                                    <td class="text-right font-weight-bold"><span id="valorTotal">0 €</span></td>
                                 </tr>
                             </table>
                         </div>
         
                     </div>
                 </div>
+                               
+                <!-- ===================== PROGRAMADAS ===================== -->
+                <div class="col-lg-3 mb-4 d-flex">        
+                    <div class="card card-dashboard shadow-sm border-success h-100 w-100">
+                        
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <strong><i class="fa fa-calendar"></i>Programadas</strong>
+
+                            <div>
+                                
+                                <button id="pdfProgramadas" class="btn btn-light btn-sm">
+                                    <i class="fa fa-file-pdf text-danger"></i>
+                                </button>
+                                
+                                <button id="xlsProgramadas" class="btn btn-light btn-sm">
+                                    <i class="fa fa-file-excel text-success"></i>
+                                </button>
+                                
+                                <span id="totalProgramadas" class="badge badge-light">0</span>
+            
+                            </div>
+        
+                        </div>
+        
+                        <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
+                            <div id="programado"></div>
+                        </div>
+        
+                    </div>
+                </div>
         
                 <!-- ===================== VENCIDAS ===================== -->
-                 <div class="col-lg-3 mb-4 d-flex">
-        
+                <div class="col-lg-3 mb-4 d-flex">
                     <div class="card card-dashboard shadow-sm border-danger h-100 w-100">
         
                         <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
         
-                            <strong>
-        
-                                <i class="fa fa-exclamation-circle"></i>
-        
-                                Vencidas
-        
-                            </strong>
+                            <strong><i class="fa fa-exclamation-circle"></i>Vencidas</strong>
         
                             <div>
         
-                                <button
-                                    id="pdfVencidas"
+                                <button id="pdfVencidas"
                                     class="btn btn-light btn-sm">
-        
                                     <i class="fa fa-file-pdf text-danger"></i>
         
                                 </button>
         
-                                <button
-                                    id="xlsVencidas"
-                                    class="btn btn-light btn-sm">
-        
+                                <button id="xlsVencidas" class="btn btn-light btn-sm">
                                     <i class="fa fa-file-excel text-success"></i>
-        
                                 </button>
         
-                                <span
-                                    id="totalVencidas"
-                                    class="badge badge-light">
-        
-                                    0
-        
-                                </span>
+                                <span id="totalVencidas" class="badge badge-light">0</span>
         
                             </div>
         
                         </div>
         
                         <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
-        
                             <div id="vencido"></div>
-        
                         </div>
         
                     </div>
-        
                 </div>
-        
-                <!-- ===================== PROGRAMADAS ===================== -->
-        
-                <div class="col-lg-3 mb-4 d-flex">
-        
-                    <div class="card card-dashboard shadow-sm border-success h-100 w-100">
-        
-                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-        
-                            <strong>
-        
-                                <i class="fa fa-calendar"></i>
-        
-                                Programadas
-        
-                            </strong>
-        
-                            <div>
-        
-                                <button
-                                    id="pdfProgramadas"
-                                    class="btn btn-light btn-sm">
-        
-                                    <i class="fa fa-file-pdf text-danger"></i>
-        
-                                </button>
-        
-                                <button
-                                    id="xlsProgramadas"
-                                    class="btn btn-light btn-sm">
-        
-                                    <i class="fa fa-file-excel text-success"></i>
-        
-                                </button>
-        
-                                <span
-                                    id="totalProgramadas"
-                                    class="badge badge-light">
-        
-                                    0
-        
-                                </span>
-        
-                            </div>
-        
-                        </div>
-        
-                        <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
-        
-                            <div id="programado"></div>
-        
-                        </div>
-        
-                    </div>
-        
-                </div>
-        
+
                 <!-- ===================== AGENDADAS ===================== -->
-        
                 <div class="col-lg-3 mb-4 d-flex">
-        
                     <div class="card card-dashboard shadow-sm border-primary h-100 w-100">
         
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        
-                            <strong>
-        
-                                <i class="fa fa-clock"></i>
-        
-                                Agendadas
-        
-                            </strong>
+                            
+                            <strong><i class="fa fa-clock"></i>Agendadas</strong>
         
                             <div>
         
-                                <button
-                                    id="pdfAgendadas"
-                                    class="btn btn-light btn-sm">
-        
+                                <button id="pdfAgendadas" class="btn btn-light btn-sm">
                                     <i class="fa fa-file-pdf text-danger"></i>
-        
                                 </button>
         
-                                <button
-                                    id="xlsAgendadas"
-                                    class="btn btn-light btn-sm">
-        
+                                <button id="xlsAgendadas" class="btn btn-light btn-sm">
                                     <i class="fa fa-file-excel text-success"></i>
-        
                                 </button>
         
-                                <span
-                                    id="totalAgendadas"
-                                    class="badge badge-light">
-        
-                                    0
-        
-                                </span>
+                                <span id="totalAgendadas" class="badge badge-light">0</span>
         
                             </div>
         
                         </div>
         
                         <div class="card-body p-2" style="max-height:70vh;overflow:auto;">
-        
                             <div id="agendado"></div>
-        
                         </div>
         
                     </div>
         
                 </div>
-        
             </div>
-        
-            <div
-                id="lstErros"
-                class="alert alert-danger"
-                style="display:none">
-            </div>
-        
         </div>
 
 
