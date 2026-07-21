@@ -32,44 +32,47 @@ try {
     // Ano corrente automático
     // =========================
     $anoAtual = date('Y');
-    $dataInicio = $anoAtual . '-01-01';
-    $dataFim    = $anoAtual . '-12-31';
+    $anoAnterior = $anoAtual - 1;
 
     // =========================
     // Query
     // =========================
     $sql = "SELECT
-                historico.historico_proces_check,
-                entidade.ent_nome,
-                historico.historico_descr_cod,
-                historico.historico_descr_nome,
-                historico.historico_dataemissao,
-                historico.historico_doc,
-                historico.historico_num,
-                historico.historico_valor,
-                historico.historico_obs,
-                processo.proces_nome,
-                procedimento.proced_regime,
-                procedimento.proced_contrato,
-                procedimento.proced_escolha,
-                rubricas.rub_tipo,
-                rubricas.rub_rubrica,
-                rubricas.rub_item
-            FROM historico
-            INNER JOIN entidade ON historico.historico_ent_cod = entidade.ent_cod
-            INNER JOIN processo ON historico.historico_proces_check = processo.proces_check
-            INNER JOIN procedimento ON processo.proces_proced_cod = procedimento.proced_cod
-            INNER JOIN rubricas ON processo.proces_rub_cod = rubricas.rub_cod
-            WHERE historico.historico_descr_cod = :cod
-              AND historico.historico_dataemissao BETWEEN :dataInicio AND :dataFim
-            ORDER BY historico.historico_dataemissao";
+                h.historico_proces_check,
+                e.ent_nome,
+                h.historico_descr_cod,
+                h.historico_descr_nome,
+                h.historico_dataemissao,
+                h.historico_doc,
+                h.historico_num,
+                h.historico_valor,
+                h.historico_obs,
+                p.proces_nome,
+                pr.proced_regime,
+                pr.proced_contrato,
+                pr.proced_escolha,
+                r.rub_tipo,
+                r.rub_rubrica,
+                r.rub_item
+            FROM historico h
+            INNER JOIN entidade e
+                ON h.historico_ent_cod = e.ent_cod
+            INNER JOIN processo p
+                ON h.historico_proces_check = p.proces_check
+            INNER JOIN procedimento pr
+                ON p.proces_proced_cod = pr.proced_cod
+            INNER JOIN rubricas r
+                ON p.proces_rub_cod = r.rub_cod
+            WHERE h.historico_descr_cod = :cod
+            AND h.historico_dataemissao BETWEEN :dataInicio AND :dataFim
+            ORDER BY h.historico_dataemissao;";
 
     $stmt = $myConn->prepare($sql);
 
     $stmt->execute([
         'cod' => $cod,
-        'dataInicio' => $dataInicio,
-        'dataFim' => $dataFim
+        'anoAtual' => $anoAtual,
+        'anoAnterior' => $anoAnterior
     ]);
 
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
