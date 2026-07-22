@@ -105,9 +105,9 @@ function classificarVistorias(lista){
         }
     });
 
-    resultado.vencidas.sort(ordenarData);
-    resultado.programadas.sort(ordenarData);
-    resultado.agendadas.sort(ordenarData);
+    resultado.vencidas.sort(ordenarEntidade);
+    resultado.programadas.sort(ordenarEntidade);
+    resultado.agendadas.sort(ordenarEntidade);
 
     return resultado;
 }
@@ -120,6 +120,11 @@ function ordenarData(a,b){
     if(a.data_registo > b.data_registo) return 1;
     return 0;
 }
+
+function ordenarEntidade(a, b) {
+    return a.entidade.localeCompare(b.entidade, 'pt-PT');
+}
+
 
 /* ============================================================
    Dashboard
@@ -348,13 +353,13 @@ function exportarPDF(lista, titulo) {
     doc.text("Data: " + new Date().toLocaleDateString("pt-PT"), 14, 22);
 
     const linhas = lista.map(item => [
-        item.tipo ?? "",
-        item.doc_num ?? "",
-        item.data_registo,
-        item.provisoria,
-        item.designacao,
         item.entidade,
         item.actividade,
+        item.data_registo,
+        item.tipo ?? "",
+        item.doc_num ?? "",
+        item.designacao,
+        item.provisoria,
         formatarEuro(item.valor || 0)
     ]);
 
@@ -365,7 +370,7 @@ function exportarPDF(lista, titulo) {
             fontSize: 8,
             cellPadding: 2
         },
-        head: [["Tipo", "Doc", "Data", "Receção", "Designação", "Entidade", "Área", "Valor (€)"]],
+        head: [["Entidade", "Área", "Data", "Tipo", "Doc", "Designação", "Receção", "Valor (€)"]],
         body: linhas,
         foot: [["", "", "", "", "", "", "Total", formatarEuro(totalLista(lista))]]
     });
@@ -400,14 +405,12 @@ function exportarExcel(lista, nomeFolha) {
     if (!lista || lista.length === 0) return;
 
     const dados = lista.map(item => ({
-        Processo: item.processo,
-        Designação: item.designacao,
         Entidade: item.entidade,
         Área: item.actividade,
-        Tipo: item.tipo ?? "",
         Data: item.data_registo,
-        Pedido: item.doc,
+        Tipo: item.tipo ?? "",
         Documento: item.doc_num,
+        Designação: item.designacao,
         Receção: item.provisoria,
         Valor: formatarEuro(item.valor)
     }));

@@ -232,10 +232,10 @@ function imprimirEmValidacao() {
             <table>
                 <thead>
                     <tr>
+                        <th>Pendente</th>    
                         <th>Entidade</th>
                         <th>Fase</th>
                         <th>Processo</th>
-                        <th>Aguarda</th>
                         <th>Dias</th>
                         <th>Estado</th>
                     </tr>
@@ -268,6 +268,33 @@ async function exportarValidacaoPDF() {
 
     // Seleciona todas as linhas
     const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
+    
+    linhas.sort((a, b) => {
+        const aCols = a.children;
+        const bCols = b.children;
+    
+        // 1º Entidade
+        let resultado = aCols[2].innerText.trim().localeCompare(
+            bCols[2].innerText.trim(),
+            'pt-PT',
+            { sensitivity: 'base' }
+        );
+        if (resultado !== 0) return resultado;
+    
+        // 2º Pendente
+        resultado = aCols[0].innerText.trim().localeCompare(
+            bCols[0].innerText.trim(),
+            'pt-PT',
+            { sensitivity: 'base' }
+        );
+        if (resultado !== 0) return resultado;
+    
+        // 3º Registo (data)
+        const dataA = converterData(aCols[1].innerText.trim());
+        const dataB = converterData(bCols[1].innerText.trim());
+    
+        return dataA - dataB; // mais antiga → mais recente
+    });
 
     // Monta array de arrays para o autoTable
     const dados = linhas.map(tr => {
@@ -275,7 +302,7 @@ async function exportarValidacaoPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Fase", "Processo", "Registo", "Aguarda", "Dias", "Estado"];
+    const cabecalho = ["Entidade", "Data", "Registo", "Observações", "Processo",   "Dias", "Estado"];
 
     doc.text("Processos a Aguardar Alteração de Estado", 40, 30);
 
@@ -316,7 +343,7 @@ function exportarValidacaoExcel() {
     });
 
     // Adiciona cabeçalho
-    dados.unshift(["Entidade", "Fase", "Processo", "Registo", "Aguarda", "Dias", "Estado"]);
+    dados.unshift(["Pendente", "Registo", "Entidade", "Fase", "Processo", "Dias", "Estado"]);
 
     // Converte para workbook
     const ws = XLSX.utils.aoa_to_sheet(dados);
@@ -410,3 +437,8 @@ const Exportador = {
     }
   
   });
+
+  function converterData(data) {
+    const [dia, mes, ano] = data.split('-');
+    return new Date(ano, mes - 1, dia);
+}

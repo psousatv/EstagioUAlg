@@ -31,7 +31,7 @@ try {
             OR h.historico_descr_nome = 'Receção Definitiva'
             )
             AND h.historico_obs = 'Programado'
-            ORDER BY h.historico_dataemissao, e.ent_nome";
+            ORDER BY e.ent_nome, h.historico_dataemissao";
 
     $stmt = $myConn->prepare($sql);
     $stmt->execute(['hoje' => date("Y-m-d")]);

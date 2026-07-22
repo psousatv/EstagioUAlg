@@ -65,7 +65,6 @@ function renderValidacao(processos) {
         return {
             ...proc,
             dataBase,
-
             diasRestantes,
             textoBadge,
             classeBadge
@@ -80,10 +79,10 @@ function renderValidacao(processos) {
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 10;">
                 <tr class="small">
                     <th style="width: 100px;">Entidade</th>
-                    <th style="width: 75px;">Fase</th>
-                    <th>Processo</th>
                     <th style="width: 75px;">Registo</th>
-                    <th style="width: 75px;">Aguarda</th>
+                    <th style="width: 75px;">Pendente</th>
+                    <th style="width: 75px;">Observações</th>
+                    <th>Processo</th>
                     <th style="width: 50px;">Dias</th>
                     <th style="width: 75px;">Estado</th>
                     
@@ -97,14 +96,10 @@ function renderValidacao(processos) {
     html += `
         <tr class="small">
             <td style="width: 50px;">${proc.entidade}</td>
-            <td style="width: 75px;">
-                <span class="badge badge-warning">
-                    ${proc.proces_estado_nome}
-                </span>
-            </td>
-            <td>${proc.proces_nome}</td>
-            <td style="width: 75px;">${formatDate(proc.dataBase)}</td>
+            <td style="width: 75px;">${formatDate(proc.dataBase)}</td>   
             <td style="width: 75px;">${proc.movimento}</td>
+            <td style="width: 75px;">${proc.observacoes}</td>
+            <td>${proc.proces_nome}</td>
             <td style="width: 50px;">${proc.diasRestantes}</td>
             <td style="width: 75px;">
                 <span class="badge ${proc.classeBadge}">

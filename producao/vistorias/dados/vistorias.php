@@ -29,7 +29,7 @@ $sqlVistorias = "SELECT
 				WHERE YEAR(historico_dataemissao) <= YEAR(NOW())
 				AND historico_obs = 'Programado'
 				OR historico_obs = 'Agendado'
-				ORDER BY historico_datamov, ent_nome";
+				ORDER BY ent_nome, historico_datamov";
 
 $stmt = $myConn->query($sqlVistorias);
 $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
