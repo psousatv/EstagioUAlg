@@ -210,7 +210,7 @@ function exportarVistoriasExcel() {
 // ESTADIOS DE PROCESSOS
 function imprimirEmValidacao() {
     // Seleciona todas as linhas do tbody gerado pelo renderBaseGov()
-    const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
+    const linhas = Array.from(document.querySelectorAll("#documentosPendentes tbody tr"));
 
     // Começa o HTML da tabela de impressão
     let html = `
@@ -267,31 +267,31 @@ async function exportarValidacaoPDF() {
     const doc = new jsPDF('p', 'pt', 'a4');
 
     // Seleciona todas as linhas
-    const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
+    const linhas = Array.from(document.querySelectorAll("#documentosPendentes tbody tr"));
     
     linhas.sort((a, b) => {
         const aCols = a.children;
         const bCols = b.children;
     
         // 1º Entidade
-        let resultado = aCols[2].innerText.trim().localeCompare(
-            bCols[2].innerText.trim(),
-            'pt-PT',
-            { sensitivity: 'base' }
-        );
-        if (resultado !== 0) return resultado;
-    
-        // 2º Pendente
-        resultado = aCols[0].innerText.trim().localeCompare(
+        let resultado = aCols[0].innerText.trim().localeCompare(
             bCols[0].innerText.trim(),
             'pt-PT',
             { sensitivity: 'base' }
         );
         if (resultado !== 0) return resultado;
     
+        // 2º Pendente
+        //resultado = aCols[0].innerText.trim().localeCompare(
+        //    bCols[0].innerText.trim(),
+        //    'pt-PT',
+        //    { sensitivity: 'base' }
+        //);
+        //if (resultado !== 0) return resultado;
+    
         // 3º Registo (data)
-        const dataA = converterData(aCols[1].innerText.trim());
-        const dataB = converterData(bCols[1].innerText.trim());
+        const dataA = converterData(aCols[2].innerText.trim());
+        const dataB = converterData(bCols[2].innerText.trim());
     
         return dataA - dataB; // mais antiga → mais recente
     });
@@ -302,40 +302,65 @@ async function exportarValidacaoPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Data", "Registo", "Observações", "Processo",   "Dias", "Estado"];
+    const cabecalho = ["Entidade", "Processo", "Fase", "Motivo", "Registo", "Dias", "Estado", "Colaborador"];
 
-    doc.text("Processos a Aguardar Alteração de Estado", 40, 30);
+    doc.text("Documentos a Aguardar Alteração de Estado - Pendentes", 40, 30);
 
     doc.autoTable({
         head: [cabecalho],
         body: dados,
         startY: 50,
-        styles: { fontSize: 9 },
-        headStyles: { fillColor: [0, 0, 255] },
-        margin: { top: 40, left: 20, right: 20 },
+    
+        styles: {
+            fontSize: 8,
+            cellPadding: 4,
+            overflow: 'linebreak'
+        },
+    
+        headStyles: {
+            fillColor: [0, 0, 255],
+            textColor: 255,
+            fontStyle: 'bold'
+        },
+    
+        tableWidth: 'auto',   // ou 'wrap'
+        margin: {
+            top: 40,
+            left: 20,
+            right: 20
+        },
+    
+        columnStyles: {
+            0: { cellWidth: 75 },      // Entidade
+            1: { cellWidth: 'auto' },  // Processo ocupa o restante espaço
+            2: { cellWidth: 75 },      // Fase
+            3: { cellWidth: 85 },      // Motivo
+            4: { cellWidth: 55 },      // Registo
+            5: { cellWidth: 35 },      // Dias
+            6: { cellWidth: 55 },      // Estado
+            7: { cellWidth: 55 }       // Colaborador
+        },
+    
         didDrawPage: function (data) {
-            // Define o tamanho e a cor do texto do rodapé
             doc.setFontSize(10);
             doc.setTextColor(100);
     
-            // Calcula a posição Y do rodapé (10px acima da margem inferior)
-            const pageSize = doc.internal.pageSize;
-            const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+            const pageHeight = doc.internal.pageSize.height;
             const footerY = pageHeight - 10;
     
-            // Texto da página atual
-            let pageStr = "*BaseGov, por norma, a publicação deve ser feita até 20 dias após o último estádio de vínculo";
-                
-            // Desenha o texto do rodapé
-            doc.text(pageStr, data.settings.margin.left, footerY);
+            doc.text(
+                "*BaseGov, por norma, a publicação deve ser feita até 20 dias após o último estádio de vínculo",
+                data.settings.margin.left,
+                footerY
+            );
         }
     });
 
-    doc.save("processosValidacao.pdf");
+    doc.save("documentosPendentes.pdf");
 }
 
 function exportarValidacaoExcel() {
-    const linhas = Array.from(document.querySelectorAll("#lstValidacao tbody tr"));
+    const linhas = Array.from(document.querySelectorAll("#documentosPendentes tbody tr"));
 
     // Cria array de arrays com o conteúdo
     const dados = linhas.map(tr => {
@@ -350,7 +375,7 @@ function exportarValidacaoExcel() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "BaseGov");
 
-    XLSX.writeFile(wb, "processosValidacao.xlsx");
+    XLSX.writeFile(wb, "documentosPendentes.xlsx");
 }
 
 const Exportador = {

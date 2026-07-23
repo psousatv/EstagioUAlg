@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadValidacoes() {
 
     try {
-        const response =  await fetch("producao/comum/dados/processosStandBy.php");
+        const response =  await fetch("producao/comum/dados/documentosPendentes.php");
         const text =  await response.text();
         const processos = JSON.parse(text);
 
@@ -17,14 +17,14 @@ async function loadValidacoes() {
 
     } catch (error) {
         console.error("Erro ao carregar os Dados:", error);
-        document.getElementById("lstValidacao").innerHTML =
+        document.getElementById("documentosPendentes").innerHTML =
             `<div class="text-danger">Erro ao carregar dados.</div>`;
     }
 }
 
 function renderValidacao(processos) {
 
-    const container = document.getElementById("lstValidacao");
+    const container = document.getElementById("documentosPendentes");
     container.innerHTML = "";
 
     const hoje = new Date();
@@ -33,12 +33,12 @@ function renderValidacao(processos) {
 
         const prazo = parseInt(proc.proces_prz_exec) || 0;
 
-        const dataAgendamento = proc.agendamento
-            ? new Date(proc.agendamento + "T00:00:00")
+        const dataPendente = proc.historico_pendente_data
+            ? new Date(proc.historico_pendente_data + "T00:00:00")
             : null;
 
         // Prioridade: Consignacao > Contrato > Adjudicacao > Hoje
-        const dataBase = dataAgendamento || hoje;
+        const dataBase = dataPendente || hoje;
 
         const dataTermo = new Date(dataBase);
         dataTermo.setDate(dataTermo.getDate() + prazo);
@@ -72,50 +72,50 @@ function renderValidacao(processos) {
 
     }).sort((a, b) => a.dataTermo - b.dataTermo);
 
-   // Tabela small + sticky
-    let html = `
-    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-        <table class="table table-sm table-hover table-bordered align-middle">
-            <thead class="thead-light" style="position: sticky; top: 0; z-index: 10;">
-                <tr class="small">
-                    <th style="width: 100px;">Entidade</th>
-                    <th style="width: 75px;">Registo</th>
-                    <th style="width: 75px;">Pendente</th>
-                    <th style="width: 75px;">Observações</th>
-                    <th>Processo</th>
-                    <th style="width: 50px;">Dias</th>
-                    <th style="width: 75px;">Estado</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-    `;
+  // Tabela small + sticky
+let html = `
+<div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+    <table class="table table-sm table-hover table-bordered align-middle w-100">
+        <thead class="table-light sticky-top">
+            <tr class="small">
+                <th>Entidade</th>
+                <th class="text-nowrap">Processo</th>
+                <th>Fase</th>
+                <th>Motivo</th>
+                <th class="text-center">Desde</th>
+                <th class="text-center">Dias</th>
+                <th class="text-center">Estado</th>
+                <th>Colaborador</th>
+            </tr>
+        </thead>
+        <tbody>
+`;
 
-    lista.forEach(proc => {
+lista.forEach(proc => {
 
     html += `
         <tr class="small">
-            <td style="width: 50px;">${proc.entidade}</td>
-            <td style="width: 75px;">${formatDate(proc.dataBase)}</td>   
-            <td style="width: 75px;">${proc.movimento}</td>
-            <td style="width: 75px;">${proc.observacoes}</td>
-            <td>${proc.proces_nome}</td>
-            <td style="width: 50px;">${proc.diasRestantes}</td>
-            <td style="width: 75px;">
+            <td>${proc.entidade}</td>
+            <td class="text-nowrap">${proc.proces_nome}</td>
+            <td>${proc.movimento}, ${proc.historico_notas}</td>
+            <td>${proc.historico_pendente_motivo}</td>
+            <td class="text-center">${formatDate(proc.dataBase)}</td>
+            <td class="text-center">${proc.diasRestantes}</td>
+            <td class="text-center">
                 <span class="badge ${proc.classeBadge}">
                     ${proc.textoBadge}
                 </span>
             </td>
+            <td>${proc.historico_pendente_colaborador}</td>
         </tr>
     `;
-    });
+});
 
-    html += `
-            </tbody>
-        </table>
-    </div>
-    `;
-
+html += `
+        </tbody>
+    </table>
+</div>
+`;
 
     container.innerHTML = html;
 }
