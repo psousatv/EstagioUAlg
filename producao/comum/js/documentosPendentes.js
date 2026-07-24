@@ -39,7 +39,7 @@ function prepararDados(processos) {
 
     return processos.map(proc => {
 
-        const prazo = 20;
+        const prazo = 15;
 
         const dataPendente = proc.historico_pendente_data
             ? new Date(proc.historico_pendente_data + "T00:00:00")
@@ -57,12 +57,12 @@ function prepararDados(processos) {
         let textoBadge = "";
         let classeBadge = "";
 
-        if (diasAtraso <= 15) {
+        if (diasAtraso <= 10) {
 
             textoBadge = "Em dia";
             classeBadge = "badge-success";
 
-        } else if (diasAtraso <= 20) {
+        } else if (diasAtraso <= 15) {
 
             textoBadge = "A Terminar";
             classeBadge = "badge-warning";
@@ -141,7 +141,7 @@ function renderValidacao() {
                     </span>
                 </td>
 
-                <td>${proc.entidade}</td>
+                <td>${proc.entidade === "Multi Fornecedor" ? proc.entidade2 : proc.entidade}</td>
 
                 <td class="text-nowrap">
                     ${proc.proces_nome}

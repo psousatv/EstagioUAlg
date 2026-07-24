@@ -16,6 +16,7 @@ try {
                    CONCAT('(', proces_estado, ') ', proces_estado_nome) AS proces_estado_nome,
                    proces_nome,
                    e.ent_nome AS entidade,
+                   h.historico_obs AS entidade2,
                    h.historico_descr_nome AS movimento,
                    h.historico_dataemissao AS agendamento,
                    h.historico_datamov,
