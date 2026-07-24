@@ -262,120 +262,156 @@ function imprimirEmValidacao() {
     janela.print();
 }
 
-async function exportarValidacaoPDF() {
+function exportarValidacaoPDF() {
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'a4');
 
-    // Seleciona todas as linhas
-    const linhas = Array.from(document.querySelectorAll("#documentosPendentes tbody tr"));
-    
-    linhas.sort((a, b) => {
-        const aCols = a.children;
-        const bCols = b.children;
-    
-        // 1º Motivo
-        let resultado = aCols[0].innerText.trim().localeCompare(
-            bCols[0].innerText.trim(),
-            'pt-PT',
-            { sensitivity: 'base' }
-        );
-        if (resultado !== 0) return resultado;
-    
-        // 2º Entidade
-        resultado = aCols[3].innerText.trim().localeCompare(
-            bCols[0].innerText.trim(),
-            'pt-PT',
-            { sensitivity: 'base' }
-        );
-        if (resultado !== 0) return resultado;
-    
-        // 3º Data
-        const dataA = converterData(aCols[1].innerText.trim());
-        const dataB = converterData(bCols[1].innerText.trim());
-    
-        return dataA - dataB; // mais antiga → mais recente
+    let motivoAnterior = null;
+
+    const dados = [];
+
+    processosPendentes.forEach(proc => {
+
+        const motivoAtual = proc.historico_pendente_motivo;
+
+        // Cabeçalho do grupo
+        if (motivoAtual !== motivoAnterior) {
+
+            dados.push([
+                {
+                    content: motivoAtual,
+                    colSpan: 8,
+                    styles: {
+                        fillColor: [230, 230, 230],
+                        textColor: 0,
+                        fontStyle: 'bold'
+                    }
+                }
+            ]);
+
+            motivoAnterior = motivoAtual;
+        }
+
+
+        // Linha de dados
+        dados.push([
+            "",
+            formatDate(proc.dataBase),
+            proc.diasRestantes,
+            proc.textoBadge,
+            proc.entidade,
+            proc.proces_nome,
+            `${proc.movimento}${proc.historico_notas ? ", " + proc.historico_notas : ""}`,
+            proc.historico_pendente_colaborador ?? ""
+        ]);
+
     });
 
-    // Monta array de arrays para o autoTable
-    const dados = linhas.map(tr => {
-        return Array.from(tr.children).map(td => td.innerText.trim());
-    });
 
-    // Cabeçalho
-    const cabecalho = ["Motivo", "Registo", "Dias", "Estado", "Entidade", "Processo", "Fase", "Colaborador"];
+    doc.text(
+        "Documentos a Aguardar Alteração de Estado - Pendentes",
+        40,
+        30
+    );
 
-    doc.text("Documentos a Aguardar Alteração de Estado - Pendentes", 40, 30);
 
     doc.autoTable({
-        head: [cabecalho],
+
+        head: [[
+            "Motivo",
+            "Registo",
+            "Dias",
+            "Estado",
+            "Entidade",
+            "Processo",
+            "Fase",
+            "Colaborador"
+        ]],
+
         body: dados,
+
         startY: 50,
-    
+
         styles: {
             fontSize: 8,
-            cellPadding: 4,
-            overflow: 'linebreak'
+            cellPadding: 4
         },
-    
+
         headStyles: {
-            fillColor: [0, 0, 255],
+            fillColor: [0,0,255],
             textColor: 255,
             fontStyle: 'bold'
         },
-    
-        tableWidth: 'auto',   // ou 'wrap'
+
         margin: {
             top: 40,
             left: 20,
             right: 20
         },
-    
-        columnStyles: {
-            0: { cellWidth: 650 },      // Motivo
-            1: { cellWidth: 50 },      // Data Situação
-            2: { cellWidth: 35 },      // Dias
-            3: { cellWidth: 55 },      // Estado
-            4: { cellWidth: 75 },      // Entidade
-            5: { cellWidth: 'auto' },  // Processo ocupa o restante espaço
-            6: { cellWidth: 55 },      // Fase
-            7: { cellWidth: 55 }       // Colaborador
-        },
-    
-        didDrawPage: function (data) {
+
+        didDrawPage(data) {
+
+            const pageHeight = doc.internal.pageSize.height;
+
             doc.setFontSize(10);
             doc.setTextColor(100);
-    
-            const pageHeight = doc.internal.pageSize.height;
-            const footerY = pageHeight - 10;
-    
+
             doc.text(
                 "*BaseGov, por norma, a publicação deve ser feita até 20 dias após o último estádio de vínculo",
                 data.settings.margin.left,
-                footerY
+                pageHeight - 10
             );
         }
+
     });
 
+
     doc.save("documentosPendentes.pdf");
+
 }
 
 function exportarValidacaoExcel() {
-    const linhas = Array.from(document.querySelectorAll("#documentosPendentes tbody tr"));
 
-    // Cria array de arrays com o conteúdo
-    const dados = linhas.map(tr => {
-        return Array.from(tr.children).map(td => td.innerText.trim());
-    });
+    const dados = processosPendentes.map(proc => ({
 
-    // Adiciona cabeçalho
-    dados.unshift(["Pendente", "Registo", "Entidade", "Fase", "Processo", "Dias", "Estado"]);
+        Motivo: proc.historico_pendente_motivo,
 
-    // Converte para workbook
-    const ws = XLSX.utils.aoa_to_sheet(dados);
+        DataSituacao: formatDate(proc.dataBase),
+
+        Dias: proc.diasAtraso,
+
+        Estado: proc.textoBadge,
+
+        Entidade: proc.entidade,
+
+        Processo: proc.proces_nome,
+
+        Fase:
+            `${proc.movimento}${proc.historico_notas ? ", " + proc.historico_notas : ""}`,
+
+        Colaborador:
+            proc.historico_pendente_colaborador ?? ""
+
+    }));
+
+
+    const ws = XLSX.utils.json_to_sheet(dados);
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "BaseGov");
 
-    XLSX.writeFile(wb, "documentosPendentes.xlsx");
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "Pendentes"
+    );
+
+
+    XLSX.writeFile(
+        wb,
+        "documentosPendentes.xlsx"
+    );
+
 }
 
 const Exportador = {

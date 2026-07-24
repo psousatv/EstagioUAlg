@@ -34,7 +34,7 @@ try {
             WHERE h.historico_pendente = :pendente
             AND h.historico_pendente_data <= :hoje
             AND h.historico_pendente_resolvido = :resolvido
-            ORDER BY h.historico_descr_nome, e.ent_nome, h.historico_dataemissao";
+            ORDER BY h.historico_pendente_motivo, e.ent_nome, h.historico_pendente_data";
 
     $stmt = $myConn->prepare($sql);
     $stmt->execute([
