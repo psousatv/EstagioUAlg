@@ -78,13 +78,13 @@ let html = `
     <table class="table table-sm table-hover table-bordered align-middle w-100">
         <thead class="table-light sticky-top">
             <tr class="small">
+                <th>Motivo</th>
+                <th class="text-center">Data Situação</th>
+                <th class="text-center">Dias</th>
+                <th class="text-center">Estado</th>
                 <th>Entidade</th>
                 <th class="text-nowrap">Processo</th>
                 <th>Fase</th>
-                <th>Motivo</th>
-                <th class="text-center">Desde</th>
-                <th class="text-center">Dias</th>
-                <th class="text-center">Estado</th>
                 <th>Colaborador</th>
             </tr>
         </thead>
@@ -95,17 +95,19 @@ lista.forEach(proc => {
 
     html += `
         <tr class="small">
-            <td>${proc.entidade}</td>
-            <td class="text-nowrap">${proc.proces_nome}</td>
-            <td>${proc.movimento}, ${proc.historico_notas}</td>
             <td>${proc.historico_pendente_motivo}</td>
-            <td class="text-center">${formatDate(proc.dataBase)}</td>
+            <td class="text-center">${formatDate(proc.dataBase)}</td>    
             <td class="text-center">${proc.diasRestantes}</td>
             <td class="text-center">
                 <span class="badge ${proc.classeBadge}">
                     ${proc.textoBadge}
                 </span>
             </td>
+            <td>${proc.entidade}</td>
+            <td class="text-nowrap">${proc.proces_nome}</td>
+            <td>${proc.movimento}, ${proc.historico_notas}</td>
+            
+            
             <td>${proc.historico_pendente_colaborador}</td>
         </tr>
     `;

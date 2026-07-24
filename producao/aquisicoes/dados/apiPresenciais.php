@@ -32,7 +32,8 @@ try {
     // Ano corrente automático
     // =========================
     $anoAtual = date('Y');
-    $anoAnterior = $anoAtual - 1;
+    $anoAnterior = ($anoAtual - 1) . '-01-01';
+    $anoAtual = $anoAtual . '-12-31';
 
     // =========================
     // Query
@@ -64,16 +65,20 @@ try {
             INNER JOIN rubricas r
                 ON p.proces_rub_cod = r.rub_cod
             WHERE h.historico_descr_cod = :cod
-            AND h.historico_dataemissao BETWEEN :dataInicio AND :dataFim
+            AND h.historico_dataemissao BETWEEN :anoAnterior AND :anoAtual
             ORDER BY h.historico_dataemissao;";
 
     $stmt = $myConn->prepare($sql);
 
     $stmt->execute([
         'cod' => $cod,
-        'anoAtual' => $anoAtual,
-        'anoAnterior' => $anoAnterior
+        'anoAnterior' => $anoAnterior,
+        'anoAtual' => $anoAtual
     ]);
+
+    //var_dump($stmt->rowCount());
+    //print_r($stmt->errorInfo());
+    //exit;
 
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

@@ -273,7 +273,7 @@ async function exportarValidacaoPDF() {
         const aCols = a.children;
         const bCols = b.children;
     
-        // 1º Entidade
+        // 1º Motivo
         let resultado = aCols[0].innerText.trim().localeCompare(
             bCols[0].innerText.trim(),
             'pt-PT',
@@ -281,17 +281,17 @@ async function exportarValidacaoPDF() {
         );
         if (resultado !== 0) return resultado;
     
-        // 2º Pendente
-        //resultado = aCols[0].innerText.trim().localeCompare(
-        //    bCols[0].innerText.trim(),
-        //    'pt-PT',
-        //    { sensitivity: 'base' }
-        //);
-        //if (resultado !== 0) return resultado;
+        // 2º Entidade
+        resultado = aCols[3].innerText.trim().localeCompare(
+            bCols[0].innerText.trim(),
+            'pt-PT',
+            { sensitivity: 'base' }
+        );
+        if (resultado !== 0) return resultado;
     
-        // 3º Registo (data)
-        const dataA = converterData(aCols[2].innerText.trim());
-        const dataB = converterData(bCols[2].innerText.trim());
+        // 3º Data
+        const dataA = converterData(aCols[1].innerText.trim());
+        const dataB = converterData(bCols[1].innerText.trim());
     
         return dataA - dataB; // mais antiga → mais recente
     });
@@ -302,7 +302,7 @@ async function exportarValidacaoPDF() {
     });
 
     // Cabeçalho
-    const cabecalho = ["Entidade", "Processo", "Fase", "Motivo", "Registo", "Dias", "Estado", "Colaborador"];
+    const cabecalho = ["Motivo", "Registo", "Dias", "Estado", "Entidade", "Processo", "Fase", "Colaborador"];
 
     doc.text("Documentos a Aguardar Alteração de Estado - Pendentes", 40, 30);
 
@@ -331,13 +331,13 @@ async function exportarValidacaoPDF() {
         },
     
         columnStyles: {
-            0: { cellWidth: 75 },      // Entidade
-            1: { cellWidth: 'auto' },  // Processo ocupa o restante espaço
-            2: { cellWidth: 75 },      // Fase
-            3: { cellWidth: 85 },      // Motivo
-            4: { cellWidth: 55 },      // Registo
-            5: { cellWidth: 35 },      // Dias
-            6: { cellWidth: 55 },      // Estado
+            0: { cellWidth: 650 },      // Motivo
+            1: { cellWidth: 50 },      // Data Situação
+            2: { cellWidth: 35 },      // Dias
+            3: { cellWidth: 55 },      // Estado
+            4: { cellWidth: 75 },      // Entidade
+            5: { cellWidth: 'auto' },  // Processo ocupa o restante espaço
+            6: { cellWidth: 55 },      // Fase
             7: { cellWidth: 55 }       // Colaborador
         },
     
