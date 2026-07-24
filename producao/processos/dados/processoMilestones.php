@@ -21,7 +21,11 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
             p2.proced_contrato AS contrato,
             p2.proced_escolha AS procedimento,
 
+            p1.proces_padm AS padm,
             p1.proces_nome AS processo,
+            p1.proces_obs AS resumo,
+            p1.proces_18cpv1 AS cpv1,
+            p1.proces_18cpv2 AS cpv2,
             p1.proces_cand AS candidatura,
 
             d.descr_cod AS codigo,
@@ -86,6 +90,7 @@ function criarContexto(array $resultados): array
             'erro' => false,
             'mensagem' => null,
             'nome' => null,
+            'resumo' => null,
             'candidatura' => null
         ];
     }
@@ -126,7 +131,8 @@ function criarContexto(array $resultados): array
         'valorMovimento4' => $valorMovimento4,
         'erro' => $erro,
         'mensagem' => $mensagem,
-        'nome' => $base['processo'] ?? null,
+        'nome' => ($base['padm'] ?? null) . '-' . ($base['processo'] ?? null),
+        'resumo' => ($base['resumo'] ?? null),
         'candidatura' => $base['candidatura'] ?? null
     ];
 }

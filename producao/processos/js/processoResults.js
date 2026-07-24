@@ -273,24 +273,19 @@ async function exportarFases() {
 
       let y = 24;
 
-
       // Processo com quebra automática
       const linhasProcesso = doc.splitTextToSize(
-          `Processo: ${contexto.nome ?? "-"}`,
-          180
-      );
-
-      doc.text(
-          linhasProcesso,
-          15,
-          y
-      );
-
-
+          `Processo: ${contexto.nome ?? "-"}`, 180);
+      doc.text(linhasProcesso, 15, y);
+      y += 5;
+      
+      //Resumo
+      const linhasResumo = doc.splitTextToSize(
+        `Resumo: ${contexto.resumo ?? "-"}`, 180);
+      doc.text(linhasResumo, 15, y);
+      
       // Desce conforme o número de linhas do processo
-      y += linhasProcesso.length * 5;
-
-
+      y += linhasResumo.length * 5;
       // Restantes informações
       const info = [
           `Candidatura: ${contexto.candidatura ?? "-"}`,
