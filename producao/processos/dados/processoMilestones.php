@@ -5,6 +5,7 @@ $codigoProcesso = isset($_GET['codigoProcesso'])
     ? intval($_GET['codigoProcesso'])
     : 0;
 
+$formato = $_GET['formato'] ?? 'html';
 $descritivos = [1, 4, 5, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 26, 27, 28, 29, 30];
 
 /**
@@ -19,6 +20,9 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
             p2.proced_regime AS regime,
             p2.proced_contrato AS contrato,
             p2.proced_escolha AS procedimento,
+
+            p1.proces_nome AS processo,
+            p1.proces_cand AS candidatura,
 
             d.descr_cod AS codigo,
             d.descr_nome AS documento,
@@ -75,12 +79,14 @@ function criarContexto(array $resultados): array
     if (empty($resultados)) {
         return [
             'regime' => null,
-            'proc' => null,
+            'procedimento' => null,
             'contrato' => null,
             'movimentos' => [],
             'valorMovimento4' => null,
             'erro' => false,
-            'mensagem' => null
+            'mensagem' => null,
+            'nome' => null,
+            'candidatura' => null
         ];
     }
 
@@ -114,12 +120,14 @@ function criarContexto(array $resultados): array
 
     return [
         'regime' => $base['regime'] ?? null,
-        'proc' => $base['procedimento'] ?? null,
+        'procedimento' => $base['procedimento'] ?? null,
         'contrato' => $base['contrato'] ?? null,
         'movimentos' => $movimentos,
         'valorMovimento4' => $valorMovimento4,
         'erro' => $erro,
-        'mensagem' => $mensagem
+        'mensagem' => $mensagem,
+        'nome' => $base['processo'] ?? null,
+        'candidatura' => $base['candidatura'] ?? null
     ];
 }
 
@@ -179,13 +187,13 @@ function definirFases(array $ctx): array
      * Aplicar exceções do procedimento
      */
     if (
-        !empty($ctx['proc']) &&
-        isset($dispensas[$ctx['proc']])
+        !empty($ctx['procedimento']) &&
+        isset($dispensas[$ctx['procedimento']])
     ) {
 
         $movimentos = array_diff(
             $movimentos,
-            $dispensas[$ctx['proc']]
+            $dispensas[$ctx['procedimento']]
         );
 
     }
@@ -212,7 +220,8 @@ function filtrarPontosControle(array $resultados, array $fases): array
                 'data_doc'  => $r['data_documento'],
                 'data_val'  => $r['data_validacao_documento'],
                 'refer'     => $r['referencias'],
-                'notas'     => $r['notas']
+                'notas'     => $r['notas'],
+                'valor'     => $r['valor_documento']
             ];
         }
     }
@@ -316,5 +325,17 @@ if (!empty($erroFases)) {
 }
 
 $pontos = filtrarPontosControle($resultados, $fases);
+
+if ($formato === 'json') {
+
+    header('Content-Type: application/json');
+
+    echo json_encode([
+        'pontos' => $pontos,
+        'contexto' => $ctx
+    ]);
+
+    exit;
+}
 
 gerarHTMLStepper($pontos);

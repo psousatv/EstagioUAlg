@@ -198,3 +198,248 @@ function redirectProcesso(codigo) {
 function redirectInformacoesCPV(){
   window.alert("Futuramente listará as Aquisições da mesma natureza");
 };
+
+// =========================
+// EXPORTA PARA PDF - Fases do Processo
+// =========================
+async function exportarFases() {
+
+  try {
+
+      const codigo = processoCodigo;
+
+      const resposta = await fetch(
+          `dados/processoMilestones.php?codigoProcesso=${codigo}&formato=json`
+      );
+
+      if (!resposta.ok) {
+          throw new Error("Não foi possível obter os dados do processo.");
+      }
+
+      const { pontos, contexto } = await resposta.json();
+
+      //console.table(pontos);
+      //console.table(contexto);
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("p", "mm", "a4");
+
+      // -----------------------------
+      // Formatação da data
+      // -----------------------------
+      function formatarData(data) {
+
+          if (!data || data === "0000-00-00")
+              return "";
+
+          const d = new Date(data);
+
+          return d.toLocaleDateString("pt-PT");
+      }
+
+      // -----------------------------
+      // Construção das linhas
+      // -----------------------------
+      const linhas = pontos.map(p => ([
+          p.documento,
+          formatarData(p.data_doc),
+          formatarData(p.data_val),
+          p.refer ?? "",
+          p.notas ?? "",
+          p.valor 
+        ? Number(p.valor).toLocaleString("pt-PT", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })
+        : ""
+      ]));
+
+      // -----------------------------
+      // Cabeçalho
+      // -----------------------------
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+
+      doc.text(
+          "Relatório das Fases do Processo",
+          15,
+          15
+      );
+
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+
+      let y = 24;
+
+
+      // Processo com quebra automática
+      const linhasProcesso = doc.splitTextToSize(
+          `Processo: ${contexto.nome ?? "-"}`,
+          180
+      );
+
+      doc.text(
+          linhasProcesso,
+          15,
+          y
+      );
+
+
+      // Desce conforme o número de linhas do processo
+      y += linhasProcesso.length * 5;
+
+
+      // Restantes informações
+      const info = [
+          `Candidatura: ${contexto.candidatura ?? "-"}`,
+          `Regime: ${contexto.regime ?? "-"}`,
+          `Contrato: ${contexto.contrato ?? "-"}`,
+          `Procedimento: ${contexto.procedimento ?? "-"}`
+      ];
+
+
+      y += 5;
+
+      info.forEach(linha => {
+
+          doc.text(
+              linha,
+              15,
+              y
+          );
+
+          y += 5;
+
+      });
+
+      // -----------------------------
+      // Tabela
+      // -----------------------------
+      doc.autoTable({
+
+          startY: y + 8,
+
+          theme: "grid",
+
+          head: [[
+              "Documento",
+              "Emissão",
+              "Validação",
+              "Referência",
+              "Notas",
+              "Valor"
+          ]],
+
+          body: linhas,
+
+          styles: {
+              font: "helvetica",
+              fontSize: 8,
+              cellPadding: 2,
+              valign: "middle",
+              overflow: "linebreak",
+              lineWidth: 0.1
+          },
+
+          headStyles: {
+              fillColor: [0, 102, 204],
+              textColor: 255,
+              fontStyle: "bold",
+              halign: "center",
+              valign: "middle"
+          },
+
+          alternateRowStyles: {
+              fillColor: [245, 245, 245]
+          },
+
+          columnStyles: {
+
+              // Documento
+              0: {cellWidth: 30},
+              // Emissão
+              1: {cellWidth: 22, halign: "center"},
+              // Validação
+              2: {cellWidth: 22, halign: "center"},
+              // Referência
+              3: {cellWidth: 35},
+              // Notas
+              4: {cellWidth: "auto"},
+              // Notas
+              5: {cellWidth: 25, halign: "right"}
+          },
+
+          margin: {
+              left: 10,
+              right: 10
+          },
+
+          didDrawPage: function () {
+
+              
+
+          }
+
+      });
+
+      // -----------------------------
+      // Footer: Página X de Y
+      // -----------------------------
+
+      const totalPaginas = doc.getNumberOfPages();
+      const altura = doc.internal.pageSize.height;
+      const largura = doc.internal.pageSize.width;
+
+      for (let i = 1; i <= totalPaginas; i++) {
+
+          doc.setPage(i);
+
+          doc.setDrawColor(180);
+
+          doc.line(
+              10,
+              altura - 12,
+              largura - 10,
+              altura - 12
+          );
+
+
+          doc.setFontSize(8);
+          doc.setTextColor(120);
+
+          // Data à esquerda
+          doc.text(
+              `Data: ${new Date().toLocaleDateString("pt-PT")}`,
+              10,
+              altura - 6
+          );
+
+
+          // Página X de Y à direita
+          doc.text(
+              `Página ${i} de ${totalPaginas}`,
+              largura - 10,
+              altura - 6,
+              {
+                  align: "right"
+              }
+          );
+      }
+
+      // -----------------------------
+      // Guardar PDF
+      // -----------------------------
+      doc.save(`Processo_${codigo}.pdf`);
+
+  }
+  catch (erro) {
+
+      console.error(erro);
+
+      alert("Erro ao gerar o PDF.");
+
+  }
+
+}

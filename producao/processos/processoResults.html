@@ -90,7 +90,8 @@
       <!-- Direita -->
       <div class="col-lg-2 col-md-2 text-right" id="lstExportaPDF">
 
-          <button type="button" class="btn btn-danger btn-sm">
+          <button type="button" class="btn btn-danger btn-sm"
+              onclick="exportarFases()">
               <i class="fas fa-file-pdf"></i>
               PDF
           </button>
@@ -244,8 +245,12 @@
   <script src="../../vendors/fonts/all.min.js"></script>
   <!-- Datatables -->
   <script src="../../vendors/datatables/datatables.min.js"></script>
+   <!-- jsPDF autoTable -->
+   <script src="../../vendors/pdf/jspdf.umd.min.js"></script>
+   <script src="../../vendors/pdf/jspdf.plugin.autotable.min.js"></script>
 
   <script src="js/processoResults.js"></script>
+  <!--script src="../comum/js/funcoes.js"></script-->
   <script src="../comum/js/processoFinanceiro.js"></script>
   
 </body>
