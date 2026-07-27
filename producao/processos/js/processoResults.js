@@ -218,24 +218,11 @@ async function exportarFases() {
 
       const { pontos, contexto } = await resposta.json();
 
-      //console.table(pontos);
-      //console.table(contexto);
+      console.table(pontos);
+      console.table(contexto);
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF("p", "mm", "a4");
-
-      // -----------------------------
-      // Formatação da data
-      // -----------------------------
-      function formatarData(data) {
-
-          if (!data || data === "0000-00-00")
-              return "";
-
-          const d = new Date(data);
-
-          return d.toLocaleDateString("pt-PT");
-      }
 
       // -----------------------------
       // Construção das linhas
@@ -246,12 +233,7 @@ async function exportarFases() {
           formatarData(p.data_val),
           p.refer ?? "",
           p.notas ?? "",
-          p.valor 
-        ? Number(p.valor).toLocaleString("pt-PT", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          })
-        : ""
+          formatarEuro(p.valor) ?? ""
       ]));
 
       // -----------------------------
@@ -277,11 +259,10 @@ async function exportarFases() {
       const linhasProcesso = doc.splitTextToSize(
           `Processo: ${contexto.nome ?? "-"}`, 180);
       doc.text(linhasProcesso, 15, y);
-      y += 5;
+      y += linhasProcesso.length * 5;
       
       //Resumo
-      const linhasResumo = doc.splitTextToSize(
-        `Resumo: ${contexto.resumo ?? "-"}`, 180);
+      const linhasResumo = doc.splitTextToSize(`Resumo: ${contexto.resumo ?? "-"}`, 180);
       doc.text(linhasResumo, 15, y);
       
       // Desce conforme o número de linhas do processo
@@ -291,23 +272,18 @@ async function exportarFases() {
           `Candidatura: ${contexto.candidatura ?? "-"}`,
           `Regime: ${contexto.regime ?? "-"}`,
           `Contrato: ${contexto.contrato ?? "-"}`,
-          `Procedimento: ${contexto.procedimento ?? "-"}`
+          `Procedimento: ${contexto.procedimento ?? "-"}`,
+          `CPV Principal: ${contexto.cpv1 ?? "-"}`,
+          `CPV Secundário: ${contexto.cpv2 ?? "-"}`
       ];
-
-
-      y += 5;
 
       info.forEach(linha => {
 
-          doc.text(
-              linha,
-              15,
-              y
-          );
-
+          doc.text(linha, 15, y);
           y += 5;
 
       });
+
 
       // -----------------------------
       // Tabela
@@ -437,4 +413,15 @@ async function exportarFases() {
 
   }
 
+}
+
+function formatarEuro(valor){
+  return new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(valor || 0) + '€';
+}
+
+function formatarData(data) {
+  if (!data) return "";
+  const d = new Date(data);
+  if (isNaN(d)) return data;
+  return d.toLocaleDateString("pt-PT");
 }

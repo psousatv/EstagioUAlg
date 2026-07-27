@@ -302,7 +302,7 @@ function exportarValidacaoPDF() {
             proc.textoBadge,
             proc.entidade === "Multi Fornecedor" ? proc.entidade2 : proc.entidade,
             proc.proces_nome,
-            `${proc.movimento}${proc.historico_notas ? ", " + proc.historico_notas : ""}`,
+            `${proc.movimento}${proc.historico_notas ? `, ${proc.historico_notas}` : ""}`,
             proc.historico_pendente_colaborador ?? ""
         ]);
 
@@ -325,7 +325,7 @@ function exportarValidacaoPDF() {
             "Estado",
             "Entidade",
             "Processo",
-            "Fase",
+            "Fase / Documento",
             "Colaborador"
         ]],
 

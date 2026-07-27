@@ -24,8 +24,8 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
             p1.proces_padm AS padm,
             p1.proces_nome AS processo,
             p1.proces_obs AS resumo,
-            p1.proces_18cpv1 AS cpv1,
-            p1.proces_18cpv2 AS cpv2,
+            CONCAT(p1.proces_18cpv1, ' - ', cpv1.cpv1_nome) AS cpv1,
+            CONCAT(p1.proces_18cpv2, ' - ', cpv2.cpv2_nome) AS cpv2,
             p1.proces_cand AS candidatura,
 
             d.descr_cod AS codigo,
@@ -61,6 +61,12 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
         LEFT JOIN procedimento p2
             ON p2.proced_cod = p1.proces_proced_cod
 
+        LEFT JOIN 18cpv1 cpv1
+            ON cpv1.cpv1_cod = p1.proces_18cpv1
+
+        LEFT JOIN 18cpv2 cpv2
+            ON cpv2.cpv2_cod = p1.proces_18cpv2
+
         WHERE d.descr_cod IN ($placeholders)
 
         ORDER BY d.descr_cod
@@ -91,7 +97,9 @@ function criarContexto(array $resultados): array
             'mensagem' => null,
             'nome' => null,
             'resumo' => null,
-            'candidatura' => null
+            'candidatura' => null,
+            'cpv1' => null,
+            'cpv2' => null
         ];
     }
 
@@ -133,7 +141,9 @@ function criarContexto(array $resultados): array
         'mensagem' => $mensagem,
         'nome' => ($base['padm'] ?? null) . '-' . ($base['processo'] ?? null),
         'resumo' => ($base['resumo'] ?? null),
-        'candidatura' => $base['candidatura'] ?? null
+        'candidatura' => $base['candidatura'] ?? null,
+        'cpv1' => $base['cpv1'] ?? null,
+        'cpv2' => $base['cpv2'] ?? null
     ];
 }
 

@@ -14,7 +14,7 @@ try {
 
     $sql = "SELECT proces_check,
                    CONCAT('(', proces_estado, ') ', proces_estado_nome) AS proces_estado_nome,
-                   proces_nome,
+                   CONCAT(proces_padm, '_', proces_nome) AS proces_nome,
                    e.ent_nome AS entidade,
                    h.historico_obs AS entidade2,
                    h.historico_descr_nome AS movimento,
