@@ -51,52 +51,11 @@
     <div id="layoutSidenav_content">        
       <div class="container-fluid">
             
-        <!-- KPI CARDS -->
-          <!--
-        <div class="row mt-2">
-          <div class="col-md-3">
-            <div class="card p-3">
-              <div>Água Segura</div>
-              <div class="kpi text-success">99.2%</div>
-              <small class="trend-up">▲ +0.3%</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card p-3">
-              <div>Água Não Faturada</div>
-              <div class="kpi text-danger">28%</div>
-              <small class="trend-down">▼ -2%</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card p-3">
-              <div>Reclamações</div>
-              <div class="kpi text-warning">4.2</div>
-              <small class="trend-down">▼ -0.5</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card p-3">
-              <div>Cobertura de Custos</div>
-              <div class="kpi text-warning">92%</div>
-              <small class="trend-up">▲ +1%</small>
-            </div>
-          </div>
-        </div>
-        -->
-        
         <h3>EM CONSTRUÇÃO</h3>
 
-        <!-- GRÁFICO PRINCIPAL -->
         <div class="row mt-2">
-          <div class="col-md-8">
-            <div class="card p-3" style="height: 580px">
-              <canvas id="volumeChart"></canvas>
-            </div>
-          </div>
-      
-          <div class="col-md-4">
 
+          <div class="col-md-4">
             <div class="card p-3">
               <h6>Plano Geral de Obras</h6>
               <p>Candidatura - AA: <strong class="text-success">99,00%</strong></p>
@@ -106,94 +65,102 @@
 
             <div class="card p-3 mt-2">
               <h6>Plano de Investimentos</h6>
-              <p>Empreitadas: <strong class="text-success">60,80%</strong></p>
-              <p>Serviços: <strong class="text-primary">100,00%</strong></p>
+              <p>Empreitadas: <strong class="text-success">49,13%</strong></p>
+              <p>Serviços: <strong class="text-primary">102,33%</strong></p>
             </div>
-      
-            <!--
+
             <div class="card p-3 mt-2">
-              <h6>Cliente</h6>
-              <p>Reclamações: <strong>4.2 /1000</strong></p>
-              <p>Tempo resposta: <strong class="text-danger">8 dias</strong></p>
-              <p>Novas ligações: <strong class="text-success">6 dias</strong></p>
+              <h6>Obras a Encerrar / Terminadas</h6>
+              <div class="small">
+                E177 - Substituição Condutas - MD
+                <div class="progress">
+                  <div class="progress-bar bg-success" style="width: 96%">95,68%</div>
+                </div>
+              </div>
+      
+              <div class="small">
+                E203 - Substituição Condutas - MEN
+                <div class="progress">
+                  <div class="progress-bar bg-success" style="width: 99%">98,77%</div>
+                </div>
+              </div>
+
+              <div class="small">
+                E201 - EMP201 - Ligação da EEARD em Vale Caranguejo e a CE IVC - Lagoas
+                <div class="progress">
+                  <div class="progress-bar bg-success" style="width: 100%">100,00%</div>
+                </div>
+              </div>
             </div>
-            -->
 
           </div>
-        <!-- FIM GRÁFICO PRINCIPAL -->             
+
+          <!-- GRÁFICO PRINCIPAL -->
+          <div class="col-md-8">
+            <div class="card p-3" style="height: 580px">
+              <canvas id="volumeChart"></canvas>
+            </div>
+          </div>
+      
         </div>
               
-        <!-- OBRAS EM CURSO -->
-          <div class="row mt-2">
+       <!-- OBRAS EM CURSO -->
+      <div class="row mt-2">
+        <div class="col-12">
+            <div class="card p-3">
+                <h6 class="mb-3">Obras Em Curso</h6>
 
-          <div class="col-md-6">
-            <div class="card p-2">
-              <h6>Obras Em Curso</h6>
+                <div class="row g-3">
 
-              <div class="row">  
-                <div class="col-md-6 small">
-                  E200 - Eliminação de Intrusões Salinas
-                  <div class="progress">
-                    <div class="progress-bar bg-danger" style="width: 36">36,20%</div>
-                  </div>
-                </div>
-        
-                <div class="col-md-6 small">
-                  E211 - Prolongamento da Rede Abastecimento de Água - Bodega
-                  <div class="progress">
-                    <div class="progress-bar bg-success" style="width: 61%">60,80%</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row mt-2">
-                <div class="col-md-6 small">
-                  E210 - Prolongamento da Rede Abastecimento de Água - Barranco da Nora
-                  <div class="progress">
-                    <div class="progress-bar bg-primary" style="width: 10%">Iniciada</div>
-                  </div>
-                </div>
-              </div>
+                    <div class="col-md-6">
+                        <div class="small fw-bold mb-1">
+                            E200 - Eliminação de Intrusões Salinas
+                        </div>
+                        <div class="progress" style="height:22px;">
+                            <div class="progress-bar bg-danger" style="width:36.2%">
+                                36,20%
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-md-6">
+                        <div class="small fw-bold mb-1">
+                            E211 - Prolongamento da Rede Abastecimento de Água - Bodega
+                        </div>
+                        <div class="progress" style="height:22px;">
+                            <div class="progress-bar bg-success" style="width:87.02%">
+                                87,02%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="small fw-bold mb-1">
+                            E210 - Prolongamento da Rede Abastecimento de Água - Barranco da Nora
+                        </div>
+                        <div class="progress" style="height:22px;">
+                            <div class="progress-bar bg-primary" style="width:10%">
+                                Iniciada
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="small fw-bold mb-1">
+                            E185 - Prolongamento da Rede de Abastecimento de Água em Covada (Estiramantens)
+                        </div>
+                        <div class="progress" style="height:22px;">
+                            <div class="progress-bar bg-primary" style="width:10%">
+                                Iniciar
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="card p-2">
-              <h6>Obras a Encerrar / Terminadas</h6>
-
-              <div class="row">
-                <div class="col-md-6 small">
-                  E177 - Substituição Condutas - MD
-                  <div class="progress">
-                    <div class="progress-bar bg-success" style="width: 96%">95,68%</div>
-                  </div>
-                </div>
-        
-                <div class="col-md-6 small">
-                  E203 - Substituição Condutas - MEN
-                  <div class="progress">
-                    <div class="progress-bar bg-success" style="width: 99%">98,77%</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mt-2">
-                <div class="col-md-6 small">
-                  E201 - EMP201 - Ligação da EEARD em Vale Caranguejo e a CE IVC - Lagoas
-                  <div class="progress">
-                    <div class="progress-bar bg-success" style="width: 100%">100,00%</div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        
-        <!-- FIM OBRAS EM CURSO/TERMINADAS -->
-        </div> 
-
+        </div>
       </div>
+    </div>
           
     <!-- JQuery - Deve Ser incluido antes do Global -->
     <script src="../../vendors/jquery/jquery.js"></script>

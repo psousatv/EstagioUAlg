@@ -8,17 +8,17 @@ const ctx = document.getElementById('volumeChart');
               datasets: [
                 {
                   label: 'Previsto',
-                  data: [199, 209, 242, 233, 346, 341, 341, 390, 227, 235, 227, 235],
+                  data: [199, 209, 242, 234, 268, 277, 355, 340, 355, 343, 227, 235],
                   backgroundColor: 'rgba(54, 162, 235, 0.6)'
                 },
                 {
                   label: 'Faturado',
-                  data: [220, 230, 50, 65, 125, 176],
+                  data: [220, 230, 50, 66, 126, 177, 7],
                   backgroundColor: 'rgba(75, 192, 192, 0.6)'
                 },
                 {
                   label: 'Realização (%)',
-                  data: [110, 110, 77, 64, 60, 60],
+                  data: [110, 110, 77, 64, 60, 60, 49],
                   type: 'line',
                   borderColor: 'red',
                   yAxisID: 'y1'
