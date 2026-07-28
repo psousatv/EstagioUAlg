@@ -30,7 +30,7 @@ try {
             h.historico_descr_nome = 'Auto Vistoria'
             OR h.historico_descr_nome = 'Receção Definitiva'
             )
-            AND h.historico_obs = 'Programado'
+            AND h.historico_obs LIKE '*Programado*'
             ORDER BY e.ent_nome, h.historico_dataemissao";
 
     $stmt = $myConn->prepare($sql);

@@ -94,7 +94,7 @@ function classificarVistorias(lista){
             return;
         }
 
-        if(item.doc === "Programado" && item.obs === "Programado"){
+        if(item.obs === "Programado"){
             const data = ano * 100 + mes;
 
             if(data < actual){

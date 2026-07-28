@@ -10,7 +10,8 @@ $sqlVistorias = "SELECT
 				YEAR(historico_datamov) AS ano, 
 				MONTH(historico_datamov) AS mes,
 				historico_descr_nome AS tipo,
-				proces_orc_actividade AS actividade,(SELECT historico_datamov fROM historico
+				proces_orc_actividade AS actividade,
+				(SELECT historico_datamov fROM historico
 				WHERE historico_proces_check = proces_check AND historico_descr_cod = 25 
 				ORDER BY historico_datamov DESC LIMIT 1) AS vistoria,
 				(SELECT historico_datamov FROM historico
@@ -27,8 +28,8 @@ $sqlVistorias = "SELECT
 				INNER JOIN processo ON proces_check = historico_proces_check
 				INNER JOIN entidade ON ent_cod = proces_ent_cod
 				WHERE YEAR(historico_dataemissao) <= YEAR(NOW())
-				AND historico_obs = 'Programado'
-				OR historico_obs = 'Agendado'
+				AND historico_obs LIKE '%Programado%'
+				OR historico_obs LIKE '%Agendado%'
 				ORDER BY ent_nome, historico_datamov";
 
 $stmt = $myConn->query($sqlVistorias);

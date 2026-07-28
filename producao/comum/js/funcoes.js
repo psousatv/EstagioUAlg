@@ -262,13 +262,12 @@ function imprimirEmValidacao() {
     janela.print();
 }
 
-function exportarValidacaoPDF() {
+async function criarPendentesPDF() {
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'a4');
 
     let motivoAnterior = null;
-
     const dados = [];
 
     processosPendentes.forEach(proc => {
@@ -293,14 +292,15 @@ function exportarValidacaoPDF() {
             motivoAnterior = motivoAtual;
         }
 
-
         // Linha de dados
         dados.push([
             "",
             formatDate(proc.dataBase),
             proc.diasAtraso,
             proc.textoBadge,
-            proc.entidade === "Multi Fornecedor" ? proc.entidade2 : proc.entidade,
+            proc.entidade === "Multi Fornecedor"
+                ? proc.entidade2
+                : proc.entidade,
             proc.proces_nome,
             `${proc.movimento}${proc.historico_notas ? `, ${proc.historico_notas}` : ""}`,
             proc.historico_pendente_colaborador ?? ""
@@ -308,13 +308,11 @@ function exportarValidacaoPDF() {
 
     });
 
-
     doc.text(
         "Documentos a Aguardar Alteração de Estado - Pendentes",
         40,
         30
     );
-
 
     doc.autoTable({
 
@@ -339,7 +337,7 @@ function exportarValidacaoPDF() {
         },
 
         headStyles: {
-            fillColor: [0,0,255],
+            fillColor: [0, 0, 255],
             textColor: 255,
             fontStyle: 'bold'
         },
@@ -362,55 +360,59 @@ function exportarValidacaoPDF() {
                 data.settings.margin.left,
                 pageHeight - 10
             );
+
         }
 
     });
 
-
-    doc.save("documentosPendentes.pdf");
+    return doc;
 
 }
 
-function exportarValidacaoExcel() {
+async function previewPendentesPDF() {
+    try {
+        const doc = await criarPendentesPDF();
+        window.open(doc.output("bloburl"), "_blank");
+    }
+    catch (erro) {
+        console.error(erro);
+        alert("Erro ao gerar o PDF.");
+    }
+
+}
+async function exportarPendentesPDF() {
+    try {
+        const doc = await criarPendentesPDF();
+        doc.save("documentosPendentes.pdf");
+    }
+    catch (erro) {
+        console.error(erro);
+        alert("Erro ao gerar o PDF.");
+    }
+
+}
+
+function exportarPendentesExcel() {
 
     const dados = processosPendentes.map(proc => ({
 
         Motivo: proc.historico_pendente_motivo,
-
         DataSituacao: formatDate(proc.dataBase),
-
         Dias: proc.diasAtraso,
-
         Estado: proc.textoBadge,
-
         Entidade: proc.entidade,
-
         Processo: proc.proces_nome,
-
-        Fase:
-            `${proc.movimento}${proc.historico_notas ? ", " + proc.historico_notas : ""}`,
-
-        Colaborador:
-            proc.historico_pendente_colaborador ?? ""
+        Fase: `${proc.movimento}${proc.historico_notas ? ", " + proc.historico_notas : ""}`,
+        Colaborador: proc.historico_pendente_colaborador ?? ""
 
     }));
 
 
     const ws = XLSX.utils.json_to_sheet(dados);
-
     const wb = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(
-        wb,
-        ws,
-        "Pendentes"
-    );
-
-
-    XLSX.writeFile(
-        wb,
-        "documentosPendentes.xlsx"
-    );
+    
+    XLSX.utils.book_append_sheet(wb, ws, "Pendentes");
+    XLSX.writeFile(wb, "documentosPendentes.xlsx");
 
 }
 
@@ -433,11 +435,7 @@ const Exportador = {
         }
   
         const ano = new Date().getFullYear();
-  
-        const filename =
-          tipo === 'presenciais'
-            ? `Presenciais_${ano}`
-            : `Outros_Gastos_${ano}`;
+        const filename = tipo === 'presenciais' ? `Presenciais_${ano}` : `Outros_Gastos_${ano}`;
   
         this.exportToExcel(data, filename);
   
@@ -473,7 +471,6 @@ const Exportador = {
       const ws = XLSX.utils.json_to_sheet(rows);
   
       XLSX.utils.book_append_sheet(wb, ws, 'Dados');
-  
       XLSX.writeFile(wb, `${filename}.xlsx`);
     }
   

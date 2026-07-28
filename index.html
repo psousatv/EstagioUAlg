@@ -228,17 +228,21 @@
                         </b>
 
                         <div>
-                            <a href="#" 
-                               onclick="exportarValidacaoPDF()" 
-                               class="text-danger mr-2">
-                                <i class="fas fa-file-pdf"></i>
-                            </a>
+                            <button class="btn btn-primary btn-sm"
+                                    onclick="previewPendentesPDF()">
+                                <i class="fas fa-tv"></i>
+                            </button>
 
-                            <a href="#" 
-                               onclick="exportarValidacaoExcel()" 
-                               class="text-success">
+                            <button class="btn btn-danger btn-sm"
+                                    onclick="exportarPendentesPDF()">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+
+                            <button class="btn btn-success btn-sm"
+                                    onclick="exportarPendentesExcel()"
+                                    class="text-success">
                                 <i class="fas fa-file-excel"></i>
-                            </a>
+                            </button>
                         </div>
 
                     </div>
