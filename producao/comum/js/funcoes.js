@@ -295,7 +295,7 @@ async function criarPendentesPDF() {
         // Linha de dados
         dados.push([
             "",
-            formatDate(proc.dataBase),
+            formatarData(proc.dataBase),
             proc.diasAtraso,
             proc.textoBadge,
             proc.entidade === "Multi Fornecedor"
@@ -397,7 +397,7 @@ function exportarPendentesExcel() {
     const dados = processosPendentes.map(proc => ({
 
         Motivo: proc.historico_pendente_motivo,
-        DataSituacao: formatDate(proc.dataBase),
+        DataSituacao: formatarData(proc.dataBase),
         Dias: proc.diasAtraso,
         Estado: proc.textoBadge,
         Entidade: proc.entidade,
@@ -496,7 +496,31 @@ const Exportador = {
   
   });
 
-  function converterData(data) {
-    const [dia, mes, ano] = data.split('-');
-    return new Date(ano, mes - 1, dia);
-}
+    function formatDate(data) {
+        const [dia, mes, ano] = data.split('-');
+        return new Date(ano, mes - 1, dia);
+    }
+
+    function formatarData(data) {
+
+        if (!data) {
+            return "—";
+        }
+
+        const date = data instanceof Date
+            ? data
+            : new Date(data);
+
+        if (Number.isNaN(date.getTime())) {
+            return "—";
+        }
+
+        return date.toLocaleDateString(
+            "pt-PT",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            }
+        );
+    }
