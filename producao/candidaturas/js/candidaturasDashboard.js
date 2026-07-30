@@ -180,6 +180,8 @@ $(document).ready(function () {
                 }
             });
 
+            console.table(data);
+            
             // 🔹 Arrays auxiliares
             dataTable.rows().every(function () {
                 var rowData = this.data();
@@ -279,6 +281,8 @@ $(document).ready(function () {
     veIndicador();
 
 });
+
+
 
 // Indicadores Gerais por Candidatura e por Processo
 function veIndicador() {
