@@ -12,23 +12,24 @@ try {
         throw new Exception("Ligação PDO não encontrada.");
     }
 
-    $sql = "SELECT proces_check,
-                   CONCAT('(', proces_estado, ') ', proces_estado_nome) AS proces_estado_nome,
-                   CONCAT(proces_padm, '_', proces_nome) AS proces_nome,
-                   e.ent_nome AS entidade,
-                   h.historico_obs AS entidade2,
-                   h.historico_descr_nome AS movimento,
-                   h.historico_dataemissao AS agendamento,
-                   h.historico_datamov,
-                   h.historico_doc,
-                   h.historico_num AS observacoes,
-                   h.historico_notas,
-                   h.historico_valor,
-                   h.historico_pendente,
-                   h.historico_pendente_data,
-                   h.historico_pendente_motivo,
-                   h.historico_pendente_colaborador,
-                   h.historico_pendente_resolvido
+    $sql = "SELECT 
+                proces_check,
+                CONCAT('(', proces_estado, ') ', proces_estado_nome) AS proces_estado_nome,
+                CONCAT(proces_padm, '_', proces_nome) AS proces_nome,
+                e.ent_nome AS entidade,
+                h.historico_obs AS entidade2,
+                h.historico_descr_nome AS movimento,
+                h.historico_dataemissao AS agendamento,
+                h.historico_datamov,
+                h.historico_doc,
+                h.historico_num AS observacoes,
+                h.historico_notas,
+                h.historico_valor,
+                h.historico_pendente,
+                h.historico_pendente_data,
+                h.historico_pendente_motivo,
+                h.historico_pendente_colaborador,
+                h.historico_pendente_resolvido
             FROM processo
             JOIN historico h ON h.historico_proces_check = proces_check
             JOIN entidade e ON e.ent_cod = proces_ent_Cod
