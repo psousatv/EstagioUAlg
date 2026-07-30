@@ -24,7 +24,8 @@ $estadiosProcesso = "SELECT
                         historico_dataemissao AS data_registo,
                         historico_descr_nome AS registo,
                         historico_num AS documento,
-                        historico_doc AS pormenor
+                        historico_doc AS pormenor,
+                        historico_obs AS obs
                      FROM historico
                      WHERE historico_descr_cod IN ($placeholders)
                      AND historico_proces_check = ?
@@ -111,9 +112,11 @@ $registos = count($relacoes);
       <?php foreach ($estados as $estado): ?>
         <li class="list-group-item">
           <span class="badge bg-info text-white"><?= htmlspecialchars($estado['data_registo']) ?></span>
-          <?= htmlspecialchars($estado['registo']) ?> -
+          <?= htmlspecialchars($estado['obs']) ?> - 
+          <?= htmlspecialchars($estado['registo']) ?>:
           <?= htmlspecialchars($estado['documento']) ?> -
           <?= htmlspecialchars($estado['pormenor']) ?>
+          
         </li>
       <?php endforeach; ?>
     </ul>
