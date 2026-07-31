@@ -82,6 +82,7 @@ try {
                 historico_dataemissao,
                 historico_doc,
                 historico_num,
+                historico_obs,
                 COALESCE(historico_valor, 0) AS historico_valor
             FROM historico
             WHERE historico_proces_check = :pc

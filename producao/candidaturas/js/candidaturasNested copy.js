@@ -1,6 +1,5 @@
 let processosGlobais = [];
 let pedidoExportacaoModal = [];
-let pedidoExportacaoKey = null;
 let table;
 
 
@@ -879,878 +878,608 @@ $(document).ready(function () {
     redirectProcesso(rowData.proces_check);
   });
 
-  // ==========================================================
-  // EXPORTAÇÃO MODAL
-  // ==========================================================
-  $(document).on('click', '#previewResumoModal', function () {
-    exportarReembolsos({
-      formato: 'pdf',
-      processos: pedidoExportacaoModal,
-      key: pedidoExportacaoKey,
-      escopo: 'modal'
-    });
-  });
+  // ================================
+  // EXPORTAÇÃO MODAL (PDF + EXCEL)
+  // ================================
+  $(document).on('click', '#previewResumoModal', function () {previewResumoModal(pedidoExportacaoModal, pedidoExportacaoKey);});
+  $(document).on('click', '#modalExportExcel', function () {modalExportExcel(pedidoExportacaoModal, pedidoExportacaoKey);});
 
-  $(document).on('click', '#modalExportExcel', function () {
-    exportarReembolsos({
-      formato: 'excel',
-      processos: pedidoExportacaoModal,
-      key: pedidoExportacaoKey,
-      escopo: 'modal'
-    });
-  });
-
-  // ==========================================================
+  // ================================
   // EXPORTAÇÃO GLOBAL
-  // ==========================================================
-  $(document).on('click', '#exportResumo', function () {
-    exportarReembolsos({
-      formato: 'pdf',
-      processos: processosGlobais,
-      escopo: 'global'
-    });
-  });
-
-  $(document).on('click', '#exportALLExcel', function () {
-    exportarReembolsos({
-      formato: 'excel',
-      processos: processosGlobais,
-      escopo: 'global'
-    });
-  });
+  // ================================
+  $(document).on('click', '#exportResumo', function () {previewResumo();});
+  $(document).on('click', '#exportALLExcel', function () {exportAllExcel();});
 
 });
 
-// ==========================================================
-// EXPORTAÇÃO UNIFICADA
-// ==========================================================
 
-async function exportarReembolsos({
-  formato,
-  processos = processosGlobais,
-  key = null,
-  escopo = 'global'
-} = {}) {
-  try {
-    if (!Array.isArray(processos) || processos.length === 0) {
-      alert('Não existem dados para exportar.');
-      return;
-    }
+// RESUMO DE PEDIDOS E REEMBOLSOS PARA O ECRAN
+function criarResumoPDF() {
 
-    let grupos = getReembolsosAgrupadosDetalhado(processos);
+  const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
 
-    if (key !== null) {
-      grupos = grupos.filter(
-        grupo => String(grupo.key) === String(key)
-      );
-    }
+  const { jsPDF } = window.jspdf;
 
-    grupos = grupos.filter(
-      grupo =>
-        grupo &&
-        grupo.processos &&
-        Object.keys(grupo.processos).length > 0
-    );
-
-    if (grupos.length === 0) {
-      alert('Não foram encontrados dados para exportar.');
-      return;
-    }
-
-    if (formato === 'pdf') {
-      const doc = criarDocumentoReembolsosPDF(grupos, {
-        processos,
-        key,
-        escopo
-      });
-
-      window.open(doc.output('bloburl'), '_blank');
-      return;
-    }
-
-    if (formato === 'excel') {
-      criarDocumentoReembolsosExcel(grupos, {
-        key,
-        escopo
-      });
-      return;
-    }
-
-    throw new Error(`Formato de exportação inválido: ${formato}`);
-
-  } catch (erro) {
-    console.error('Erro ao exportar reembolsos:', erro);
-    alert('Ocorreu um erro ao gerar o ficheiro.');
-  }
-}
-
-
-// ==========================================================
-// PDF
-// ==========================================================
-function criarDocumentoReembolsosPDF(
-    grupos,
-    {
-      processos = processosGlobais,
-      escopo = 'global'
-    } = {}
-  ) {
-    const { jsPDF } = window.jspdf;
-
-    /*
-    * O PDF global e o PDF do modal usam exatamente
-    * o mesmo formato e o mesmo layout.
-    */
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-
-    const marginLeft = 10;
-    const marginRight = 10;
-    const tableWidth = pageWidth - marginLeft - marginRight;
-
-    let startY = 28;
-
-    let totalPedidoGeral = 0;
-    let totalReembolsoGeral = 0;
-    let totalFaturadoGeral = 0;
-
-    const candidatura =
-      processos?.[0] ||
-      processosGlobais?.[0] ||
-      {};
-
-    // ========================================================
-    // CABEÇALHO DO DOCUMENTO
-    // ========================================================
-    function adicionarCabecalho() {
-      const data = new Date().toLocaleDateString('pt-PT');
-
-      const codigoCandidatura =
-        candidatura.candidatura ||
-        candidatura.codigo_candidatura ||
-        'N/D';
-
-      const designacaoCandidatura =
-        candidatura.nome ||
-        candidatura.designacao_candidatura ||
-        '';
-
-      const estadoCandidatura =
-        candidatura.estado
-          ? ` | ${candidatura.estado}`
-          : '';
-
-      doc.setTextColor(0, 0, 0);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-
-      doc.text(
-        'RELATÓRIO DE REEMBOLSOS',
-        marginLeft,
-        10
-      );
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8.5);
-
-      const textoCandidatura = cleanPdfText(
-        `Candidatura: ${codigoCandidatura}` +
-        `${designacaoCandidatura ? ` - ${designacaoCandidatura}` : ''}` +
-        estadoCandidatura
-      );
-
-      const linhasCandidatura = doc.splitTextToSize(
-        textoCandidatura,
-        pageWidth - marginLeft - marginRight - 50
-      );
-
-      doc.text(
-        linhasCandidatura,
-        marginLeft,
-        16
-      );
-
-      doc.text(
-        `Gerado em: ${data}`,
-        pageWidth - marginRight,
-        10,
-        {
-          align: 'right'
-        }
-      );
-
-      doc.setDrawColor(180, 180, 180);
-
-      doc.line(
-        marginLeft,
-        21,
-        pageWidth - marginRight,
-        21
-      );
-    }
-
-    // ========================================================
-    // NOVA PÁGINA
-    // ========================================================
-    function adicionarNovaPagina() {
-      doc.addPage();
-
-      startY = 28;
-
-      adicionarCabecalho();
-    }
-
-    // ========================================================
-    // TOTAL DE FATURAS DO GRUPO
-    // ========================================================
-    function calcularTotalFaturadoGrupo(grupo) {
-      return Object.values(grupo?.processos || {})
-        .reduce((totalGrupo, item) => {
-          const totalProcesso = (item?.faturas || [])
-            .reduce(
-              (totalFaturas, fatura) =>
-                totalFaturas +
-                (Number(fatura.fact_valor) || 0),
-              0
-            );
-
-          return totalGrupo + totalProcesso;
-        }, 0);
-    }
-
-    // ========================================================
-    // RESUMO FINAL
-    // ========================================================
-    function adicionarResumoFinal() {
-      const diferencialGeral =
-        totalPedidoGeral -
-        Math.abs(totalReembolsoGeral);
-
-      /*
-      * O resumo ocupa aproximadamente 45 mm.
-      * Se não houver espaço, é criada uma nova página.
-      */
-      if (startY > pageHeight - 55) {
-        adicionarNovaPagina();
-      }
-
-      doc.setFillColor(33, 37, 41);
-
-      doc.rect(
-        marginLeft,
-        startY,
-        tableWidth,
-        9,
-        'F'
-      );
-
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.setTextColor(255, 255, 255);
-
-      doc.text(
-        'RESUMO',
-        marginLeft + 3,
-        startY + 6
-      );
-
-      doc.setTextColor(0, 0, 0);
-
-      doc.autoTable({
-        startY: startY + 11,
-
-        body: [
-          [
-            'Total de pedidos',
-            formatCurrency(totalPedidoGeral)
-          ],
-          [
-            'Total de reembolsos',
-            formatCurrency(totalReembolsoGeral)
-          ],
-          [
-            'Total faturado',
-            formatCurrency(totalFaturadoGeral)
-          ],
-          [
-            'Diferencial',
-            formatCurrency(diferencialGeral)
-          ]
-        ],
-
-        theme: 'grid',
-
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
-
-        tableWidth: 105,
-
-        styles: {
-          fontSize: 9,
-          cellPadding: 2,
-          valign: 'middle'
-        },
-
-        columnStyles: {
-          0: {
-            cellWidth: 65,
-            fontStyle: 'bold',
-            fillColor: [245, 245, 245]
-          },
-
-          1: {
-            cellWidth: 40,
-            halign: 'right'
-          }
-        }
-      });
-
-      startY = doc.lastAutoTable.finalY + 8;
-    }
-
-    // ========================================================
-    // INÍCIO DO DOCUMENTO
-    // ========================================================
-    adicionarCabecalho();
-
-    // ========================================================
-    // GRUPOS
-    // ========================================================
-    grupos.forEach(grupo => {
-      if (
-        !grupo ||
-        !grupo.processos ||
-        Object.keys(grupo.processos).length === 0
-      ) {
-        return;
-      }
-
-      if (startY > pageHeight - 45) {
-        adicionarNovaPagina();
-      }
-
-      const totalPedido =
-        Number(grupo.totalPedido) || 0;
-
-      const totalReembolso =
-        Number(grupo.totalReembolso) || 0;
-
-      const totalFaturado =
-        calcularTotalFaturadoGrupo(grupo);
-
-      totalPedidoGeral += totalPedido;
-      totalReembolsoGeral += totalReembolso;
-      totalFaturadoGeral += totalFaturado;
-
-      /*
-      * Mantém o cabeçalho de grupo já existente
-      * no seu ficheiro.
-      */
-      adicionarCabecalhoGrupoPDF(
-        doc,
-        grupo,
-        {
-          startY,
-          marginLeft,
-          tableWidth
-        }
-      );
-
-      /*
-      * O segundo argumento true faz com que
-      * a coluna Faturação seja sempre incluída.
-      */
-      const rows = criarLinhasPDF(grupo, true);
-
-      doc.autoTable({
-        startY: startY + 7,
-
-        /*
-        * Global e modal têm sempre as mesmas
-        * quatro colunas.
-        */
-        head: [[
-          'Processo',
-          'Designação',
-          'Movimentos',
-          'Faturação'
-        ]],
-
-        body: rows,
-
-        theme: 'grid',
-
-        margin: {
-          left: marginLeft,
-          right: marginRight,
-          top: 25,
-          bottom: 15
-        },
-
-        styles: {
-          fontSize: 6.8,
-          cellPadding: 1.3,
-          overflow: 'linebreak',
-          valign: 'middle'
-        },
-
-        headStyles: {
-          fillColor: [23, 162, 184],
-          textColor: 255,
-          fontStyle: 'bold',
-          halign: 'center'
-        },
-
-        /*
-        * Larguras ajustadas à folha A4 portrait.
-        * A largura útil é aproximadamente 190 mm.
-        */
-        columnStyles: {
-          0: {
-            cellWidth: 22,
-            halign: 'center'
-          },
-
-          1: {
-            cellWidth: 63
-          },
-
-          2: {
-            cellWidth: 42
-          },
-
-          3: {
-            cellWidth: 63
-          }
-        },
-
-        didDrawPage() {
-          adicionarCabecalho();
-        }
-      });
-
-      startY =
-        doc.lastAutoTable.finalY + 8;
-    });
-
-    /*
-    * O resumo é sempre apresentado:
-    * tanto no global como no modal.
-    */
-    adicionarResumoFinal();
-
-    adicionarPaginacaoPDF(doc);
-
-    return doc;
-  }
-
-function adicionarCabecalhoGrupoPDF(
-  doc,
-  grupo,
-  {
-    startY,
-    marginLeft,
-    tableWidth
-  }
-) {
-  const isOrfao = grupo.key === 'ORFAO';
-
-  if (isOrfao) {
-    doc.setFillColor(255, 245, 200);
-  } else {
-    doc.setFillColor(235, 235, 235);
-  }
-
-  doc.rect(
-    marginLeft,
-    startY - 4,
-    tableWidth,
-    8,
-    'F'
-  );
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-
-  doc.text(
-    isOrfao ? 'Faturas Órfãs' : String(grupo.key),
-    marginLeft + 3,
-    startY + 1
-  );
-
-  const totalPedido = Number(grupo.totalPedido) || 0;
-  const totalReembolso = Number(grupo.totalReembolso) || 0;
-  const diferencial = totalPedido - Math.abs(totalReembolso);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-
-  doc.text(
-    [
-      `P: ${formatCurrency(totalPedido)}`,
-      `R: ${formatCurrency(totalReembolso)}`,
-      `Dif.: ${formatCurrency(diferencial)}`
-    ].join(' | '),
-    marginLeft + 45,
-    startY + 1
-  );
-}
-
-
-function criarLinhasPDF(grupo, incluirFaturacao = false) {
-  return Object.values(grupo.processos).map(item => {
-    const processo = item.processo || {};
-
-    const pedidos = filtrarMovimentosGrupo(
-      processo,
-      grupo.key,
-      91
-    );
-
-    const reembolsos = filtrarMovimentosGrupo(
-      processo,
-      grupo.key,
-      92
-    );
-
-    const pedidoValor = somarMovimentos(pedidos);
-    const reembolsoValor = somarMovimentos(reembolsos);
-    const diferencial = pedidoValor - Math.abs(reembolsoValor);
-
-    const movimentos = [
-      `P: ${formatCurrency(pedidoValor)}`,
-      `R: ${formatCurrency(reembolsoValor)}`,
-      `Dif.: ${formatCurrency(diferencial)}`
-    ].join('\n');
-
-    const row = [
-      processo.padm || processo.proces_check || '-',
-      cleanPdfText(processo.designacao || '-'),
-      movimentos
-    ];
-
-    if (incluirFaturacao) {
-      row.push(formatarFaturasPDF(item.faturas));
-    }
-
-    return row;
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4"
   });
-}
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  const marginLeft = 10;
+  const marginRight = 10;
+
+  let startY = 28;
+
+  let totalPedidoGeral = 0;
+  let totalReembolsoGeral = 0;
 
 
-function filtrarMovimentosGrupo(processo, key, codigo) {
-  return (processo.historico || []).filter(movimento =>
-    Number(movimento.historico_descr_cod) === Number(codigo) &&
-    String(movimento.historico_num || 'ORFAO') === String(key)
-  );
-}
+  const addHeader = () => {
+
+    const c = processosGlobais?.[0] || {};
+    const data = new Date().toLocaleDateString("pt-PT");
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+
+    doc.text(
+      "RELATÓRIO DE REEMBOLSOS",
+      marginLeft,
+      10
+    );
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `Candidatura: ${c.candidatura || c.codigo_candidatura || 'N/D'} ${c.estado ? '| ' + c.estado : ''}`,
+      marginLeft,
+      16
+    );
+
+    doc.text(
+      `Gerado em: ${data}`,
+      pageWidth - 55,
+      10
+    );
+
+    doc.line(
+      marginLeft,
+      19,
+      pageWidth - marginRight,
+      19
+    );
+  };
 
 
-function somarMovimentos(movimentos) {
-  return movimentos.reduce(
-    (total, movimento) =>
-      total + (Number(movimento.historico_valor) || 0),
-    0
-  );
-}
+  addHeader();
+
+  dados
+  .filter(g => g && g.processos && Object.keys(g.processos).length > 0)
+  .forEach(g => {
+
+    if (startY > 250) {
+      doc.addPage();
+      startY = 28;
+      addHeader();
+    }
 
 
-function formatarFaturasPDF(faturas = []) {
-  if (!faturas.length) {
-    return 'Sem faturas';
+    totalPedidoGeral += g.totalPedido || 0;
+    totalReembolsoGeral += g.totalReembolso || 0;
+
+
+    const diferencial = (g.totalPedido || 0) - Math.abs(g.totalReembolso || 0);
+
+
+    const isOrfao = g.key === "ORFAO";
+
+
+    doc.setFillColor(
+      isOrfao ? 255 : 235,
+      isOrfao ? 245 : 235,
+      isOrfao ? 200 : 235
+    );
+
+
+    doc.rect(
+      marginLeft,
+      startY - 4,
+      pageWidth - marginLeft - marginRight,
+      8,
+      "F"
+    );
+
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+
+
+    doc.text(
+      isOrfao ? "Faturas Órfão" : g.key,
+      marginLeft + 3,
+      startY + 1
+    );
+
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+
+
+    doc.text(
+      `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)} | Dif: ${formatCurrency(diferencial)}`,
+      marginLeft + 45,
+      startY + 1
+    );
+
+
+    const rows = [];
+
+
+    Object.values(g.processos).forEach(p => {
+
+      const pedidos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+
+      const reembolsos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 92 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+
+      const pedidoValor = pedidos.reduce(
+        (s,h) => s + (h.historico_valor || 0),
+        0
+      );
+
+
+      const reembolsoValor = reembolsos.reduce(
+        (s,h) => s + (h.historico_valor || 0),
+        0
+      );
+
+
+      rows.push([
+        p.processo.padm,
+        p.processo.designacao,
+        `P: ${formatCurrency(pedidoValor)}\nR: ${formatCurrency(reembolsoValor)}\nDif: ${formatCurrency(pedidoValor - Math.abs(reembolsoValor))}`
+      ]);
+
+    });
+
+
+    doc.autoTable({
+
+      startY: startY + 6,
+    
+      head: [
+        [
+          "Processo",
+          "Designação",
+          "Movimentos"
+        ]
+      ],
+    
+      body: rows,
+    
+      theme: "grid",
+    
+      margin: {
+        left: marginLeft,
+        right: marginRight
+      },
+    
+      styles: {
+        fontSize: 7,
+        cellPadding: 2
+      },
+    
+      headStyles: {
+        fillColor: [23,162,184],
+        textColor:255
+      },
+    
+      columnStyles: {
+        0: {cellWidth: 25}, // Processo
+        1: {cellWidth: 125}, // Designação
+        2: {cellWidth: 40, halign: "left"} // Movimento
+        }
+      });
+
+
+    startY = doc.lastAutoTable.finalY + 8;
+
+  });
+
+
+
+  // RESUMO FINAL
+  if (startY > 240) {
+    doc.addPage();
+    startY = 30;
+    addHeader();
   }
 
-  return faturas.map(fatura => {
-    const expediente =
-      formatExpediente(fatura.fact_expediente) || '-';
 
-    const data = fatura.fact_data || '-';
+  const diferencialGeral = totalPedidoGeral - Math.abs(totalReembolsoGeral);
 
-    const documento = [
-      fatura.fact_tipo,
-      fatura.fact_num
-    ]
-      .filter(Boolean)
-      .join('_') || '-';
-
-    const auto = fatura.fact_auto_num
-      ? `AM_${fatura.fact_auto_num}`
-      : '-';
-
-    return [
-      expediente,
-      data,
-      documento,
-      auto,
-      formatCurrency(fatura.fact_valor)
-    ].join(' / ');
-  }).join('\n');
-}
-
-
-function adicionarResumoFinalPDF(
-  doc,
-  {
-    startY,
-    marginLeft,
-    totalPedidoGeral,
-    totalReembolsoGeral,
-    diferencialGeral
-  }
-) {
-  doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-
-  doc.text('RESUMO', marginLeft, startY);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
+  doc.setFont("helvetica","bold");
 
   doc.text(
-    `Total de pedidos: ${formatCurrency(totalPedidoGeral)}`,
+    "RESUMO",
+    marginLeft,
+    startY
+  );
+
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica","normal");
+
+
+  doc.text(
+    `Total Pedidos: ${formatCurrency(totalPedidoGeral)}`,
     marginLeft,
     startY + 8
   );
 
+
   doc.text(
-    `Total de reembolsos: ${formatCurrency(totalReembolsoGeral)}`,
+    `Total Reembolsos: ${formatCurrency(totalReembolsoGeral)}`,
     marginLeft,
     startY + 15
   );
+
 
   doc.text(
     `Diferencial: ${formatCurrency(diferencialGeral)}`,
     marginLeft,
     startY + 22
   );
-}
 
 
-function adicionarPaginacaoPDF(doc) {
-  const totalPaginas = doc.getNumberOfPages();
+  const pages = doc.getNumberOfPages();
 
-  for (let pagina = 1; pagina <= totalPaginas; pagina++) {
-    doc.setPage(pagina);
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
+  for (let i = 1; i <= pages; i++) {
 
-    doc.setFont('helvetica', 'normal');
+    doc.setPage(i);
+
     doc.setFontSize(8);
 
     doc.text(
-      `Página ${pagina} / ${totalPaginas}`,
+      `Página ${i} / ${pages}`,
       pageWidth - 35,
-      pageHeight - 7
+      290
     );
+
   }
+
+  return doc;
+
+}
+
+async function previewResumo() {
+  try {
+      const doc = await criarResumoPDF();
+      window.open(doc.output("bloburl"), "_blank");
+  }
+  catch (erro) {
+      console.error(erro);
+      alert("Erro ao gerar o PDF.");
+  }
+
 }
 
 
-// ==========================================================
-// EXCEL
-// ==========================================================
 
-function criarDocumentoReembolsosExcel(
-  grupos,
-  {
-    key = null,
-    escopo = 'global'
-  } = {}
-) {
-  const rows = criarLinhasExcel(grupos);
+function exportAllExcel() {
 
-  if (rows.length === 0) {
-    alert('Não existem registos para exportar.');
-    return;
-  }
+  const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
 
-  const worksheet = XLSX.utils.json_to_sheet(rows);
-  const workbook = XLSX.utils.book_new();
-
-  configurarLargurasExcel(worksheet);
-
-  XLSX.utils.book_append_sheet(
-    workbook,
-    worksheet,
-    'Reembolsos'
-  );
-
-  const nomeFicheiro = criarNomeFicheiroExportacao({
-    formato: 'xlsx',
-    key,
-    escopo
-  });
-
-  XLSX.writeFile(workbook, nomeFicheiro);
-}
-
-
-function criarLinhasExcel(grupos) {
   const rows = [];
 
-  grupos.forEach(grupo => {
-    Object.values(grupo.processos).forEach(item => {
-      const processo = item.processo || {};
+  dados.forEach(g => {
 
-      const pedidos = filtrarMovimentosGrupo(
-        processo,
-        grupo.key,
-        91
+    Object.values(g.processos).forEach(p => {
+
+      const pedidos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
       );
 
-      const reembolsos = filtrarMovimentosGrupo(
-        processo,
-        grupo.key,
-        92
+      const reembolsos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 92 &&
+        String(h.historico_num) === String(g.key)
       );
 
-      const pedidoRef = formatarReferenciasMovimentos(pedidos);
-      const reembolsoRef =
-        formatarReferenciasMovimentos(reembolsos);
+      const pedidoRef = pedidos.length
+        ? pedidos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
+        : "-";
 
-      const totalPedido = somarMovimentos(pedidos);
-      const totalReembolso = somarMovimentos(reembolsos);
+      const reembolsoRef = reembolsos.length
+        ? reembolsos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
+        : "-";
 
-      const dadosComuns = {
-        Grupo:
-          grupo.key === 'ORFAO'
-            ? 'Faturas órfãs'
-            : grupo.key,
+      if (!p.faturas || !p.faturas.length) {
 
-        Processo:
-          processo.padm ||
-          processo.proces_check ||
-          '-',
-
-        Designação:
-          cleanPdfText(processo.designacao || '-'),
-
-        Pedido: pedidoRef,
-        'Valor pedido': totalPedido,
-
-        Reembolso: reembolsoRef,
-        'Valor reembolso': totalReembolso,
-
-        Diferencial:
-          totalPedido - Math.abs(totalReembolso)
-      };
-
-      if (!item.faturas?.length) {
         rows.push({
-          ...dadosComuns,
-          Data: '-',
-          Fatura: '-',
-          Expediente: '-',
-          Auto: '-',
-          'Valor fatura': 0
+          Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
+          Pedido: pedidoRef,
+          Reembolso: reembolsoRef,
+          Processo: p.processo.designacao,
+          Fatura: "-",
+          Valor: "-"
         });
 
-        return;
+      } else {
+
+        p.faturas.forEach(f => {
+
+          rows.push({
+            Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
+            Pedido: pedidoRef,
+            Reembolso: reembolsoRef,
+            Processo: p.processo.designacao,
+            Data: f.fact_data,
+            Fatura: `${f.fact_tipo}_${f.fact_num}`,
+            Expediente: formatExpediente(f.fact_expediente),
+            Valor: f.fact_valor
+          });
+
+        });
       }
-
-      item.faturas.forEach(fatura => {
-        rows.push({
-          ...dadosComuns,
-
-          Data: fatura.fact_data || '-',
-
-          Fatura: [
-            fatura.fact_tipo,
-            fatura.fact_num
-          ]
-            .filter(Boolean)
-            .join('_') || '-',
-
-          Expediente:
-            formatExpediente(fatura.fact_expediente) || '-',
-
-          Auto:
-            fatura.fact_auto_num
-              ? `AM_${fatura.fact_auto_num}`
-              : '-',
-
-          'Valor fatura':
-            Number(fatura.fact_valor) || 0
-        });
-      });
     });
   });
 
-  return rows;
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(wb, ws, "Reembolsos");
+
+  XLSX.writeFile(wb, "reembolsos_detalhado.xlsx");
 }
 
+// PARA O MODAL
+function criarResumoModalPDF(processos, keySelecionada) {
 
-function formatarReferenciasMovimentos(movimentos) {
-  if (!movimentos.length) {
-    return '-';
+  const dados = getReembolsosAgrupadosDetalhado(processos)
+  .filter(g => String(g.key) === String(keySelecionada));
+
+  const doc = new window.jspdf.jsPDF({
+    orientation: "landscape",
+    unit: "mm"
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  const marginLeft = 10;
+  const marginRight = 10;
+  const tableWidth = pageWidth - marginLeft - marginRight;
+
+  let startY = 28;
+
+  const addHeader = () => {
+
+    const c = processosGlobais?.[0] || {};
+    const data = new Date().toLocaleDateString("pt-PT");
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("RELATÓRIO DE REEMBOLSOS", marginLeft, 10);
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `Candidatura: ${c.candidatura || c.codigo_candidatura || 'N/D'} ${c.estado ? '| ' + c.estado : ''}`,
+      marginLeft,
+      16
+    );
+
+    doc.text(`Gerado em: ${data}`, pageWidth - 60, 10);
+
+    doc.line(marginLeft, 19, pageWidth - marginRight, 19);
+  };
+
+  addHeader();
+
+  dados
+  .filter(g => g && g.processos && Object.keys(g.processos).length > 0)
+  .forEach(g => {
+
+    const isOrfao = g.key === 'ORFAO';
+
+    if (startY > 170) {
+      doc.addPage();
+      startY = 28;
+      addHeader();
+    }
+
+    const headerY = startY;
+
+    doc.setFillColor(isOrfao ? 255 : 235, isOrfao ? 245 : 235, isOrfao ? 200 : 235);
+    doc.rect(marginLeft, headerY - 3, tableWidth, 8, "F");
+
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica", "bold");
+
+    doc.text(
+      isOrfao ? "Faturas Órfão" : g.key,
+      marginLeft + 4,
+      headerY + 2
+    );
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+      `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)}`,
+      marginLeft + 40,
+      headerY + 2
+    );
+
+    const tableStartY = headerY + 10;
+
+    const rows = [];
+
+    Object.values(g.processos).forEach(p => {
+
+      const pedidos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const reembolsos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 92 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const pedidoValor = pedidos.reduce((s, h) => s + (h.historico_valor || 0), 0);
+      const reembolsoValor = reembolsos.reduce((s, h) => s + (h.historico_valor || 0), 0);
+
+      const faturas = (p.faturas || []).length
+        ? p.faturas.map(f =>
+            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num}  - AM${f.fact_auto_num}: ${formatCurrency(f.fact_valor)}`
+          ).join("\n")
+        : "Sem faturas";
+
+      rows.push([
+        p.processo.padm,
+        p.processo.designacao,
+        `P: ${formatCurrency(pedidoValor)} | R: ${formatCurrency(reembolsoValor)}`,
+        faturas
+      ]);
+    });
+
+    doc.autoTable({
+      startY: tableStartY,
+      head: [["Processo", "Designação", "Movimentos", "Faturação"]],
+      body: rows,
+      theme: "grid",
+      margin: { left: marginLeft, right: marginRight },
+      styles: { fontSize: 7.2, cellPadding: 1.4 },
+      headStyles: { fillColor: [23, 162, 184], textColor: 255 },
+      columnStyles: {
+        0: { cellWidth: 22 },
+        1: { cellWidth: 80 },
+        2: { cellWidth: 80 },
+        3: { cellWidth: 95 }
+      }
+    });
+
+    startY = doc.lastAutoTable.finalY + 8;
+  });
+
+  const pages = doc.getNumberOfPages();
+
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.text(`Página ${i} / ${pages}`, pageWidth - 30, 200);
   }
 
-  return movimentos.map(movimento => {
-    return [
-      movimento.historico_num,
-      movimento.historico_doc,
-      movimento.historico_dataemissao
-    ]
-      .filter(Boolean)
-      .join(' / ');
-  }).join(' | ');
+  return doc;
 }
 
+async function previewResumoModal(processos, keySelecionada) {
 
-function configurarLargurasExcel(worksheet) {
-  worksheet['!cols'] = [
-    { wch: 18 }, // Grupo
-    { wch: 16 }, // Processo
-    { wch: 50 }, // Designação
-    { wch: 35 }, // Pedido
-    { wch: 16 }, // Valor pedido
-    { wch: 35 }, // Reembolso
-    { wch: 18 }, // Valor reembolso
-    { wch: 16 }, // Diferencial
-    { wch: 13 }, // Data
-    { wch: 18 }, // Fatura
-    { wch: 22 }, // Expediente
-    { wch: 14 }, // Auto
-    { wch: 16 }  // Valor fatura
-  ];
+  try {
+
+      const doc = await criarResumoModalPDF(
+          processos,
+          keySelecionada
+      );
+
+      window.open(
+          doc.output("bloburl"),
+          "_blank"
+      );
+
+  }
+  catch (erro) {
+
+      console.error(erro);
+
+      alert("Erro ao gerar o PDF.");
+
+  }
+
 }
 
+function modalExportExcel(processos, keySelecionada) {
 
-function criarNomeFicheiroExportacao({
-  formato,
-  key,
-  escopo
-}) {
-  const candidatura =
-    processosGlobais?.[0]?.candidatura ||
-    'candidatura';
+  const dados = getReembolsosAgrupadosDetalhado(processos)
+      .filter(g => String(g.key) === String(keySelecionada));
 
-  const referencia =
-    escopo === 'modal' && key
-      ? key
-      : 'todos';
+  const rows = [];
 
-  const nomeSeguro = String(
-    `reembolsos_${candidatura}_${referencia}`
-  )
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-zA-Z0-9_-]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-    .toLowerCase();
+  dados.forEach(g => {
 
-  return `${nomeSeguro}.${formato}`;
+    Object.values(g.processos).forEach(p => {
+
+      const pedidos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 91 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const reembolsos = (p.processo.historico || []).filter(h =>
+        h.historico_descr_cod === 92 &&
+        String(h.historico_num) === String(g.key)
+      );
+
+      const pedidoRef = pedidos.length
+        ? pedidos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
+        : "-";
+
+      const reembolsoRef = reembolsos.length
+        ? reembolsos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
+        : "-";
+
+      if (!p.faturas || !p.faturas.length) {
+
+        rows.push({
+          Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
+          Pedido: pedidoRef,
+          Reembolso: reembolsoRef,
+          Processo: p.processo.designacao,
+          Fatura: "-",
+          Valor: "-"
+        });
+
+      } else {
+
+        p.faturas.forEach(f => {
+
+          rows.push({
+            Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
+            Pedido: pedidoRef,
+            Reembolso: reembolsoRef,
+            Processo: p.processo.designacao,
+            Data: f.fact_data,
+            Fatura: `${f.fact_tipo}_${f.fact_num}`,
+            Expediente: formatExpediente(f.fact_expediente),
+            Valor: f.fact_valor
+          });
+
+        });
+      }
+    });
+  });
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(wb, ws, "Reembolsos");
+
+  XLSX.writeFile(wb, "reembolsos_detalhado.xlsx");
 }
-
 
 function getReembolsosAgrupadosDetalhado(processos) {
 
