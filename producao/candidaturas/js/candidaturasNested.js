@@ -403,18 +403,26 @@ $(document).ready(function () {
                 <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
 
                   <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
-                    class="btn btn-info mr-1"
+                    class="btn btn-primary mr-1"
                     style="padding: 6px 14px;"
-                    title="Voltar">
+                    title="Voltar à Candidatura">
                     <i class="fa-solid fa-arrow-left text-light"></i>
                   </a>
 
                   <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
-                    class="btn btn-secondary mr-1"
+                    class="btn btn-info mr-1"
                     style="padding: 6px 14px;"
                     title="Atualizar">
                     <i class="fa-solid fa-rotate text-light"></i>
-                  </a>                 
+                  </a>
+                  
+                   <a href="candidaturasDashboard.html?"
+                    class="btn btn-secondary mr-1"
+                    style="padding: 6px 14px;"
+                    title="Dashboard">
+                    <i class="fa-solid fa-home text-light"></i>
+                  </a>
+
 
                 </div>
             </div>
@@ -1067,7 +1075,7 @@ function criarDocumentoReembolsosPDF(
 
       const linhasCandidatura = doc.splitTextToSize(
         textoCandidatura,
-        pageWidth - marginLeft - marginRight - 50
+        pageWidth - marginLeft - marginRight - 5
       );
 
       doc.text(
@@ -1167,16 +1175,16 @@ function criarDocumentoReembolsosPDF(
 
         body: [
           [
+            'Total faturado',
+            formatCurrency(totalFaturadoGeral)
+          ],
+          [
             'Total de pedidos',
             formatCurrency(totalPedidoGeral)
           ],
           [
             'Total de reembolsos',
             formatCurrency(totalReembolsoGeral)
-          ],
-          [
-            'Total faturado',
-            formatCurrency(totalFaturadoGeral)
           ],
           [
             'Diferencial',
