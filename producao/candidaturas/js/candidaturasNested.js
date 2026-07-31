@@ -1288,8 +1288,8 @@ function criarDocumentoReembolsosPDF(
         head: [[
           'Processo',
           'Designação',
-          'Movimentos',
-          'Faturação'
+          'Faturação',
+          'Resumo'
         ]],
 
         body: rows,
@@ -1322,22 +1322,10 @@ function criarDocumentoReembolsosPDF(
         * A largura útil é aproximadamente 190 mm.
         */
         columnStyles: {
-          0: {
-            cellWidth: 22,
-            halign: 'center'
-          },
-
-          1: {
-            cellWidth: 63
-          },
-
-          2: {
-            cellWidth: 42
-          },
-
-          3: {
-            cellWidth: 63
-          }
+          0: {cellWidth: 22, valign: 'top', halign: 'center'},
+          1: {cellWidth: 75, valign: 'top'},
+          2: {cellWidth: 70, valign: 'top'},
+          3: {cellWidth: 23, valign: 'top'}
         },
 
         didDrawPage() {
@@ -1433,21 +1421,29 @@ function criarLinhasPDF(grupo, incluirFaturacao = false) {
     const reembolsoValor = somarMovimentos(reembolsos);
     const diferencial = pedidoValor - Math.abs(reembolsoValor);
 
-    const movimentos = [
+    const resumo = [
       `P: ${formatCurrency(pedidoValor)}`,
       `R: ${formatCurrency(reembolsoValor)}`,
       `Dif.: ${formatCurrency(diferencial)}`
     ].join('\n');
 
+    /*
+     * Ordem das colunas:
+     * 1 - Processo
+     * 2 - Designação
+     * 3 - Faturação
+     * 4 - Resumo
+     */
     const row = [
       processo.padm || processo.proces_check || '-',
-      cleanPdfText(processo.designacao || '-'),
-      movimentos
+      cleanPdfText(processo.designacao || '-')
     ];
 
     if (incluirFaturacao) {
       row.push(formatarFaturasPDF(item.faturas));
     }
+
+    row.push(resumo);
 
     return row;
   });
