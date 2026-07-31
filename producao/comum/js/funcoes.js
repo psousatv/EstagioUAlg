@@ -356,7 +356,7 @@ async function criarPendentesPDF() {
             doc.setTextColor(100);
 
             doc.text(
-                "*BaseGov, por norma, a publicação deve ser feita até 20 dias após o último estádio de vínculo",
+                '*O campo "colaborador" pode assumir o valor da tramitação a seguir.',
                 data.settings.margin.left,
                 pageHeight - 10
             );

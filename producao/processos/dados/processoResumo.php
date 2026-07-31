@@ -86,7 +86,7 @@ foreach($data as $row)
     <div class="col-md-2 text-primary"><b>Rubrica: </b></div> 
       <div class="col-md-10 text-primary">
         ['.$row['proces_rub_cod'].'] - '.$row['proces_orc_rubrica'].'
-        <mark class="bg-warning"><i class="fa-solid fa-binoculars" onclick="redirectInformacoesCPV('.$row['proces_rub_cod'].')"></i></mark>
+        <mark class="bg-warning"><i class="fa-solid fa-binoculars" onclick="redirectOrcamento('.$row['proces_rub_cod'].')"></i></mark>
       </div>
     </div>
   </fieldset>';

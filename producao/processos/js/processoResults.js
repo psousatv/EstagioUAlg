@@ -4,11 +4,12 @@ var variaveis = [];
 
 // Os resultados da Seleção é redirecionado para a processosResults.html
 // Quando se seleciona um processo - obtem a identificação do processo e passa para o "Título"
+
 function processoSelected() { 
 
   var params = new URLSearchParams(window.location.search);
   var codigo = params.get("codigoProcesso");
-  var item = 11;
+  var item = 106;
   var ano = 2026;
   //var item = params.get("codigoProcesso");
   //var ano = params.get("codigoProcesso");
@@ -19,7 +20,7 @@ function processoSelected() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("processoSelected").innerHTML = this.responseText;
       processoCodigo.push(codigo);
-      variaveis.push(codigo, item, ano);
+      variaveis.push(codigo, item, ano);    
     }
   }
 
@@ -36,7 +37,10 @@ function processoSelected() {
         faturasProcesso(codigo); // Detalhes daas Faturas
         //garantiasProcesso(codigo);
 
+        console.log(params);
+
 };
+
 
 // Resumo do Processo
 function resumoProcesso(codigo) {
@@ -44,10 +48,13 @@ function resumoProcesso(codigo) {
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       data = document.getElementById("lstResumo").innerHTML = this.responseText;
+
+      console.log(data);
     }
   }
   xmlhttp.open("GET","dados/processoResumo.php?codigoProcesso="+codigo,true);
   xmlhttp.send();
+
 };
 
 // Fases do Processo - Milestones
