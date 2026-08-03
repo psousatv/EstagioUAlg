@@ -148,7 +148,7 @@ table = $('#processosNested').DataTable({
             : totalOrcamento;        
 
         // Atualiza os valores na tabela
-        $('#valoresRubrica').html(`
+        $('#kpiValores').html(`
           <div class="row">
 
               <div class="col-6 col-md-3 mb-2">
@@ -156,7 +156,7 @@ table = $('#processosNested').DataTable({
                       <div class="card-body py-2 px-2">
                           <div class="small">Orçamento</div>
                           <div class="text-right font-weight-bold">
-                              ${formatCurrency(totalOrcamento)}
+                              
                           </div>
                       </div>
                   </div>
@@ -167,7 +167,7 @@ table = $('#processosNested').DataTable({
                       <div class="card-body py-2 px-2">
                           <div class="small">Adjudicado</div>
                           <div class="text-right font-weight-bold">
-                              ${formatCurrency(totalAdjudicado)}
+                              
                           </div>
                       </div>
                   </div>
@@ -178,7 +178,7 @@ table = $('#processosNested').DataTable({
                       <div class="card-body py-2 px-2">
                           <div class="small">Faturado</div>
                           <div class="text-right font-weight-bold">
-                              ${formatCurrency(totalFaturado)}
+                              
                           </div>
                       </div>
                   </div>
@@ -195,8 +195,104 @@ table = $('#processosNested').DataTable({
                   </div>
               </div>
 
+              <!-- BOTÕES -->
+              <div class="col-md-2 text-right">
+      
+                  <button
+                      id="exportResumo"
+                      class="btn btn-danger btn-lg shadow-sm mr-2"
+                      title="Exportar PDF">
+                      <i class="fa-solid fa-file-pdf"></i>
+                  </button>
+      
+                  <button
+                      id="exportALLExcel"
+                      class="btn btn-success btn-lg shadow-sm"
+                      title="Exportar Excel">
+                      <i class="fa-solid fa-file-excel"></i>
+                  </button>
+      
+              </div>
+
           </div>
         `);
+
+        $('#kpiValores').html(`
+          <div class="row align-items-center mb-2">
+      
+              <!-- ORÇAMENTO -->
+              <div class="col-md-2">
+                  <div class="card bg-primary text-white h-100">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Orçamento</div>
+                          <div class="text-right font-weight-bold">
+                            ${formatCurrency(totalOrcamento)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+      
+              <!-- ADJUDICADO -->
+              <div class="col-md-2">
+                  <div class="card bg-secondary text-white h-100">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Ajdudicado</div>
+                          <div class="text-right font-weight-bold">
+                            ${formatCurrency(totalAdjudicado)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+      
+              <!-- FATURADO -->
+              <div class="col-md-2">
+                  <div class="card bg-warning text-dark h-100">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Faturado</div>
+                          <div class="text-right font-weight-bold">
+                            ${formatCurrency(totalFaturado)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+      
+              <!-- SALDO -->
+              <div class="col-md-2">
+                  <div class="card bg-success text-white h-100">
+                      <div class="card-body py-2 px-2">
+                          <div class="small">Saldo</div>
+                          <div class="text-right font-weight-bold">
+                            ${formatCurrency(saldoTitulo)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+      
+              <!-- BOTÕES -->
+              <div class="col-md-4 text-right">
+      
+                  <button
+                      id="exportResumo"
+                      class="btn btn-danger btn-lg shadow-sm mr-2"
+                      title="Exportar PDF">
+                      <i class="fa-solid fa-file-pdf"></i>
+                  </button>
+      
+                  <button
+                      id="exportALLExcel"
+                      class="btn btn-success btn-lg shadow-sm"
+                      title="Exportar Excel">
+                      <i class="fa-solid fa-file-excel"></i>
+                  </button>
+      
+              </div>
+      
+          </div>
+      `);
+
+
+
+
         }
 
       // Atualiza o rodapé com a nota

@@ -458,82 +458,97 @@ $(document).ready(function () {
           );
         
 
-        // ================================
-        // BOTÕES EXPORTAÇÃO GLOBAL
-        // ================================
-        const exportAllBtns = `
-        <div class="d-flex align-items-center gap-3">
+          $('#kpiValores').html(`
+            <div class="row align-items-center mb-2">
         
-          <button id="exportResumo"
-            class="btn btn-danger btn-lg d-flex align-items-center gap-2 shadow-sm"
-            title="Exportar PDF">
-            <i class="fa-solid fa-file-pdf"></i>
-          </button>
+                <!-- ELEGÍVEL -->
+                <div class="col-md-2">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body py-2 px-2">
+                            <div class="small">Elegível</div>
+                            <div class="text-right font-weight-bold">
+                                ${formatCurrency(json.elegivel)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
         
-          <button id="exportALLExcel"
-            class="btn btn-success btn-lg d-flex align-items-center gap-2 shadow-sm"
-            title="Exportar Excel">
-            <i class="fa-solid fa-file-excel"></i>
-          </button>
+                <!-- FUNDO -->
+                <div class="col-md-2">
+                    <div class="card bg-secondary text-white h-100">
+                        <div class="card-body py-2 px-2">
+                            <div class="small">Fundo</div>
+                            <div class="text-right font-weight-bold">
+                                ${formatCurrency(json.elegivel * json.taxa)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
         
-        </div>
-        `;
+                <!-- PEDIDO -> FATURADO -->
+                <div class="col-md-2">
+                    <div class="card bg-warning text-dark h-100">
+                        <div class="card-body py-2 px-2">
+                            <div class="small">Pedido → Faturado</div>
+                            <div class="text-right font-weight-bold">
+                                ${formatCurrency(totalPedidos)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- REEMBOLSOS -->
+                <div class="col-md-2">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body py-2 px-2">
+                            <div class="small">Reembolsos</div>
+                            <div class="text-right font-weight-bold">
+                                ${formatCurrency(totalReembolsos * json.taxa)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        // Valores da Candidatura
-        $('#valoresTotais').html(`
-          <div class="row w-100 align-items-center">
-        
-            <!-- MÉTRICAS -->
-            <div class="col-9 d-flex gap-3">
-        
-              <div class="flex-fill bg-primary text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Investimento Aprovado</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(json.elegivel)}
+                <!-- SALDO -->
+                <div class="col-md-2">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body py-2 px-2">
+                            <div class="small">Saldo</div>
+                            <div class="text-right font-weight-bold">
+                                ${formatCurrency(totalPedidos - (totalReembolsos * json.taxa))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
         
-              <div class="flex-fill bg-secondary text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Apoio Previsto</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(json.elegivel * json.taxa)}
-                </div>
-              </div>
+                <!-- BOTÕES -->
+                <div class="col-md-2 text-right">
         
-              <div class="flex-fill bg-success text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Pedido</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(totalPedidos)}
-                </div>
-              </div>
+                    <button
+                        id="exportResumo"
+                        class="btn btn-danger btn-lg shadow-sm mr-2"
+                        title="Exportar PDF">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </button>
         
-              <div class="flex-fill bg-info text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Pago</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(totalReembolsos * json.taxa)}
+                    <button
+                        id="exportALLExcel"
+                        class="btn btn-success btn-lg shadow-sm"
+                        title="Exportar Excel">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </button>
+        
                 </div>
-              </div>
         
             </div>
-        
-            <!-- BOTÕES -->
-            <div class="col-3 d-flex justify-content-end align-items-center gap-2">
-        
-              ${exportAllBtns}
-        
-            </div>
-        
-          </div>
         `);
 
-        //$('#logo').html(`
-        //  <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;"></img>
-        //`);
 
         // Cartões
         $('#cartoesReembolsos').html(renderReembolsosCards(processos) );
 
         return processos;
+
       },
       data: function(d) {
         return { ...d, ...queryParams };
