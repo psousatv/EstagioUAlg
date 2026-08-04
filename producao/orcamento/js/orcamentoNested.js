@@ -840,6 +840,201 @@ $(document).ready(function () {
     const totaisPorTipoFatura = {};
 
     // ========================================================
+    // FATURAÇÃO POR MÊS
+    // ========================================================
+    function calcularFaturacaoMensal(processos) {
+      const meses = Array(12).fill(0);
+
+      processos.forEach(processo => {const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+
+        faturas.forEach(fatura => {
+          if (!fatura.fact_data) {
+            return;
+          }
+
+          const partes = String(fatura.fact_data)
+            .substring(0, 10)
+            .split('-');
+
+          if (partes.length !== 3) {
+            return;
+          }
+
+          const mes = Number(partes[1]);
+
+          if (mes < 1 || mes > 12) {
+            return;
+          }
+
+          meses[mes - 1] += numero(fatura.fact_valor);
+        });
+      });
+
+      return meses;
+    }
+    
+    // ========================================================
+    // CRIAR IMAGEM DO GRÁFICO MENSAL
+    // ========================================================
+    function criarImagemGraficoMensal(processos) {
+      const canvas = document.createElement('canvas');
+
+      canvas.width = 1200;
+      canvas.height = 500;
+
+      const contexto = canvas.getContext('2d');
+
+      const valoresMensais =
+        calcularFaturacaoMensal(processos);
+
+      const meses = [
+        'Jan.',
+        'Fev.',
+        'Mar.',
+        'Abr.',
+        'Mai.',
+        'Jun.',
+        'Jul.',
+        'Ago.',
+        'Set.',
+        'Out.',
+        'Nov.',
+        'Dez.'
+      ];
+
+      const grafico = new Chart(contexto, {
+        type: 'bar',
+
+        data: {
+          labels: meses,
+
+          datasets: [
+            {
+              label: 'Faturação',
+              data: valoresMensais,
+              borderWidth: 1
+            }
+          ]
+        },
+
+        options: {
+          responsive: false,
+          animation: false,
+          maintainAspectRatio: false,
+
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+
+          scales: {
+            x: {
+              grid: {
+                display: false
+              }
+            },
+
+            y: {
+              beginAtZero: true,
+
+              ticks: {
+                callback(valor) {
+                  return new Intl.NumberFormat(
+                    'pt-PT',
+                    {
+                      notation: 'compact',
+                      maximumFractionDigits: 1
+                    }
+                  ).format(valor);
+                }
+              }
+            }
+          }
+        }
+      });
+
+      grafico.update();
+
+      const imagem = canvas.toDataURL(
+        'image/png',
+        1
+      );
+
+      grafico.destroy();
+
+      return {
+        imagem,
+        valoresMensais
+      };
+    }
+
+    // ========================================================
+    // ADICIONAR GRÁFICO MENSAL AO PDF
+    // ========================================================
+    function adicionarGraficoMensal() {
+      const alturaGrafico = 72;
+
+      if (startY > pageHeight - alturaGrafico - 20) {
+        adicionarNovaPagina();
+      }
+
+      const {
+        imagem,
+        valoresMensais
+      } = criarImagemGraficoMensal(processos);
+
+      const totalGrafico = valoresMensais.reduce(
+        (total, valor) => total + valor,
+        0
+      );
+
+      doc.setFillColor(33, 37, 41);
+
+      doc.rect(
+        marginLeft,
+        startY,
+        tableWidth,
+        9,
+        'F'
+      );
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(255, 255, 255);
+
+      doc.text(
+        'FATURAÇÃO POR MÊS',
+        marginLeft + 3,
+        startY + 6
+      );
+
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+
+      doc.text(
+        `Total: ${formatCurrency(totalGrafico)}`,
+        pageWidth - marginRight - 3,
+        startY + 6,
+        {
+          align: 'right'
+        }
+      );
+
+      doc.addImage(
+        imagem,
+        'PNG',
+        marginLeft,
+        startY + 11,
+        tableWidth,
+        alturaGrafico
+      );
+
+      startY += alturaGrafico + 17;
+    }
+
+    // ========================================================
     // CABEÇALHO
     // ========================================================
     function adicionarCabecalho() {
@@ -981,8 +1176,8 @@ $(document).ready(function () {
         formatExpediente(fatura.fact_expediente) || '-',
         fatura.fact_auto_num || '-',      
         formatDate(fatura.fact_auto_data) || '-',
-        formatPercentage(fatura.fact_iva) || '-',
-        formatCurrency(fatura.fact_valor)
+        numero(fatura.fact_iva) || '-',
+        numero(fatura.fact_valor)
       ]);
 
       doc.autoTable({
@@ -1031,17 +1226,19 @@ $(document).ready(function () {
           3: { cellWidth: 26 },                   // Expediente
           4: { cellWidth: 16, halign: 'center' }, // Auto
           5: { cellWidth: 20, halign: 'center' }, // Data Auto
-          6: { cellWidth: 12, halign: 'right' },  // IVA
-          7: { cellWidth: 28, halign: 'right' }   // Valor
+          6: { cellWidth: 20, halign: 'right' },  // IVA
+          7: { cellWidth: 20, halign: 'right' }   // Valor
         },
-
+        
         didParseCell(data) {
-          if (data.section === 'body' && data.column.index === 6 || data.column.index === 7) {
+          if (data.section === 'body' && [6, 7].includes(data.column.index)) {
             data.cell.text = [formatCurrency(data.cell.raw)];
           }
         },
+        
 
         didDrawPage() {adicionarCabecalho();}
+
       });
 
       startY = doc.lastAutoTable.finalY + 8;
@@ -1284,6 +1481,7 @@ $(document).ready(function () {
     });
 
     adicionarResumoFinal();
+    adicionarGraficoMensal();
     adicionarPaginacaoPDF(doc);
 
     return doc;
