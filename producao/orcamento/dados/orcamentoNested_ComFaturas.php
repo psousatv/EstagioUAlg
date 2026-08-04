@@ -8,8 +8,6 @@ $itemProcurado = $_GET['itemProcurado'] ?? null;
 $anoCorrente   = $_GET['anoCorrente'] ?? date('Y');
 
 if (!$itemProcurado) {
-    http_response_code(400);
-
     echo json_encode([
         "error" => "Parâmetro 'itemProcurado' é obrigatório."
     ], JSON_UNESCAPED_UNICODE);
@@ -33,6 +31,7 @@ try {
     ";
 
     $stmtRubrica = $myConn->prepare($sqlRubrica);
+
     $stmtRubrica->execute([
         ':itemProcurado' => $itemProcurado
     ]);
@@ -40,8 +39,6 @@ try {
     $rubrica = $stmtRubrica->fetch(PDO::FETCH_ASSOC);
 
     if (!$rubrica) {
-        http_response_code(404);
-
         echo json_encode([
             "error" => "Rubrica não encontrada."
         ], JSON_UNESCAPED_UNICODE);
@@ -70,6 +67,7 @@ try {
     ";
 
     $stmtOrcamentos = $myConn->prepare($sqlOrcamentos);
+
     $stmtOrcamentos->execute([
         ':itemProcurado' => $itemProcurado,
         ':anoCorrente'   => $anoCorrente
@@ -104,6 +102,7 @@ try {
     ";
 
     $stmtProcessos = $myConn->prepare($sqlProcessos);
+
     $stmtProcessos->execute([
         ':itemProcurado' => $itemProcurado,
         ':anoCorrente'   => $anoCorrente
@@ -132,6 +131,7 @@ try {
     ";
 
     $stmtAdjudicados = $myConn->prepare($sqlAdjudicados);
+
     $stmtAdjudicados->execute([
         ':itemProcurado' => $itemProcurado,
         ':anoCorrente'   => $anoCorrente
@@ -141,12 +141,11 @@ try {
 
 
     // ==========================================================
-    // 5. FATURAS DOS PROCESSOS
+    // 5. FATURAS
     // ==========================================================
     $sqlFaturas = "
         SELECT
             f.fact_proces_check,
-            e.ent_nome,
             f.fact_auto_num,
             f.fact_auto_data,
             f.fact_tipo,
@@ -155,13 +154,11 @@ try {
             f.fact_data,
             f.fact_iva,
             f.fact_valor
-        FROM factura f
+        FROM fatura f
         INNER JOIN processo p
             ON p.proces_check = f.fact_proces_check
         INNER JOIN orcamento o
             ON o.orc_check = p.proces_orc_check
-        INNER JOIN entidade e
-            ON e.ent_cod = f.fact_ent_cod
         WHERE o.orc_rubrica = :itemProcurado
           AND o.orc_ano = :anoCorrente
           AND p.proces_report_valores = 1
@@ -174,6 +171,7 @@ try {
     ";
 
     $stmtFaturas = $myConn->prepare($sqlFaturas);
+
     $stmtFaturas->execute([
         ':itemProcurado' => $itemProcurado,
         ':anoCorrente'   => $anoCorrente,
@@ -184,7 +182,7 @@ try {
 
 
     // ==========================================================
-    // 6. MAPA DE ADJUDICAÇÕES POR PROCESSO
+    // 6. CRIAR MAPA DOS ADJUDICADOS
     // ==========================================================
     $mapAdjudicados = [];
 
@@ -195,39 +193,42 @@ try {
 
 
     // ==========================================================
-    // 7. MAPA DE FATURAS POR PROCESSO
+    // 7. CRIAR MAPA DAS FATURAS
     // ==========================================================
     $mapFaturas = [];
 
     foreach ($faturas as $fatura) {
-        $procesCheck = $fatura['fact_proces_check'];
 
-        if (!isset($mapFaturas[$procesCheck])) {
-            $mapFaturas[$procesCheck] = [];
-        }
+        $procesCheck = $fatura['fact_proces_check'];
 
         $mapFaturas[$procesCheck][] = $fatura;
     }
 
 
     // ==========================================================
-    // 8. ASSOCIAR ADJUDICAÇÃO E FATURAS AOS PROCESSOS
+    // 8. ASSOCIAR VALORES E FATURAS AOS PROCESSOS
     // ==========================================================
     $mapProcessos = [];
 
     foreach ($processos as $processo) {
+
         $procesCheck = $processo['proces_check'];
         $orcCheck    = $processo['proces_orc_check'];
+
+        $faturasProcesso = $mapFaturas[$procesCheck] ?? [];
+
+        $totalFaturado = 0;
+
+        foreach ($faturasProcesso as $fatura) {
+            $totalFaturado += (float) $fatura['fact_valor'];
+        }
 
         $processo['adjudicado'] =
             $mapAdjudicados[$procesCheck] ?? 0;
 
-        $processo['faturas'] =
-            $mapFaturas[$procesCheck] ?? [];
+        $processo['faturado'] = $totalFaturado;
 
-        if (!isset($mapProcessos[$orcCheck])) {
-            $mapProcessos[$orcCheck] = [];
-        }
+        $processo['faturas'] = $faturasProcesso;
 
         $mapProcessos[$orcCheck][] = $processo;
     }
@@ -237,10 +238,32 @@ try {
     // 9. ASSOCIAR PROCESSOS AOS ORÇAMENTOS
     // ==========================================================
     foreach ($orcamentos as &$orcamento) {
+
         $orcCheck = $orcamento['orc_check'];
 
         $orcamento['processos'] =
             $mapProcessos[$orcCheck] ?? [];
+
+        $totalAdjudicado = 0;
+        $totalFaturado   = 0;
+
+        foreach ($orcamento['processos'] as $processo) {
+
+            $totalAdjudicado +=
+                (float) $processo['adjudicado'];
+
+            $totalFaturado +=
+                (float) $processo['faturado'];
+        }
+
+        $orcamento['total_orcamento'] =
+            (float) $orcamento['orcamento'];
+
+        $orcamento['total_adjudicado'] =
+            $totalAdjudicado;
+
+        $orcamento['total_faturado'] =
+            $totalFaturado;
     }
 
     unset($orcamento);
@@ -248,7 +271,6 @@ try {
 
     // ==========================================================
     // 10. RETORNO FINAL
-    // Rubrica -> Orçamento -> Processo -> Faturas
     // ==========================================================
     echo json_encode([
         "rubrica" => $rubrica,
@@ -256,6 +278,7 @@ try {
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
 } catch (PDOException $e) {
+
     http_response_code(500);
 
     echo json_encode([
@@ -263,3 +286,4 @@ try {
         "details" => $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }
+?>

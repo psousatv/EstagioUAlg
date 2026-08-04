@@ -22,14 +22,14 @@
 <link href="../../vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
 <!-- Fontawesome -->
 <link href="../../vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
-<!-- Datatables -->
+<!-- Datables -->
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
 
 <style>
   /* Adiciona uma imagem em 'background' a toda a página */
-  body {
+  body  {
     background-image: url('../../global/imagens/bgPages.jpg');
     background-size: cover;
   }
@@ -43,31 +43,30 @@
     <a class="navbar-brand" href="../../index.html">Orçamento - Detalhe da Rúbrica</a>
 
     <div class="ml-auto d-flex align-items-center">
-      <a class="btn btn-outline-light btn-sm mr-3" href="../../index.html">
-        <i class="fa fa-home"></i>
-      </a>
-      <span class="text-white-50 small">Paulo Sousa © 2024</span>
+        <a class="btn btn-outline-light btn-sm mr-3" href="../../index.html">
+            <i class="fa fa-home"></i>
+        </a>
+        <span class="text-white-50 small">Paulo Sousa © 2024</span>
     </div>
   </nav>
 
   <div class="page_wrapper">
-    <!-- Page Content -->
+    <!-- Page Content-->
     <h1 class="mt-2"></h1>
-
-    <div class="container-fluid">
-
+    <div class="container-fluid">  
+          
       <!-- Nome da Rúbrica -->
       <div class="row">
         <div class="col col-md-12" id="titulo"></div>
       </div>
 
       <!-- Valores na Rúbrica -->
-      <div class="row">
+      <div class="row" >
         <div class="col col-md-12" id="kpiValores">
-          <b>KPIs do Orçamento - Valores</b>
+        <b>KPIs do Orçamento - Valores</b>
         </div>
       </div>
-
+      
       <!-- DataTables Nested -->
       <div class="row">
         <div class="col col-md-12">
@@ -98,21 +97,23 @@
         </div>
       </div>
 
-      <!-- Faturação por Processo Administrativo -->
-      <!--
+
+      <!-- Facturação por Processo Administrativo -->
+       <!--
       <h1 class="mt-2"></h1>
       <div class="row col-md-12" id="lstFaturacaoPADM">
-        <b>Faturação por Processo Administrativo</b>
+        <b>Facturação por Processo Administrativo</b>
       </div>
       -->
-
+    
     </div>
   </div>
 
-<!-- JQuery - Deve ser incluído antes do Global -->
+<!-- JQuery - Deve Ser incluido antes do Global -->
 <script src="../../vendors/jquery/jquery.js"></script>
 <!-- Global -->
 <script src="../../global/js/scripts.js"></script>
+    
 <!-- Bootstrap -->
 <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
 <!-- Fontawesome -->
@@ -121,13 +122,12 @@
 <script src="../../vendors/datatables/datatables.min.js"></script>
 <!-- Charts -->
 <script src="../../vendors/charts/chart.umd.min.js"></script>
-<!-- jsPDF autoTable -->
-<script src="../../vendors/pdf/jspdf.umd.min.js"></script>
-<script src="../../vendors/pdf/jspdf.plugin.autotable.min.js"></script>
-<!-- SheetJS (XLSX) -->
-<script src="../../vendors/pdf/xlsx.full.min.js"></script>
 
+<!--script src="js/orcamentoResults.js"></script-->
 <script src="js/orcamentoNested.js"></script>
 
+
 </body>
+
 </html>
+

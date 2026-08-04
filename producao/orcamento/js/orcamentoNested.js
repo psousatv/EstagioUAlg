@@ -1,37 +1,142 @@
+// ==========================================================
+// FUNÇÕES GLOBAIS DE APOIO
+// ==========================================================
+function numero(valor) {
+  const resultado = Number(valor);
+  return Number.isFinite(resultado) ? resultado : 0;
+}
+
+function formatCurrency(valor) {
+  return new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(numero(valor));
+}
+
+function formatDate(valor) {
+  if (!valor) {return '';}
+
+  const data = String(valor).substring(0, 10);
+  const partes = data.split('-');
+
+  if (partes.length !== 3) {return escapeHtml(valor);}
+
+  const [ano, mes, dia] = partes;
+
+  return `${dia}-${mes}-${ano}`;
+}
+
+function formatPercentage(valor) {
+
+  const resultado = Number(valor);
+
+  if (!Number.isFinite(resultado)) { return '';}
+
+  return `${resultado.toLocaleString('pt-PT', {minimumFractionDigits: 0, maximumFractionDigits: 2})}%`;
+}
+
+function escapeHtml(valor) {
+  return String(valor ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function formatExpediente(valor) {
+
+  if (!valor) {return '';}
+
+  const texto = String(valor).trim();
+
+  if (/^[A-Za-z0-9]\.\d+\.\d+$/.test(texto)) {
+    return texto;
+  }
+
+  const prefixo = texto.charAt(0);
+  const ano = texto.slice(-2);
+  const numero = texto.slice(1, -2);
+
+  return `${prefixo}.${numero.padStart(5, '0')}.${ano}`;
+
+}
 
 $(document).ready(function () {
   const queryParams = getQueryParams();
-
   let table;
 
-  // Função para renderizar nested rows
+  let dadosExportacao = {rubrica: {}, orcamentos: []};
+
+  // ==========================================================
+  // FUNÇÕES DE APOIO AOS CÁLCULOS
+  // ==========================================================
+  
+  function calcularFaturadoProcesso(processo) {
+    
+    const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+    
+    return faturas.reduce((total, fatura) => total + numero(fatura.fact_valor), 0);
+
+  }
+
+  function calcularTotaisOrcamento(orcamento) {
+    
+    const processos = Array.isArray(orcamento.processos) ? orcamento.processos : [];
+    const totalOrcamento = numero(orcamento.orcamento);
+    const totalAdjudicado = processos.reduce((total, processo) => total + numero(processo.adjudicado), 0);
+    const totalFaturado = processos.reduce((total, processo) => total + calcularFaturadoProcesso(processo), 0);
+    const saldo = totalAdjudicado !== 0 ? totalOrcamento - totalAdjudicado : totalOrcamento;
+
+    return {
+      totalOrcamento,
+      totalAdjudicado,
+      totalFaturado,
+      saldo
+    };
+  }
+
+  function prepararDados(data) {
+    data.forEach(orcamento => {
+
+      const processos = Array.isArray(orcamento.processos) ? orcamento.processos : [];
+
+      processos.forEach(processo => {
+        processo.val_max = numero(processo.val_max);
+        processo.adjudicado = numero(processo.adjudicado);
+        processo.faturado = calcularFaturadoProcesso(processo);
+
+        processo.saldo = processo.adjudicado !== 0
+          ? processo.val_max - processo.adjudicado
+          : processo.val_max;
+      });
+
+      const totais = calcularTotaisOrcamento(orcamento);
+
+      orcamento.total_orcamento = totais.totalOrcamento;
+      orcamento.total_adjudicado = totais.totalAdjudicado;
+      orcamento.total_faturado = totais.totalFaturado;
+      orcamento.saldo = totais.saldo;
+
+    });
+
+    return data;
+  }
+
+  // ==========================================================
+  // NESTED ROWS DOS PROCESSOS
+  // ==========================================================
   function formatNested(processos) {
-    if (!processos || processos.length === 0) return 'Sem processos';
+    if (!Array.isArray(processos) || processos.length === 0) {
+      return '<div class="p-2 text-muted">Sem processos.</div>';
+    }
 
-    const grouped = processos.reduce((acc, proc) => {
-      const key = proc.proces_check;
-      if (!acc[key]) {
-        acc[key] = {
-          proces_check: key,
-          regime: proc.regime,
-          linha_orcamento: proc.linha_orcamento,
-          linha_se: proc.linha_se,
-          designacao: proc.designacao,
-          valor_maximo: proc.val_max,
-          adjudicado: 0,
-          faturado: 0
-        };
-      }
-      
-      acc[key].adjudicado += parseFloat(proc.adjudicado) || 0;
-      acc[key].faturado += parseFloat(proc.faturado) || 0;
-      return acc;
-    }, {});
-
-    const rows = Object.values(grouped).sort((a, b) => a.designacao.localeCompare(b.designacao));
+    const rows = [...processos].sort((a, b) =>
+      String(a.designacao || '').localeCompare(
+        String(b.designacao || ''),
+        'pt-PT'
+      )
+    );
 
     let html = `
-      <table class="table nested table-dark">
+      <table class="table nested table-dark mb-0 small">
         <thead>
           <tr>
             <th>Regime</th>
@@ -42,353 +147,1401 @@ $(document).ready(function () {
             <th class="text-center">Adjudicado</th>
             <th class="text-center">Faturado</th>
             <th class="text-center">Saldo</th>
+            <th style="width: 45px;">Faturas</th>
+            <th class="text-center" style="width: 95px;">Exportar</th>
           </tr>
         </thead>
+
         <tbody>
     `;
 
-    rows.forEach(proc => {
-     
-      const saldoProcesso =
-      proc.adjudicado !== 0
-          ? proc.valor_maximo - proc.adjudicado
-          : proc.valor_maximo;  
-      
-      //const saldoProcesso = proc.adjudicado === 0 && proc.faturado === 0 ? proc.previsto :
-      //proc.adjudicado > 0 && proc.faturado === 0 ? proc.previsto - proc.adjudicado :
-      //proc.previsto === 0 && proc.faturado > 0 ? proc.adjudicado - proc.faturado :
-      //proc.previsto - proc.faturado;
-      
-      //O previsto deve ter como base o plano de pagamentos para que retire os valores de cada ano
-      html += `<tr onclick="redirectProcesso(${proc.proces_check})">
-        <td>${proc.regime}</td>
-        <td>${proc.linha_orcamento}</td>
-        <td>${proc.linha_se}</td>
-        <td>${proc.designacao}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.valor_maximo)}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.adjudicado)}</td><td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(proc.faturado)}</td>
-        <td class="text-right">${Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(saldoProcesso)}</td>
-      </tr>`;
+    rows.forEach(processo => {
+      const processoId = String(processo.proces_check);
+
+      const temFaturas =
+        Array.isArray(processo.faturas) &&
+        processo.faturas.length > 0;
+
+      html += `
+        <tr class="linha-processo" data-processo-id="${escapeHtml(processoId)}">
+          
+          <td>${escapeHtml(processo.regime || '')}</td>
+          <td>${escapeHtml(processo.linha_orcamento || '')}</td>
+          <td>${escapeHtml(processo.linha_se || '')}</td>
+          <td>
+            <a
+              href="#"
+              class="text-white link-processo"
+              data-processo-id="${escapeHtml(processoId)}"
+              title="Abrir processo">
+              ${escapeHtml(processo.designacao || '')}
+            </a>
+          </td>
+          <td class="text-right">${formatCurrency(processo.val_max)}</td>
+          <td class="text-right">${formatCurrency(processo.adjudicado)}</td>
+          <td class="text-right">${formatCurrency(processo.faturado)}</td>
+          <td class="text-right">${formatCurrency(processo.saldo)}</td>
+          <!-- FATURAS -->
+          <td class="text-center align-middle">${temFaturas ? `
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-light btn-faturas"
+              data-processo-id="${escapeHtml(processoId)}"
+              title="Ver faturas">
+              <i class="fa-solid fa-plus"></i>
+            </button>`: `
+            <span class="text-white-50" title="Sem faturas">
+              <i class="fa-solid fa-minus"></i>
+            </span>`}
+          </td>
+          <!-- EXPORTAÇÃO -->
+          <td class="text-center align-middle">
+            <div class="d-flex flex-nowrap justify-content-center">
+              <button
+                type="button"
+                class="btn btn-sm btn-danger btn-exportar-processo-pdf mr-1"
+                data-processo-id="${escapeHtml(processoId)}"
+                title="Exportar processo para PDF">
+                <i class="fa-solid fa-file-pdf"></i>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-success btn-exportar-processo-excel"
+                data-processo-id="${escapeHtml(processoId)}"
+                title="Exportar processo para Excel">
+                <i class="fa-solid fa-file-excel"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr
+          id="faturas-${escapeHtml(processoId)}"
+          class="linha-faturas"
+          style="display: none;">
+          <td colspan="10" class="p-0">${formatFaturas(processo.faturas)}</td>
+        </tr>
+      `;
     });
 
-    html += `</tbody></table>`;
+    html += `
+        </tbody>
+      </table>
+    `;
+
     return html;
   }
 
-  // Inicializa DataTable
-table = $('#processosNested').DataTable({
-  ajax: {
-    url: 'dados/orcamentoNested.php',
-    dataSrc: function (json) {
-      const rubrica = json.rubrica || {};
-      const data = json.data || [];
+  // ==========================================================
+  // TABELA DAS FATURAS DE CADA PROCESSO
+  // ==========================================================
+  function formatFaturas(faturas) {
+    if (!Array.isArray(faturas) || faturas.length === 0) {
+      return `
+        <div class="bg-light text-muted p-3">
+          Este processo não possui faturas.
+        </div>
+      `;
+    }
 
-      console.table(data);
+    const faturasOrdenadas = [...faturas].sort((a, b) => {
+      
+      const dataA = a.fact_data ? new Date(a.fact_data).getTime() : 0;
+      const dataB = b.fact_data ? new Date(b.fact_data).getTime() : 0;
 
-      // Ordenar pelo tipo
-      data.sort((a, b) => a.tipo.localeCompare(b.tipo));
+      return dataA - dataB;
+    });
 
-      // Array com a contagem de processos de cada linha
-      window.processosPorLinha = data.map(row => Array.isArray(row.processos) ? row.processos.length : 0);
+    const totalFaturas = faturasOrdenadas.reduce((total, fatura) => total + numero(fatura.fact_valor), 0);
 
-      // Total de processos de todas as linhas
-      const totalProcessos = window.processosPorLinha.reduce((sum, qtd) => sum + qtd, 0);
+    let html = `
+      <div class="bg-light p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong class="text-dark">Faturas do processo</strong>
+          <span class="badge badge-warning">${faturasOrdenadas.length}
+            ${faturasOrdenadas.length === 1 ? 'fatura' : 'faturas'}
+          </span>
+        </div>
 
-      //console.table(rubrica);
-      //console.table(data[0]["ano"]);
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered table-striped bg-white mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th>Entidade</th>
+                <th>Expediente</th>
+                <th>Tipo</th>  
+                <th>Auto</th>
+                <th>Data do auto</th>
+                <th>Data da fatura</th>
+                <th>N.º da fatura</th>              
+                <th class="text-right">IVA</th>
+                <th class="text-right">Valor</th>
+              </tr>
+            </thead>
 
-      if (data.length > 0) {
-        
-        $('#titulo').html(`
-          <div class="row no-gutters align-items-center mb-2">
+            <tbody>
+    `;
 
-            <div class="col-10">
-                <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
-                ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
-                </div>
+    faturasOrdenadas.forEach(fatura => {
+      html += `
+        <tr>
+          <td>${escapeHtml(fatura.ent_nome || '')}</td>
+          <td>${formatExpediente(fatura.fact_expediente || '')}</td>
+          <td>
+            <span class="badge badge-info">${escapeHtml(fatura.fact_tipo || '')}</span>
+          </td>  
+          <td>${escapeHtml(fatura.fact_auto_num || '')}</td>
+          <td>${formatDate(fatura.fact_auto_data)}</td>
+          <td>${formatDate(fatura.fact_data)}</td>
+          <td>${escapeHtml(fatura.fact_num || '')}</td>
+          <td class="text-right">${formatCurrency(fatura.fact_iva)}</td>
+          <td class="text-right font-weight-bold">${formatCurrency(fatura.fact_valor)}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="8" class="text-right">Total faturado</th>
+                <th class="text-right">${formatCurrency(totalFaturas)}</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+      </div>
+    `;
+
+    return html;
+  }
+  
+  // ==========================================================
+  // TÍTULO DA PÁGINA
+  // ==========================================================
+  function renderTitulo(rubrica, data) {
+    const ano = data.length > 0
+      ? data[0].ano
+      : queryParams.anoCorrente || '';
+
+    $('#titulo').html(`
+      <div class="row no-gutters align-items-center mb-2">
+
+        <div class="col-10">
+          <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+            ${rubrica.rubrica || ''}: ${rubrica.tipo || ''} - ${rubrica.grupo || ''} - ${rubrica.descritivo || ''}
+          </div>
+        </div>
+
+        <div class="col-2">
+          <divclass="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
+            
+            <a href="orcamentoDashboard.html" 
+              class="btn btn-info mr-1" style="padding: 6px 14px;" title="Detalhes">
+              <i class="fa-solid fa-arrow-left text-light"></i>
+            </a>
+
+            <a href="orcamentoNested.html?itemProcurado=${encodeURIComponent(rubrica.rubrica || '')}&anoCorrente=${encodeURIComponent(ano)}"
+              class="btn btn-secondary mr-1" style="padding: 6px 14px;" title="Atualizar">
+              <i class="fa-solid fa-rotate text-light"></i>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+    `);
+  }
+
+  // ==========================================================
+  // KPIs
+  // ==========================================================
+  function renderKpis(data) {
+    const totais = data.reduce(
+      (acc, orcamento) => {
+        acc.totalOrcamento += numero(orcamento.total_orcamento);
+        acc.totalAdjudicado += numero(orcamento.total_adjudicado);
+        acc.totalFaturado += numero(orcamento.total_faturado);
+
+        return acc;
+      },
+      {
+        totalOrcamento: 0,
+        totalAdjudicado: 0,
+        totalFaturado: 0
+      }
+    );
+
+    const saldoTitulo = totais.totalAdjudicado !== 0
+      ? totais.totalOrcamento - totais.totalAdjudicado
+      : totais.totalOrcamento;
+
+    $('#kpiValores').html(`
+      <div class="row align-items-center mb-2">
+
+        <!-- ORÇAMENTO -->
+        <div class="col-md-2">
+          <div class="card bg-primary text-white h-100">
+            <div class="card-body py-2 px-2">
+              <div class="small">Orçamento</div>
+
+              <div class="text-right font-weight-bold">
+                ${formatCurrency(totais.totalOrcamento)}
+              </div>
             </div>
+          </div>
+        </div>
 
-            <div class="col-2">
-              <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
+        <!-- ADJUDICADO -->
+        <div class="col-md-2">
+          <div class="card bg-secondary text-white h-100">
+            <div class="card-body py-2 px-2">
+              <div class="small">Adjudicado</div>
 
-                <!-- Botões -->
-                <a href="orcamentoDashboard.html"
-                  class="btn btn-info mr-1"
-                  style="padding: 6px 14px;"
-                  title="Detalhes">
-                  <i class="fa-solid fa-arrow-left text-light"></i>
-                </a>
-
-                <a href="orcamentoNested.html?itemProcurado=${rubrica.rubrica}&anoCorrente=${data[0]["ano"]}"
-                  class="btn btn-secondary mr-1"
-                  style="padding: 6px 14px;"
-                  title="Atualizar">
-                  <i class="fa-solid fa-rotate text-light"></i>
-                </a>
-
+              <div class="text-right font-weight-bold">
+                ${formatCurrency(totais.totalAdjudicado)}
               </div>
             </div>
-
           </div>
-        `);
+        </div>
 
-        const { totalOrcamento, totalAdjudicado, totalFaturado } = data.reduce(
-          (acc, r) => {
-            acc.totalOrcamento += Number(r.total_orcamento) || 0;
-            acc.totalAdjudicado += Number(r.total_adjudicado) || 0;
-            acc.totalFaturado += Number(r.total_faturado) || 0;
-            return acc;
-          },
-          { totalOrcamento: 0, totalAdjudicado: 0, totalFaturado: 0 }
-        );
+        <!-- FATURADO -->
+        <div class="col-md-2">
+          <div class="card bg-warning text-dark h-100">
+            <div class="card-body py-2 px-2">
+              <div class="small">Faturado</div>
+
+              <div class="text-right font-weight-bold">
+                ${formatCurrency(totais.totalFaturado)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SALDO -->
+        <div class="col-md-2">
+          <div class="card bg-success text-white h-100">
+            <div class="card-body py-2 px-2">
+              <div class="small">Saldo</div>
+
+              <div class="text-right font-weight-bold">
+                ${formatCurrency(saldoTitulo)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="col-md-4 text-right">
+
+          <button
+            id="exportarPDF"
+            class="btn btn-danger btn-lg shadow-sm mr-2"
+            title="Exportar PDF"
+          >
+            <i class="fa-solid fa-file-pdf"></i>
+          </button>
+
+          <button
+            id="exportarExcel"
+            class="btn btn-success btn-lg shadow-sm"
+            title="Exportar Excel"
+          >
+            <i class="fa-solid fa-file-excel"></i>
+          </button>
+
+        </div>
+
+      </div>
+    `);
+
+    return saldoTitulo;
+  }
+
+  // ==========================================================
+  // LOCALIZAR PROCESSO PARA EXPORTAÇÃO INDIVIDUAL
+  // ==========================================================
+  function obterProcessoPorId(processoId) {
+    const orcamentos = Array.isArray(dadosExportacao.orcamentos)
+      ? dadosExportacao.orcamentos
+      : [];
+
+    for (const orcamento of orcamentos) {
+      const processos = Array.isArray(orcamento.processos)
+        ? orcamento.processos
+        : [];
+
+      const processo = processos.find(
+        item =>
+          String(item.proces_check) ===
+          String(processoId)
+      );
+
+      if (processo) {
+        return {
+          ...processo,
+
+          orc_check: orcamento.orc_check,
+          orcamento_tipo: orcamento.tipo,
+          orcamento_regime: orcamento.regime,
+          orcamento_descritivo: orcamento.descritivo,
+          valor_orcamento: numero(orcamento.orcamento)
         
-        const saldoTitulo =
-        totalAdjudicado !== 0
-            ? totalOrcamento - totalAdjudicado
-            : totalOrcamento;        
+        };
+      }
+    }
 
-        // Atualiza os valores na tabela
-        $('#kpiValores').html(`
-          <div class="row">
+    return null;
+  }
 
-              <div class="col-6 col-md-3 mb-2">
-                  <div class="card bg-primary text-white">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Orçamento</div>
-                          <div class="text-right font-weight-bold">
-                              
-                          </div>
-                      </div>
-                  </div>
-              </div>
+  // ==========================================================
+  // EXPORTAR UM PROCESSO ISOLADAMENTE
+  // ==========================================================
+  function exportarProcesso(
+    processoId,
+    formato
+  ) {
+    try {
+      const processo = obterProcessoPorId(processoId);
 
-              <div class="col-6 col-md-3 mb-2">
-                  <div class="card bg-secondary text-white">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Adjudicado</div>
-                          <div class="text-right font-weight-bold">
-                              
-                          </div>
-                      </div>
-                  </div>
-              </div>
+      if (!processo) {alert('Não foi possível encontrar o processo.');     
+        return;
+      }
 
-              <div class="col-6 col-md-3 mb-2">
-                  <div class="card bg-warning text-dark">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Faturado</div>
-                          <div class="text-right font-weight-bold">
-                              
-                          </div>
-                      </div>
-                  </div>
-              </div>
+      const rubrica = dadosExportacao.rubrica || {};
 
-              <div class="col-6 col-md-3 mb-2">
-                  <div class="card bg-success text-white">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Saldo</div>
-                          <div class="text-right font-weight-bold">
-                              ${formatCurrency(saldoTitulo)}
-                          </div>
-                      </div>
-                  </div>
-              </div>
+      if (formato === 'pdf') {
+        const documento = criarDocumentoFaturacaoPDF( rubrica, [processo] );
+        window.open(documento.output('bloburl'), '_blank');
+        return;
+      }
 
-              <!-- BOTÕES -->
-              <div class="col-md-2 text-right">
-      
-                  <button
-                      id="exportResumo"
-                      class="btn btn-danger btn-lg shadow-sm mr-2"
-                      title="Exportar PDF">
-                      <i class="fa-solid fa-file-pdf"></i>
-                  </button>
-      
-                  <button
-                      id="exportALLExcel"
-                      class="btn btn-success btn-lg shadow-sm"
-                      title="Exportar Excel">
-                      <i class="fa-solid fa-file-excel"></i>
-                  </button>
-      
-              </div>
+      if (formato === 'excel') {criarDocumentoFaturacaoExcel(rubrica, [processo]);
+        return;
+      }
 
-          </div>
-        `);
+      throw new Error(`Formato inválido: ${formato}`);
 
-        $('#kpiValores').html(`
-          <div class="row align-items-center mb-2">
-      
-              <!-- ORÇAMENTO -->
-              <div class="col-md-2">
-                  <div class="card bg-primary text-white h-100">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Orçamento</div>
-                          <div class="text-right font-weight-bold">
-                            ${formatCurrency(totalOrcamento)}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- ADJUDICADO -->
-              <div class="col-md-2">
-                  <div class="card bg-secondary text-white h-100">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Ajdudicado</div>
-                          <div class="text-right font-weight-bold">
-                            ${formatCurrency(totalAdjudicado)}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- FATURADO -->
-              <div class="col-md-2">
-                  <div class="card bg-warning text-dark h-100">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Faturado</div>
-                          <div class="text-right font-weight-bold">
-                            ${formatCurrency(totalFaturado)}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- SALDO -->
-              <div class="col-md-2">
-                  <div class="card bg-success text-white h-100">
-                      <div class="card-body py-2 px-2">
-                          <div class="small">Saldo</div>
-                          <div class="text-right font-weight-bold">
-                            ${formatCurrency(saldoTitulo)}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- BOTÕES -->
-              <div class="col-md-4 text-right">
-      
-                  <button
-                      id="exportResumo"
-                      class="btn btn-danger btn-lg shadow-sm mr-2"
-                      title="Exportar PDF">
-                      <i class="fa-solid fa-file-pdf"></i>
-                  </button>
-      
-                  <button
-                      id="exportALLExcel"
-                      class="btn btn-success btn-lg shadow-sm"
-                      title="Exportar Excel">
-                      <i class="fa-solid fa-file-excel"></i>
-                  </button>
-      
-              </div>
-      
-          </div>
-      `);
+    } catch (erro) {
+
+      console.error('Erro ao exportar o processo:', erro);
+      alert('Ocorreu um erro ao exportar o processo.');
+    }
+  }
 
 
+  // ==========================================================
+  // DATATABLE
+  // ==========================================================
+  table = $('#processosNested').DataTable({
+    ajax: {
+      url: 'dados/orcamentoNested.php',
 
+      data: function (d) {
+        return {
+          ...d,
+          ...queryParams
+        };
+      },
 
+      dataSrc: function (json) {
+        if (json.error) {
+          console.error(
+            json.error,
+            json.details || ''
+          );
+
+          $('#notaRodape').text(json.error);
+
+          return [];
         }
 
-      // Atualiza o rodapé com a nota
-      //const notaRodape = `Total de processos: ${totalProcessos} | Saldo: ${formatCurrency(saldoTitulo)}`;
-      //$('#notaRodape').text(notaRodape);  // Atualiza o conteúdo da nota no rodapé
+        const rubrica = json.rubrica || {};
 
-      return data;
+        const data = prepararDados(Array.isArray(json.data) ? json.data : []);
+
+        dadosExportacao = {rubrica, orcamentos: data};
+
+        data.sort((a, b) => 
+          String(a.tipo || '').localeCompare(String(b.tipo || ''), 'pt-PT'));
+
+        window.processosPorLinha = data.map(row => 
+          Array.isArray(row.processos) ? row.processos.length : 0);
+
+        const totalProcessos = window.processosPorLinha.reduce(
+          (total, quantidade) => total + quantidade, 0);
+
+        renderTitulo(rubrica, data);
+
+        const saldoTitulo = renderKpis(data);
+
+        $('#notaRodape').text(
+          `Total de processos: ${totalProcessos} | Saldo: ${formatCurrency(saldoTitulo)}`
+        );
+
+        //console.table(data);
+
+        return data;
+      },
+
+      error: function (xhr, error, thrown) {
+        console.error(
+          'Erro ao carregar os dados:', error, thrown);
+
+        $('#notaRodape').text('Erro ao carregar os dados.');}
     },
-    data: function(d) {
-      return { ...d, ...queryParams };
+
+    paging: false,
+    searching: false,
+    select: true,
+
+    columnDefs: [{className: 'dt-head-center', targets: '_all'}],
+    order: [[0, 'asc']],
+    columns: [
+      {data: 'regime'},
+      {data: 'descritivo',
+        render: function (data, type, row) {
+          const totalProcessosLinha = Array.isArray(row.processos) ? row.processos.length: 0;
+          return `${data || ''}
+            <span class="badge bg-info text-white">
+              (${totalProcessosLinha})
+            </span>
+          `;
+        }
+      },
+      {data: 'total_orcamento',
+        className: 'dt-body-right',
+        render: $.fn.dataTable.render.number('.', ',', 2, '')
+      },
+      {data: 'total_adjudicado', 
+        className: 'dt-body-right',
+        render: $.fn.dataTable.render.number('.', ',', 2, '')
+      },
+      {data: 'total_faturado',
+        className: 'dt-body-right',
+        render: $.fn.dataTable.render.number('.', ',', 2, '')
+      },
+      {data: 'saldo',
+        className: 'dt-body-right',
+        render: $.fn.dataTable.render.number('.', ',', 2, '')
+      },
+      {data: null,
+        className: 'details-control dt-center align-middle',
+        orderable: false,
+        defaultContent: `<button class="btn-detalhe"><i class="fa-plus"></i></button>`
+      },
+      {data: 'tipo',
+        visible: false
+      }
+    ]
+  });
+
+  // ==========================================================
+  // ABRIR / FECHAR PROCESSOS DO ORÇAMENTO
+  // ==========================================================
+  $('#processosNested tbody').on('click', 'td.details-control button',
+    function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const tr = $(this).closest('tr');
+      const row = table.row(tr);
+      const icon = $(this).find('i');
+
+      if (!row.data()) {
+        return;
+      }
+
+      if (row.child.isShown()) {row.child.hide();
+        tr.removeClass('shown');
+        icon
+          .removeClass('fa-minus')
+          .addClass('fa-plus');
+      } else {
+        row.child(formatNested(row.data().processos)).show();
+        tr.addClass('shown');
+        icon
+          .removeClass('fa-plus')
+          .addClass('fa-minus');
+      }
     }
-  },
-  paging: false,
-  searching: false,
-  select: true,
-  columnDefs: [{ className: "dt-head-center", targets: "_all" }],
-  order: [[0, 'asc']], // ordenado pelo regime de procedimento
-  columns: [
-    { data: 'regime' },
-    { 
-      data: 'descritivo',
-      render: function(data, type, row, meta) {
-        const totalProcessosLinha = window.processosPorLinha[meta.row] || 0;
-        return `${data} <span class="badge bg-info text-white">(${totalProcessosLinha})</span>`;
+  );
+
+  // ==========================================================
+  // ABRIR / FECHAR FATURAS DO PROCESSO
+  // ==========================================================
+  $('#processosNested').on(
+    'click',
+    '.btn-faturas',
+    function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const botao = $(this);
+      const linhaProcesso = botao.closest('tr.linha-processo');
+      const linhaFaturas = linhaProcesso.next('tr.linha-faturas');
+      const icon = botao.find('i');
+
+      if (!linhaFaturas.length) {console.error('Linha de faturas não encontrada.');
+        return;
+      }
+
+      if (linhaFaturas.is(':visible')) {
+        linhaFaturas.hide();
+        icon
+          .removeClass('fa-minus')
+          .addClass('fa-plus');
+      } else {
+        linhaFaturas.show();
+        icon
+          .removeClass('fa-plus')
+          .addClass('fa-minus');
+      }
+    }
+  );
+
+  // ==========================================================
+  // EXPORTAÇÃO PDF E EXCEL
+  // ==========================================================
+  async function exportarFaturacao(formato) {
+    try {
+      const rubrica = dadosExportacao.rubrica || {};
+      const orcamentos = Array.isArray(dadosExportacao.orcamentos)
+        ? dadosExportacao.orcamentos
+        : [];
+
+      const processos = obterProcessosExportacao(orcamentos);
+
+      if (processos.length === 0) {
+        alert('Não existem processos para exportar.');
+        return;
+      }
+
+      if (formato === 'pdf') {const documento = criarDocumentoFaturacaoPDF(rubrica, processos);
+        window.open(documento.output('bloburl'), '_blank');
+        return;
+      }
+
+      if (formato === 'excel') {criarDocumentoFaturacaoExcel(rubrica, processos);
+        return;
+      }
+
+      throw new Error(`Formato de exportação inválido: ${formato}`);
+
+    } catch (erro) {console.error('Erro ao exportar a faturação:', erro);
+
+      alert('Ocorreu um erro ao gerar o documento.');
+    }
+  }
+
+
+  // ==========================================================
+  // OBTER TODOS OS PROCESSOS DOS ORÇAMENTOS
+  // ==========================================================
+  function obterProcessosExportacao(orcamentos) {
+    const processos = [];
+
+    orcamentos.forEach(orcamento => {
+      const listaProcessos = Array.isArray(orcamento.processos)
+        ? orcamento.processos
+        : [];
+
+      listaProcessos.forEach(processo => {
+        processos.push({
+          ...processo,
+
+          orc_check: orcamento.orc_check,
+          orcamento_tipo: orcamento.tipo,
+          orcamento_regime: orcamento.regime,
+          orcamento_descritivo: orcamento.descritivo,
+          valor_orcamento: numero(orcamento.orcamento)
+        });
+      });
+    });
+
+    return processos.sort((a, b) =>
+      String(a.designacao || '').localeCompare(
+        String(b.designacao || ''),
+        'pt-PT'
+      )
+    );
+  }
+
+
+  // ==========================================================
+  // NOME COMPLETO DA RUBRICA
+  // ==========================================================
+  function obterNomeRubrica(rubrica) {
+    const partes = [
+      rubrica.rubrica,
+      rubrica.tipo,
+      rubrica.grupo,
+      rubrica.descritivo
+    ].filter(valor =>
+      valor !== null &&
+      valor !== undefined &&
+      String(valor).trim() !== ''
+    );
+
+    return partes.join(' - ');
+  }
+
+
+  // ==========================================================
+  // LIMPAR TEXTO PARA PDF
+  // ==========================================================
+  function cleanPdfText(valor) {
+    return String(valor ?? '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[^\x20-\xFF]/g, '')
+      .trim();
+  }
+
+
+  // ==========================================================
+  // PDF
+  // ==========================================================
+  function criarDocumentoFaturacaoPDF(rubrica, processos) {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      throw new Error('A biblioteca jsPDF não está disponível.');
+    }
+
+    const { jsPDF } = window.jspdf;
+    
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    if (typeof doc.autoTable !== 'function') {
+      throw new Error(
+        'A biblioteca jsPDF AutoTable não está disponível.'
+      );
+    }
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    const marginLeft = 10;
+    const marginRight = 10;
+
+    const tableWidth = pageWidth - marginLeft - marginRight;
+
+    const nomeRubrica = obterNomeRubrica(rubrica) || 'Rubrica não identificada';
+
+    let startY = 30;
+    let totalFaturadoGeral = 0;
+    let totalAdjudicadoGeral = 0;
+    let totalLimiteGeral = 0;
+
+    const totaisPorTipoFatura = {};
+
+    // ========================================================
+    // CABEÇALHO
+    // ========================================================
+    function adicionarCabecalho() {
+      const dataGeracao =
+        new Date().toLocaleDateString('pt-PT');
+
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+
+      doc.text('EXECUÇÃO ORÇAMENTAL — FATURAÇÃO', marginLeft, 10);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+
+      const linhasRubrica = doc.splitTextToSize(cleanPdfText(nomeRubrica), pageWidth - marginLeft - marginRight - 35);
+
+      doc.text(linhasRubrica, marginLeft, 16);
+      doc.text(`Gerado em: ${dataGeracao}`, pageWidth - marginRight, 10, {align: 'right'});
+
+      doc.setDrawColor(180, 180, 180);
+
+      doc.line(marginLeft, 23, pageWidth - marginRight, 23);
+    }
+
+
+    // ========================================================
+    // NOVA PÁGINA
+    // ========================================================
+    function adicionarNovaPagina() {
+      doc.addPage();
+      adicionarCabecalho();
+      startY = 30;
+    }
+
+
+    // ========================================================
+    // CABEÇALHO DO PROCESSO
+    // ========================================================
+    function adicionarCabecalhoProcesso(processo, totalFaturadoProcesso) {
+      if (startY > pageHeight - 50) {adicionarNovaPagina();}
+
+      const padm = processo.padm || processo.proces_check || '-';
+      const designacao = cleanPdfText(processo.designacao || 'Processo sem designação');
+
+      doc.setFillColor(52, 58, 64);
+      doc.rect(marginLeft, startY, tableWidth, 9, 'F');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(255, 255, 255);
+
+      const tituloProcesso = `${padm} — ${designacao}`;
+
+      const tituloLimitado = doc.splitTextToSize(tituloProcesso, tableWidth - 6);
+      doc.text(tituloLimitado[0], marginLeft + 3, startY + 6 );
+
+      doc.setTextColor(0, 0, 0);
+
+      doc.autoTable({
+        startY: startY + 11,
+
+        body: [
+          ['Regime', processo.regime || '-', 'Linha ORC.', processo.linha_orcamento || '-'],
+          ['Linha SE.', processo.linha_se || '-', 'Limite', formatCurrency(processo.val_max)],
+          ['Adjudicado', formatCurrency(processo.adjudicado), 'Faturado', formatCurrency(totalFaturadoProcesso)],
+          ['Saldo', formatCurrency(processo.saldo), 'N.º de faturas', Array.isArray(processo.faturas) ? String(processo.faturas.length): '0']
+        ],
+        theme: 'grid',
+        margin: {
+          left: marginLeft,
+          right: marginRight
+        },
+
+        styles: {
+          fontSize: 7.5,
+          cellPadding: 1.5,
+          valign: 'middle'
+        },
+
+        columnStyles: {
+          0: {cellWidth: 25, fontStyle: 'bold', fillColor: [240, 240, 240]},
+          1: {cellWidth: 65},
+          2: {cellWidth: 25, fontStyle: 'bold', fillColor: [240, 240, 240] },
+          3: {cellWidth: 75, halign: 'right'}
+        }
+      });
+
+      startY = doc.lastAutoTable.finalY + 3;
+    }
+
+
+    // ========================================================
+    // TABELA DE FATURAS
+    // ========================================================
+    function adicionarFaturasProcesso(processo) {
+      const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+
+      if (faturas.length === 0) {
+        doc.autoTable({
+          startY,
+
+          body: [['Este processo não possui faturas.']],
+          theme: 'grid',
+          margin: {left: marginLeft, right: marginRight },
+          styles: {
+            fontSize: 8,
+            textColor: [100, 100, 100],
+            fillColor: [250, 250, 250],
+            cellPadding: 2
+          }
+        });
+
+        startY = doc.lastAutoTable.finalY + 7;
+
+        return;
+      }
+
+      const linhas = faturas.map(fatura => [
+        cleanPdfText(fatura.ent_nome || '-'),
+        formatDate(fatura.fact_data) || '-',
+        [fatura.fact_tipo, fatura.fact_num].filter(Boolean).join(' ') || '-',
+        formatExpediente(fatura.fact_expediente) || '-',
+        fatura.fact_auto_num || '-',      
+        formatDate(fatura.fact_auto_data) || '-',
+        formatPercentage(fatura.fact_iva) || '-',
+        formatCurrency(fatura.fact_valor)
+      ]);
+
+      doc.autoTable({
+        startY,
+
+        head: [[
+          'Entidade',
+          'Data',
+          'Fatura',
+          'Expediente',
+          'Auto',
+          'Data do auto',
+          'IVA',
+          'Valor'
+        ]],
+
+        body: linhas,
+
+        theme: 'grid',
+
+        margin: {
+          left: marginLeft,
+          right: marginRight,
+          top: 27,
+          bottom: 15
+        },
+
+        styles: {
+          fontSize: 6.7,
+          cellPadding: 1.3,
+          overflow: 'linebreak',
+          valign: 'middle'
+        },
+
+        headStyles: {
+          fillColor: [23, 162, 184],
+          textColor: 255,
+          fontStyle: 'bold',
+          halign: 'center'
+        },
+
+        columnStyles: {
+          0: { cellWidth: 42 },                   // Entidade
+          1: { cellWidth: 18, halign: 'center' }, // Data
+          2: { cellWidth: 28 },                   // Fatura
+          3: { cellWidth: 26 },                   // Expediente
+          4: { cellWidth: 16, halign: 'center' }, // Auto
+          5: { cellWidth: 20, halign: 'center' }, // Data Auto
+          6: { cellWidth: 12, halign: 'right' },  // IVA
+          7: { cellWidth: 28, halign: 'right' }   // Valor
+        },
+
+        didParseCell(data) {
+          if (data.section === 'body' && data.column.index === 6 || data.column.index === 7) {
+            data.cell.text = [formatCurrency(data.cell.raw)];
+          }
+        },
+
+        didDrawPage() {adicionarCabecalho();}
+      });
+
+      startY = doc.lastAutoTable.finalY + 8;
+    }
+
+    // ========================================================
+    // ACUMULAR TOTAIS POR TIPO DE FATURA
+    // ========================================================
+    function acumularTotaisPorTipo(faturas) {
+      if (!Array.isArray(faturas)) {
+        return;
+      }
+
+      faturas.forEach(fatura => {
+        const tipo = String(
+          fatura.fact_tipo || 'SEM TIPO'
+        )
+          .trim()
+          .toUpperCase();
+
+        if (!totaisPorTipoFatura[tipo]) {
+          totaisPorTipoFatura[tipo] = {
+            quantidade: 0,
+            valor: 0
+          };
+        }
+
+        totaisPorTipoFatura[tipo].quantidade += 1;
+
+        totaisPorTipoFatura[tipo].valor +=
+          numero(fatura.fact_valor);
+      });
+    }
+    // ========================================================
+    // RESUMO FINAL
+    // ========================================================
+    // ========================================================
+// RESUMO FINAL
+// ========================================================
+function adicionarResumoFinal() {
+  const tiposOrdenados = Object.entries(
+    totaisPorTipoFatura
+  ).sort(([tipoA], [tipoB]) =>
+    tipoA.localeCompare(
+      tipoB,
+      'pt-PT'
+    )
+  );
+
+  /*
+   * Linhas principais do resumo.
+   */
+  const linhasResumo = [
+    [
+      'Total limite dos processos',
+      '',
+      formatCurrency(totalLimiteGeral)
+    ],
+    [
+      'Total adjudicado',
+      '',
+      formatCurrency(totalAdjudicadoGeral)
+    ],
+    [
+      'Total faturado',
+      '',
+      formatCurrency(totalFaturadoGeral)
+    ],
+    [
+      'Saldo',
+      '',
+      formatCurrency(
+        totalLimiteGeral -
+        totalAdjudicadoGeral
+      )
+    ]
+  ];
+
+  /*
+   * Separador visual antes dos totais
+   * por tipo de documento.
+   */
+  if (tiposOrdenados.length > 0) {
+    linhasResumo.push([
+      'Faturação por tipo',
+      'Registos',
+      'Valor'
+    ]);
+
+    tiposOrdenados.forEach(
+      ([tipo, totais]) => {
+        linhasResumo.push([
+          tipo,
+          String(totais.quantidade),
+          formatCurrency(totais.valor)
+        ]);
+      }
+    );
+  }
+
+  /*
+   * Calcula aproximadamente o espaço necessário.
+   * Cada linha ocupa cerca de 7 mm.
+   */
+  const alturaEstimada =
+    25 + linhasResumo.length * 7;
+
+  if (
+    startY >
+    pageHeight - alturaEstimada
+  ) {
+    adicionarNovaPagina();
+  }
+
+  doc.setFillColor(33, 37, 41);
+
+  doc.rect(
+    marginLeft,
+    startY,
+    tableWidth,
+    9,
+    'F'
+  );
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(255, 255, 255);
+
+  doc.text(
+    'RESUMO',
+    marginLeft + 3,
+    startY + 6
+  );
+
+  doc.setTextColor(0, 0, 0);
+
+  doc.autoTable({
+    startY: startY + 11,
+
+    body: linhasResumo,
+
+    theme: 'grid',
+
+    margin: {
+      left: marginLeft,
+      right: marginRight
+    },
+
+    tableWidth: 120,
+
+    styles: {
+      fontSize: 9,
+      cellPadding: 2,
+      valign: 'middle'
+    },
+
+    columnStyles: {
+      0: {
+        cellWidth: 65
+      },
+
+      1: {
+        cellWidth: 20,
+        halign: 'center'
+      },
+
+      2: {
+        cellWidth: 35,
+        halign: 'right'
       }
     },
-    { data: 'total_orcamento', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-    { data: 'total_adjudicado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-    { data: 'total_faturado', className: 'dt-body-right', render: $.fn.dataTable.render.number('.', ',', 2, '') },
-    {
-      data: null,
-      className: 'dt-body-right',
-      // O saldo de cada linha
-      // deve ser considerado a diferença entre o adjudicado e o faturado
-      // Caso o item não tenha sido utilizado, usar o previsto
-      render: function(data, type, row) {
-        const orcamento = row.total_orcamento || 0;
-        const adjudicado = row.total_adjudicado || 0;
-        const faturado = row.total_faturado || 0;
 
-        const saldoRubricas =
-        adjudicado !== 0
-            ? orcamento - adjudicado
-            : orcamento; 
+    didParseCell(data) {
+      /*
+       * Formatar as quatro linhas principais.
+       */
+      if (data.row.index < 4) {
+        if (data.column.index === 0) {
+          data.cell.styles.fontStyle =
+            'bold';
 
-        return $.fn.dataTable.render.number('.', ',', 2, '').display(saldoRubricas);
+          data.cell.styles.fillColor =
+            [245, 245, 245];
+        }
+
+        /*
+         * Junta visualmente as duas primeiras
+         * colunas nas linhas principais.
+         */
+        if (data.column.index === 1) {
+          data.cell.styles.fillColor =
+            [245, 245, 245];
+        }
       }
-    },
-    {
-      data: null,
-      className: 'details-control dt-center align-middle',
-      orderable: false,
-      defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-info"></i></button>'
-    },
-    { data: 'tipo', visible: false }
-  ]
-}
-);
 
+      /*
+       * Cabeçalho da secção por tipo.
+       */
+      if (
+        tiposOrdenados.length > 0 &&
+        data.row.index === 4
+      ) {
+        data.cell.styles.fillColor =
+          [23, 162, 184];
 
+        data.cell.styles.textColor =
+          [255, 255, 255];
 
-  // Nested rows toggle
-  $('#processosNested tbody').on('click', 'td.details-control button', function () {
-    const tr = $(this).closest('tr');
-    const row = table.row(tr);
-    const icon = $(this).find('i');
-
-    if (row.child.isShown()) {
-      row.child.hide();
-      icon.removeClass('fa-circle-info').addClass('fa-circle-minus');
-    } else {
-      row.child(formatNested(row.data().processos)).show();
-      icon.removeClass('fa-circle-minus').addClass('fa-circle-info');
+        data.cell.styles.fontStyle =
+          'bold';
+      }
     }
   });
-});
-  
-  
-function getQueryParams() {
-    const params = {};
-    const search = window.location.search;
-    const query = new URLSearchParams(search);
-    for (const [key, value] of query.entries()) {
-      params[key] = value;
-    }
-    return params;
-  };
-  
-// Função para formatar valores monetários
-function formatCurrency(value) {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-};
 
-// Ao clicar no processo redireciona para o processo
-function redirectProcesso(codigoProcesso){
-  var obrasURL = "../../producao/processos/processoResults.html?codigoProcesso=" + codigoProcesso;
-  //window.open(obrasURL, "_blank");
+  startY =
+    doc.lastAutoTable.finalY + 8;
+}
+
+
+    // ========================================================
+    // CONSTRUÇÃO DO DOCUMENTO
+    // ========================================================
+    adicionarCabecalho();
+
+    processos.forEach(processo => {
+      const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+      
+      acumularTotaisPorTipo(faturas);
+
+      const totalFaturadoProcesso = faturas.reduce((total, fatura) =>
+            total + numero(fatura.fact_valor), 0
+        );
+
+      totalLimiteGeral += numero(processo.val_max);
+      totalAdjudicadoGeral += numero(processo.adjudicado);
+      totalFaturadoGeral += totalFaturadoProcesso;
+      
+      
+      adicionarCabecalhoProcesso(processo, totalFaturadoProcesso);
+      adicionarFaturasProcesso(processo);
+
+    });
+
+    adicionarResumoFinal();
+    adicionarPaginacaoPDF(doc);
+
+    return doc;
+  }
+
+
+  // ==========================================================
+  // PAGINAÇÃO DO PDF
+  // ==========================================================
+  function adicionarPaginacaoPDF(doc) {
+    const totalPaginas =
+      doc.getNumberOfPages();
+
+    for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+      
+      doc.setPage(pagina);
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(90, 90, 90);
+
+      doc.text(`Página ${pagina} / ${totalPaginas}`, pageWidth - 10, pageHeight - 7, {align: 'right'});
+
+    }
+  }
+
+
+  // ==========================================================
+  // EXCEL
+  // ==========================================================
+  function criarDocumentoFaturacaoExcel(rubrica, processos ) {
+    
+    if (!window.XLSX) {throw new Error('A biblioteca XLSX não está disponível.');}
+
+    const linhas = criarLinhasFaturacaoExcel(processos);
+
+    if (linhas.length === 0) {alert('Não existem dados para exportar.');
+
+      return;
+
+    }
+
+    const nomeRubrica = obterNomeRubrica(rubrica);
+    const worksheet = XLSX.utils.json_to_sheet(linhas);
+    const workbook = XLSX.utils.book_new();
+
+    configurarLargurasFaturacaoExcel(worksheet);
+
+    worksheet['!autofilter'] = {ref: worksheet['!ref']};
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Faturação');
+
+    const processoUnico = processos.length === 1 ? processos[0] : null;
+
+    const nomeFicheiro = criarNomeFicheiroFaturacao(rubrica, 'xlsx', processoUnico);
+
+    XLSX.writeFile(workbook, nomeFicheiro);
+    
+  }
+
+
+  // ==========================================================
+  // LINHAS DO EXCEL
+  // ==========================================================
+  function criarLinhasFaturacaoExcel(processos) {
+
+    const linhas = [];
+
+    processos.forEach(processo => {
+      
+      const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+
+      const dadosProcesso = {
+        Processo: processo.padm || processo.proces_check || '-',
+        Designação: processo.designacao || '-',
+        Regime: processo.regime || '-',
+        'Linha ORC.': processo.linha_orcamento || '-',
+        'Linha SE.': processo.linha_se || '-',
+        Limite: numero(processo.val_max),
+        Adjudicado: numero(processo.adjudicado),
+        Saldo: numero(processo.saldo)
+      };
+
+      if (faturas.length === 0) {
+        linhas.push({
+          ...dadosProcesso,
+
+          'Data da fatura': '-',
+          Tipo: '-',
+          Fatura: '-',
+          Expediente: '-',
+          Auto: '-',
+          'Data do auto': '-',
+          IVA: 0,
+          'Valor da fatura': 0
+        });
+
+        return;
+      }
+
+      faturas.forEach(fatura => {
+        linhas.push({
+          ...dadosProcesso,
+
+          Entidade: fatura.ent_nome || '-',
+          'Data da fatura': fatura.fact_data || '-',
+          Tipo: fatura.fact_tipo || '-',
+          Fatura: fatura.fact_num || '-',
+          Expediente: formatExpediente(fatura.fact_expediente) || '-',
+          Auto: fatura.fact_auto_num || '-',
+          'Data do auto': fatura.fact_auto_data || '-',
+          IVA: numero(fatura.fact_iva),
+          'Valor da fatura': numero(fatura.fact_valor)
+        });
+      });
+    });
+
+    return linhas;
+  }
+
+
+  // ==========================================================
+  // LARGURAS DAS COLUNAS EXCEL
+  // ==========================================================
+  function configurarLargurasFaturacaoExcel(
+    worksheet
+  ) {
+    worksheet['!cols'] = [
+      { wch: 16 }, // Processo
+      { wch: 55 }, // Designação
+      { wch: 24 }, // Regime
+      { wch: 14 }, // Linha ORC.
+      { wch: 14 }, // Linha SE.
+      { wch: 15 }, // Limite
+      { wch: 15 }, // Adjudicado
+      { wch: 15 }, // Saldo
+      { wch: 40 }, // Entidade
+      { wch: 15 }, // Data da fatura
+      { wch: 10 }, // Tipo
+      { wch: 18 }, // Fatura
+      { wch: 22 }, // Expediente
+      { wch: 14 }, // Auto
+      { wch: 15 }, // Data do auto
+      { wch: 10 }, // IVA
+      { wch: 18 }  // Valor da fatura
+    ];
+  }
+
+
+  // ==========================================================
+  // NOME DO FICHEIRO
+  // ==========================================================
+  function criarNomeFicheiroFaturacao(
+    rubrica,
+    formato,
+    processo = null
+  ) {
+    const codigoRubrica =
+      rubrica.rubrica ||
+      'rubrica';
+
+    const codigoProcesso =
+      processo
+        ? (
+            processo.padm ||
+            processo.proces_check ||
+            'processo'
+          )
+        : 'todos';
+
+    const nomeSeguro = String(
+      `faturacao_${codigoRubrica}_${codigoProcesso}`
+    )
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase();
+
+    return `${nomeSeguro}.${formato}`;
+  }
+
+
+  // ==========================================================
+  // EVENTOS DOS BOTÕES
+  // ==========================================================
+  $('#kpiValores').on(
+    'click',
+    '#exportarPDF',
+    function (event) {
+      event.preventDefault();
+
+      exportarFaturacao('pdf');
+    }
+  );
+
+  $('#kpiValores').on(
+    'click',
+    '#exportarExcel',
+    function (event) {
+      event.preventDefault();
+
+      exportarFaturacao('excel');
+    }
+  );
+
+  // ==========================================================
+  // EXPORTAR PROCESSO PARA PDF
+  // ==========================================================
+  $('#processosNested').on(
+    'click',
+    '.btn-exportar-processo-pdf',
+    function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const processoId =
+        $(this).data('processo-id');
+
+      exportarProcesso(
+        processoId,
+        'pdf'
+      );
+    }
+  );
+
+
+  // ==========================================================
+  // EXPORTAR PROCESSO PARA EXCEL
+  // ==========================================================
+  $('#processosNested').on(
+    'click',
+    '.btn-exportar-processo-excel',
+    function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const processoId =
+        $(this).data('processo-id');
+
+      exportarProcesso(
+        processoId,
+        'excel'
+      );
+    }
+  );
+});
+
+// ==========================================================
+// PARÂMETROS DO URL
+// ==========================================================
+function getQueryParams() {
+  const params = {};
+
+  const query = new URLSearchParams(window.location.search);
+
+  for (const [key, value] of query.entries()) {
+    params[key] = value;
+  }
+
+  return params;
+}
+
+// ==========================================================
+// REDIRECIONAR PARA O PROCESSO
+// ==========================================================
+function redirectProcesso(codigoProcesso) {
+  const obrasURL = '../../producao/processos/processoResults.html?codigoProcesso=' + encodeURIComponent(codigoProcesso);
+
   window.location.href = obrasURL;
-};
+}
