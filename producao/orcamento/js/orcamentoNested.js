@@ -903,28 +903,44 @@ $(document).ready(function () {
         startY: startY + 11,
 
         body: [
-          ['Regime', processo.regime || '-', 'Linha ORC.', processo.linha_orcamento || '-'],
-          ['Linha SE.', processo.linha_se || '-', 'Limite', formatCurrency(processo.val_max)],
-          ['Adjudicado', formatCurrency(processo.adjudicado), 'Faturado', formatCurrency(totalFaturadoProcesso)],
-          ['Saldo', formatCurrency(processo.saldo), 'N.º de faturas', Array.isArray(processo.faturas) ? String(processo.faturas.length): '0']
+          [
+            {content: 'Regime', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.regime || '-',
+            {content: 'Linha ORC.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.linha_orcamento || '-',
+            {content: 'Linha SE.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.linha_se || '-',     
+            {content: 'Limite', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, 
+              {content: formatCurrency(processo.val_max), styles: {halign: 'right'}}
+          ],
+          [
+            {content: 'Adjudicado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: formatCurrency(processo.adjudicado), styles: {halign: 'right'}},
+            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
+            {content: 'Saldo', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: formatCurrency(processo.saldo), styles: {halign: 'right'}},
+            {content: '', colSpan: 2}
+          ],
+          [
+            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: Array.isArray(processo.faturas) ? String(processo.faturas.length) : '0', styles: {halign: 'center'}},
+            {content: '', colSpan: 6}
+          ]
         ],
+        
         theme: 'grid',
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
-
-        styles: {
-          fontSize: 7.5,
-          cellPadding: 1.5,
-          valign: 'middle'
-        },
-
+        
+        margin: {left: marginLeft, right: marginRight},
+        
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle'},
+        
         columnStyles: {
-          0: {cellWidth: 25, fontStyle: 'bold', fillColor: [240, 240, 240]},
-          1: {cellWidth: 65},
-          2: {cellWidth: 25, fontStyle: 'bold', fillColor: [240, 240, 240] },
-          3: {cellWidth: 75, halign: 'right'}
+          0: { cellWidth: 22 },
+          1: { cellWidth: 34 },
+          2: { cellWidth: 21 },
+          3: { cellWidth: 24 },       
+          4: { cellWidth: 19 },
+          5: { cellWidth: 24 },
+          6: { cellWidth: 18 },
+          7: { cellWidth: 28 }
         }
       });
 
@@ -1059,190 +1075,188 @@ $(document).ready(function () {
           numero(fatura.fact_valor);
       });
     }
+
     // ========================================================
     // RESUMO FINAL
     // ========================================================
-    // ========================================================
-// RESUMO FINAL
-// ========================================================
-function adicionarResumoFinal() {
-  const tiposOrdenados = Object.entries(
-    totaisPorTipoFatura
-  ).sort(([tipoA], [tipoB]) =>
-    tipoA.localeCompare(
-      tipoB,
-      'pt-PT'
-    )
-  );
+    function adicionarResumoFinal() {
+      const tiposOrdenados = Object.entries(
+        totaisPorTipoFatura
+      ).sort(([tipoA], [tipoB]) =>
+        tipoA.localeCompare(
+          tipoB,
+          'pt-PT'
+        )
+      );
 
-  /*
-   * Linhas principais do resumo.
-   */
-  const linhasResumo = [
-    [
-      'Total limite dos processos',
-      '',
-      formatCurrency(totalLimiteGeral)
-    ],
-    [
-      'Total adjudicado',
-      '',
-      formatCurrency(totalAdjudicadoGeral)
-    ],
-    [
-      'Total faturado',
-      '',
-      formatCurrency(totalFaturadoGeral)
-    ],
-    [
-      'Saldo',
-      '',
-      formatCurrency(
-        totalLimiteGeral -
-        totalAdjudicadoGeral
-      )
-    ]
-  ];
+      /*
+      * Linhas principais do resumo.
+      */
+      const linhasResumo = [
+        [
+          'Total limite dos processos',
+          '',
+          formatCurrency(totalLimiteGeral)
+        ],
+        [
+          'Total adjudicado',
+          '',
+          formatCurrency(totalAdjudicadoGeral)
+        ],
+        [
+          'Total faturado',
+          '',
+          formatCurrency(totalFaturadoGeral)
+        ],
+        [
+          'Saldo',
+          '',
+          formatCurrency(
+            totalLimiteGeral -
+            totalAdjudicadoGeral
+          )
+        ]
+      ];
 
-  /*
-   * Separador visual antes dos totais
-   * por tipo de documento.
-   */
-  if (tiposOrdenados.length > 0) {
-    linhasResumo.push([
-      'Faturação por tipo',
-      'Registos',
-      'Valor'
-    ]);
-
-    tiposOrdenados.forEach(
-      ([tipo, totais]) => {
+      /*
+      * Separador visual antes dos totais
+      * por tipo de documento.
+      */
+      if (tiposOrdenados.length > 0) {
         linhasResumo.push([
-          tipo,
-          String(totais.quantidade),
-          formatCurrency(totais.valor)
+          'Faturação por tipo',
+          'Registos',
+          'Valor'
         ]);
-      }
-    );
-  }
 
-  /*
-   * Calcula aproximadamente o espaço necessário.
-   * Cada linha ocupa cerca de 7 mm.
-   */
-  const alturaEstimada =
-    25 + linhasResumo.length * 7;
-
-  if (
-    startY >
-    pageHeight - alturaEstimada
-  ) {
-    adicionarNovaPagina();
-  }
-
-  doc.setFillColor(33, 37, 41);
-
-  doc.rect(
-    marginLeft,
-    startY,
-    tableWidth,
-    9,
-    'F'
-  );
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(255, 255, 255);
-
-  doc.text(
-    'RESUMO',
-    marginLeft + 3,
-    startY + 6
-  );
-
-  doc.setTextColor(0, 0, 0);
-
-  doc.autoTable({
-    startY: startY + 11,
-
-    body: linhasResumo,
-
-    theme: 'grid',
-
-    margin: {
-      left: marginLeft,
-      right: marginRight
-    },
-
-    tableWidth: 120,
-
-    styles: {
-      fontSize: 9,
-      cellPadding: 2,
-      valign: 'middle'
-    },
-
-    columnStyles: {
-      0: {
-        cellWidth: 65
-      },
-
-      1: {
-        cellWidth: 20,
-        halign: 'center'
-      },
-
-      2: {
-        cellWidth: 35,
-        halign: 'right'
-      }
-    },
-
-    didParseCell(data) {
-      /*
-       * Formatar as quatro linhas principais.
-       */
-      if (data.row.index < 4) {
-        if (data.column.index === 0) {
-          data.cell.styles.fontStyle =
-            'bold';
-
-          data.cell.styles.fillColor =
-            [245, 245, 245];
-        }
-
-        /*
-         * Junta visualmente as duas primeiras
-         * colunas nas linhas principais.
-         */
-        if (data.column.index === 1) {
-          data.cell.styles.fillColor =
-            [245, 245, 245];
-        }
+        tiposOrdenados.forEach(
+          ([tipo, totais]) => {
+            linhasResumo.push([
+              tipo,
+              String(totais.quantidade),
+              formatCurrency(totais.valor)
+            ]);
+          }
+        );
       }
 
       /*
-       * Cabeçalho da secção por tipo.
-       */
+      * Calcula aproximadamente o espaço necessário.
+      * Cada linha ocupa cerca de 7 mm.
+      */
+      const alturaEstimada =
+        25 + linhasResumo.length * 7;
+
       if (
-        tiposOrdenados.length > 0 &&
-        data.row.index === 4
+        startY >
+        pageHeight - alturaEstimada
       ) {
-        data.cell.styles.fillColor =
-          [23, 162, 184];
-
-        data.cell.styles.textColor =
-          [255, 255, 255];
-
-        data.cell.styles.fontStyle =
-          'bold';
+        adicionarNovaPagina();
       }
-    }
-  });
 
-  startY =
-    doc.lastAutoTable.finalY + 8;
-}
+      doc.setFillColor(33, 37, 41);
+
+      doc.rect(
+        marginLeft,
+        startY,
+        tableWidth,
+        9,
+        'F'
+      );
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(255, 255, 255);
+
+      doc.text(
+        'RESUMO',
+        marginLeft + 3,
+        startY + 6
+      );
+
+      doc.setTextColor(0, 0, 0);
+
+      doc.autoTable({
+        startY: startY + 11,
+
+        body: linhasResumo,
+
+        theme: 'grid',
+
+        margin: {
+          left: marginLeft,
+          right: marginRight
+        },
+
+        tableWidth: 120,
+
+        styles: {
+          fontSize: 9,
+          cellPadding: 2,
+          valign: 'middle'
+        },
+
+        columnStyles: {
+          0: {
+            cellWidth: 65
+          },
+
+          1: {
+            cellWidth: 20,
+            halign: 'center'
+          },
+
+          2: {
+            cellWidth: 35,
+            halign: 'right'
+          }
+        },
+
+        didParseCell(data) {
+          /*
+          * Formatar as quatro linhas principais.
+          */
+          if (data.row.index < 4) {
+            if (data.column.index === 0) {
+              data.cell.styles.fontStyle =
+                'bold';
+
+              data.cell.styles.fillColor =
+                [245, 245, 245];
+            }
+
+            /*
+            * Junta visualmente as duas primeiras
+            * colunas nas linhas principais.
+            */
+            if (data.column.index === 1) {
+              data.cell.styles.fillColor =
+                [245, 245, 245];
+            }
+          }
+
+          /*
+          * Cabeçalho da secção por tipo.
+          */
+          if (
+            tiposOrdenados.length > 0 &&
+            data.row.index === 4
+          ) {
+            data.cell.styles.fillColor =
+              [23, 162, 184];
+
+            data.cell.styles.textColor =
+              [255, 255, 255];
+
+            data.cell.styles.fontStyle =
+              'bold';
+          }
+        }
+      });
+
+      startY =
+        doc.lastAutoTable.finalY + 8;
+    }
 
 
     // ========================================================
