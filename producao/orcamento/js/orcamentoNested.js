@@ -1069,72 +1069,225 @@ $(document).ready(function () {
       startY = 30;
     }
 
-
     // ========================================================
     // CABEÇALHO DO PROCESSO
     // ========================================================
     function adicionarCabecalhoProcesso(processo, totalFaturadoProcesso) {
-      if (startY > pageHeight - 50) {adicionarNovaPagina();}
-
       const padm = processo.padm || processo.proces_check || '-';
-      const designacao = cleanPdfText(processo.designacao || 'Processo sem designação');
 
+      const designacao = cleanPdfText(
+        processo.designacao || 'Processo sem designação'
+      );
+
+      const tituloProcesso = `${padm} — ${designacao}`;
+
+      /*
+      * Divide o título em várias linhas,
+      * respeitando a largura disponível.
+      */
+      const tituloLinhas = doc.splitTextToSize(
+        tituloProcesso,
+        tableWidth - 6
+      );
+
+      /*
+      * Altura dinâmica da caixa do título.
+      * Cada linha ocupa aproximadamente 4 mm.
+      */
+      const alturaLinhaTitulo = 4;
+      const alturaTitulo = Math.max(
+        9,
+        5 + tituloLinhas.length * alturaLinhaTitulo
+      );
+
+      /*
+      * Espaço estimado necessário:
+      * título + tabela de resumo do processo.
+      */
+      const alturaNecessaria = alturaTitulo + 38;
+
+      if (startY > pageHeight - alturaNecessaria) {
+        adicionarNovaPagina();
+      }
+
+      // Fundo do título
       doc.setFillColor(52, 58, 64);
-      doc.rect(marginLeft, startY, tableWidth, 9, 'F');
 
+      doc.rect(
+        marginLeft,
+        startY,
+        tableWidth,
+        alturaTitulo,
+        'F'
+      );
+
+      // Texto do título
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
       doc.setTextColor(255, 255, 255);
 
-      const tituloProcesso = `${padm} — ${designacao}`;
-
-      const tituloLimitado = doc.splitTextToSize(tituloProcesso, tableWidth - 6);
-      doc.text(tituloLimitado[0], marginLeft + 3, startY + 6 );
+      doc.text(
+        tituloLinhas,
+        marginLeft + 3,
+        startY + 5,
+        {
+          lineHeightFactor: 1.15
+        }
+      );
 
       doc.setTextColor(0, 0, 0);
 
+      /*
+      * A tabela começa depois da altura dinâmica
+      * ocupada pelo título.
+      */
       doc.autoTable({
-        startY: startY + 11,
+        startY: startY + alturaTitulo + 2,
 
         body: [
           [
-            {content: 'Regime', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.regime || '-',
-            {content: 'Linha ORC.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.linha_orcamento || '-',
-            {content: 'Linha SE.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.linha_se || '-',     
-            {content: 'Limite', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, 
-              {content: formatCurrency(processo.val_max), styles: {halign: 'right'}}
+            {
+              content: 'Regime',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            processo.regime || '-',
+
+            {
+              content: 'Linha ORC.',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            processo.linha_orcamento || '-',
+
+            {
+              content: 'Linha SE.',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            processo.linha_se || '-',
+
+            {
+              content: 'Limite',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            {
+              content: formatCurrency(processo.val_max),
+              styles: {
+                halign: 'right'
+              }
+            }
           ],
+
           [
-            {content: 'Adjudicado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
-              {content: formatCurrency(processo.adjudicado), styles: {halign: 'right'}},
-            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
-              {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
-            {content: 'Saldo', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
-              {content: formatCurrency(processo.saldo), styles: {halign: 'right'}},
-            {content: '', colSpan: 2}
+            {
+              content: 'Adjudicado',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            {
+              content: formatCurrency(processo.adjudicado),
+              styles: {
+                halign: 'right'
+              }
+            },
+
+            {
+              content: 'Faturado',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            {
+              content: formatCurrency(totalFaturadoProcesso),
+              styles: {
+                halign: 'right'
+              }
+            },
+
+            {
+              content: 'Saldo',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            {
+              content: formatCurrency(processo.saldo),
+              styles: {
+                halign: 'right'
+              }
+            },
+
+            {
+              content: '',
+              colSpan: 2
+            }
           ],
+
           [
-            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
-            {content: Array.isArray(processo.faturas) ? String(processo.faturas.length) : '0', styles: {halign: 'center'}},
-            {content: '', colSpan: 6}
+            {
+              content: 'N.º de faturas',
+              styles: {
+                fontStyle: 'bold',
+                fillColor: [240, 240, 240]
+              }
+            },
+            {
+              content: Array.isArray(processo.faturas)
+                ? String(processo.faturas.length)
+                : '0',
+              styles: {
+                halign: 'center'
+              }
+            },
+
+            {
+              content: '',
+              colSpan: 6
+            }
           ]
         ],
-        
+
         theme: 'grid',
-        
-        margin: {left: marginLeft, right: marginRight},
-        
-        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle'},
-        
+
+        margin: {
+          left: marginLeft,
+          right: marginRight
+        },
+
+        styles: {
+          fontSize: 7.5,
+          cellPadding: 1.5,
+          valign: 'middle',
+          overflow: 'linebreak'
+        },
+
         columnStyles: {
           0: { cellWidth: 22 },
           1: { cellWidth: 34 },
           2: { cellWidth: 21 },
-          3: { cellWidth: 24 },       
+          3: { cellWidth: 24 },
           4: { cellWidth: 19 },
           5: { cellWidth: 24 },
           6: { cellWidth: 18 },
           7: { cellWidth: 28 }
+        },
+
+        didDrawPage() {
+          adicionarCabecalho();
         }
       });
 
