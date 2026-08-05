@@ -1,13 +1,13 @@
 // ==========================================================
 // FUNÇÕES GLOBAIS DE APOIO
 // ==========================================================
-function numero(valor) {
+function formatNumero(valor) {
   const resultado = Number(valor);
   return Number.isFinite(resultado) ? resultado : 0;
 }
 
 function formatCurrency(valor) {
-  return new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(numero(valor));
+  return new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(formatNumero(valor));
 }
 
 function formatDate(valor) {
@@ -52,10 +52,11 @@ function formatExpediente(valor) {
   }
 
   const prefixo = texto.charAt(0);
+  const registo = texto.slice(1, -2);
   const ano = texto.slice(-2);
-  const numero = texto.slice(1, -2);
+  
 
-  return `${prefixo}.${numero.padStart(5, '0')}.${ano}`;
+  return `${prefixo}.${registo.padStart(5, '0')}.${ano}`;
 
 }
 
@@ -73,15 +74,15 @@ $(document).ready(function () {
     
     const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
     
-    return faturas.reduce((total, fatura) => total + numero(fatura.fact_valor), 0);
+    return faturas.reduce((total, fatura) => total + formatNumero(fatura.fact_valor), 0);
 
   }
 
   function calcularTotaisOrcamento(orcamento) {
     
     const processos = Array.isArray(orcamento.processos) ? orcamento.processos : [];
-    const totalOrcamento = numero(orcamento.orcamento);
-    const totalAdjudicado = processos.reduce((total, processo) => total + numero(processo.adjudicado), 0);
+    const totalOrcamento = formatNumero(orcamento.orcamento);
+    const totalAdjudicado = processos.reduce((total, processo) => total + formatNumero(processo.adjudicado), 0);
     const totalFaturado = processos.reduce((total, processo) => total + calcularFaturadoProcesso(processo), 0);
     const saldo = totalAdjudicado !== 0 ? totalOrcamento - totalAdjudicado : totalOrcamento;
 
@@ -99,8 +100,8 @@ $(document).ready(function () {
       const processos = Array.isArray(orcamento.processos) ? orcamento.processos : [];
 
       processos.forEach(processo => {
-        processo.val_max = numero(processo.val_max);
-        processo.adjudicado = numero(processo.adjudicado);
+        processo.val_max = formatNumero(processo.val_max);
+        processo.adjudicado = formatNumero(processo.adjudicado);
         processo.faturado = calcularFaturadoProcesso(processo);
 
         processo.saldo = processo.adjudicado !== 0
@@ -251,7 +252,7 @@ $(document).ready(function () {
       return dataA - dataB;
     });
 
-    const totalFaturas = faturasOrdenadas.reduce((total, fatura) => total + numero(fatura.fact_valor), 0);
+    const totalFaturas = faturasOrdenadas.reduce((total, fatura) => total + formatNumero(fatura.fact_valor), 0);
 
     let html = `
       <div class="bg-light p-3">
@@ -359,9 +360,9 @@ $(document).ready(function () {
   function renderKpis(data) {
     const totais = data.reduce(
       (acc, orcamento) => {
-        acc.totalOrcamento += numero(orcamento.total_orcamento);
-        acc.totalAdjudicado += numero(orcamento.total_adjudicado);
-        acc.totalFaturado += numero(orcamento.total_faturado);
+        acc.totalOrcamento += formatNumero(orcamento.total_orcamento);
+        acc.totalAdjudicado += formatNumero(orcamento.total_adjudicado);
+        acc.totalFaturado += formatNumero(orcamento.total_faturado);
 
         return acc;
       },
@@ -485,7 +486,7 @@ $(document).ready(function () {
           orcamento_tipo: orcamento.tipo,
           orcamento_regime: orcamento.regime,
           orcamento_descritivo: orcamento.descritivo,
-          valor_orcamento: numero(orcamento.orcamento)
+          valor_orcamento: formatNumero(orcamento.orcamento)
         
         };
       }
@@ -754,7 +755,7 @@ $(document).ready(function () {
           orcamento_tipo: orcamento.tipo,
           orcamento_regime: orcamento.regime,
           orcamento_descritivo: orcamento.descritivo,
-          valor_orcamento: numero(orcamento.orcamento)
+          valor_orcamento: formatNumero(orcamento.orcamento)
         });
       });
     });
@@ -865,7 +866,7 @@ $(document).ready(function () {
             return;
           }
 
-          meses[mes - 1] += numero(fatura.fact_valor);
+          meses[mes - 1] += formatNumero(fatura.fact_valor);
         });
       });
 
@@ -1085,20 +1086,14 @@ $(document).ready(function () {
       * Divide o título em várias linhas,
       * respeitando a largura disponível.
       */
-      const tituloLinhas = doc.splitTextToSize(
-        tituloProcesso,
-        tableWidth - 6
-      );
+      const tituloLinhas = doc.splitTextToSize(tituloProcesso, tableWidth - 6);
 
       /*
       * Altura dinâmica da caixa do título.
       * Cada linha ocupa aproximadamente 4 mm.
       */
       const alturaLinhaTitulo = 4;
-      const alturaTitulo = Math.max(
-        9,
-        5 + tituloLinhas.length * alturaLinhaTitulo
-      );
+      const alturaTitulo = Math.max(9, 5 + tituloLinhas.length * alturaLinhaTitulo);
 
       /*
       * Espaço estimado necessário:
@@ -1106,35 +1101,19 @@ $(document).ready(function () {
       */
       const alturaNecessaria = alturaTitulo + 38;
 
-      if (startY > pageHeight - alturaNecessaria) {
-        adicionarNovaPagina();
-      }
+      if (startY > pageHeight - alturaNecessaria) {adicionarNovaPagina();}
 
       // Fundo do título
       doc.setFillColor(52, 58, 64);
 
-      doc.rect(
-        marginLeft,
-        startY,
-        tableWidth,
-        alturaTitulo,
-        'F'
-      );
+      doc.rect(marginLeft, startY, tableWidth, alturaTitulo, 'F');
 
       // Texto do título
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
       doc.setTextColor(255, 255, 255);
 
-      doc.text(
-        tituloLinhas,
-        marginLeft + 3,
-        startY + 5,
-        {
-          lineHeightFactor: 1.15
-        }
-      );
-
+      doc.text(tituloLinhas, marginLeft + 3, startY + 5, {lineHeightFactor: 1.15});
       doc.setTextColor(0, 0, 0);
 
       /*
@@ -1146,134 +1125,33 @@ $(document).ready(function () {
 
         body: [
           [
-            {
-              content: 'Regime',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            processo.regime || '-',
-
-            {
-              content: 'Linha ORC.',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            processo.linha_orcamento || '-',
-
-            {
-              content: 'Linha SE.',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            processo.linha_se || '-',
-
-            {
-              content: 'Limite',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            {
-              content: formatCurrency(processo.val_max),
-              styles: {
-                halign: 'right'
-              }
-            }
+            {content: 'Regime', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.regime || '-',
+            {content: 'Linha ORC.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.linha_orcamento || '-',
+            {content: 'Linha SE.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, processo.linha_se || '-',
+            {content: 'Limite', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, 
+              {content: formatCurrency(processo.val_max), styles: {halign: 'right'}}
           ],
-
           [
-            {
-              content: 'Adjudicado',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            {
-              content: formatCurrency(processo.adjudicado),
-              styles: {
-                halign: 'right'
-              }
-            },
-
-            {
-              content: 'Faturado',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            {
-              content: formatCurrency(totalFaturadoProcesso),
-              styles: {
-                halign: 'right'
-              }
-            },
-
-            {
-              content: 'Saldo',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            {
-              content: formatCurrency(processo.saldo),
-              styles: {
-                halign: 'right'
-              }
-            },
-
-            {
-              content: '',
-              colSpan: 2
-            }
+            {content: 'Adjudicado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: formatCurrency(processo.adjudicado), styles: {halign: 'right'}},
+            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
+            {content: 'Saldo', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: formatCurrency(processo.saldo), styles: {halign: 'right'}},
+            {content: '', colSpan: 2}
           ],
-
           [
-            {
-              content: 'N.º de faturas',
-              styles: {
-                fontStyle: 'bold',
-                fillColor: [240, 240, 240]
-              }
-            },
-            {
-              content: Array.isArray(processo.faturas)
-                ? String(processo.faturas.length)
-                : '0',
-              styles: {
-                halign: 'center'
-              }
-            },
-
-            {
-              content: '',
-              colSpan: 6
-            }
+            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+              {content: Array.isArray(processo.faturas) ? String(processo.faturas.length) : '0', styles: {halign: 'center'}},
+            {content: '', colSpan: 6}
           ]
         ],
 
         theme: 'grid',
 
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
+        margin: {left: marginLeft, right: marginRight},
 
-        styles: {
-          fontSize: 7.5,
-          cellPadding: 1.5,
-          valign: 'middle',
-          overflow: 'linebreak'
-        },
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle', overflow: 'linebreak'},
 
         columnStyles: {
           0: { cellWidth: 22 },
@@ -1321,16 +1199,18 @@ $(document).ready(function () {
         return;
       }
 
-      const linhas = faturas.map(fatura => [
+      const linhas = faturas.map(fatura => 
+        [
         cleanPdfText(fatura.ent_nome || '-'),
         formatDate(fatura.fact_data) || '-',
         [fatura.fact_tipo, fatura.fact_num].filter(Boolean).join(' ') || '-',
         formatExpediente(fatura.fact_expediente) || '-',
         fatura.fact_auto_num || '-',      
         formatDate(fatura.fact_auto_data) || '-',
-        numero(fatura.fact_iva) || '-',
-        numero(fatura.fact_valor)
-      ]);
+        formatNumero(fatura.fact_iva) || '-',
+        formatNumero(fatura.fact_valor)
+        ]
+      );
 
       doc.autoTable({
         startY,
@@ -1405,23 +1285,19 @@ $(document).ready(function () {
       }
 
       faturas.forEach(fatura => {
-        const tipo = String(
-          fatura.fact_tipo || 'SEM TIPO'
-        )
+        const tipo = String(fatura.fact_tipo || 'SEM TIPO')
           .trim()
           .toUpperCase();
 
-        if (!totaisPorTipoFatura[tipo]) {
-          totaisPorTipoFatura[tipo] = {
+        if (!totaisPorTipoFatura[tipo]) {totaisPorTipoFatura[tipo] = {
             quantidade: 0,
             valor: 0
           };
         }
 
         totaisPorTipoFatura[tipo].quantidade += 1;
+        totaisPorTipoFatura[tipo].valor += formatNumero(fatura.fact_valor);
 
-        totaisPorTipoFatura[tipo].valor +=
-          numero(fatura.fact_valor);
       });
     }
 
@@ -1429,42 +1305,18 @@ $(document).ready(function () {
     // RESUMO FINAL
     // ========================================================
     function adicionarResumoFinal() {
-      const tiposOrdenados = Object.entries(
-        totaisPorTipoFatura
-      ).sort(([tipoA], [tipoB]) =>
-        tipoA.localeCompare(
-          tipoB,
-          'pt-PT'
-        )
+      const tiposOrdenados = Object.entries(totaisPorTipoFatura).sort(
+        ([tipoA], [tipoB]) => tipoA.localeCompare(tipoB, 'pt-PT')
       );
 
       /*
       * Linhas principais do resumo.
       */
       const linhasResumo = [
-        [
-          'Total limite dos processos',
-          '',
-          formatCurrency(totalLimiteGeral)
-        ],
-        [
-          'Total adjudicado',
-          '',
-          formatCurrency(totalAdjudicadoGeral)
-        ],
-        [
-          'Total faturado',
-          '',
-          formatCurrency(totalFaturadoGeral)
-        ],
-        [
-          'Saldo',
-          '',
-          formatCurrency(
-            totalLimiteGeral -
-            totalAdjudicadoGeral
-          )
-        ]
+        ['Total limite dos processos', '', formatCurrency(totalLimiteGeral)],
+        ['Total adjudicado', '', formatCurrency(totalAdjudicadoGeral)],
+        ['Total faturado', '', formatCurrency(totalFaturadoGeral)],
+        ['Saldo', '', formatCurrency(totalLimiteGeral - totalAdjudicadoGeral)]
       ];
 
       /*
@@ -1472,56 +1324,38 @@ $(document).ready(function () {
       * por tipo de documento.
       */
       if (tiposOrdenados.length > 0) {
-        linhasResumo.push([
-          'Faturação por tipo',
-          'Registos',
-          'Valor'
-        ]);
-
-        tiposOrdenados.forEach(
-          ([tipo, totais]) => {
-            linhasResumo.push([
-              tipo,
-              String(totais.quantidade),
-              formatCurrency(totais.valor)
-            ]);
-          }
+        linhasResumo.push(
+          [
+            'Faturação por tipo',
+            'Registos',
+            'Valor'
+          ]
         );
+
+        tiposOrdenados.forEach(([tipo, totais]) => {linhasResumo.push(
+          [tipo, String(totais.quantidade), formatCurrency(totais.valor)]
+        );});
       }
 
       /*
       * Calcula aproximadamente o espaço necessário.
       * Cada linha ocupa cerca de 7 mm.
       */
-      const alturaEstimada =
-        25 + linhasResumo.length * 7;
+      const alturaEstimada = 25 + linhasResumo.length * 7;
 
-      if (
-        startY >
-        pageHeight - alturaEstimada
-      ) {
+      if (startY > pageHeight - alturaEstimada ) {
         adicionarNovaPagina();
       }
 
       doc.setFillColor(33, 37, 41);
 
-      doc.rect(
-        marginLeft,
-        startY,
-        tableWidth,
-        9,
-        'F'
-      );
+      doc.rect(marginLeft, startY, tableWidth, 9, 'F');
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(10);
       doc.setTextColor(255, 255, 255);
 
-      doc.text(
-        'RESUMO',
-        marginLeft + 3,
-        startY + 6
-      );
+      doc.text('RESUMO', marginLeft + 3, startY + 6);
 
       doc.setTextColor(0, 0, 0);
 
@@ -1532,33 +1366,16 @@ $(document).ready(function () {
 
         theme: 'grid',
 
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
+        margin: {left: marginLeft, right: marginRight},
 
         tableWidth: 120,
 
-        styles: {
-          fontSize: 9,
-          cellPadding: 2,
-          valign: 'middle'
-        },
+        styles: {fontSize: 9, cellPadding: 2, valign: 'middle'},
 
         columnStyles: {
-          0: {
-            cellWidth: 65
-          },
-
-          1: {
-            cellWidth: 20,
-            halign: 'center'
-          },
-
-          2: {
-            cellWidth: 35,
-            halign: 'right'
-          }
+          0: {cellWidth: 65},
+          1: {cellWidth: 20, halign: 'center'},
+          2: {cellWidth: 35, halign: 'right'}
         },
 
         didParseCell(data) {
@@ -1567,44 +1384,28 @@ $(document).ready(function () {
           */
           if (data.row.index < 4) {
             if (data.column.index === 0) {
-              data.cell.styles.fontStyle =
-                'bold';
-
-              data.cell.styles.fillColor =
-                [245, 245, 245];
+              data.cell.styles.fontStyle = 'bold';
+              data.cell.styles.fillColor = [245, 245, 245];
             }
 
             /*
-            * Junta visualmente as duas primeiras
-            * colunas nas linhas principais.
+            * Junta visualmente as duas primeiras colunas nas linhas principais.
             */
-            if (data.column.index === 1) {
-              data.cell.styles.fillColor =
-                [245, 245, 245];
-            }
+            if (data.column.index === 1) {data.cell.styles.fillColor = [245, 245, 245];}
           }
 
           /*
           * Cabeçalho da secção por tipo.
           */
-          if (
-            tiposOrdenados.length > 0 &&
-            data.row.index === 4
-          ) {
-            data.cell.styles.fillColor =
-              [23, 162, 184];
-
-            data.cell.styles.textColor =
-              [255, 255, 255];
-
-            data.cell.styles.fontStyle =
-              'bold';
+          if (tiposOrdenados.length > 0 && data.row.index === 4) {
+            data.cell.styles.fillColor = [23, 162, 184];
+            data.cell.styles.textColor = [255, 255, 255];
+            data.cell.styles.fontStyle = 'bold';
           }
         }
       });
 
-      startY =
-        doc.lastAutoTable.finalY + 8;
+      startY = doc.lastAutoTable.finalY + 8;
     }
 
 
@@ -1619,11 +1420,11 @@ $(document).ready(function () {
       acumularTotaisPorTipo(faturas);
 
       const totalFaturadoProcesso = faturas.reduce((total, fatura) =>
-            total + numero(fatura.fact_valor), 0
+            total + formatNumero(fatura.fact_valor), 0
         );
 
-      totalLimiteGeral += numero(processo.val_max);
-      totalAdjudicadoGeral += numero(processo.adjudicado);
+      totalLimiteGeral += formatNumero(processo.val_max);
+      totalAdjudicadoGeral += formatNumero(processo.adjudicado);
       totalFaturadoGeral += totalFaturadoProcesso;
       
       
@@ -1716,9 +1517,9 @@ $(document).ready(function () {
         Regime: processo.regime || '-',
         'Linha ORC.': processo.linha_orcamento || '-',
         'Linha SE.': processo.linha_se || '-',
-        Limite: numero(processo.val_max),
-        Adjudicado: numero(processo.adjudicado),
-        Saldo: numero(processo.saldo)
+        Limite: formatNumero(processo.val_max),
+        Adjudicado: formatNumero(processo.adjudicado),
+        Saldo: formatNumero(processo.saldo)
       };
 
       if (faturas.length === 0) {
@@ -1749,8 +1550,8 @@ $(document).ready(function () {
           Expediente: formatExpediente(fatura.fact_expediente) || '-',
           Auto: fatura.fact_auto_num || '-',
           'Data do auto': fatura.fact_auto_data || '-',
-          IVA: numero(fatura.fact_iva),
-          'Valor da fatura': numero(fatura.fact_valor)
+          IVA: formatNumero(fatura.fact_iva),
+          'Valor da fatura': formatNumero(fatura.fact_valor)
         });
       });
     });
@@ -1790,27 +1591,12 @@ $(document).ready(function () {
   // ==========================================================
   // NOME DO FICHEIRO
   // ==========================================================
-  function criarNomeFicheiroFaturacao(
-    rubrica,
-    formato,
-    processo = null
-  ) {
-    const codigoRubrica =
-      rubrica.rubrica ||
-      'rubrica';
+  function criarNomeFicheiroFaturacao(rubrica, formato, processo = null) {
+    
+    const codigoRubrica = rubrica.rubrica || 'rubrica';
+    const codigoProcesso = processo ? (processo.padm || processo.proces_check || 'processo') : 'todos';
 
-    const codigoProcesso =
-      processo
-        ? (
-            processo.padm ||
-            processo.proces_check ||
-            'processo'
-          )
-        : 'todos';
-
-    const nomeSeguro = String(
-      `faturacao_${codigoRubrica}_${codigoProcesso}`
-    )
+    const nomeSeguro = String(`faturacao_${codigoRubrica}_${codigoProcesso}`)
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-zA-Z0-9_-]+/g, '_')
@@ -1824,22 +1610,16 @@ $(document).ready(function () {
   // ==========================================================
   // EVENTOS DOS BOTÕES
   // ==========================================================
-  $('#kpiValores').on(
-    'click',
-    '#exportarPDF',
+  $('#kpiValores').on('click', '#exportarPDF',
     function (event) {
       event.preventDefault();
-
       exportarFaturacao('pdf');
     }
   );
 
-  $('#kpiValores').on(
-    'click',
-    '#exportarExcel',
+  $('#kpiValores').on('click', '#exportarExcel',
     function (event) {
       event.preventDefault();
-
       exportarFaturacao('excel');
     }
   );
@@ -1847,20 +1627,15 @@ $(document).ready(function () {
   // ==========================================================
   // EXPORTAR PROCESSO PARA PDF
   // ==========================================================
-  $('#processosNested').on(
-    'click',
-    '.btn-exportar-processo-pdf',
+  $('#processosNested').on('click', '.btn-exportar-processo-pdf',
     function (event) {
       event.preventDefault();
       event.stopPropagation();
 
-      const processoId =
-        $(this).data('processo-id');
+      const processoId = $(this).data('processo-id');
 
-      exportarProcesso(
-        processoId,
-        'pdf'
-      );
+      exportarProcesso(processoId, 'pdf');
+
     }
   );
 
@@ -1868,30 +1643,23 @@ $(document).ready(function () {
   // ==========================================================
   // EXPORTAR PROCESSO PARA EXCEL
   // ==========================================================
-  $('#processosNested').on(
-    'click',
-    '.btn-exportar-processo-excel',
+  $('#processosNested').on('click', '.btn-exportar-processo-excel',
     function (event) {
       event.preventDefault();
       event.stopPropagation();
 
-      const processoId =
-        $(this).data('processo-id');
+      const processoId = $(this).data('processo-id');
 
-      exportarProcesso(
-        processoId,
-        'excel'
-      );
+      exportarProcesso(processoId, 'excel');
+
     }
   );
 
 
   // ==========================================================
-  // ABRIR PROCESSO
+  // ABRIR PROCESSO - CLICAR EM QUALQUER CAMPO DA LINHA
   // ==========================================================
-  $('#processosNested').on(
-    'click',
-    '.linha-processo',
+  $('#processosNested').on('click', '.linha-processo',
     function (event) {
   
       if ($(event.target).closest('button').length) {
@@ -1913,6 +1681,7 @@ $(document).ready(function () {
       const processoId = $(this).data('processo-id');
   
       redirectProcesso(processoId);
+
     }
   );
 });
