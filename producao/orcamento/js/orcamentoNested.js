@@ -172,7 +172,6 @@ $(document).ready(function () {
             <a
               href="#"
               class="text-white link-processo"
-              data-processo-id="${escapeHtml(processoId)}"
               title="Abrir processo">
               ${escapeHtml(processo.designacao || '')}
             </a>
@@ -1730,6 +1729,37 @@ $(document).ready(function () {
         processoId,
         'excel'
       );
+    }
+  );
+
+
+  // ==========================================================
+  // ABRIR PROCESSO
+  // ==========================================================
+  $('#processosNested').on(
+    'click',
+    '.linha-processo',
+    function (event) {
+  
+      if ($(event.target).closest('button').length) {
+        return;
+      }
+  
+      if ($(event.target).closest('.btn-faturas').length) {
+        return;
+      }
+  
+      if ($(event.target).closest('.btn-exportar-processo-pdf').length) {
+        return;
+      }
+  
+      if ($(event.target).closest('.btn-exportar-processo-excel').length) {
+        return;
+      }
+  
+      const processoId = $(this).data('processo-id');
+  
+      redirectProcesso(processoId);
     }
   );
 });
