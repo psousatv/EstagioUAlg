@@ -269,6 +269,7 @@ $(document).ready(function () {
       
         historico.forEach(h => {
       
+
           // FILTRO PP
           if (h.historico_num && !String(h.historico_num).startsWith('PP')) return;
       
@@ -303,10 +304,10 @@ $(document).ready(function () {
 
           if (a.key === 'ORFAO') return 1;
           if (b.key === 'ORFAO') return -1;
-
+ 
           return String(a.key).localeCompare(String(b.key), 'pt');
       });
-    
+      
       // =====================================================
       // 3. RENDER CARDS
       // =====================================================
@@ -1042,6 +1043,7 @@ function criarDocumentoReembolsosPDF(
     let totalPedidoGeral = 0;
     let totalReembolsoGeral = 0;
     let totalFaturadoGeral = 0;
+    let totalFaturasOrfasGeral = 0;
 
     const candidatura =
       processos?.[0] ||
@@ -1202,9 +1204,13 @@ function criarDocumentoReembolsosPDF(
             formatCurrency(totalReembolsoGeral)
           ],
           [
-            'Diferencial',
+            'A Receber',
             formatCurrency(diferencialGeral)
-          ]
+          ],
+          [
+            'Faturas órfãs',
+            formatCurrency(totalFaturasOrfasGeral)
+          ],
         ],
 
         theme: 'grid',
@@ -1260,18 +1266,18 @@ function criarDocumentoReembolsosPDF(
         adicionarNovaPagina();
       }
 
-      const totalPedido =
-        Number(grupo.totalPedido) || 0;
+      const totalPedido = Number(grupo.totalPedido) || 0;
+      const totalReembolso = Number(grupo.totalReembolso) || 0;
+      const totalFaturado = calcularTotalFaturadoGrupo(grupo);
 
-      const totalReembolso =
-        Number(grupo.totalReembolso) || 0;
-
-      const totalFaturado =
-        calcularTotalFaturadoGrupo(grupo);
 
       totalPedidoGeral += totalPedido;
       totalReembolsoGeral += totalReembolso;
       totalFaturadoGeral += totalFaturado;
+
+      if (grupo.key === 'ORFAO') {
+        totalFaturasOrfasGeral += totalFaturado;
+      }
 
       /*
       * Mantém o cabeçalho de grupo já existente
@@ -1363,57 +1369,100 @@ function criarDocumentoReembolsosPDF(
     return doc;
   }
 
-function adicionarCabecalhoGrupoPDF(
-  doc,
-  grupo,
-  {
-    startY,
-    marginLeft,
-    tableWidth
+  function adicionarCabecalhoGrupoPDF(
+    doc,
+    grupo,
+    {
+      startY,
+      marginLeft,
+      tableWidth
+    }
+  ) {
+  
+    const isOrfao = grupo.key === 'ORFAO';
+  
+    // ==========================================================
+    // COR DO CABEÇALHO
+    // ==========================================================
+    if (isOrfao) {
+      doc.setFillColor(255, 245, 200);
+    } else {
+      doc.setFillColor(235, 235, 235);
+    }
+  
+    doc.rect(
+      marginLeft,
+      startY - 4,
+      tableWidth,
+      8,
+      'F'
+    );
+  
+    // ==========================================================
+    // TÍTULO
+    // ==========================================================
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+  
+    doc.text(
+      isOrfao ? 'Faturas Órfãs' : String(grupo.key),
+      marginLeft + 3,
+      startY + 1
+    );
+  
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+  
+    // ==========================================================
+    // FATURAS ÓRFÃS
+    // ==========================================================
+    if (isOrfao) {
+  
+      const totalFaturasOrfas = Object.values(grupo.processos || {})
+        .reduce((total, item) => {
+  
+          const totalProcesso = (item.faturas || [])
+            .reduce(
+              (subtotal, fatura) =>
+                subtotal + (Number(fatura.fact_valor) || 0),
+              0
+            );
+  
+          return total + totalProcesso;
+  
+        }, 0);
+  
+      doc.text(
+        `Total: ${formatCurrency(totalFaturasOrfas)}`,
+        marginLeft + 45,
+        startY + 1
+      );
+  
+      return;
+    }
+  
+    // ==========================================================
+    // PEDIDOS / REEMBOLSOS NORMAIS
+    // ==========================================================
+    const totalPedido =
+      Number(grupo.totalPedido) || 0;
+  
+    const totalReembolso =
+      Number(grupo.totalReembolso) || 0;
+  
+    const diferencial =
+      totalPedido - Math.abs(totalReembolso);
+  
+    doc.text(
+      [
+        `P: ${formatCurrency(totalPedido)}`,
+        `R: ${formatCurrency(totalReembolso)}`,
+        `Dif.: ${formatCurrency(diferencial)}`
+      ].join(' | '),
+      marginLeft + 45,
+      startY + 1
+    );
   }
-) {
-  const isOrfao = grupo.key === 'ORFAO';
-
-  if (isOrfao) {
-    doc.setFillColor(255, 245, 200);
-  } else {
-    doc.setFillColor(235, 235, 235);
-  }
-
-  doc.rect(
-    marginLeft,
-    startY - 4,
-    tableWidth,
-    8,
-    'F'
-  );
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-
-  doc.text(
-    isOrfao ? 'Faturas Órfãs' : String(grupo.key),
-    marginLeft + 3,
-    startY + 1
-  );
-
-  const totalPedido = Number(grupo.totalPedido) || 0;
-  const totalReembolso = Number(grupo.totalReembolso) || 0;
-  const diferencial = totalPedido - Math.abs(totalReembolso);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-
-  doc.text(
-    [
-      `P: ${formatCurrency(totalPedido)}`,
-      `R: ${formatCurrency(totalReembolso)}`,
-      `Dif.: ${formatCurrency(diferencial)}`
-    ].join(' | '),
-    marginLeft + 45,
-    startY + 1
-  );
-}
 
 
 function criarLinhasPDF(grupo, incluirFaturacao = false) {
@@ -1770,6 +1819,14 @@ function criarNomeFicheiroExportacao({
   return `${nomeSeguro}.${formato}`;
 }
 
+function getGrupoPP(valor) {
+
+  const numero = String(valor || '').trim();
+
+  return numero.startsWith('PP')
+      ? numero
+      : 'ORFAO';
+}
 
 function getReembolsosAgrupadosDetalhado(processos) {
 
@@ -1789,7 +1846,7 @@ function getReembolsosAgrupadosDetalhado(processos) {
     // ============================
     movimentos.forEach(h => {
 
-      const key = h.historico_num || 'ORFAO';
+      const key = getGrupoPP(h.historico_num);
 
       if (!grupos[key]) {
         grupos[key] = {
@@ -1843,7 +1900,7 @@ function getReembolsosAgrupadosDetalhado(processos) {
     // ============================
     faturas.forEach(f => {
 
-      const key = f.fact_finan_pp || 'ORFAO';
+      const key = getGrupoPP(f.fact_finan_pp);
 
       if (!grupos[key]) {
         grupos[key] = {
