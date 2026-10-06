@@ -1584,7 +1584,7 @@ function criarDocumentoReembolsosPDF(
     const totalReembolso = Number(grupo.totalReembolso) || 0;
     const totalFaturado = calcularTotalFaturadoGrupo(grupo);
     const aReceber = totalPedido - Math.abs(totalReembolso);
-
+    
     // ------------------------------------------------------
     // BARRA DO TÍTULO
     // ------------------------------------------------------
@@ -1609,192 +1609,41 @@ function criarDocumentoReembolsosPDF(
 
         body: [
           [
-            {
-              content:
-                'Total das faturas órfãs',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  totalFaturado
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            }
+            {content: 'Total das faturas órfãs', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturado), styles: {halign: 'right'}}
           ]
         ],
-
-        theme: 'grid',
-
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
-
+        theme: 'grid', 
+        margin: {left: marginLeft, right: marginRight},
         tableWidth: 90,
-
-        styles: {
-          fontSize: 8,
-          cellPadding: 1.7,
-          valign: 'middle'
-        },
-
-        columnStyles: {
-          0: {
-            cellWidth: 55
-          },
-
-          1: {
-            cellWidth: 35
-          }
-        }
+        styles: {fontSize: 8, cellPadding: 1.7, valign: 'middle'},
+        columnStyles: {0: {cellWidth: 55}, 1: {cellWidth: 35}}
       });
-
     } else {
-
       doc.autoTable({
-
-        startY:
-          startY + 11,
-
+        startY: startY + 11,
         body: [
           [
-            {
-              content: 'Pedido',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  totalPedido
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'Reembolso',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  totalReembolso
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'A Receber',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  aReceber
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'Faturado',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  totalFaturado
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            }
+            {content: 'Pedido', styles: {fontStyle:'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalPedido), styles: {halign: 'right'}},
+            {content: 'Reembolso', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalReembolso), styles: {halign: 'right'}},
+            {content:'A Receber', styles: {fontStyle:'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(aReceber), styles: {halign: 'right'}},
+            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturado), styles: {halign: 'right'}}
           ]
         ],
-
         theme: 'grid',
-
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
-
-        styles: {
-          fontSize: 7.5,
-          cellPadding: 1.5,
-          valign: 'middle'
-        },
-
+        margin: {left: marginLeft, right: marginRight},
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle'},
         columnStyles: {
           0: { cellWidth: 20 },
           1: { cellWidth: 28 },
-
           2: { cellWidth: 22 },
           3: { cellWidth: 28 },
-
           4: { cellWidth: 22 },
           5: { cellWidth: 28 },
-
           6: { cellWidth: 20 },
           7: { cellWidth: 22 }
         }
@@ -1814,223 +1663,57 @@ function criarDocumentoReembolsosPDF(
     item
   ) {
 
-    const processo =
-      item.processo || {};
+    const processo = item.processo || {};
+    const faturas = Array.isArray(item.faturas) ? item.faturas : [];
+    const padm = processo.padm || processo.proces_check || '-';
+    const designacao = cleanPdfText(processo.designacao || 'Processo sem designação' );
+    const tituloProcesso = `${padm} — ${designacao}`;
+    const tituloLinhas = doc.splitTextToSize(tituloProcesso, tableWidth - 6);
+    const alturaLinhaTitulo = 4;
+    const alturaTitulo = Math.max(9, 5 + tituloLinhas.length * alturaLinhaTitulo);
+    const alturaNecessaria = alturaTitulo + 30;
 
-    const faturas =
-      Array.isArray(item.faturas)
-        ? item.faturas
-        : [];
-
-    const padm =
-      processo.padm ||
-      processo.proces_check ||
-      '-';
-
-    const designacao =
-      cleanPdfText(
-        processo.designacao ||
-        'Processo sem designação'
-      );
-
-    const tituloProcesso =
-      `${padm} — ${designacao}`;
-
-    const tituloLinhas =
-      doc.splitTextToSize(
-        tituloProcesso,
-        tableWidth - 6
-      );
-
-    const alturaLinhaTitulo =
-      4;
-
-    const alturaTitulo =
-      Math.max(
-        9,
-        5 +
-        tituloLinhas.length *
-        alturaLinhaTitulo
-      );
-
-    const alturaNecessaria =
-      alturaTitulo + 30;
-
-    if (
-      startY >
-      pageHeight -
-      alturaNecessaria
-    ) {
-      adicionarNovaPagina();
-    }
+    if (startY > pageHeight - alturaNecessaria) {adicionarNovaPagina();}
 
     // ------------------------------------------------------
     // MOVIMENTOS DESTE PROCESSO / GRUPO
     // ------------------------------------------------------
-    const pedidos =
-      filtrarMovimentosGrupo(
-        processo,
-        grupo.key,
-        91
-      );
+    const pedidos = filtrarMovimentosGrupo(processo, grupo.key, 91);
+    const reembolsos = filtrarMovimentosGrupo(processo, grupo.key, 92);
+    const pedidoValor = somarMovimentos(pedidos);
+    const reembolsoValor = somarMovimentos(reembolsos);
+    const aReceber = pedidoValor - Math.abs(reembolsoValor);
+    const totalFaturadoProcesso = calcularTotalFaturadoItem(item);
 
-    const reembolsos =
-      filtrarMovimentosGrupo(
-        processo,
-        grupo.key,
-        92
-      );
-
-    const pedidoValor =
-      somarMovimentos(
-        pedidos
-      );
-
-    const reembolsoValor =
-      somarMovimentos(
-        reembolsos
-      );
-
-    const aReceber =
-      pedidoValor -
-      Math.abs(
-        reembolsoValor
-      );
-
-    const totalFaturadoProcesso =
-      calcularTotalFaturadoItem(
-        item
-      );
+    const iva = pedidoValor - totalFaturadoProcesso || 0;
 
     // ------------------------------------------------------
     // TÍTULO
     // ------------------------------------------------------
-    doc.setFillColor(
-      52,
-      58,
-      64
-    );
-
-    doc.rect(
-      marginLeft,
-      startY,
-      tableWidth,
-      alturaTitulo,
-      'F'
-    );
-
-    doc.setFont(
-      'helvetica',
-      'bold'
-    );
-
+    doc.setFillColor(52, 58, 64);
+    doc.rect(marginLeft, startY, tableWidth, alturaTitulo, 'F');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
-
-    doc.setTextColor(
-      255,
-      255,
-      255
-    );
-
-    doc.text(
-      tituloLinhas,
-      marginLeft + 3,
-      startY + 5,
-      {
-        lineHeightFactor:
-          1.15
-      }
-    );
-
-    doc.setTextColor(
-      0,
-      0,
-      0
-    );
+    doc.setTextColor(255, 255, 255);
+    doc.text(tituloLinhas, marginLeft + 3, startY + 5, {lineHeightFactor: 1.15});
+    doc.setTextColor(0, 0, 0);
 
     // ------------------------------------------------------
     // PROCESSO ÓRFÃO
     // ------------------------------------------------------
-    if (
-      grupo.key === 'ORFAO'
-    ) {
-
-      doc.autoTable({
-
-        startY:
-          startY +
-          alturaTitulo +
-          2,
-
+    if (grupo.key === 'ORFAO') {
+      doc.autoTable({startY: startY + alturaTitulo + 2,
         body: [
           [
-            {
-              content:
-                'Faturado',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  totalFaturadoProcesso
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'N.º de faturas',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                String(
-                  faturas.length
-                ),
-
-              styles: {
-                halign:
-                  'center'
-              }
-            }
+            {content:'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
+            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: String(faturas.length), styles: {halign: 'center'}}
           ]
         ],
-
-        theme: 'grid',
-
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
-
+        theme: 'grid', margin: {left: marginLeft, right: marginRight},
         tableWidth: 100,
-
-        styles: {
-          fontSize: 7.5,
-          cellPadding: 1.5,
-          valign: 'middle'
-        },
-
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle'},
         columnStyles: {
           0: { cellWidth: 25 },
           1: { cellWidth: 30 },
@@ -2044,171 +1727,34 @@ function criarDocumentoReembolsosPDF(
       // ----------------------------------------------------
       // PROCESSO NORMAL
       // ----------------------------------------------------
-      doc.autoTable({
-
-        startY:
-          startY +
-          alturaTitulo +
-          2,
-
+      doc.autoTable({startY: startY + alturaTitulo + 2,
         body: [
           [
-            {
-              content:
-                'Pedido',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  pedidoValor
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'Reembolso',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  reembolsoValor
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'A Receber',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  aReceber
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            }
+            {content: 'Pedido', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(pedidoValor), styles: {halign: 'right'}},
+            {content: 'Reembolso', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(reembolsoValor), styles: {halign: 'right'}},
+            {content: 'A Receber', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(aReceber), styles: {halign: 'right'}}
           ],
-
           [
-            {
-              content:
-                'Faturado',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                formatCurrency(
-                  totalFaturadoProcesso
-                ),
-
-              styles: {
-                halign:
-                  'right'
-              }
-            },
-
-            {
-              content:
-                'N.º de faturas',
-
-              styles: {
-                fontStyle:
-                  'bold',
-
-                fillColor:
-                  [240, 240, 240]
-              }
-            },
-
-            {
-              content:
-                String(
-                  faturas.length
-                ),
-
-              styles: {
-                halign:
-                  'center'
-              }
-            },
-
-            {
-              content: '',
-              colSpan: 2
-            }
+            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
+            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: String(faturas.length), styles: {halign: 'center'}},
+            {content: 'Pedido-Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(iva), styles: {halign: 'right'}}
           ]
         ],
-
         theme: 'grid',
-
-        margin: {
-          left: marginLeft,
-          right: marginRight
-        },
-
-        styles: {
-          fontSize: 7.5,
-          cellPadding: 1.5,
-          valign: 'middle',
-          overflow:
-            'linebreak'
-        },
+        margin: {left: marginLeft, right: marginRight},
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle', overflow: 'linebreak'},
 
         columnStyles: {
           0: { cellWidth: 25 },
           1: { cellWidth: 35 },
-
           2: { cellWidth: 27 },
           3: { cellWidth: 35 },
-
           4: { cellWidth: 25 },
           5: { cellWidth: 43 }
         },
@@ -2372,7 +1918,7 @@ function criarDocumentoReembolsosPDF(
         'Expediente',
         'Auto',
         'Data do auto',
-        'IVA',
+        'Pedido-Faturado',
         'Valor'
       ]],
 
@@ -2507,47 +2053,12 @@ function criarDocumentoReembolsosPDF(
     // LINHAS PRINCIPAIS
     // ------------------------------------------------------
     const linhasResumo = [
-      [
-        'Total faturado',
-        '',
-        formatCurrency(
-          totalFaturadoGeral
-        )
-      ],
-
-      [
-        'Total de pedidos',
-        '',
-        formatCurrency(
-          totalPedidoGeral
-        )
-      ],
-
-      [
-        'Total de reembolsos',
-        '',
-        formatCurrency(
-          totalReembolsoGeral
-        )
-      ],
-
-      [
-        'A Receber',
-        '',
-        formatCurrency(
-          aReceberGeral
-        )
-      ],
-
-      [
-        'Faturas órfãs',
-        String(
-          quantidadeFaturasOrfas
-        ),
-        formatCurrency(
-          totalFaturasOrfasGeral
-        )
-      ]
+      ['Total faturado', '', formatCurrency(totalFaturadoGeral)],
+      ['Total de pedidos', '', formatCurrency(totalPedidoGeral)],
+      ['Total de reembolsos', '', formatCurrency(totalReembolsoGeral)],
+      ['Total de Pedido-Faturado [IVA]', '', formatCurrency(totalPedidoGeral - totalFaturadoGeral)],
+      ['A Receber', '', formatCurrency(aReceberGeral)],
+      ['Faturas órfãs', String(quantidadeFaturasOrfas), formatCurrency(totalFaturasOrfasGeral)]
     ];
 
     // ------------------------------------------------------
@@ -2979,40 +2490,22 @@ function criarDocumentoReembolsosPDF(
     // ------------------------------------------------------
     // TOTAIS GERAIS DO PP
     // ------------------------------------------------------
-    const totalPedido =
-      Number(
-        grupo.totalPedido
-      ) || 0;
-
-    const totalReembolso =
-      Number(
-        grupo.totalReembolso
-      ) || 0;
-
-    const totalFaturadoGrupo =
-      calcularTotalFaturadoGrupo(
-        grupo
-      );
-
-    totalPedidoGeral +=
-      totalPedido;
-
-    totalReembolsoGeral +=
-      totalReembolso;
-
-    totalFaturadoGeral +=
-      totalFaturadoGrupo;
+    const totalPedido = Number(grupo.totalPedido) || 0;
+    const totalReembolso = Number(grupo.totalReembolso) || 0;
+    const totalFaturadoGrupo = calcularTotalFaturadoGrupo(grupo);
+    
+    totalPedidoGeral += totalPedido;
+    totalReembolsoGeral += totalReembolso;
+    totalFaturadoGeral += totalFaturadoGrupo;
 
     // ------------------------------------------------------
     // FATURAS ÓRFÃS
     // ------------------------------------------------------
     if (
-      grupo.key ===
-      'ORFAO'
+      grupo.key === 'ORFAO'
     ) {
 
-      totalFaturasOrfasGeral +=
-        totalFaturadoGrupo;
+      totalFaturasOrfasGeral += totalFaturadoGrupo;
     }
 
     // ------------------------------------------------------

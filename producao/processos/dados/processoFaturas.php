@@ -9,7 +9,7 @@ $codigoProcesso = intval($_GET['codigoProcesso']);
 $processoFaturas = "SELECT *
                     FROM factura
                     WHERE fact_proces_check = '" .$codigoProcesso. "'
-                    AND fact_tipo IN ('FTN', 'FTC', 'NC', 'REF', 'IND')
+                    AND fact_tipo IN ('FTN', 'FTC', 'NC', 'IND', 'RPR')
                     ORDER BY fact_auto_num DESC";
 
 $stmt = $myConn->query($processoFaturas);
@@ -18,7 +18,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $processoFaturasAcumulado = array_sum(
   array_column(
       array_filter($data, function ($fatura) {
-          return !in_array($fatura['fact_tipo'], ['NC', 'IND']);
+          return !in_array($fatura['fact_tipo'], ['IND']);
       }),
       'fact_valor'
   )

@@ -180,24 +180,37 @@ function criarContexto(array $resultados): array
     ];
 }
 
-/* Calcular a data de termo */
+//* Calcular a Data de Termo Previsto */
 function calcularDataTermoPrevisto(array $ctx): ?string
 {
     /*
+     * ============================================================
      * EMPREITADA
-     * Data-base = movimento 18.
-     * Se existir movimento 60 posterior ao 18,
-     * o movimento 60 passa a ser a nova data-base.
+     * ============================================================
+     *
+     * A data-base é determinada pelos movimentos 18 e 60.
+     *
+     * - Movimento 18 é obrigatório.
+     * - Se existir movimento 60 posterior ao 18,
+     *   a data-base passa a ser a data do movimento 60.
+     * - Se o movimento 60 for anterior ao 18,
+     *   mantém-se a data do movimento 18.
      */
-    if ($ctx['contrato'] === 'Empreitada') {
+    if (($ctx['contrato'] ?? '') === 'Empreitada') {
 
         if (empty($ctx['data18']) || empty($ctx['prazo'])) {
             return null;
         }
 
+        /* Movimento 18 como data-base inicial */
         $dataBase = new DateTime($ctx['data18']);
 
+        /*
+         * Verificar movimento 60.
+         * Só substitui a data-base se for posterior ao movimento 18.
+         */
         if (!empty($ctx['data60'])) {
+
             $data60 = new DateTime($ctx['data60']);
 
             if ($data60 > $dataBase) {
@@ -206,9 +219,12 @@ function calcularDataTermoPrevisto(array $ctx): ?string
         }
 
     /*
+     * ============================================================
      * RESTANTES CONTRATOS
-     * Se existir movimento 18, usa data18.
-     * Caso contrário, usa data14.
+     * ============================================================
+     *
+     * Se existir movimento 18, utiliza data18.
+     * Caso contrário, utiliza data14.
      */
     } else {
 
@@ -217,29 +233,68 @@ function calcularDataTermoPrevisto(array $ctx): ?string
         }
 
         if (!empty($ctx['data18'])) {
+
             $dataBase = new DateTime($ctx['data18']);
+
         } elseif (!empty($ctx['data14'])) {
+
             $dataBase = new DateTime($ctx['data14']);
+
         } else {
+
             return null;
         }
     }
 
-    /* Prazo contratual inicial */
-    $prazo = (int)$ctx['prazo'];
 
-    /* Dias adicionais de prorrogação/suspensão */
-    $diasProrrogacao = (int)($ctx['valorMovimento21'] ?? 0);
+    /*
+     * ============================================================
+     * PRAZO CONTRATUAL
+     * ============================================================
+     */
 
-    /* Prazo total */
-    $prazoTotal = $prazo + $diasProrrogacao;
+    $prazo = (int)($ctx['prazo'] ?? 0);
 
-    /* Calcular data de termo prevista */
+
+    /*
+     * ============================================================
+     * MOVIMENTO 21 - SUSPENSÃO / RETOMA
+     * ============================================================
+     *
+     * O valor do movimento 21 corresponde ao número de dias
+     * que devem ser acrescentados ao prazo previsto.
+     *
+     * Se não existir movimento 21, considera 0 dias.
+     */
+
+    $diasSuspensao = (int)($ctx['valorMovimento21'] ?? 0);
+
+
+    /*
+     * ============================================================
+     * PRAZO TOTAL PREVISTO
+     * ============================================================
+     *
+     * Prazo contratual + dias de suspensão.
+     */
+
+    $prazoTotal = $prazo + $diasSuspensao;
+
+
+    /*
+     * ============================================================
+     * DATA DE TERMO PREVISTO
+     * ============================================================
+     */
+
     $dataBase->modify("+{$prazoTotal} days");
 
+
+    /*
+     * Formato apresentado no Stepper
+     */
     return $dataBase->format('d-m-Y');
 }
-
  
 /* Definir fases + regra do movimento 4 + Excessões pelo tipo de procedimento */
 function definirFases(array $ctx): array
@@ -332,57 +387,139 @@ function gerarHTMLStepper(array $pontos, array $ctx): void
 {
     echo '<div class="stepper-wrapper">';
 
+    /*
+     * ============================================================
+     * CALCULAR DATA DE TERMO PREVISTO
+     * ============================================================
+     */
     $dataTermoPrevisto = calcularDataTermoPrevisto($ctx);
 
+
+    /*
+     * ============================================================
+     * VERIFICAR SE EXISTE REGISTO REAL 26, 27 OU 28
+     * ============================================================
+     *
+     * O código existir em $pontos NÃO significa que exista
+     * um registo.
+     *
+     * Só consideramos existente quando data_doc está preenchida.
+     */
+    $existeRegistoTermo = false;
+
+    foreach ($pontos as $pt) {
+
+        $codigo = (int)($pt['codigo'] ?? 0);
+
+        if (
+            in_array($codigo, [26, 27, 28], true)
+            &&
+            !empty($pt['data_doc'])
+        ) {
+            $existeRegistoTermo = true;
+            break;
+        }
+    }
+
+
+    /*
+     * ============================================================
+     * CONTROLO DO TERMO PREVISTO
+     * ============================================================
+     *
+     * Garante que o Termo Previsto é apresentado apenas UMA vez.
+     */
+    $termoPrevistoApresentado = false;
+
+
+    /*
+     * ============================================================
+     * GERAR STEPPER
+     * ============================================================
+     */
     foreach ($pontos as $i => $pt) {
 
         $status = 'nulo';
         $dias = '';
 
-        // Descritivo apresentado no stepper
+        $codigo = (int)($pt['codigo'] ?? 0);
+
         $descritivo = $pt['documento'];
 
+
         /*
-         * DESCRITIVOS 26, 27 e 28
-         * No caso da não existência de registos
-         * Em vez do número de dias, apresenta sempre
+         * ========================================================
+         * TERMO PREVISTO
+         * ========================================================
+         *
+         * Se:
+         *
+         * 1. Não existir nenhum registo real 26/27/28
+         * 2. Estamos num ponto 26/27/28
+         * 3. Ainda não apresentámos o Termo Previsto
+         *
+         * então usamos esse ponto para apresentar
          * a Data de Termo Previsto.
          */
-        if (in_array((int)$pt['codigo'], [26, 27, 28], true)) {
+        if (
+            !$existeRegistoTermo
+            &&
+            !$termoPrevistoApresentado
+            &&
+            in_array($codigo, [26, 27, 28], true)
+        ) {
+
+            $descritivo = 'Termo Previsto';
 
             $dias = $dataTermoPrevisto ?? '';
 
-            // Altera apenas o texto apresentado
-            $descritivo = 'Termo Previsto';
+            $status = 'nulo';
 
-            if ($pt['data_doc'] != 0) {
-                $status = 'conforme';
-            }
+            $termoPrevistoApresentado = true;
 
         } else {
 
             /*
-             * Restantes descritivos:
-             * mantém o comportamento atual.
+             * ====================================================
+             * COMPORTAMENTO NORMAL
+             * ====================================================
              */
-            if ($pt['data_doc'] != 0) {
+            if (!empty($pt['data_doc'])) {
 
                 $status = 'conforme';
 
-                if ($i > 0 && $pontos[$i - 1]['data_val'] != 0) {
+                if (
+                    $i > 0
+                    &&
+                    !empty($pontos[$i - 1]['data_val'])
+                ) {
 
                     $d1 = new DateTime($pt['data_val']);
                     $d2 = new DateTime($pontos[$i - 1]['data_val']);
 
                     $dias = $d1->diff($d2)->days;
 
-                    if ($pt['documento'] === 'BaseGov' && $dias > 20) {
+
+                    /*
+                     * BaseGov
+                     */
+                    if (
+                        $pt['documento'] === 'BaseGov'
+                        &&
+                        $dias > 20
+                    ) {
                         $status = 'desconforme';
                     }
                 }
             }
         }
 
+
+        /*
+         * ========================================================
+         * BADGE
+         * ========================================================
+         */
         $badge = $dias !== ''
             ? '<span class="badge rounded-pill bg-'
                 . ($status === 'desconforme' ? 'danger' : 'info')
@@ -393,6 +530,12 @@ function gerarHTMLStepper(array $pontos, array $ctx): void
               '</span>'
             : '';
 
+
+        /*
+         * ========================================================
+         * HTML
+         * ========================================================
+         */
         echo '
         <div class="stepper-item ' . $status . '">
 
@@ -402,17 +545,19 @@ function gerarHTMLStepper(array $pontos, array $ctx): void
                 data-bs-toggle="popover"
                 data-bs-trigger="focus"
                 data-bs-placement="top"
-                title="[E:' . $pt['data_doc'] .
-                    ' - V:' . $pt['data_val'] .
-                    '] - ' . $pt['notas'] . '"
-                data-bs-content="' . $pt['data_val'] . '">
+
+                title="[E:' . ($pt['data_doc'] ?? '') .
+                    ' - V:' . ($pt['data_val'] ?? '') .
+                    '] - ' . ($pt['notas'] ?? '') . '"
+
+                data-bs-content="' . ($pt['data_val'] ?? '') . '">
 
                 ' . ($i + 1) . $badge . '
 
             </div>
 
-            <div class="step-name badge bg-' .
-                ($status === 'conforme'
+            <div class="step-name badge bg-'
+                . ($status === 'conforme'
                     ? 'success'
                     : ($status === 'desconforme'
                         ? 'danger'
@@ -423,6 +568,7 @@ function gerarHTMLStepper(array $pontos, array $ctx): void
 
         </div>';
     }
+
 
     echo '</div>';
 }
