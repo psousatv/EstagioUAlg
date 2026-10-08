@@ -4,21 +4,48 @@ class AquisicoesAPI
 {
     private PDO $db;
 
+    /*
+     * ==================================================
+     * REGIMES DE CONTRATAÇÃO
+     * ==================================================
+     */
     private array $tiposRegime = [
         'setores_especiais' => ['Setores Especiais'],
         'geral'             => ['Geral'],
-        'excluida'          => ['Contratação Excluída'],
-        'materiais'         => ['Critérios Materiais']
+        'materiais'         => ['Critérios Materiais'],
+        'excluida_regime'   => ['Contratação Excluída']
     ];
 
+
+    /*
+     * ==================================================
+     * TIPOS DE PROCEDIMENTO
+     * ==================================================
+     */
+    private array $tiposEscolha = [
+        'ajuste_direto'              => ['Ajuste Direto'],
+        'ajuste_direto_simplificado' => ['Ajuste Direto Simplificado'],
+        'consulta_previa'            => ['Consulta Prévia'],
+        'excluida_escolha'           => ['Contratação Excluída']
+    ];
+
+
+    /*
+     * ==================================================
+     * CONSTRUTOR
+     * ==================================================
+     */
     public function __construct(PDO $conn)
     {
         $this->db = $conn;
     }
 
-    // ==================================================
-    // ENTIDADES
-    // ==================================================
+
+    /*
+     * ==================================================
+     * ENTIDADES
+     * ==================================================
+     */
     public function getEntidades(string $fornecedor = ''): array
     {
         $sql = "
@@ -26,19 +53,30 @@ class AquisicoesAPI
                 e.ent_cod,
                 e.ent_nome AS entidade,
                 e.ent_nif AS contribuinte
+
             FROM entidade e
+
             WHERE 1=1
         ";
 
-        if (!empty($fornecedor)) {
-            $sql .= " AND e.ent_nome LIKE :fornecedor ";
+        /*
+         * Filtro opcional por fornecedor
+         */
+        if ($fornecedor !== '') {
+
+            $sql .= "
+                AND e.ent_nome LIKE :fornecedor
+            ";
         }
 
-        $sql .= " ORDER BY e.ent_nome";
+        $sql .= "
+            ORDER BY e.ent_nome
+        ";
 
         $stmt = $this->db->prepare($sql);
 
-        if (!empty($fornecedor)) {
+        if ($fornecedor !== '') {
+
             $stmt->bindValue(
                 ':fornecedor',
                 '%' . $fornecedor . '%',
@@ -51,27 +89,82 @@ class AquisicoesAPI
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ==================================================
-    // FATURAS
-    // ==================================================
+
+    /*
+     * ==================================================
+     * FATURAS
+     * ==================================================
+     */
     public function getFaturasAll(string $tipo): array
     {
-        $regimes = $this->tiposRegime[$tipo]
-            ?? $this->tiposRegime['setores_especiais'];
+        /*
+        * ==================================================
+        * IDENTIFICAR O TIPO DE FILTRO
+        * ==================================================
+        */
 
-        $placeholders = [];
-        $params = [];
+        $campoFiltro = null;
+        $valorFiltro = null;
 
-        foreach ($regimes as $i => $regime) {
+        /*
+        * --------------------------------------------------
+        * REGIME
+        * --------------------------------------------------
+        */
 
-            $placeholder = ":regime{$i}";
+        if (isset($this->tiposRegime[$tipo])) {
 
-            $placeholders[] = $placeholder;
-            $params[$placeholder] = $regime;
+            $campoFiltro = 'pr.proced_regime';
+            $valorFiltro = $this->tiposRegime[$tipo][0];
         }
+
+        /*
+        * --------------------------------------------------
+        * PROCEDIMENTO
+        * --------------------------------------------------
+        */
+
+        elseif (isset($this->tiposEscolha[$tipo])) {
+
+            $campoFiltro = 'pr.proced_escolha';
+            $valorFiltro = $this->tiposEscolha[$tipo][0];
+        }
+
+        /*
+        * --------------------------------------------------
+        * TIPO INVÁLIDO
+        * --------------------------------------------------
+        */
+
+        else {
+
+            return [];
+        }
+
+
+        /*
+        * ==================================================
+        * SQL
+        * ==================================================
+        *
+        * Se for REGIME:
+        *
+        *     proced_regime = regime selecionado
+        *
+        *     O procedimento pode ser qualquer um.
+        *
+        *
+        * Se for PROCEDIMENTO:
+        *
+        *     proced_escolha = procedimento selecionado
+        *
+        *     O regime pode ser qualquer um.
+        * ==================================================
+        */
 
         $sql = "
             SELECT
+
                 f.fact_ent_cod,
                 f.fact_proces_check,
                 f.fact_expediente,
@@ -84,13 +177,19 @@ class AquisicoesAPI
                 pr.proced_contrato AS contrato,
                 pr.proced_escolha AS procedimento,
 
-                CONCAT(r.rub_tipo, ' ', r.rub_rubrica, ' ', r.rub_item) AS rubrica,
-                p.proces_orc_actividade AS atividade,
+                CONCAT(
+                    r.rub_tipo,
+                    ' ',
+                    r.rub_rubrica,
+                    ' ',
+                    r.rub_item
+                ) AS rubrica,
 
+                p.proces_orc_actividade AS atividade,
                 p.proces_padm AS padm,
                 p.proces_nome AS designacao,
 
-                SUM(h.historico_valor) AS adjudicado
+                h.adjudicado
 
             FROM factura f
 
@@ -100,18 +199,36 @@ class AquisicoesAPI
             LEFT JOIN procedimento pr
                 ON pr.proced_cod = p.proces_proced_cod
 
-            LEFT JOIN historico h
+            LEFT JOIN (
+
+                SELECT
+                    historico_proces_check,
+                    SUM(historico_valor) AS adjudicado
+
+                FROM historico
+
+                GROUP BY
+                    historico_proces_check
+
+            ) h
                 ON h.historico_proces_check = p.proces_check
 
             LEFT JOIN rubricas r
                 ON r.rub_cod = p.proces_rub_cod
 
             WHERE
+
+                /*
+                * Ano corrente + ano anterior
+                */
                 YEAR(f.fact_data) IN (
                     YEAR(CURDATE()),
                     YEAR(CURDATE()) - 1
                 )
 
+                /*
+                * Tipos de fatura
+                */
                 AND f.fact_tipo IN (
                     'FTN',
                     'FTC',
@@ -119,45 +236,59 @@ class AquisicoesAPI
                     'NC'
                 )
 
-                AND pr.proced_regime IN (
-                    " . implode(',', $placeholders) . "
-                )
+                /*
+                * Filtro selecionado:
+                *
+                * regime OU procedimento
+                */
+                AND {$campoFiltro} = :filtro
 
-            GROUP BY
-                f.fact_ent_cod,
-                f.fact_proces_check,
-                f.fact_expediente,
-                f.fact_num,
-                f.fact_data,
-                f.fact_valor,
-                f.fact_obs,
-                pr.proced_regime,
-                pr.proced_contrato,
-                pr.proced_escolha,
-                p.proces_orc_actividade,
-                p.proces_padm,
-                p.proces_nome,
-                r.rub_tipo,
-                r.rub_rubrica,
-                r.rub_item
-
-            HAVING adjudicado > 0
+                /*
+                * Apenas processos com adjudicação positiva
+                */
+                AND h.adjudicado > 0
 
             ORDER BY
                 f.fact_data DESC
         ";
 
+
+        /*
+        * ==================================================
+        * PREPARAR
+        * ==================================================
+        */
+
         $stmt = $this->db->prepare($sql);
 
-        foreach ($params as $placeholder => $value) {
-            $stmt->bindValue(
-                $placeholder,
-                $value,
-                PDO::PARAM_STR
-            );
-        }
+
+        /*
+        * ==================================================
+        * PARÂMETRO
+        * ==================================================
+        */
+
+        $stmt->bindValue(
+            ':filtro',
+            $valorFiltro,
+            PDO::PARAM_STR
+        );
+
+
+        /*
+        * ==================================================
+        * EXECUTAR
+        * ==================================================
+        */
 
         $stmt->execute();
+
+
+        /*
+        * ==================================================
+        * RESULTADO
+        * ==================================================
+        */
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

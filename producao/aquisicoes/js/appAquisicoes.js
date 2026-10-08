@@ -224,7 +224,7 @@ const App = {
 
 
       $('#listaAquisicoes').html(
-        '<p>Sem resultados</p>'
+        '<p>Sem resultados - Potencialmente, não houve aquisições no ano corrente</p>'
       );
 
       this.updateKPIs([]);
