@@ -64,7 +64,9 @@ $(document).ready(function () {
             var dataTable = $('#tabela').DataTable({
                 searching: false,
                 lengthChange: false,
-                aaData: data,
+                aaData: data.filter(row =>
+                    row.estado === 'Em Curso' || row.estado === 'Encerrada'
+                ),
 
                 columns: [
                     // coluna 0
