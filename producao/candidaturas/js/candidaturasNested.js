@@ -365,261 +365,820 @@ $(document).ready(function () {
       return html;
     }
 
-  // Inicializa DataTable principal
-  table = $('#processosNested').DataTable({
-    ajax: {
-      url: 'dados/candidaturasNested.php',
-      dataSrc: function (json) {
-        // Retorna todos os processos como linhas
-        const processos = json.processos.map(proc => ({
-          ...proc,
-          candidatura: json.candidatura,
-          estado: json.estado,
-          aviso: json.aviso,
-          programa: json.programa,
-          nome: json.designacao,
-          taxa: json.taxa,
-          logo: json.logo
-        }));
+    // ==========================================================
+    // FUNÇÕES DE CÁLCULO
+    // ==========================================================
 
-        processosGlobais = processos
+    // Coluna 2 - Adjudicado
+    function calcularAdjudicado(row) {
 
-        //console.table(json);
-        //console.table(processosGlobais);
-
-        // Caminho para o Logotipo da Candidatura
-        const path = "../../global/imagens";
-
-        // Título da candidatura
-        $('#titulo').html(`
-          <div class="row no-gutters align-items-center mb-2">
-
-            <div class="col-8">
-                <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
-                ${json.candidatura || ''} - ${json.designacao || ''}
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
-
-                  <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
-                    class="btn btn-primary mr-1"
-                    style="padding: 6px 14px;"
-                    title="Voltar à Candidatura">
-                    <i class="fa-solid fa-arrow-left text-light"></i>
-                  </a>
-
-                  <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
-                    class="btn btn-info mr-1"
-                    style="padding: 6px 14px;"
-                    title="Atualizar">
-                    <i class="fa-solid fa-rotate text-light"></i>
-                  </a>
-                  
-                   <a href="candidaturasDashboard.html?"
-                    class="btn btn-secondary mr-1"
-                    style="padding: 6px 14px;"
-                    title="Dashboard">
-                    <i class="fa-solid fa-home text-light"></i>
-                  </a>
+      return row.historico
+          ?.filter(h =>
+              h.historico_descr_cod === 14 &&
+              Number(h.historico_valor || 0) > 0
+          )
+          .reduce(
+              (sum, h) => sum + Number(h.historico_valor || 0),
+              0
+          ) || 0;
+    }
 
 
-                </div>
-            </div>
+    // Coluna 3 - Faturas
+    function calcularFaturas(row) {
 
-            <!-- Logotipo -->
-            <div class="col-2 d-flex justify-content-end align-items-center">
-              <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
-            </div>
+      const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND'];
 
-          </div>
-        `);
-       
-        const totalPedidos = processos
-        .reduce((sumProc, p) => sumProc +
-          (p.historico || [])
-            .filter(h =>
-              h.historico_descr_cod === 91 &&
-              Number(h.historico_valor) > 0
-            )
-            .reduce((s, h) => s + Number(h.historico_valor), 0),
-          0
-        );
+      return row.faturas
+          ?.filter(f =>
+              tiposValidos.includes(f.fact_tipo)
+          )
+          .reduce(
+              (sum, f) => sum + Number(f.fact_valor || 0),
+              0
+          ) || 0;
+    }
 
-        const totalReembolsos = processos
-          .reduce((sumProc, p) => sumProc +
-            (p.historico || [])
-              .filter(h =>
-                h.historico_descr_cod === 92 &&
-                Number(h.historico_valor) > 0
-              )
-              .reduce((s, h) => s + Number(h.historico_valor), 0),
-            0
+
+    // Coluna 4 - Reembolsos
+    function calcularReembolsos(row) {
+
+      return row.historico
+          ?.filter(h =>
+              h.historico_descr_cod === 92 &&
+              Number(h.historico_valor || 0) > 0 &&
+              !(h.historico_num?.includes("Ad"))
+          )
+          .reduce(
+              (sum, h) => sum + Number(h.historico_valor || 0),
+              0
+          ) || 0;
+    }
+
+
+    // ==========================================================
+    // INICIALIZA DATATABLE PRINCIPAL
+    // ==========================================================
+
+    table = $('#processosNested').DataTable({
+
+      // ======================================================
+      // AJAX
+      // ======================================================
+
+      ajax: {
+
+          url: 'dados/candidaturasNested.php',
+
+          dataSrc: function (json) {
+
+              // ------------------------------------------------
+              // Processos
+              // ------------------------------------------------
+
+              const processos = json.processos.map(proc => ({
+
+                  ...proc,
+
+                  candidatura: json.candidatura,
+                  estado: json.estado,
+                  aviso: json.aviso,
+                  programa: json.programa,
+                  nome: json.designacao,
+                  taxa: json.taxa,
+                  logo: json.logo
+
+              }));
+
+
+              processosGlobais = processos;
+
+
+              // ------------------------------------------------
+              // Caminho para o Logotipo da Candidatura
+              // ------------------------------------------------
+
+              const path = "../../global/imagens";
+
+
+              // ------------------------------------------------
+              // Título da candidatura
+              // ------------------------------------------------
+
+              $('#titulo').html(`
+
+                  <div class="row no-gutters align-items-center mb-2">
+
+                      <div class="col-8">
+
+                          <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+
+                              ${json.candidatura || ''}
+                              -
+                              ${json.designacao || ''}
+
+                          </div>
+
+                      </div>
+
+
+                      <div class="col-2">
+
+                          <div
+                              class="d-flex justify-content-end px-3 py-2"
+                              style="padding: 6px 16px; min-height: 50px;"
+                          >
+
+                              <a
+                                  href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
+                                  class="btn btn-primary mr-1"
+                                  style="padding: 6px 14px;"
+                                  title="Voltar à Candidatura"
+                              >
+                                  <i class="fa-solid fa-arrow-left text-light"></i>
+                              </a>
+
+
+                              <a
+                                  href="candidaturasNested.html?itemProcurado=${json.candidatura}"
+                                  class="btn btn-info mr-1"
+                                  style="padding: 6px 14px;"
+                                  title="Atualizar"
+                              >
+                                  <i class="fa-solid fa-rotate text-light"></i>
+                              </a>
+
+
+                              <a
+                                  href="candidaturasDashboard.html?"
+                                  class="btn btn-secondary mr-1"
+                                  style="padding: 6px 14px;"
+                                  title="Dashboard"
+                              >
+                                  <i class="fa-solid fa-home text-light"></i>
+                              </a>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- Logotipo -->
+
+                      <div class="col-2 d-flex justify-content-end align-items-center">
+
+                          <img
+                              src="${path}/${json.logo}"
+                              alt="Logotipo"
+                              style="max-height: 50px;"
+                          >
+
+                      </div>
+
+                  </div>
+
+              `);
+
+
+              // ==================================================
+              // TOTAL PEDIDOS
+              // ==================================================
+
+              const totalPedidos = processos.reduce(
+
+                  (sumProc, p) =>
+
+                      sumProc +
+
+                      (p.historico || [])
+
+                          .filter(h =>
+                              h.historico_descr_cod === 91 &&
+                              Number(h.historico_valor) > 0
+                          )
+
+                          .reduce(
+                              (s, h) =>
+                                  s + Number(h.historico_valor),
+                              0
+                          ),
+
+                  0
+
+              );
+
+
+              // ==================================================
+              // TOTAL REEMBOLSOS
+              // ==================================================
+
+              const totalReembolsos = processos.reduce(
+
+                  (sumProc, p) =>
+
+                      sumProc +
+
+                      (p.historico || [])
+
+                          .filter(h =>
+                              h.historico_descr_cod === 92 &&
+                              Number(h.historico_valor) > 0
+                          )
+
+                          .reduce(
+                              (s, h) =>
+                                  s + Number(h.historico_valor),
+                              0
+                          ),
+
+                  0
+
+              );
+
+
+              // ==================================================
+              // KPI
+              // ==================================================
+
+              $('#kpiValores').html(`
+
+                  <div class="row align-items-center mb-2">
+
+
+                      <!-- ELEGÍVEL -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-primary text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Elegível
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(
+                                          json.elegivel * json.iva
+                                      )}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- FUNDO -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-secondary text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Fundo
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(
+                                          json.elegivel *
+                                          json.iva *
+                                          json.taxa
+                                      )}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- PEDIDO -> FATURADO -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-warning text-dark h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Pedido → Faturado - confirmar IVA
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(
+                                          totalPedidos * json.iva
+                                      )}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- REEMBOLSOS -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-success text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Reembolsos - confirmar IVA
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(
+                                          totalReembolsos
+                                      )}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- SALDO -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-primary text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Saldo
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(
+                                          totalPedidos -
+                                          totalReembolsos
+                                      )}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- BOTÕES -->
+
+                      <div class="col-md-2 text-right">
+
+                          <button
+                              id="exportResumo"
+                              class="btn btn-danger btn-lg shadow-sm mr-2"
+                              title="Exportar PDF"
+                          >
+                              <i class="fa-solid fa-file-pdf"></i>
+                          </button>
+
+
+                          <button
+                              id="exportALLExcel"
+                              class="btn btn-success btn-lg shadow-sm"
+                              title="Exportar Excel"
+                          >
+                              <i class="fa-solid fa-file-excel"></i>
+                          </button>
+
+                      </div>
+
+                  </div>
+
+              `);
+
+
+              // ==================================================
+              // CARTÕES
+              // ==================================================
+
+              $('#cartoesReembolsos').html(
+                  renderReembolsosCards(processos)
+              );
+
+
+              // ==================================================
+              // DEVOLVE PROCESSOS AO DATATABLE
+              // ==================================================
+
+              return processos;
+
+          },
+
+
+          // ----------------------------------------------------
+          // Parâmetros
+          // ----------------------------------------------------
+
+          data: function(d) {
+
+              return {
+                  ...d,
+                  ...queryParams
+              };
+
+          }
+
+      },
+
+
+      // ========================================================
+      // CONFIGURAÇÕES
+      // ========================================================
+
+      paging: false,
+
+      searching: false,
+
+      select: true,
+
+      order: [
+          [1, 'asc']
+      ],
+
+
+      columnDefs: [
+
+          {
+              className: "dt-head-center",
+              targets: "_all"
+          }
+
+      ],
+
+
+      // ========================================================
+      // FOOTER / LINHA DE TOTAIS
+      // ========================================================
+
+      footerCallback: function () {
+
+          const api = this.api();
+
+
+          // ----------------------------------------------------
+          // Linhas globais
+          // ----------------------------------------------------
+
+          const rowsGlobal =
+              api.rows({
+                  search: 'applied'
+              })
+              .data()
+              .toArray();
+
+
+          // ----------------------------------------------------
+          // Linhas da página
+          // ----------------------------------------------------
+
+          const rowsPagina =
+              api.rows({
+                  page: 'current'
+              })
+              .data()
+              .toArray();
+
+
+          // ====================================================
+          // TOTAL ADJUDICADO
+          // ====================================================
+
+          const totalAdjudicadoGlobal = rowsGlobal.reduce(
+
+              (total, row) =>
+                  total + calcularAdjudicado(row),
+
+              0
+
           );
-        
-
-          $('#kpiValores').html(`
-            <div class="row align-items-center mb-2">
-        
-                <!-- ELEGÍVEL -->
-                <div class="col-md-2">
-                    <div class="card bg-primary text-white h-100">
-                        <div class="card-body py-2 px-2">
-                            <div class="small">Elegível</div>
-                            <div class="text-right font-weight-bold">
-                                ${formatCurrency(json.elegivel * json.iva)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        
-                <!-- FUNDO -->
-                <div class="col-md-2">
-                    <div class="card bg-secondary text-white h-100">
-                        <div class="card-body py-2 px-2">
-                            <div class="small">Fundo</div>
-                            <div class="text-right font-weight-bold">
-                                ${formatCurrency(json.elegivel * json.iva * json.taxa)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        
-                <!-- PEDIDO -> FATURADO -->
-                <div class="col-md-2">
-                    <div class="card bg-warning text-dark h-100">
-                        <div class="card-body py-2 px-2">
-                            <div class="small">Pedido → Faturado - confirmar IVA</div>
-                            <div class="text-right font-weight-bold">
-                                ${formatCurrency(totalPedidos * json.iva)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        
-                <!-- REEMBOLSOS -->
-                <div class="col-md-2">
-                    <div class="card bg-success text-white h-100">
-                        <div class="card-body py-2 px-2">
-                            <div class="small">Reembolsos - confirmar IVA</div>
-                            <div class="text-right font-weight-bold">
-                                ${formatCurrency(totalReembolsos)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SALDO -->
-                <div class="col-md-2">
-                    <div class="card bg-primary text-white h-100">
-                        <div class="card-body py-2 px-2">
-                            <div class="small">Saldo</div>
-                            <div class="text-right font-weight-bold">
-                                ${formatCurrency(totalPedidos - totalReembolsos)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        
-                <!-- BOTÕES -->
-                <div class="col-md-2 text-right">
-        
-                    <button
-                        id="exportResumo"
-                        class="btn btn-danger btn-lg shadow-sm mr-2"
-                        title="Exportar PDF">
-                        <i class="fa-solid fa-file-pdf"></i>
-                    </button>
-        
-                    <button
-                        id="exportALLExcel"
-                        class="btn btn-success btn-lg shadow-sm"
-                        title="Exportar Excel">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </button>
-        
-                </div>
-        
-            </div>
-        `);
 
 
-        // Cartões
-        $('#cartoesReembolsos').html(renderReembolsosCards(processos) );
+          const totalAdjudicadoPagina = rowsPagina.reduce(
 
-        return processos;
+              (total, row) =>
+                  total + calcularAdjudicado(row),
+
+              0
+
+          );
+
+
+          // ====================================================
+          // TOTAL FATURADO
+          // ====================================================
+
+          const totalFaturasGlobal = rowsGlobal.reduce(
+
+              (total, row) =>
+                  total + calcularFaturas(row),
+
+              0
+
+          );
+
+
+          const totalFaturasPagina = rowsPagina.reduce(
+
+              (total, row) =>
+                  total + calcularFaturas(row),
+
+              0
+
+          );
+
+
+          // ====================================================
+          // TOTAL REEMBOLSOS
+          // ====================================================
+
+          const totalReembolsosGlobal = rowsGlobal.reduce(
+
+              (total, row) =>
+                  total + calcularReembolsos(row),
+
+              0
+
+          );
+
+
+          const totalReembolsosPagina = rowsPagina.reduce(
+
+              (total, row) =>
+                  total + calcularReembolsos(row),
+
+              0
+
+          );
+
+
+          // ====================================================
+          // COLUNA 2 - ADJUDICADO
+          // ====================================================
+
+          $(api.column(2).footer()).html(`
+
+              <div class="text-right font-weight-bold">
+
+                  ${formatCurrency(
+                      totalAdjudicadoPagina
+                  )}
+
+                  <br>
+
+                  <small class="font-weight-normal">
+
+                      (Global:
+                      ${formatCurrency(
+                          totalAdjudicadoGlobal
+                      )}
+                      )
+
+                  </small>
+
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // COLUNA 3 - FATURADO
+          // ====================================================
+
+          $(api.column(3).footer()).html(`
+
+              <div class="text-right font-weight-bold">
+
+                  ${formatCurrency(
+                      totalFaturasPagina
+                  )}
+
+                  <br>
+
+                  <small class="font-weight-normal">
+
+                      (Global:
+                      ${formatCurrency(
+                          totalFaturasGlobal
+                      )}
+                      )
+
+                  </small>
+
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // COLUNA 4 - REEMBOLSOS
+          // ====================================================
+
+          $(api.column(4).footer()).html(`
+
+              <div class="text-right font-weight-bold">
+
+                  ${formatCurrency(
+                      totalReembolsosPagina
+                  )}
+
+                  <br>
+
+                  <small class="font-weight-normal">
+
+                      (Global:
+                      ${formatCurrency(
+                          totalReembolsosGlobal
+                      )}
+                      )
+
+                  </small>
+
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // TEXTO "TOTAIS" NA PRIMEIRA COLUNA
+          // ====================================================
+
+          $(api.column(0).footer()).html(`
+
+              <div class="text-left font-weight-bold">
+                  TOTAIS
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // LIMPA COLUNA 1 E 5
+          // ====================================================
+
+          $(api.column(1).footer()).html('');
+          $(api.column(5).footer()).html('');
 
       },
-      data: function(d) {
-        return { ...d, ...queryParams };
-      }
-    },
-    paging: false,
-    searching: false,
-    select: true,
-    order: [[1, 'asc']],   // <-- ordena pela Designação
-    columnDefs: [{ className: "dt-head-center", targets: "_all" }],
-    columns: [
-      { data: 'padm' },
-      {
-        data: 'designacao',
-        render: function(data, type, row) {
-    
-            if (type === 'sort' || type === 'type') {
-                return data;
-            }
-    
-            const totalPedidosLinha = row.historico?.length || 0;
-    
-            return `${data} <span class="badge bg-info text-white">(${totalPedidosLinha})</span>`;
-        }
-    },
-      { 
-        data: null,
-        className: 'dt-body-right',
-        render: function(data, type, row) {
-          const totalAdjudicado = row.historico
-            ?.filter(h => 
-              h.historico_descr_cod === 14 
-              && (h.historico_valor || 0) > 0)
-            .reduce((sum, h) => sum + h.historico_valor, 0) || 0;
-      
-          return formatCurrency(totalAdjudicado);
-        }
-      },
-      { 
-        data: null,
-        className: 'dt-body-right',
-        render: function(data, type, row) {
-          const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND'];
-          const totalFaturas = row.faturas 
-            ?.filter(f => tiposValidos.includes(f.fact_tipo))
-            .reduce((sum, f) => sum + (f.fact_valor || 0), 0) || 0;
-          return formatCurrency(totalFaturas);
-        }
-      },
-      { 
-        data: null,
-        className: 'dt-body-right',
-        render: function(data, type, row) {
-          const totalReembolsos = row.historico 
-          ?.filter(h => 
-            h.historico_descr_cod === 92 &&
-            (h.historico_valor || 0) > 0 &&
-            !(h.historico_num?.includes("Ad")))
-          .reduce((sum, h) => sum + (h.historico_valor || 0), 0) || 0;
-          return formatCurrency(totalReembolsos);
-        }
-      },
-      {
-        data: null,
-        className: 'details-control dt-center align-middle',
-        orderable: false,
-        defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-info"></i></button>'
-      }
-    ]
-  });
+
+
+      // ========================================================
+      // COLUNAS
+      // ========================================================
+
+      columns: [
+
+          // ----------------------------------------------------
+          // 0 - PAdm
+          // ----------------------------------------------------
+
+          {
+              data: 'padm'
+          },
+
+
+          // ----------------------------------------------------
+          // 1 - Designação
+          // ----------------------------------------------------
+
+          {
+              data: 'designacao',
+
+              render: function(data, type, row) {
+
+                  // Para ordenação
+                  if (
+                      type === 'sort' ||
+                      type === 'type'
+                  ) {
+                      return data;
+                  }
+
+
+                  const totalPedidosLinha =
+                      row.historico?.length || 0;
+
+
+                  return `
+
+                      ${data}
+
+                      <span class="badge bg-info text-white">
+                          (${totalPedidosLinha})
+                      </span>
+
+                  `;
+
+              }
+
+          },
+
+
+          // ----------------------------------------------------
+          // 2 - Adjudicado
+          // ----------------------------------------------------
+
+          {
+              data: null,
+
+              className: 'dt-body-right',
+
+              render: function(data, type, row) {
+
+                  return formatCurrency(
+                      calcularAdjudicado(row)
+                  );
+
+              }
+
+          },
+
+
+          // ----------------------------------------------------
+          // 3 - Faturado
+          // ----------------------------------------------------
+
+          {
+              data: null,
+
+              className: 'dt-body-right',
+
+              render: function(data, type, row) {
+
+                  return formatCurrency(
+                      calcularFaturas(row)
+                  );
+
+              }
+
+          },
+
+
+          // ----------------------------------------------------
+          // 4 - Reembolsos
+          // ----------------------------------------------------
+
+          {
+              data: null,
+
+              className: 'dt-body-right',
+
+              render: function(data, type, row) {
+
+                  return formatCurrency(
+                      calcularReembolsos(row)
+                  );
+
+              }
+
+          },
+
+
+          // ----------------------------------------------------
+          // 5 - Detalhes
+          // ----------------------------------------------------
+
+          {
+              data: null,
+
+              className:
+                  'details-control dt-center align-middle',
+
+              orderable: false,
+
+              defaultContent:
+                  '<button class="btn-detalhe">' +
+                  '<i class="fa-solid fa-circle-info"></i>' +
+                  '</button>'
+
+          }
+
+      ]
+
+    });
 
   $(document).on('click', '.reembolso-card', function () {
 
