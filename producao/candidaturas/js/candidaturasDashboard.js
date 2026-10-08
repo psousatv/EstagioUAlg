@@ -67,87 +67,70 @@ $(document).ready(function () {
                 aaData: data,
 
                 columns: [
-                    { data: 'candidatura' },
-
-                    {
-                        data: 'taxa',
-                        className: 'dt-body-right',
+                    // coluna 0
+                    {data: 'candidatura'},
+                    //coluna 1
+                    {data: 'taxa', className: 'dt-body-right',
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
                             return Formatters.percent.format(data || 0);
                         }
                     },
-                    // Valor Aprovado
-                    {
-                        data: null,
-                        className: 'dt-body-right',
+                    // coluna 2 - Investimento - Calculado
+                    {data: null, className: 'dt-body-right',
                         render: function (data, type, row) {
                             const valor = calcularValorAprovado(row);
                             if (type === 'sort' || type === 'type') return valor;
-                            return Formatters.number.format(valor);
+                            return Formatters.currency.format(valor);
                         }
                     },
-
-                    // Coluna calculada Fundo
-                    {
-                        data: null,
-                        className: 'dt-body-right',
+                    // coluna 3 - Elegível - Fundo - Calculado
+                    {data: null, className: 'dt-body-right',
                         render: function (data, type, row) {
                             const valor = calcularApoio(row);
                             if (type === 'sort' || type === 'type') return valor;
-                            return Formatters.number.format(valor);
+                            return Formatters.currency.format(valor);
                         }
                     },
-
-                    {
-                        data: 'adjudicado',
-                        className: 'dt-body-right',
+                    // coluna 4
+                    {data: 'adjudicado', className: 'dt-body-right',
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
-                            return Formatters.number.format(data || 0);
+                            return Formatters.currency.format(data || 0);
                         }
                     },
-
-                    {
-                        data: 'faturado',
-                        className: 'dt-body-right',
+                    // coluna 5
+                    {data: 'faturado', className: 'dt-body-right',
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
-                            return Formatters.number.format(data || 0);
+                            return Formatters.currency.format(data || 0);
                         }
                     },
-
-                    {
-                        data: 'recebido',
-                        className: 'dt-body-right',
+                    // coluna 6
+                    {data: 'recebido', className: 'dt-body-right',
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
-                            return Formatters.number.format(data || 0);
+                            return Formatters.currency.format(data || 0);
                         }
                     },
-
-                    {
-                        data: 'faturado_recebido_percent',
-                        className: 'dt-body-right',
+                    // coluna 7
+                    {data: 'faturado_recebido_percent', className: 'dt-body-right',
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
                             return Formatters.percent.format(data || 0);
                         }
                     },
-
-                    {
-                        data: 'elegivel_recebido_percent',
-                        className: 'dt-body-right',
+                    // coluna 8
+                    {data: 'elegivel_recebido_percent', className: 'dt-body-right',
                         render: function (data, type) {
                             if (type === 'sort' || type === 'type') return data || 0;
                             return Formatters.percent.format(data || 0);
                         }
                     },
-
+                    // coluna 9 - Coluna de Ordenação, não visivel na tabela.
                     { data: 'inicio', visible: false }
                 ],
-
-                order: [[1, 'desc']],
+                order: [[9, 'desc']],
 
                 // ✅ Totais no footer
                 footerCallback: function () {
@@ -158,16 +141,36 @@ $(document).ready(function () {
                         let totalGlobal = 0;
                         let totalPagina = 0;
 
-                        if (colIndex === 5) {
-                            // Coluna calculada Apoio
-                            totalGlobal = api.rows().data().toArray()
-                                .reduce((sum, row) => sum + calcularApoio(row), 0);
+                        // 🔹 Coluna 2 - Valor Aprovado (calculado)
+                        if (colIndex === 2) {
+
+                            totalGlobal = api.rows({ search: 'applied' }).data().toArray()
+                                .reduce((sum, row) => {
+                                    return sum + calcularValorAprovado(row);
+                                }, 0);
 
                             totalPagina = api.rows({ page: 'current' }).data().toArray()
-                                .reduce((sum, row) => sum + calcularApoio(row), 0);
+                                .reduce((sum, row) => {
+                                    return sum + calcularValorAprovado(row);
+                                }, 0);
 
+                        // 🔹 Coluna 3 - Apoio / Fundo (calculado)
+                        } else if (colIndex === 3) {
+
+                            totalGlobal = api.rows({ search: 'applied' }).data().toArray()
+                                .reduce((sum, row) => {
+                                    return sum + calcularApoio(row);
+                                }, 0);
+
+                            totalPagina = api.rows({ page: 'current' }).data().toArray()
+                                .reduce((sum, row) => {
+                                    return sum + calcularApoio(row);
+                                }, 0);
+
+                        // 🔹 Colunas normais
                         } else {
-                            totalGlobal = api.column(colIndex).data()
+
+                            totalGlobal = api.column(colIndex, { search: 'applied' }).data()
                                 .reduce((a, b) => intVal(a) + intVal(b), 0);
 
                             totalPagina = api.column(colIndex, { page: 'current' }).data()
@@ -177,11 +180,14 @@ $(document).ready(function () {
                         $(api.column(colIndex).footer()).html(
                             `<div class="text-right">
                                 ${Formatters.currency.format(totalPagina)}<br>
-                                <small>(Global: ${Formatters.currency.format(totalGlobal)})</small>
+                                <small>
+                                    (Global: ${Formatters.currency.format(totalGlobal)})
+                                </small>
                             </div>`
                         );
                     });
                 }
+
             });
             
             // 🔹 Arrays auxiliares
@@ -202,13 +208,13 @@ $(document).ready(function () {
             });
 
             // 🔹 Cartões
-            var containerOutroEstado = $('#cartoesCandidaturaOutroEstado');
             var containerCurso = $('#cartoesCandidaturaEmCurso');
             var containerEncerrada = $('#cartoesCandidaturaEncerrada');
+            var containerOutroEstado = $('#cartoesCandidaturaOutroEstado');
 
-            containerOutroEstado.empty();
             containerCurso.empty();
             containerEncerrada.empty();
+            containerOutroEstado.empty();
 
             data.forEach(dados => {
 
