@@ -242,46 +242,78 @@ $(document).ready(function () {
                 }
 
                 let cartao = `
-                <div class="col-sm-6 col-md-3 mb-2">
-                    <div class="card h-100 ${classeCartao}" onclick="candidaturaRedirected('${dados.candidatura}')">
-                        <div class="d-flex px-3 py-2 small">
-                            <div class="flex-grow-1 text-left">
-                                <p class="mb-1 font-weight-bold">${dados.aviso}: ${dados.candidatura}</p>
+                <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                    <div class="card candidatura-card h-100 ${classeCartao}"
+                        onclick="candidaturaRedirected('${dados.candidatura}')">
 
-                                <div>
-                                    <h6>
-                                        ${Formatters.currency.format(dados.faturado)} -
-                                        ${Formatters.currency.format(dados.recebido)} -
-                                        ${Formatters.percent.format(dados.faturado_recebido_percent)}
-                                    </h6>
-                                </div>
+                        <!-- Cabeçalho -->
+                        <div class="candidatura-header">
+                           
 
-                                <div>
-                                    <h5>
-                                        ${Formatters.currency.format(dados.elegivel * dados.iva)}
-                                        <span class="h6">
-                                            - ${Formatters.percent.format(dados.elegivel_recebido_percent)}
-                                        </span>
-                                    </h5>
-                                </div>
-
+                            <div class="candidatura-titulo">
+                                <span>${dados.aviso}: ${dados.candidatura}</span>
                             </div>
 
-                            <div class="pl-2 mt-auto">
-                                <i class="fas ${iconeCartao} fa-3x"></i>
+                            <div class="candidatura-estado">
+                                <i class="fas ${iconeCartao}"></i>
                             </div>
                         </div>
+
+                        <!-- Valores financeiros -->
+                        <div class="candidatura-metricas">
+                            <div class="metrica">
+                                <div class="metrica-label">Faturado</div>
+                                <div class="metrica-valor">
+                                    ${Formatters.currency.format(dados.faturado)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Recebido</div>
+                                <div class="metrica-valor">
+                                    ${Formatters.currency.format(dados.recebido)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Faturado / Recebido</div>
+                                <div class="metrica-valor">
+                                    ${Formatters.percent.format(dados.faturado_recebido_percent)}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="candidatura-separador"></div>
+
+                        <!-- Valores elegíveis -->
+                        <div class="candidatura-metricas candidatura-metricas-secundarias">
+                            <div class="metrica">
+                                <div class="metrica-label">Elegível (× IVA)</div>
+                                <div class="metrica-valor">
+                                    ${Formatters.currency.format(dados.elegivel * dados.iva)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Elegível / Recebido</div>
+                                <div class="metrica-valor">
+                                    ${Formatters.percent.format(dados.elegivel_recebido_percent)}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 `;
 
                 if (dados.estado === 'Em Curso') {
                     containerCurso.append(cartao);
-                } else if(dados.estado === 'Encerrada') {
+                } else if (dados.estado === 'Encerrada') {
                     containerEncerrada.append(cartao);
                 } else {
                     containerOutroEstado.append(cartao);
                 }
+
             });
 
         })

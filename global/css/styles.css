@@ -10546,3 +10546,438 @@ body {
   background:#efefef;
 
 }
+
+/* ===== Cartão principal ===== */
+.candidatura-card {
+    border: 0;
+    border-radius: 14px;
+    padding: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, .10);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.candidatura-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+}
+
+/* ===== Cores dinâmicas por execução ===== */
+.candidatura-card.bg-danger {
+    background: linear-gradient(135deg, #e6384b, #b91f32) !important;
+    color: #fff !important;
+}
+
+.candidatura-card.bg-warning {
+    background: linear-gradient(135deg, #ffda72, #f0b82f) !important;
+    color: #382800 !important;
+}
+
+.candidatura-card.bg-primary {
+    background: linear-gradient(135deg, #1685ff, #075bc5) !important;
+    color: #fff !important;
+}
+
+.candidatura-card.bg-success {
+    background: linear-gradient(135deg, #2db653, #16843a) !important;
+    color: #fff !important;
+}
+
+.candidatura-card.bg-dark {
+    background: linear-gradient(135deg, #454d55, #292e33) !important;
+    color: #fff !important;
+}
+
+/* ===== Cabeçalho ===== */
+.candidatura-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.candidatura-documento {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .16);
+    font-size: 24px;
+}
+
+.candidatura-titulo {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.candidatura-estado {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .16);
+    font-size: 25px;
+}
+
+/* Texto escuro no cartão amarelo */
+.candidatura-card.bg-warning .candidatura-documento,
+.candidatura-card.bg-warning .candidatura-estado {
+    background: rgba(56, 40, 0, .09);
+}
+
+/* ===== Grelha dos indicadores ===== */
+.candidatura-metricas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+.metrica {
+    min-width: 0;
+    padding: 0 12px;
+    border-right: 1px solid rgba(255, 255, 255, .25);
+}
+
+.metrica:first-child {
+    padding-left: 0;
+}
+
+.metrica:last-child {
+    border-right: 0;
+    padding-right: 0;
+}
+
+/* Rótulos das métricas */
+.metrica-label {
+    min-height: 28px;
+    margin-bottom: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-transform: uppercase;
+    opacity: 0.88;
+}
+
+/* Valores financeiros e percentagens */
+.metrica-valor {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+/* Cartões em ecrãs largos */
+@media (min-width: 1200px) {
+    .metrica-label {
+        font-size: 10px;
+    }
+
+    .metrica-valor {
+        font-size: 14px;
+    }
+}
+
+/* Tablets e ecrãs médios */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .metrica-label {
+        font-size: 9px;
+    }
+
+    .metrica-valor {
+        font-size: 12px;
+    }
+}
+
+/* Telemóveis */
+@media (max-width: 575.98px) {
+    .metrica-label {
+        font-size: 10px;
+    }
+
+    .metrica-valor {
+        font-size: 14px;
+    }
+}
+
+/* ===== Separador e segunda linha ===== */
+.candidatura-separador {
+    height: 1px;
+    margin: 22px 0;
+    background: currentColor;
+    opacity: .22;
+}
+
+.candidatura-metricas-secundarias {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ===== Tablets e ecrãs médios ===== */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .candidatura-card {
+        padding: 14px;
+    }
+
+    .candidatura-header {
+        gap: 8px;
+    }
+
+    .candidatura-documento {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        font-size: 20px;
+    }
+
+    .candidatura-estado {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        font-size: 20px;
+    }
+
+    .candidatura-titulo {
+        font-size: 12px;
+    }
+
+    .metrica {
+        padding: 0 7px;
+    }
+
+    .metrica-label {
+        font-size: 10px;
+    }
+
+    .metrica-valor {
+        font-size: 14px;
+    }
+}
+
+/* ===== Telemóveis ===== */
+@media (max-width: 575.98px) {
+    .candidatura-card {
+        padding: 16px;
+    }
+
+    .candidatura-titulo {
+        font-size: 13px;
+    }
+
+    .metrica-valor {
+        font-size: 14px;
+    }
+
+    .candidatura-separador {
+        margin: 17px 0;
+    }
+}
+
+/* Cartão mais compacto */
+.candidatura-card {
+    padding: 12px 14px;
+    border-radius: 12px;
+}
+
+/* Cabeçalho mais baixo */
+.candidatura-header {
+    gap: 9px;
+    margin-bottom: 12px;
+}
+
+.candidatura-documento {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 20px;
+    border-radius: 9px;
+}
+
+.candidatura-estado {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+    font-size: 21px;
+}
+
+/* Título */
+.candidatura-titulo {
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+/* Rótulos */
+.metrica-label {
+    min-height: 0;
+    margin-bottom: 3px;
+    font-size: 9px;
+    line-height: 1.25;
+}
+
+/* Valores */
+.metrica-valor {
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+/* Separador mais curto */
+.candidatura-separador {
+    margin: 12px 0;
+}
+
+/* Menos espaço nos indicadores */
+.metrica {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.candidatura-metricas-secundarias .metrica {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Ajuste para ecrãs estreitos */
+@media (max-width: 575.98px) {
+    .candidatura-card {
+        padding: 12px;
+    }
+
+    .candidatura-header {
+        margin-bottom: 12px;
+    }
+
+    .metrica-valor {
+        font-size: 13px;
+    }
+}
+
+/* Cartões do orçamento */
+#cartoesInvestimentos .candidatura-card,
+#cartoesGastos .candidatura-card,
+#cartoesProtocolos .candidatura-card {
+    padding: 12px 14px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#cartoesInvestimentos .candidatura-card:hover,
+#cartoesGastos .candidatura-card:hover,
+#cartoesProtocolos .candidatura-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Cabeçalho */
+.candidatura-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+}
+
+.candidatura-documento {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.18);
+    font-size: 20px;
+}
+
+.candidatura-titulo {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.candidatura-estado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    font-size: 21px;
+}
+
+/* Indicadores */
+.candidatura-metricas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+}
+
+.candidatura-metricas-secundarias {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metrica {
+    min-width: 0;
+    padding: 0 8px;
+    overflow-wrap: anywhere;
+}
+
+.metrica + .metrica {
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.metrica-label {
+    margin-bottom: 3px;
+    font-size: 9px;
+    line-height: 1.25;
+    opacity: 0.85;
+}
+
+.metrica-valor {
+    font-size: 13px;
+    line-height: 1.3;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+/* Separador */
+.candidatura-separador {
+    margin: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Ecrãs estreitos */
+@media (max-width: 575.98px) {
+    #cartoesInvestimentos .candidatura-card,
+    #cartoesGastos .candidatura-card,
+    #cartoesProtocolos .candidatura-card {
+        padding: 12px;
+    }
+
+    .metrica {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .metrica-valor {
+        font-size: 12px;
+    }
+}
+
+.bg-orcamento-azul {
+  background-color: #0d6efd !important;
+}

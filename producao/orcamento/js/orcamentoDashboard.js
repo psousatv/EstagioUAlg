@@ -98,147 +98,122 @@ function cartoes(endereco) {
                 dados.faturado / dados.adjudicado;
 
             let previsto_percent =
-                dados.previsto === 0 && dados.faturado === 0 ? 0 :
-                dados.previsto > 0 && dados.faturado === 0 ? 0 :
-                dados.faturado / dados.previsto;
+                dados.previsto === 0 && dados.adjudicado === 0 ? 0 :
+                dados.previsto > 0 && dados.adjudicado === 0 ? 0 :
+                dados.adjudicado / dados.previsto;
 
-            if (previsto_percent > 0.85) {
-
+            
+            if (previsto_percent >= 1) {
+                // Previsto atingido ou ultrapassado
                 classeCartao = 'bg-danger text-white';
                 iconeCartao = 'fa fa-thumbs-down';
 
-            } else if (previsto_percent > 0.60) {
+            } else if (previsto_percent >= 0.85) {
+                // Risco elevado
+                classeCartao = 'bg-danger text-white';
+                iconeCartao = 'fa fa-exclamation-triangle';
 
-                classeCartao = 'bg-warning text-white';
+            } else if (previsto_percent >= 0.60) {
+                // Atenção
+                classeCartao = 'bg-warning text-dark';
+                iconeCartao = 'fa fa-cog';
+
+            } else if (previsto_percent >= 0.40) {
+                // Situação confortável
+                classeCartao = 'bg-orcamento-azul text-white';
                 iconeCartao = 'fa fa-cog fa-spin';
+                
 
             } else {
-
+                // Execução baixa face ao previsto
                 classeCartao = 'bg-success text-white';
                 iconeCartao = 'fa fa-smile';
             }
 
 
+            
             let cartao = `
+                <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                    <div class="card candidatura-card h-100 ${classeCartao}"
+                        onclick="orcamentoNested('${dados.cod}')">
 
-                <div class="col-sm-6 col-md-3 mb-2">
+                        <div class="candidatura-header">
 
-                    <div
-                        class="card h-100 ${classeCartao}"
-                        onclick="orcamentoNested('${dados.cod}')"
-                    >
-
-                        <div class="d-flex px-3 py-2 small">
-
-                            <div class="flex-grow-1 text-left">
-
-                                <p class="mb-1 font-weight-bold">
-                                    ${dados.item}
-                                </p>
-
-                                <div>
-
-                                    <h6>
-
-                                        ${Intl.NumberFormat(
-                                            "de-DE",
-                                            {
-                                                style: "currency",
-                                                currency: "EUR"
-                                            }
-                                        ).format(dados.adjudicado)}
-
-                                        -
-
-                                        ${Intl.NumberFormat(
-                                            "de-DE",
-                                            {
-                                                style: "currency",
-                                                currency: "EUR"
-                                            }
-                                        ).format(dados.faturado)}
-
-                                        -
-
-                                        <span>
-
-                                            ${Intl.NumberFormat(
-                                                "de-DE",
-                                                {
-                                                    style: "percent",
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2
-                                                }
-                                            ).format(adjudicado_percent)}
-
-                                        </span>
-
-                                    </h6>
-
-                                </div>
-
-
-                                <div>
-
-                                    <h5>
-
-                                        ${Intl.NumberFormat(
-                                            "de-DE",
-                                            {
-                                                style: "currency",
-                                                currency: "EUR"
-                                            }
-                                        ).format(dados.previsto)}
-
-                                        <span class="h6">
-
-                                            -
-
-                                            ${Intl.NumberFormat(
-                                                "de-DE",
-                                                {
-                                                    style: "percent",
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2
-                                                }
-                                            ).format(previsto_percent)}
-
-                                        </span>
-
-                                    </h5>
-
-                                </div>
-
+                            <div class="candidatura-titulo">
+                                <span>${dados.item}</span>
                             </div>
 
+                            <div class="candidatura-estado">
+                                <i class="${iconeCartao}"></i>
+                            </div>
 
-                            <div class="pl-2 mt-auto">
+                        </div>
 
-                                <i class="fas ${iconeCartao} fa-3x"></i>
+                        <div class="candidatura-metricas">
 
+                            <div class="metrica">
+                                <div class="metrica-label">Adjudicado</div>
+                                <div class="metrica-valor">
+                                    ${moeda(dados.adjudicado)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Faturado</div>
+                                <div class="metrica-valor">
+                                    ${moeda(dados.faturado)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Adjudicado / Faturado</div>
+                                <div class="metrica-valor">
+                                    ${new Intl.NumberFormat('pt-PT', {
+                                        style: 'percent',
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }).format(adjudicado_percent)}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="candidatura-separador"></div>
+
+                        <div class="candidatura-metricas candidatura-metricas-secundarias">
+
+                            <div class="metrica">
+                                <div class="metrica-label">Previsto</div>
+                                <div class="metrica-valor">
+                                    ${moeda(dados.previsto)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Adjudicado / Previsto</div>
+                                <div class="metrica-valor">
+                                    ${new Intl.NumberFormat('pt-PT', {
+                                        style: 'percent',
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }).format(previsto_percent)}
+                                </div>
                             </div>
 
                         </div>
 
                     </div>
-
                 </div>
             `;
 
-
             if (dados.tipo === 'Investimento') {
-
                 containerInvestimentos.innerHTML += cartao;
-
             } else if (
                 dados.tipo === 'Gastos' &&
                 dados.item === 'SubContratos'
             ) {
-
                 containerProtocolos.innerHTML += cartao;
-
             } else {
-
                 containerGastos.innerHTML += cartao;
             }
         });
