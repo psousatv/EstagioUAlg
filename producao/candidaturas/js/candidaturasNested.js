@@ -446,6 +446,7 @@ $(document).ready(function () {
                   programa: json.programa,
                   nome: json.designacao,
                   taxa: json.taxa,
+                  iva: json.iva,
                   logo: json.logo
 
               }));
@@ -619,9 +620,7 @@ $(document).ready(function () {
 
                                   <div class="text-right font-weight-bold">
 
-                                      ${formatCurrency(
-                                          json.elegivel * json.iva
-                                      )}
+                                      ${formatCurrency(json.elegivel * json.iva)}
 
                                   </div>
 
@@ -646,11 +645,7 @@ $(document).ready(function () {
 
                                   <div class="text-right font-weight-bold">
 
-                                      ${formatCurrency(
-                                          json.elegivel *
-                                          json.iva *
-                                          json.taxa
-                                      )}
+                                      ${formatCurrency(json.elegivel * json.iva * json.taxa)}
 
                                   </div>
 
@@ -670,14 +665,12 @@ $(document).ready(function () {
                               <div class="card-body py-2 px-2">
 
                                   <div class="small">
-                                      Pedido → Faturado - confirmar IVA
+                                      Pedido - inclui IVA
                                   </div>
 
                                   <div class="text-right font-weight-bold">
 
-                                      ${formatCurrency(
-                                          totalPedidos * json.iva
-                                      )}
+                                      ${formatCurrency(totalPedidos)}
 
                                   </div>
 
@@ -697,14 +690,12 @@ $(document).ready(function () {
                               <div class="card-body py-2 px-2">
 
                                   <div class="small">
-                                      Reembolsos - confirmar IVA
+                                      Reembolsos - inclui IVA
                                   </div>
 
                                   <div class="text-right font-weight-bold">
 
-                                      ${formatCurrency(
-                                          totalReembolsos
-                                      )}
+                                      ${formatCurrency(totalReembolsos)}
 
                                   </div>
 
@@ -724,15 +715,12 @@ $(document).ready(function () {
                               <div class="card-body py-2 px-2">
 
                                   <div class="small">
-                                      Saldo
+                                      Não Reembolsado
                                   </div>
 
                                   <div class="text-right font-weight-bold">
 
-                                      ${formatCurrency(
-                                          totalPedidos -
-                                          totalReembolsos
-                                      )}
+                                      ${formatCurrency(totalPedidos - totalReembolsos)}
 
                                   </div>
 
@@ -972,18 +960,14 @@ $(document).ready(function () {
 
               <div class="text-right font-weight-bold">
 
-                  ${formatCurrency(
-                      totalFaturasPagina
-                  )}
+                  ${formatCurrency(totalFaturasPagina)}
 
                   <br>
 
                   <small class="font-weight-normal">
 
                       (Global:
-                      ${formatCurrency(
-                          totalFaturasGlobal
-                      )}
+                      ${formatCurrency(totalFaturasGlobal)}
                       )
 
                   </small>
@@ -1001,18 +985,14 @@ $(document).ready(function () {
 
               <div class="text-right font-weight-bold">
 
-                  ${formatCurrency(
-                      totalReembolsosPagina
-                  )}
+                  ${formatCurrency(totalReembolsosPagina)}
 
                   <br>
 
                   <small class="font-weight-normal">
 
                       (Global:
-                      ${formatCurrency(
-                          totalReembolsosGlobal
-                      )}
+                      ${formatCurrency(totalReembolsosGlobal)}
                       )
 
                   </small>
@@ -1054,134 +1034,66 @@ $(document).ready(function () {
           // ----------------------------------------------------
           // 0 - PAdm
           // ----------------------------------------------------
-
-          {
-              data: 'padm'
-          },
-
-
+          {data: 'padm'},
           // ----------------------------------------------------
           // 1 - Designação
           // ----------------------------------------------------
-
-          {
-              data: 'designacao',
-
+          {data: 'designacao',
               render: function(data, type, row) {
-
                   // Para ordenação
-                  if (
-                      type === 'sort' ||
-                      type === 'type'
-                  ) {
+                  if (type === 'sort' || type === 'type') {
                       return data;
                   }
-
-
-                  const totalPedidosLinha =
-                      row.historico?.length || 0;
-
-
+                  
+                  const totalPedidosLinha = row.historico?.length || 0;
                   return `
-
                       ${data}
-
                       <span class="badge bg-info text-white">
                           (${totalPedidosLinha})
                       </span>
-
                   `;
-
               }
-
           },
-
-
           // ----------------------------------------------------
           // 2 - Adjudicado
           // ----------------------------------------------------
-
-          {
-              data: null,
-
-              className: 'dt-body-right',
-
+          {data: null, className: 'dt-body-right',
               render: function(data, type, row) {
-
-                  return formatCurrency(
-                      calcularAdjudicado(row)
-                  );
-
+                  return formatCurrency(calcularAdjudicado(row));
               }
-
           },
-
-
           // ----------------------------------------------------
           // 3 - Faturado
           // ----------------------------------------------------
-
-          {
-              data: null,
-
-              className: 'dt-body-right',
-
+          {data: null, className: 'dt-body-right',
               render: function(data, type, row) {
-
-                  return formatCurrency(
-                      calcularFaturas(row)
-                  );
-
+                  return formatCurrency(calcularFaturas(row));
               }
-
           },
-
-
           // ----------------------------------------------------
           // 4 - Reembolsos
           // ----------------------------------------------------
-
-          {
-              data: null,
-
-              className: 'dt-body-right',
-
+          {data: null, className: 'dt-body-right',
               render: function(data, type, row) {
-
-                  return formatCurrency(
-                      calcularReembolsos(row)
-                  );
-
+                  return formatCurrency(calcularReembolsos(row));
               }
-
           },
-
-
           // ----------------------------------------------------
           // 5 - Detalhes
           // ----------------------------------------------------
-
-          {
-              data: null,
-
-              className:
-                  'details-control dt-center align-middle',
-
-              orderable: false,
-
-              defaultContent:
+          {data: null,
+            className: 'details-control dt-center align-middle',
+            orderable: false,
+            defaultContent:
                   '<button class="btn-detalhe">' +
                   '<i class="fa-solid fa-circle-info"></i>' +
                   '</button>'
-
           }
-
       ]
 
     });
 
   $(document).on('click', '.reembolso-card', function () {
-
     const key = $(this).data('key');
 
     pedidoExportacaoKey = key;

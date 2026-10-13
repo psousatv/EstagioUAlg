@@ -73,9 +73,11 @@ async function carregarDados(){
 /* ============================================================
    Classificação
 ============================================================ */
-function classificarVistorias(lista){
+function classificarVistorias(lista) {
     const hoje = new Date();
-    const actual = hoje.getFullYear() * 100 + (hoje.getMonth() + 1);
+    hoje.setHours(0, 0, 0, 0);
+
+    const anoAtual = hoje.getFullYear();
 
     const resultado = {
         vencidas: [],
@@ -86,22 +88,35 @@ function classificarVistorias(lista){
     lista.forEach(item => {
         item.provisoria = item.provisoria || "n.a.";
         item.valor = Number(item.valor || 0);
-        const ano = Number(item.ano);
-        const mes = Number(item.mes);
 
-        if(item.obs === "Agendado"){
+        // Os agendados mantêm a classificação atual
+        if (item.obs === "Agendado") {
             resultado.agendadas.push(item);
             return;
         }
 
-        if(item.obs === "Programado"){
-            const data = ano * 100 + mes;
+        if (!item.obs || !item.obs.includes("Programado")) {
+            return;
+        }
 
-            if(data < actual){
-                resultado.vencidas.push(item);
-            } else{
-                resultado.programadas.push(item);
-            }
+        // A data de referência é a data de registo
+        const dataRegisto = new Date(item.data_registo);
+
+        if (isNaN(dataRegisto.getTime())) {
+            return;
+        }
+
+        dataRegisto.setHours(0, 0, 0, 0);
+
+        // Calcular a data de vencimento: registo + 15 dias
+        const dataLimite = new Date(dataRegisto);
+        dataLimite.setDate(dataLimite.getDate() + 15);
+
+        // Vencida quando já passaram 15 dias
+        if (hoje >= dataLimite) {
+            resultado.vencidas.push(item);
+        } else if (dataRegisto.getFullYear() === anoAtual) {
+            resultado.programadas.push(item);
         }
     });
 
@@ -207,6 +222,42 @@ function renderizarTudo(dados){
 }
 
 /* ============================================================
+   Verifica se o processo está listado em mais do que uma lista
+============================================================ */
+function obterNotaOutrasSituacoes(item, listaAtual) {
+    const processo = String(item.processo);
+
+    const situacoes = {
+        vencidas: "Vencidas",
+        programadas: "Programadas",
+        agendadas: "Agendadas"
+    };
+
+    const outrasSituacoes = Object.keys(listas).filter(situacao => {
+        // Só procurar noutras listas
+        if (situacao === listaAtual) return false;
+
+        return listas[situacao].some(registo =>
+            String(registo.processo) === processo
+        );
+    });
+
+    if (outrasSituacoes.length === 0) return "";
+
+    const nomes = outrasSituacoes
+        .map(situacao => situacoes[situacao]);
+
+    return `
+        <div class="alert alert-warning py-2 px-2 mt-2 mb-0 small">
+            <i class="fa fa-exclamation-triangle"></i>
+            <strong>Atenção:</strong> este processo também está listado em
+            ${nomes.join(" e ")}.
+        </div>
+    `;
+}
+
+
+/* ============================================================
    Renderizar Lista
 ============================================================ */
 function renderizarLista(id, lista, badge){
@@ -224,19 +275,35 @@ function renderizarLista(id, lista, badge){
         return;
     }
 
-    const html = lista.map(item => criarCard(item, badge, id === "agendado")).join("");
+    const html = lista.map(item =>
+        criarCard(
+            item,
+            badge,
+            id === "agendado",
+            id === "vencido" ? "vencidas" :
+            id === "programado" ? "programadas" :
+            "agendadas"
+        )
+    ).join("");
+
     container.innerHTML = html;
 }
+
 
 /* ============================================================
    Criar Cartão
 ============================================================ */
-function criarCard(item, badge, mostrarTipo=false){
-    const area = mostrarTipo && item.tipo ? 
-        `${item.tipo} - ${item.actividade ?? ""}`
+function criarCard(item, badge, mostrarTipo = false, situacao = "") {
+    const area = mostrarTipo && item.tipo
+        ? `${item.tipo} - ${item.actividade ?? ""}`
         : (item.actividade ?? "");
 
     const valor = formatarEuro(item.valor);
+
+    // Mostrar a nota apenas em Vencidas ou Agendadas
+    const nota = (situacao === "vencidas" || situacao === "agendadas")
+        ? obterNotaOutrasSituacoes(item, situacao)
+        : "";
 
     return `
         <div class="card card-vistoria mb-3 shadow-sm border-${badge}">
@@ -279,7 +346,8 @@ function criarCard(item, badge, mostrarTipo=false){
                 <div class="row small mb-0">
                     <div class="col-4 font-weight-bold">Pedido</div>
                     <div class="col-8">
-                        <span class="badge badge-${badge}">${item.doc}</span>   
+                        <span class="badge badge-${badge}">${item.doc}</span>
+                        ${item.data_registo}
                     </div>
                 </div>
                 <div class="row small">
@@ -287,6 +355,9 @@ function criarCard(item, badge, mostrarTipo=false){
                     <div class="col-8"><strong>${valor} €</strong></div>
                 </div>
             </div>
+            
+            ${nota}
+            
         </div>
     `;
 }

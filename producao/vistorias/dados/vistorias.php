@@ -28,8 +28,10 @@ $sqlVistorias = "SELECT
 				INNER JOIN processo ON proces_check = historico_proces_check
 				INNER JOIN entidade ON ent_cod = proces_ent_cod
 				WHERE YEAR(historico_dataemissao) <= YEAR(NOW())
-				AND historico_obs LIKE '%Programado%'
-				OR historico_obs LIKE '%Agendado%'
+				AND (
+					historico_obs LIKE '%Programado%'
+					OR historico_obs LIKE '%Agendado%'
+				)
 				ORDER BY ent_nome, historico_datamov";
 
 $stmt = $myConn->query($sqlVistorias);
