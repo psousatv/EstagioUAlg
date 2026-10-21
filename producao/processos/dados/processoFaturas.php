@@ -33,7 +33,7 @@ echo "
 </tr>
   <tr style='text-align: center'>
     <th class='bg-secondary text-white' colspan='12'>Faturação</th>
-    <th colspan='4' class='bg-warning'>Reembolsos</th>
+    <th colspan='4' class='bg-warning'>Financiamento</th>
   </tr>
   </thead>
   <tbody>
@@ -44,14 +44,14 @@ echo "
       <th>Auto</th>
       <th>Data</th>
       <th class='bg-info text-white'>Valor</th>
-      <th class='bg-info text-white'>IVA</th>
       <th class='bg-info text-white'>Caução</th>
       <th class='bg-secondary text-white'>SubTotal</th>
-      <th class='bg-info text-white'>Outros</th>
       <th class='bg-info text-white'>Garantia</th>
+      <th class='bg-info text-white'>IVA</th>
+      <th class='bg-info text-white'>Outros</th>
       <th class='bg-dark text-white'>Pagar</th>
       <th class='bg-info text-white'>Imputado</th>
-      <th class='bg-warning'>Reembolso</th>
+      <th class='bg-warning'>Fundo</th>
       <th class='bg-warning'>Privado</th>
     </tr>
   </tbody";
@@ -61,7 +61,10 @@ foreach($data as $row)
   $numero = substr($row['fact_expediente'], 1, 5);
   $ano = substr($row['fact_expediente'], 6, 7);
   $expediente = $tipo. "." .$numero. "." .$ano;
-  $garantia = $row['fact_duovalor'];
+  $caucao = $row['fact_duovalor'];
+  $garantia = $row['fact_garban'];
+  $outros = $row['fact_duocga'];
+  $iva = $row['fact_iva'];
 
   //if ($row['fact_valor'] < 0) {
 
@@ -69,15 +72,15 @@ foreach($data as $row)
 
   //} else {
 
-      $subtotal = $row['fact_valor'] - $row['fact_duovalor'];
+      $subtotal = $row['fact_valor'] - $caucao;
       
       if ($row['fact_tipo'] === 'NC') {
-        $pagar = $garantia = 0 ;
+        $pagar = $garantia = $caucao = 0 ;
       } else {
-        $pagar = $subtotal - $garantia;
+        $pagar = $subtotal - $caucao;
       };
       
-      $imputado = $row['fact_valor'] + $row['fact_iva'];
+      $imputado = $subtotal + $iva;
       $fundo = $row['fact_finan_fundo'];
       $privado = $imputado - $fundo;
   //}
@@ -90,11 +93,14 @@ foreach($data as $row)
       <td class='text-left'>".$row['fact_auto_num']."</td>
       <td class='text-left'>".$row['fact_auto_data']."</td>
       <td class='bg-info text-right text-white'>" .number_format($row['fact_valor'], 2, ',', '.'). "</td>
-      <td class='bg-info text-right text-white'>" .number_format($row['fact_iva'], 2, ',', '.'). "</td>
-      <td class='bg-info text-right text-white'>" .number_format($garantia, 2, ',', '.'). "</td>
+      
+      <td class='bg-info text-right text-white'>" .number_format($caucao, 2, ',', '.'). "</td>
       <td class='bg-secondary text-right text-white'>".number_format($subtotal, 2, ',', '.')."</td>
-      <td class='bg-info text-right text-white'>" .number_format($row['fact_duocga'], 2, ',', '.'). "</td>
-      <td class='bg-info text-right text-white'>" .number_format($row['fact_garban'], 2, ',', '.'). "</td>
+      <td class='bg-info text-right text-white'>" .number_format($garantia, 2, ',', '.'). "</td>
+      <td class='bg-info text-right text-white'>" .number_format($iva, 2, ',', '.'). "</td>
+      <td class='bg-info text-right text-white'>" .number_format($outros, 2, ',', '.'). "</td>
+      
+      
       <td class='bg-dark text-right text-white'>".number_format($pagar, 2, ',', '.')."</td>
       <td class='bg-info text-right text-white'>" .number_format($imputado, 2, ',', '.'). "</td>
       <td class='bg-warning text-right'>" .number_format($fundo, 2, ',', '.'). "</td>
