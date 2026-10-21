@@ -45,11 +45,11 @@ echo "
       <th>Data</th>
       <th class='bg-info text-white'>Valor</th>
       <th class='bg-info text-white'>IVA</th>
-      <th>Caução</th>
+      <th class='bg-info text-white'>Caução</th>
       <th class='bg-secondary text-white'>SubTotal</th>
       <th class='bg-info text-white'>Outros</th>
-      <th class='bg-secondary text-white'>Pagar</th>
-      <th>Garantia</th>
+      <th class='bg-info text-white'>Garantia</th>
+      <th class='bg-dark text-white'>Pagar</th>
       <th class='bg-info text-white'>Imputado</th>
       <th class='bg-warning'>Reembolso</th>
       <th class='bg-warning'>Privado</th>
@@ -79,7 +79,7 @@ foreach($data as $row)
       
       $imputado = $row['fact_valor'] + $row['fact_iva'];
       $fundo = $row['fact_finan_fundo'];
-      $privado = $row['fact_finan_max_imputado'] - $row['fact_finan_fundo'];
+      $privado = $imputado - $fundo;
   //}
   
   echo "
@@ -91,22 +91,14 @@ foreach($data as $row)
       <td class='text-left'>".$row['fact_auto_data']."</td>
       <td class='bg-info text-right text-white'>" .number_format($row['fact_valor'], 2, ',', '.'). "</td>
       <td class='bg-info text-right text-white'>" .number_format($row['fact_iva'], 2, ',', '.'). "</td>
-      <td class='text-right'>" .number_format($garantia, 2, ',', '.'). "</td>
-      <td class='bg-secondary text-white' style='text-align:right'>
-        ".number_format($subtotal, 2, ',', '.')."
-      </td>
+      <td class='bg-info text-right text-white'>" .number_format($garantia, 2, ',', '.'). "</td>
+      <td class='bg-secondary text-right text-white'>".number_format($subtotal, 2, ',', '.')."</td>
       <td class='bg-info text-right text-white'>" .number_format($row['fact_duocga'], 2, ',', '.'). "</td>
-      <td class='bg-secondary text-white' style='text-align:right'>
-        ".number_format($pagar, 2, ',', '.')."
-      </td>
-      <td class='text-right'>" .number_format($row['fact_garban'], 2, ',', '.'). "</td>
-      
+      <td class='bg-info text-right text-white'>" .number_format($row['fact_garban'], 2, ',', '.'). "</td>
+      <td class='bg-dark text-right text-white'>".number_format($pagar, 2, ',', '.')."</td>
       <td class='bg-info text-right text-white'>" .number_format($imputado, 2, ',', '.'). "</td>
       <td class='bg-warning text-right'>" .number_format($fundo, 2, ',', '.'). "</td>
-      
-      <td class='bg-warning text-right' style='text-align:right'>
-        ".number_format($privado , 2, ',', '.')."
-      </td>
+      <td class='bg-warning text-right'>".number_format($privado , 2, ',', '.')."</td>
     </tr>";
 };
 echo "</table>";
