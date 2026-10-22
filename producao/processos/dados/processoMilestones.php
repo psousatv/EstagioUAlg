@@ -39,15 +39,23 @@ function buscarResultados(PDO $conn, int $codigoProcesso, array $descritivos): a
             h.historico_notas AS notas
 
         FROM descritivos d
-
         LEFT JOIN (
             SELECT *
             FROM (
                 SELECT
                     h1.*,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h1.historico_descr_cod
-                        ORDER BY h1.historico_datamov DESC
+                        PARTITION BY
+                            h1.historico_descr_cod
+                        ORDER BY
+                            CASE
+                                WHEN h1.historico_descr_cod = 14
+                                THEN h1.historico_dataemissao
+                            END ASC,
+                            CASE
+                                WHEN h1.historico_descr_cod <> 14
+                                THEN h1.historico_datamov
+                            END DESC
                     ) AS rn
                 FROM historico h1
                 WHERE h1.historico_proces_check = ?
