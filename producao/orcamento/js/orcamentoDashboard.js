@@ -1389,11 +1389,12 @@ function criarDocumentoExecucaoGeralPDF(rubricas, ano) {
         );
 
         const adjudicado = numero(processo.adjudicado);
+        const faturado = numero(processo.faturado);
 
         const saldo =
             processo.saldo !== undefined
                 ? numero(processo.saldo)
-                : adjudicado - limite;
+                : limite - faturado;
 
         const faturas =
             Array.isArray(processo.faturas)
