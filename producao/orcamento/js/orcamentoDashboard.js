@@ -377,45 +377,23 @@ function prepararExecucaoOrcamento(rubricas) {
         // TOTAIS DA RUBRICA
         // --------------------------------------------------
 
-        const previsto =
-            numero(
-                rubrica.previsto
-            );
-
-
-        const adjudicado =
-            numero(
-                rubrica.adjudicado
-            );
-
+        const previsto = numero(rubrica.previsto);
+        const adjudicado = numero(rubrica.adjudicado);
+        const faturado = numero(rubrica.faturado);
 
         // Saldo pedido:
         //
-        // Valor Previsto - Valor Adjudicado
-
-        const saldo =
-            previsto -
-            adjudicado;
-
+        // Valor Adjudicado - Valor Previsto
+        const saldo = previsto - faturado;
 
         // --------------------------------------------------
         // NOME DA RUBRICA
         // --------------------------------------------------
-
         const nomeRubrica =
-            [
-                rubrica.cod ||
-                    rubrica.rub_cod ||
-                    '',
-
-                rubrica.item ||
-                    rubrica.rubrica ||
-                    rubrica.designacao ||
-                    ''
-            ]
+            [rubrica.cod || rubrica.rub_cod || '',
+             rubrica.item || rubrica.rubrica || rubrica.designacao || '']
             .filter(Boolean)
             .join(' — ');
-
 
         // --------------------------------------------------
         // OBJETO DA DATATABLE
@@ -424,33 +402,14 @@ function prepararExecucaoOrcamento(rubricas) {
         return {
 
             // Código da rubrica usado para ordenação
-            rubCod:
-                numero(
-                    rubrica.cod ||
-                    rubrica.rub_cod
-                ),
-
+            rubCod: numero(rubrica.cod || rubrica.rub_cod),
             rubrica: nomeRubrica,
-
             previsto: previsto,
-
             adjudicado: adjudicado,
-
             saldo: saldo,
-
-            numeroProcessos:
-                processos.length,
-
-            numeroFaturas:
-                numeroFaturas,
-
-            faturado:
-                rubrica.faturado !== undefined
-                    ? numero(
-                        rubrica.faturado
-                    )
-                    : faturadoCalculado,
-
+            numeroProcessos: processos.length,
+            numeroFaturas: numeroFaturas,
+            faturado: rubrica.faturado !== undefined ? numero(rubrica.faturado) : faturadoCalculado,
             jan: faturacaoMensal[0],
             fev: faturacaoMensal[1],
             mar: faturacaoMensal[2],
@@ -474,18 +433,10 @@ function prepararExecucaoOrcamento(rubricas) {
 // CRIAR DATATABLE
 // ==========================================================
 
-function renderTabelaExecucaoOrcamento(
-    rubricas
-) {
-
-    const container =
-        document.getElementById(
-            'tabelaExecucaoOrcamento'
-        );
-
+function renderTabelaExecucaoOrcamento(rubricas) {
+    const container = document.getElementById('tabelaExecucaoOrcamento');
 
     if (!container) {
-
         return;
     }
 
@@ -557,88 +508,33 @@ function renderTabelaExecucaoOrcamento(
                         <!-- ============================== -->
 
                         <tr>
+                            <th rowspan="2" class="align-middle">Rubrica</th>
+                            <th colspan="12" class="text-center">Faturação por mês</th>
+                            <th rowspan="2" class="align-middle text-right">Valor Faturado</th>
+                            <th rowspan="2" class="align-middle text-right">Saldo</th>
+                            
+                            <th rowspan="2" class="align-middle text-right">Valor Previsto</th>
 
-                            <th rowspan="2" class="align-middle">
-                                Rubrica
-                            </th>
-
-                            <th rowspan="2" class="align-middle text-right">
-                                Valor Previsto
-                            </th>
-
-                            <th rowspan="2" class="align-middle text-right">
-                                Valor Adjudicado
-                            </th>
-
-                            <th rowspan="2" class="align-middle text-right">
-                                Saldo
-                            </th>
-
-                            <th rowspan="2" class="align-middle text-right">
-                                Valor Faturado
-                            </th>
-
-                            <th colspan="12" class="text-center">
-                                Faturação por mês
-                            </th>
-
+                            <th rowspan="2" class="align-middle text-right">Valor Adjudicado</th>
                         </tr>
-
 
                         <!-- ============================== -->
                         <!-- MESES                          -->
                         <!-- ============================== -->
 
                         <tr>
-
-                            <th class="text-right">
-                                Jan.
-                            </th>
-
-                            <th class="text-right">
-                                Fev.
-                            </th>
-
-                            <th class="text-right">
-                                Mar.
-                            </th>
-
-                            <th class="text-right">
-                                Abr.
-                            </th>
-
-                            <th class="text-right">
-                                Mai.
-                            </th>
-
-                            <th class="text-right">
-                                Jun.
-                            </th>
-
-                            <th class="text-right">
-                                Jul.
-                            </th>
-
-                            <th class="text-right">
-                                Ago.
-                            </th>
-
-                            <th class="text-right">
-                                Set.
-                            </th>
-
-                            <th class="text-right">
-                                Out.
-                            </th>
-
-                            <th class="text-right">
-                                Nov.
-                            </th>
-
-                            <th class="text-right">
-                                Dez.
-                            </th>
-
+                            <th class="text-right">Jan.</th>
+                            <th class="text-right">Fev.</th>
+                            <th class="text-right">Mar.</th>
+                            <th class="text-right">Abr.</th>
+                            <th class="text-right">Mai.</th>
+                            <th class="text-right">Jun.</th>
+                            <th class="text-right">Jul.</th>
+                            <th class="text-right">Ago.</th>
+                            <th class="text-right">Set.</th>
+                            <th class="text-right">Out.</th>
+                            <th class="text-right">Nov.</th>
+                            <th class="text-right">Dez.</th>
                         </tr>
 
                     </thead>
@@ -766,91 +662,29 @@ function renderTabelaExecucaoOrcamento(
                     }
                 },
 
-                {
-                    data: 'previsto',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'adjudicado',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'saldo',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'faturado',
-                    render: renderMoeda
-                },
-
-
                 // ------------------------------------------
                 // MESES
                 // ------------------------------------------
 
-                {
-                    data: 'jan',
-                    render: renderMoeda
-                },
+                {data: 'jan', render: renderMoeda},
+                {data: 'fev', render: renderMoeda},
+                {data: 'mar', render: renderMoeda},
+                {data: 'abr', render: renderMoeda},
+                {data: 'mai', render: renderMoeda},
+                {data: 'jun', render: renderMoeda},
+                {data: 'jul', render: renderMoeda},
+                {data: 'ago', render: renderMoeda},
+                {data: 'set', render: renderMoeda},
+                {data: 'out', render: renderMoeda},
+                {data: 'nov', render: renderMoeda},
+                {data: 'dez', render: renderMoeda},
 
-                {
-                    data: 'fev',
-                    render: renderMoeda
-                },
+                {data: 'faturado', render: renderMoeda},
+                {data: 'saldo', render: renderMoeda},
 
-                {
-                    data: 'mar',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'abr',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'mai',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'jun',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'jul',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'ago',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'set',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'out',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'nov',
-                    render: renderMoeda
-                },
-
-                {
-                    data: 'dez',
-                    render: renderMoeda
-                }
-
+                {data: 'previsto', render: renderMoeda},
+                {data: 'adjudicado', render: renderMoeda}
+                     
             ],
 
 
@@ -1559,7 +1393,7 @@ function criarDocumentoExecucaoGeralPDF(rubricas, ano) {
         const saldo =
             processo.saldo !== undefined
                 ? numero(processo.saldo)
-                : limite - adjudicado;
+                : adjudicado - limite;
 
         const faturas =
             Array.isArray(processo.faturas)
