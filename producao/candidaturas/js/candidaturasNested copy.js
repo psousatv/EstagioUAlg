@@ -1,10 +1,11 @@
 let processosGlobais = [];
 let pedidoExportacaoModal = [];
+let pedidoExportacaoKey = null;
 let table;
 
 
 function formatCurrency(value){
-  return new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(value || 0) + '€';
+  return new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(value || 0) + '€';
 }
 
 function formatExpediente(str){
@@ -268,6 +269,7 @@ $(document).ready(function () {
       
         historico.forEach(h => {
       
+
           // FILTRO PP
           if (h.historico_num && !String(h.historico_num).startsWith('PP')) return;
       
@@ -302,10 +304,10 @@ $(document).ready(function () {
 
           if (a.key === 'ORFAO') return 1;
           if (b.key === 'ORFAO') return -1;
-
+ 
           return String(a.key).localeCompare(String(b.key), 'pt');
       });
-    
+      
       // =====================================================
       // 3. RENDER CARDS
       // =====================================================
@@ -363,241 +365,735 @@ $(document).ready(function () {
       return html;
     }
 
-  // Inicializa DataTable principal
-  table = $('#processosNested').DataTable({
-    ajax: {
-      url: 'dados/candidaturasNested.php',
-      dataSrc: function (json) {
-        // Retorna todos os processos como linhas
-        const processos = json.processos.map(proc => ({
-          ...proc,
-          candidatura: json.candidatura,
-          estado: json.estado,
-          aviso: json.aviso,
-          programa: json.programa,
-          nome: json.designacao,
-          taxa: json.taxa,
-          logo: json.logo
-        }));
+    // ==========================================================
+    // FUNÇÕES DE CÁLCULO
+    // ==========================================================
 
-        processosGlobais = processos
+    // Coluna 2 - Adjudicado
+    function calcularAdjudicado(row) {
 
-        //console.table(json);
-        //console.table(processosGlobais);
+      return row.historico
+          ?.filter(h =>
+              h.historico_descr_cod === 14 &&
+              Number(h.historico_valor || 0) > 0
+          )
+          .reduce(
+              (sum, h) => sum + Number(h.historico_valor || 0),
+              0
+          ) || 0;
+    }
 
-        // Caminho para o Logotipo da Candidatura
-        const path = "../../global/imagens";
 
-        // Título da candidatura
-        $('#titulo').html(`
-          <div class="row no-gutters align-items-center mb-2">
+    // Coluna 3 - Faturas
+    function calcularFaturas(row) {
 
-            <div class="col-8">
-                <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
-                ${json.candidatura || ''} - ${json.designacao || ''}
-                </div>
-            </div>
+      const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND'];
 
-            <div class="col-2">
-                <div class="d-flex justify-content-end px-3 py-2" style="padding: 6px 16px; min-height: 50px;">
+      return row.faturas
+          ?.filter(f =>
+              tiposValidos.includes(f.fact_tipo)
+          )
+          .reduce(
+              (sum, f) => sum + Number(f.fact_valor || 0),
+              0
+          ) || 0;
+    }
 
-                  <a href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
-                    class="btn btn-info mr-1"
-                    style="padding: 6px 14px;"
-                    title="Voltar">
-                    <i class="fa-solid fa-arrow-left text-light"></i>
-                  </a>
 
-                  <a href="candidaturasNested.html?itemProcurado=${json.candidatura}"
-                    class="btn btn-secondary mr-1"
-                    style="padding: 6px 14px;"
-                    title="Atualizar">
-                    <i class="fa-solid fa-rotate text-light"></i>
-                  </a>                 
+    // Coluna 4 - Reembolsos
+    function calcularReembolsos(row) {
 
-                </div>
-            </div>
+      return row.historico
+          ?.filter(h =>
+              h.historico_descr_cod === 92 &&
+              Number(h.historico_valor || 0) > 0 &&
+              !(h.historico_num?.includes("Ad"))
+          )
+          .reduce(
+              (sum, h) => sum + Number(h.historico_valor || 0),
+              0
+          ) || 0;
+    }
 
-            <!-- Logotipo -->
-            <div class="col-2 d-flex justify-content-end align-items-center">
-              <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;">
-            </div>
 
-          </div>
-        `);
-       
-        const totalPedidos = processos
-        .reduce((sumProc, p) => sumProc +
-          (p.historico || [])
-            .filter(h =>
-              h.historico_descr_cod === 91 &&
-              Number(h.historico_valor) > 0
-            )
-            .reduce((s, h) => s + Number(h.historico_valor), 0),
-          0
-        );
+    // ==========================================================
+    // INICIALIZA DATATABLE PRINCIPAL
+    // ==========================================================
 
-        const totalReembolsos = processos
-          .reduce((sumProc, p) => sumProc +
-            (p.historico || [])
-              .filter(h =>
-                h.historico_descr_cod === 92 &&
-                Number(h.historico_valor) > 0
-              )
-              .reduce((s, h) => s + Number(h.historico_valor), 0),
-            0
+    table = $('#processosNested').DataTable({
+
+      // ======================================================
+      // AJAX
+      // ======================================================
+
+      ajax: {
+
+          url: 'dados/candidaturasNested.php',
+
+          dataSrc: function (json) {
+
+              // ------------------------------------------------
+              // Processos
+              // ------------------------------------------------
+
+              const processos = json.processos.map(proc => ({
+
+                  ...proc,
+
+                  candidatura: json.candidatura,
+                  estado: json.estado,
+                  aviso: json.aviso,
+                  programa: json.programa,
+                  nome: json.designacao,
+                  taxa: json.taxa,
+                  iva: json.iva,
+                  logo: json.logo
+
+              }));
+
+
+              processosGlobais = processos;
+
+
+              // ------------------------------------------------
+              // Caminho para o Logotipo da Candidatura
+              // ------------------------------------------------
+
+              const path = "../../global/imagens";
+
+
+              // ------------------------------------------------
+              // Título da candidatura
+              // ------------------------------------------------
+
+              $('#titulo').html(`
+
+                  <div class="row no-gutters align-items-center mb-2">
+
+                      <div class="col-8">
+
+                          <div class="d-flex justify-content-start bg-primary text-white text-truncate px-3 py-2">
+
+                              ${json.candidatura || ''}
+                              -
+                              ${json.designacao || ''}
+
+                          </div>
+
+                      </div>
+
+
+                      <div class="col-2">
+
+                          <div
+                              class="d-flex justify-content-end px-3 py-2"
+                              style="padding: 6px 16px; min-height: 50px;"
+                          >
+
+                              <a
+                                  href="candidaturasGeral.html?itemProcurado=${json.candidatura}"
+                                  class="btn btn-primary mr-1"
+                                  style="padding: 6px 14px;"
+                                  title="Voltar à Candidatura"
+                              >
+                                  <i class="fa-solid fa-arrow-left text-light"></i>
+                              </a>
+
+
+                              <a
+                                  href="candidaturasNested.html?itemProcurado=${json.candidatura}"
+                                  class="btn btn-info mr-1"
+                                  style="padding: 6px 14px;"
+                                  title="Atualizar"
+                              >
+                                  <i class="fa-solid fa-rotate text-light"></i>
+                              </a>
+
+
+                              <a
+                                  href="candidaturasDashboard.html?"
+                                  class="btn btn-secondary mr-1"
+                                  style="padding: 6px 14px;"
+                                  title="Dashboard"
+                              >
+                                  <i class="fa-solid fa-home text-light"></i>
+                              </a>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- Logotipo -->
+
+                      <div class="col-2 d-flex justify-content-end align-items-center">
+
+                          <img
+                              src="${path}/${json.logo}"
+                              alt="Logotipo"
+                              style="max-height: 50px;"
+                          >
+
+                      </div>
+
+                  </div>
+
+              `);
+
+
+              // ==================================================
+              // TOTAL PEDIDOS
+              // ==================================================
+
+              const totalPedidos = processos.reduce(
+
+                  (sumProc, p) =>
+
+                      sumProc +
+
+                      (p.historico || [])
+
+                          .filter(h =>
+                              h.historico_descr_cod === 91 &&
+                              Number(h.historico_valor) > 0
+                          )
+
+                          .reduce(
+                              (s, h) =>
+                                  s + Number(h.historico_valor),
+                              0
+                          ),
+
+                  0
+
+              );
+
+
+              // ==================================================
+              // TOTAL REEMBOLSOS
+              // ==================================================
+
+              const totalReembolsos = processos.reduce(
+
+                  (sumProc, p) =>
+
+                      sumProc +
+
+                      (p.historico || [])
+
+                          .filter(h =>
+                              h.historico_descr_cod === 92 &&
+                              Number(h.historico_valor) > 0
+                          )
+
+                          .reduce(
+                              (s, h) =>
+                                  s + Number(h.historico_valor),
+                              0
+                          ),
+
+                  0
+
+              );
+
+
+              // ==================================================
+              // KPI
+              // ==================================================
+
+              $('#kpiValores').html(`
+
+                  <div class="row align-items-center mb-2">
+
+
+                      <!-- ELEGÍVEL -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-primary text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Elegível
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(json.elegivel * json.iva)}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- FUNDO -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-secondary text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Fundo
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(json.elegivel * json.iva * json.taxa)}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- PEDIDO -> FATURADO -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-warning text-dark h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Pedido - inclui IVA
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(totalPedidos)}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- REEMBOLSOS -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-success text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Reembolsos - inclui IVA
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(totalReembolsos)}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- SALDO -->
+
+                      <div class="col-md-2">
+
+                          <div class="card bg-primary text-white h-100">
+
+                              <div class="card-body py-2 px-2">
+
+                                  <div class="small">
+                                      Não Reembolsado
+                                  </div>
+
+                                  <div class="text-right font-weight-bold">
+
+                                      ${formatCurrency(totalPedidos - totalReembolsos)}
+
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+                      </div>
+
+
+                      <!-- BOTÕES -->
+
+                      <div class="col-md-2 text-right">
+
+                          <button
+                              id="exportResumo"
+                              class="btn btn-danger btn-lg shadow-sm mr-2"
+                              title="Exportar PDF"
+                          >
+                              <i class="fa-solid fa-file-pdf"></i>
+                          </button>
+
+
+                          <button
+                              id="exportALLExcel"
+                              class="btn btn-success btn-lg shadow-sm"
+                              title="Exportar Excel"
+                          >
+                              <i class="fa-solid fa-file-excel"></i>
+                          </button>
+
+                      </div>
+
+                  </div>
+
+              `);
+
+
+              // ==================================================
+              // CARTÕES
+              // ==================================================
+
+              $('#cartoesReembolsos').html(
+                  renderReembolsosCards(processos)
+              );
+
+
+              // ==================================================
+              // DEVOLVE PROCESSOS AO DATATABLE
+              // ==================================================
+
+              return processos;
+
+          },
+
+
+          // ----------------------------------------------------
+          // Parâmetros
+          // ----------------------------------------------------
+
+          data: function(d) {
+
+              return {
+                  ...d,
+                  ...queryParams
+              };
+
+          }
+
+      },
+
+
+      // ========================================================
+      // CONFIGURAÇÕES
+      // ========================================================
+
+      paging: false,
+
+      searching: false,
+
+      select: true,
+
+      order: [
+          [1, 'asc']
+      ],
+
+
+      columnDefs: [
+
+          {
+              className: "dt-head-center",
+              targets: "_all"
+          }
+
+      ],
+
+
+      // ========================================================
+      // FOOTER / LINHA DE TOTAIS
+      // ========================================================
+
+      footerCallback: function () {
+
+          const api = this.api();
+
+
+          // ----------------------------------------------------
+          // Linhas globais
+          // ----------------------------------------------------
+
+          const rowsGlobal =
+              api.rows({
+                  search: 'applied'
+              })
+              .data()
+              .toArray();
+
+
+          // ----------------------------------------------------
+          // Linhas da página
+          // ----------------------------------------------------
+
+          const rowsPagina =
+              api.rows({
+                  page: 'current'
+              })
+              .data()
+              .toArray();
+
+
+          // ====================================================
+          // TOTAL ADJUDICADO
+          // ====================================================
+
+          const totalAdjudicadoGlobal = rowsGlobal.reduce(
+
+              (total, row) =>
+                  total + calcularAdjudicado(row),
+
+              0
+
           );
-        
 
-        // ================================
-        // BOTÕES EXPORTAÇÃO GLOBAL
-        // ================================
-        const exportAllBtns = `
-        <div class="d-flex align-items-center gap-3">
-        
-          <button id="exportResumo"
-            class="btn btn-danger btn-lg d-flex align-items-center gap-2 shadow-sm"
-            title="Exportar PDF">
-            <i class="fa-solid fa-file-pdf"></i>
-          </button>
-        
-          <button id="exportALLExcel"
-            class="btn btn-success btn-lg d-flex align-items-center gap-2 shadow-sm"
-            title="Exportar Excel">
-            <i class="fa-solid fa-file-excel"></i>
-          </button>
-        
-        </div>
-        `;
 
-        // Valores da Candidatura
-        $('#valoresTotais').html(`
-          <div class="row w-100 align-items-center">
-        
-            <!-- MÉTRICAS -->
-            <div class="col-9 d-flex gap-3">
-        
-              <div class="flex-fill bg-primary text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Investimento Aprovado</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(json.elegivel)}
-                </div>
+          const totalAdjudicadoPagina = rowsPagina.reduce(
+
+              (total, row) =>
+                  total + calcularAdjudicado(row),
+
+              0
+
+          );
+
+
+          // ====================================================
+          // TOTAL FATURADO
+          // ====================================================
+
+          const totalFaturasGlobal = rowsGlobal.reduce(
+
+              (total, row) =>
+                  total + calcularFaturas(row),
+
+              0
+
+          );
+
+
+          const totalFaturasPagina = rowsPagina.reduce(
+
+              (total, row) =>
+                  total + calcularFaturas(row),
+
+              0
+
+          );
+
+
+          // ====================================================
+          // TOTAL REEMBOLSOS
+          // ====================================================
+
+          const totalReembolsosGlobal = rowsGlobal.reduce(
+
+              (total, row) =>
+                  total + calcularReembolsos(row),
+
+              0
+
+          );
+
+
+          const totalReembolsosPagina = rowsPagina.reduce(
+
+              (total, row) =>
+                  total + calcularReembolsos(row),
+
+              0
+
+          );
+
+
+          // ====================================================
+          // COLUNA 2 - ADJUDICADO
+          // ====================================================
+
+          $(api.column(2).footer()).html(`
+
+              <div class="text-right font-weight-bold">
+
+                  ${formatCurrency(
+                      totalAdjudicadoPagina
+                  )}
+
+                  <br>
+
+                  <small class="font-weight-normal">
+
+                      (Global:
+                      ${formatCurrency(
+                          totalAdjudicadoGlobal
+                      )}
+                      )
+
+                  </small>
+
               </div>
-        
-              <div class="flex-fill bg-secondary text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Apoio Previsto</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(json.elegivel * json.taxa)}
-                </div>
-              </div>
-        
-              <div class="flex-fill bg-success text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Pedido</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(totalPedidos)}
-                </div>
-              </div>
-        
-              <div class="flex-fill bg-info text-white px-3 py-2 rounded shadow-sm border d-flex justify-content-between align-items-center">
-                <div>Pago</div>
-                <div class="fw-bold text-nowrap">
-                  ${formatCurrency(totalReembolsos * json.taxa)}
-                </div>
-              </div>
-        
-            </div>
-        
-            <!-- BOTÕES -->
-            <div class="col-3 d-flex justify-content-end align-items-center gap-2">
-        
-              ${exportAllBtns}
-        
-            </div>
-        
-          </div>
-        `);
 
-        //$('#logo').html(`
-        //  <img src="${path}/${json.logo}" alt="Logotipo" style="max-height: 50px;"></img>
-        //`);
+          `);
 
-        // Cartões
-        $('#cartoesReembolsos').html(renderReembolsosCards(processos) );
 
-        return processos;
+          // ====================================================
+          // COLUNA 3 - FATURADO
+          // ====================================================
+
+          $(api.column(3).footer()).html(`
+
+              <div class="text-right font-weight-bold">
+
+                  ${formatCurrency(totalFaturasPagina)}
+
+                  <br>
+
+                  <small class="font-weight-normal">
+
+                      (Global:
+                      ${formatCurrency(totalFaturasGlobal)}
+                      )
+
+                  </small>
+
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // COLUNA 4 - REEMBOLSOS
+          // ====================================================
+
+          $(api.column(4).footer()).html(`
+
+              <div class="text-right font-weight-bold">
+
+                  ${formatCurrency(totalReembolsosPagina)}
+
+                  <br>
+
+                  <small class="font-weight-normal">
+
+                      (Global:
+                      ${formatCurrency(totalReembolsosGlobal)}
+                      )
+
+                  </small>
+
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // TEXTO "TOTAIS" NA PRIMEIRA COLUNA
+          // ====================================================
+
+          $(api.column(0).footer()).html(`
+
+              <div class="text-left font-weight-bold">
+                  TOTAIS
+              </div>
+
+          `);
+
+
+          // ====================================================
+          // LIMPA COLUNA 1 E 5
+          // ====================================================
+
+          $(api.column(1).footer()).html('');
+          $(api.column(5).footer()).html('');
+
       },
-      data: function(d) {
-        return { ...d, ...queryParams };
-      }
-    },
-    paging: false,
-    searching: false,
-    select: true,
-    order: [[1, 'asc']],   // <-- ordena pela Designação
-    columnDefs: [{ className: "dt-head-center", targets: "_all" }],
-    columns: [
-      { data: 'padm' },
-      {
-        data: 'designacao',
-        render: function(data, type, row) {
-    
-            if (type === 'sort' || type === 'type') {
-                return data;
-            }
-    
-            const totalPedidosLinha = row.historico?.length || 0;
-    
-            return `${data} <span class="badge bg-info text-white">(${totalPedidosLinha})</span>`;
-        }
-    },
-      { 
-        data: null,
-        className: 'dt-body-right',
-        render: function(data, type, row) {
-          const totalAdjudicado = row.historico
-            ?.filter(h => 
-              h.historico_descr_cod === 14 
-              && (h.historico_valor || 0) > 0)
-            .reduce((sum, h) => sum + h.historico_valor, 0) || 0;
-      
-          return formatCurrency(totalAdjudicado);
-        }
-      },
-      { 
-        data: null,
-        className: 'dt-body-right',
-        render: function(data, type, row) {
-          const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND'];
-          const totalFaturas = row.faturas 
-            ?.filter(f => tiposValidos.includes(f.fact_tipo))
-            .reduce((sum, f) => sum + (f.fact_valor || 0), 0) || 0;
-          return formatCurrency(totalFaturas);
-        }
-      },
-      { 
-        data: null,
-        className: 'dt-body-right',
-        render: function(data, type, row) {
-          const totalReembolsos = row.historico 
-          ?.filter(h => 
-            h.historico_descr_cod === 92 &&
-            (h.historico_valor || 0) > 0 &&
-            !(h.historico_num?.includes("Ad")))
-          .reduce((sum, h) => sum + (h.historico_valor || 0), 0) || 0;
-          return formatCurrency(totalReembolsos);
-        }
-      },
-      {
-        data: null,
-        className: 'details-control dt-center align-middle',
-        orderable: false,
-        defaultContent: '<button class="btn-detalhe"><i class="fa-solid fa-circle-info"></i></button>'
-      }
-    ]
-  });
+
+
+      // ========================================================
+      // COLUNAS
+      // ========================================================
+
+      columns: [
+
+          // ----------------------------------------------------
+          // 0 - PAdm
+          // ----------------------------------------------------
+          {data: 'padm'},
+          // ----------------------------------------------------
+          // 1 - Designação
+          // ----------------------------------------------------
+          {data: 'designacao',
+              render: function(data, type, row) {
+                  // Para ordenação
+                  if (type === 'sort' || type === 'type') {
+                      return data;
+                  }
+                  
+                  const totalPedidosLinha = row.historico?.length || 0;
+                  return `
+                      ${data}
+                      <span class="badge bg-info text-white">
+                          (${totalPedidosLinha})
+                      </span>
+                  `;
+              }
+          },
+          // ----------------------------------------------------
+          // 2 - Adjudicado
+          // ----------------------------------------------------
+          {data: null, className: 'dt-body-right',
+              render: function(data, type, row) {
+                  return formatCurrency(calcularAdjudicado(row));
+              }
+          },
+          // ----------------------------------------------------
+          // 3 - Faturado
+          // ----------------------------------------------------
+          {data: null, className: 'dt-body-right',
+              render: function(data, type, row) {
+                  return formatCurrency(calcularFaturas(row));
+              }
+          },
+          // ----------------------------------------------------
+          // 4 - Reembolsos
+          // ----------------------------------------------------
+          {data: null, className: 'dt-body-right',
+              render: function(data, type, row) {
+                  return formatCurrency(calcularReembolsos(row));
+              }
+          },
+          // ----------------------------------------------------
+          // 5 - Detalhes
+          // ----------------------------------------------------
+          {data: null,
+            className: 'details-control dt-center align-middle',
+            orderable: false,
+            defaultContent:
+                  '<button class="btn-detalhe">' +
+                  '<i class="fa-solid fa-circle-info"></i>' +
+                  '</button>'
+          }
+      ]
+
+    });
 
   $(document).on('click', '.reembolso-card', function () {
-
     const key = $(this).data('key');
 
     pedidoExportacaoKey = key;
@@ -878,607 +1374,2023 @@ $(document).ready(function () {
     redirectProcesso(rowData.proces_check);
   });
 
-  // ================================
-  // EXPORTAÇÃO MODAL (PDF + EXCEL)
-  // ================================
-  $(document).on('click', '#previewResumoModal', function () {previewResumoModal(pedidoExportacaoModal, pedidoExportacaoKey);});
-  $(document).on('click', '#modalExportExcel', function () {modalExportExcel(pedidoExportacaoModal, pedidoExportacaoKey);});
+  // ==========================================================
+  // EXPORTAÇÃO MODAL
+  // ==========================================================
+  $(document).on('click', '#previewResumoModal', function () {
+    exportarReembolsos({
+      formato: 'pdf',
+      processos: pedidoExportacaoModal,
+      key: pedidoExportacaoKey,
+      escopo: 'modal'
+    });
+  });
 
-  // ================================
+  $(document).on('click', '#modalExportExcel', function () {
+    exportarReembolsos({
+      formato: 'excel',
+      processos: pedidoExportacaoModal,
+      key: pedidoExportacaoKey,
+      escopo: 'modal'
+    });
+  });
+
+  // ==========================================================
   // EXPORTAÇÃO GLOBAL
-  // ================================
-  $(document).on('click', '#exportResumo', function () {previewResumo();});
-  $(document).on('click', '#exportALLExcel', function () {exportAllExcel();});
+  // ==========================================================
+  $(document).on('click', '#exportResumo', function () {
+    exportarReembolsos({
+      formato: 'pdf',
+      processos: processosGlobais,
+      escopo: 'global'
+    });
+  });
+
+  $(document).on('click', '#exportALLExcel', function () {
+    exportarReembolsos({
+      formato: 'excel',
+      processos: processosGlobais,
+      escopo: 'global'
+    });
+  });
 
 });
 
+// ==========================================================
+// EXPORTAÇÃO UNIFICADA
+// ==========================================================
 
-// RESUMO DE PEDIDOS E REEMBOLSOS PARA O ECRAN
-function criarResumoPDF() {
+async function exportarReembolsos({
+  formato,
+  processos = processosGlobais,
+  key = null,
+  escopo = 'global'
+} = {}) {
+  try {
+    if (!Array.isArray(processos) || processos.length === 0) {
+      alert('Não existem dados para exportar.');
+      return;
+    }
 
-  const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
+    let grupos = getReembolsosAgrupadosDetalhado(processos);
+
+    if (key !== null) {
+      grupos = grupos.filter(
+        grupo => String(grupo.key) === String(key)
+      );
+    }
+
+    grupos = grupos.filter(
+      grupo =>
+        grupo &&
+        grupo.processos &&
+        Object.keys(grupo.processos).length > 0
+    );
+
+    if (grupos.length === 0) {
+      alert('Não foram encontrados dados para exportar.');
+      return;
+    }
+
+    if (formato === 'pdf') {
+      const doc = criarDocumentoReembolsosPDF(grupos, {
+        processos,
+        key,
+        escopo
+      });
+
+      window.open(doc.output('bloburl'), '_blank');
+      return;
+    }
+
+    if (formato === 'excel') {
+      criarDocumentoReembolsosExcel(grupos, {
+        key,
+        escopo
+      });
+      return;
+    }
+
+    throw new Error(`Formato de exportação inválido: ${formato}`);
+
+  } catch (erro) {
+    console.error('Erro ao exportar reembolsos:', erro);
+    alert('Ocorreu um erro ao gerar o ficheiro.');
+  }
+}
+
+
+// ==========================================================
+// PDF - RELATÓRIO DE REEMBOLSOS
+// ==========================================================
+function criarDocumentoReembolsosPDF(
+  grupos,
+  {
+    processos = processosGlobais,
+    escopo = 'global'
+  } = {}
+) {
+
+  // ========================================================
+  // VERIFICAÇÕES
+  // ========================================================
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    throw new Error('A biblioteca jsPDF não está disponível.');
+  }
 
   const { jsPDF } = window.jspdf;
 
   const doc = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: "a4"
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
   });
 
+  if (typeof doc.autoTable !== 'function') {
+    throw new Error(
+      'A biblioteca jsPDF AutoTable não está disponível.'
+    );
+  }
+
+  // ========================================================
+  // DIMENSÕES
+  // ========================================================
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
 
   const marginLeft = 10;
   const marginRight = 10;
 
-  let startY = 28;
+  const tableWidth =
+    pageWidth -
+    marginLeft -
+    marginRight;
 
+  let startY = 30;
+
+  // ========================================================
+  // TOTAIS GERAIS
+  // ========================================================
   let totalPedidoGeral = 0;
   let totalReembolsoGeral = 0;
+  let totalFaturadoGeral = 0;
 
+  let quantidadeFaturasGeral = 0;
+  let quantidadeFaturasOrfas = 0;
+  let totalFaturasOrfasGeral = 0;
 
-  const addHeader = () => {
+  const totaisPorTipoFatura = {};
 
-    const c = processosGlobais?.[0] || {};
-    const data = new Date().toLocaleDateString("pt-PT");
+  // ========================================================
+  // DADOS DA CANDIDATURA
+  // ========================================================
+  const candidatura =
+    processos?.[0] ||
+    processosGlobais?.[0] ||
+    {};
+
+  // ========================================================
+  // FORMATAÇÃO LOCAL DE DATA
+  // ========================================================
+  function formatDatePDF(valor) {
+
+    if (!valor) {
+      return '-';
+    }
+
+    const data =
+      String(valor)
+        .substring(0, 10);
+
+    const partes =
+      data.split('-');
+
+    if (partes.length !== 3) {
+      return cleanPdfText(valor);
+    }
+
+    const [ano, mes, dia] =
+      partes;
+
+    return `${dia}-${mes}-${ano}`;
+  }
+
+  // ========================================================
+  // NOVA PÁGINA
+  // ========================================================
+  function adicionarNovaPagina() {
+
+    doc.addPage();
+
+    adicionarCabecalho();
+
+    startY = 30;
+  }
+
+  // ========================================================
+  // CABEÇALHO PRINCIPAL
+  // ========================================================
+  function adicionarCabecalho() {
+
+    const dataGeracao =
+      new Date()
+        .toLocaleDateString('pt-PT');
+
+    const codigoCandidatura =
+      candidatura.candidatura ||
+      candidatura.codigo_candidatura ||
+      'N/D';
+
+    const designacaoCandidatura =
+      candidatura.nome ||
+      candidatura.designacao_candidatura ||
+      '';
+
+    const estadoCandidatura =
+      candidatura.estado
+        ? ` | ${candidatura.estado}`
+        : '';
+
+    // ------------------------------------------------------
+    // TÍTULO
+    // ------------------------------------------------------
+    doc.setTextColor(0, 0, 0);
+
+    doc.setFont(
+      'helvetica',
+      'bold'
+    );
 
     doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
 
     doc.text(
-      "RELATÓRIO DE REEMBOLSOS",
+      'RELATÓRIO DE REEMBOLSOS',
       marginLeft,
       10
     );
 
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
+    // ------------------------------------------------------
+    // CANDIDATURA
+    // ------------------------------------------------------
+    doc.setFont(
+      'helvetica',
+      'normal'
+    );
+
+    doc.setFontSize(8.5);
+
+    const textoCandidatura =
+      cleanPdfText(
+        `Candidatura: ${codigoCandidatura}` +
+        (
+          designacaoCandidatura
+            ? ` - ${designacaoCandidatura}`
+            : ''
+        ) +
+        estadoCandidatura
+      );
+
+    const linhasCandidatura =
+      doc.splitTextToSize(
+        textoCandidatura,
+        pageWidth -
+        marginLeft -
+        marginRight -
+        35
+      );
 
     doc.text(
-      `Candidatura: ${c.candidatura || c.codigo_candidatura || 'N/D'} ${c.estado ? '| ' + c.estado : ''}`,
+      linhasCandidatura,
       marginLeft,
       16
     );
 
+    // ------------------------------------------------------
+    // DATA
+    // ------------------------------------------------------
     doc.text(
-      `Gerado em: ${data}`,
-      pageWidth - 55,
-      10
+      `Gerado em: ${dataGeracao}`,
+      pageWidth - marginRight,
+      10,
+      {
+        align: 'right'
+      }
+    );
+
+    // ------------------------------------------------------
+    // LINHA
+    // ------------------------------------------------------
+    doc.setDrawColor(
+      180,
+      180,
+      180
     );
 
     doc.line(
       marginLeft,
-      19,
+      23,
       pageWidth - marginRight,
-      19
+      23
     );
-  };
+  }
 
+  // ========================================================
+  // CALCULAR TOTAL FATURADO DO ITEM / PROCESSO
+  // ========================================================
+  function calcularTotalFaturadoItem(item) {
 
-  addHeader();
+    const faturas =
+      Array.isArray(item?.faturas)
+        ? item.faturas
+        : [];
 
-  dados
-  .filter(g => g && g.processos && Object.keys(g.processos).length > 0)
-  .forEach(g => {
+    return faturas.reduce(
+      (total, fatura) =>
+        total +
+        (
+          Number(fatura.fact_valor) ||
+          0
+        ),
+      0
+    );
+  }
 
-    if (startY > 250) {
-      doc.addPage();
-      startY = 28;
-      addHeader();
+  // ========================================================
+  // TOTAL FATURADO DO GRUPO
+  // ========================================================
+  function calcularTotalFaturadoGrupo(grupo) {
+
+    return Object.values(
+      grupo?.processos || {}
+    ).reduce(
+      (total, item) =>
+        total +
+        calcularTotalFaturadoItem(item),
+      0
+    );
+  }
+
+  // ========================================================
+  // ACUMULAR FATURAÇÃO POR TIPO
+  // ========================================================
+  function acumularTotaisPorTipo(faturas) {
+
+    if (!Array.isArray(faturas)) {
+      return;
     }
 
+    faturas.forEach(fatura => {
 
-    totalPedidoGeral += g.totalPedido || 0;
-    totalReembolsoGeral += g.totalReembolso || 0;
+      const tipo =
+        String(
+          fatura.fact_tipo ||
+          'SEM TIPO'
+        )
+          .trim()
+          .toUpperCase();
 
+      if (!totaisPorTipoFatura[tipo]) {
 
-    const diferencial = (g.totalPedido || 0) - Math.abs(g.totalReembolso || 0);
+        totaisPorTipoFatura[tipo] = {
+          quantidade: 0,
+          valor: 0
+        };
+      }
 
+      totaisPorTipoFatura[tipo]
+        .quantidade += 1;
 
-    const isOrfao = g.key === "ORFAO";
+      totaisPorTipoFatura[tipo]
+        .valor +=
+          Number(fatura.fact_valor) ||
+          0;
+    });
+  }
 
+  // ========================================================
+  // FATURAÇÃO POR MÊS / ANO
+  // Cada ano corresponde a uma série diferente
+  // ========================================================
+  function calcularFaturacaoMensal() {
 
-    doc.setFillColor(
-      isOrfao ? 255 : 235,
-      isOrfao ? 245 : 235,
-      isOrfao ? 200 : 235
-    );
+    const faturacaoPorAno = {};
 
+    grupos.forEach(grupo => {
 
-    doc.rect(
-      marginLeft,
-      startY - 4,
-      pageWidth - marginLeft - marginRight,
-      8,
-      "F"
-    );
+      Object.values(
+        grupo?.processos || {}
+      ).forEach(item => {
 
+        const faturas =
+          Array.isArray(item.faturas)
+            ? item.faturas
+            : [];
 
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "bold");
+        faturas.forEach(fatura => {
 
+          if (!fatura.fact_data) {
+            return;
+          }
 
-    doc.text(
-      isOrfao ? "Faturas Órfão" : g.key,
-      marginLeft + 3,
-      startY + 1
-    );
+          const partes =
+            String(fatura.fact_data)
+              .substring(0, 10)
+              .split('-');
 
+          if (partes.length !== 3) {
+            return;
+          }
 
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "normal");
+          const ano = Number(partes[0]);
+          const mes = Number(partes[1]);
 
+          if (
+            !ano ||
+            mes < 1 ||
+            mes > 12
+          ) {
+            return;
+          }
 
-    doc.text(
-      `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)} | Dif: ${formatCurrency(diferencial)}`,
-      marginLeft + 45,
-      startY + 1
-    );
+          // Criar o ano caso ainda não exista
+          if (!faturacaoPorAno[ano]) {
+            faturacaoPorAno[ano] =
+              Array(12).fill(0);
+          }
 
-
-    const rows = [];
-
-
-    Object.values(g.processos).forEach(p => {
-
-      const pedidos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 91 &&
-        String(h.historico_num) === String(g.key)
-      );
-
-
-      const reembolsos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 92 &&
-        String(h.historico_num) === String(g.key)
-      );
-
-
-      const pedidoValor = pedidos.reduce(
-        (s,h) => s + (h.historico_valor || 0),
-        0
-      );
-
-
-      const reembolsoValor = reembolsos.reduce(
-        (s,h) => s + (h.historico_valor || 0),
-        0
-      );
-
-
-      rows.push([
-        p.processo.padm,
-        p.processo.designacao,
-        `P: ${formatCurrency(pedidoValor)}\nR: ${formatCurrency(reembolsoValor)}\nDif: ${formatCurrency(pedidoValor - Math.abs(reembolsoValor))}`
-      ]);
-
+          // Acumular no mês correspondente
+          faturacaoPorAno[ano][mes - 1] +=
+            Number(fatura.fact_valor) || 0;
+        });
+      });
     });
 
+    // Ordenar os anos cronologicamente
+    const anos =
+      Object.keys(faturacaoPorAno)
+        .map(Number)
+        .sort((a, b) => a - b);
 
-    doc.autoTable({
+    return {
+      anos,
+      faturacaoPorAno
+    };
+  }
 
-      startY: startY + 6,
-    
-      head: [
-        [
-          "Processo",
-          "Designação",
-          "Movimentos"
-        ]
-      ],
-    
-      body: rows,
-    
-      theme: "grid",
-    
-      margin: {
-        left: marginLeft,
-        right: marginRight
+  // ========================================================
+  // CRIAR IMAGEM DO GRÁFICO
+  // Cada ano é apresentado como uma série
+  // ========================================================
+  function criarImagemGraficoMensal() {
+
+    const canvas =
+      document.createElement('canvas');
+
+    canvas.width = 1200;
+    canvas.height = 500;
+
+    const contexto =
+      canvas.getContext('2d');
+
+    const {
+      anos,
+      faturacaoPorAno
+    } =
+      calcularFaturacaoMensal();
+
+    const meses = [
+      'Jan.',
+      'Fev.',
+      'Mar.',
+      'Abr.',
+      'Mai.',
+      'Jun.',
+      'Jul.',
+      'Ago.',
+      'Set.',
+      'Out.',
+      'Nov.',
+      'Dez.'
+    ];
+
+    // ------------------------------------------------------
+    // CORES DAS SÉRIES
+    // ------------------------------------------------------
+    const cores = [
+      {
+        fundo: '#17a2b8',
+        bordo: '#117a8b'
       },
-    
-      styles: {
-        fontSize: 7,
-        cellPadding: 2
+      {
+        fundo: '#28a745',
+        bordo: '#1e7e34'
       },
-    
-      headStyles: {
-        fillColor: [23,162,184],
-        textColor:255
+      {
+        fundo: '#ffc107',
+        bordo: '#d39e00'
       },
+      {
+        fundo: '#6f42c1',
+        bordo: '#59339d'
+      },
+      {
+        fundo: '#fd7e14',
+        bordo: '#d96b0b'
+      },
+      {
+        fundo: '#dc3545',
+        bordo: '#bd2130'
+      }
+    ];
+
+    // ------------------------------------------------------
+    // UM DATASET POR ANO
+    // ------------------------------------------------------
+    const datasets =
+      anos.map((ano, index) => {
+
+        const cor = cores[index % cores.length];
+
+        return {
+          label: String(ano),
+          data: faturacaoPorAno[ano],
+          backgroundColor: cor.fundo,
+          borderColor: cor.bordo,
+          borderWidth: 1
+        };
+      });
+
+    // ------------------------------------------------------
+    // VALORES SOBRE AS BARRAS
+    // ------------------------------------------------------
+    const pluginValores = {
+
+      id: 'pluginValoresReembolsos',
+      afterDatasetsDraw(chart) {
+
+        const { ctx } = chart;
+
+        ctx.save();
+
+        ctx.font = 'bold 13px Arial';
+        ctx.fillStyle = '#212529';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+            const meta = chart.getDatasetMeta(datasetIndex);
+
+            meta.data.forEach((barra, index) => {
+                const valor = Number(dataset.data[index]) || 0;
+
+                // Não apresentar valores zero
+                if (valor === 0) {
+                  return;
+                }
+
+                ctx.fillText(formatCurrency(valor), barra.x, barra.y - 6);
+
+              }
+            );
+          }
+        );
+
+        ctx.restore();
+      }
+    };
+
+    // ------------------------------------------------------
+    // GRÁFICO
+    // ------------------------------------------------------
+    const grafico = new Chart(contexto,{
+          type: 'bar',
+          data: {
+            labels: meses,
+            datasets
+          },
+          plugins: [pluginValores],
+          options: {
+            responsive: false,
+            animation: false,
+            maintainAspectRatio: false,
+            layout: {
+              padding: {
+                top: 35,
+                right: 10,
+                left: 10,
+                bottom: 10
+              }
+            },
+            plugins: {
+              // Agora precisamos da legenda
+              // para identificar cada ano
+              legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  boxWidth: 18,
+                  boxHeight: 10,
+                  font: {size: 13}
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: {display: false},
+                ticks: {
+                  autoSkip: false,
+                  maxRotation: 0,
+                  minRotation: 0
+                }
+              },
+              y: {
+                beginAtZero: true,
+                ticks: {callback(valor) {
+                    return new Intl.NumberFormat('pt-PT', {notation: 'compact', maximumFractionDigits: 1}).format(valor);
+                  }
+                }
+              }
+            }
+          }
+        }
+      );
+
+    grafico.update();
+
+    const imagem = canvas.toDataURL('image/png', 1);
+
+    grafico.destroy();
+
+    // ------------------------------------------------------
+    // TOTAL DE TODOS OS ANOS
+    // ------------------------------------------------------
+    const valoresMensais = Array(12).fill(0);
+
+    anos.forEach(ano => {faturacaoPorAno[ano].forEach((valor, mes) => {
+          valoresMensais[mes] += Number(valor) || 0;
+        });
+    });
+
+    return {
+      imagem,
+      valoresMensais
+    };
+  }
+
+  // ========================================================
+  // CABEÇALHO DO GRUPO PP
+  // ========================================================
+  function adicionarCabecalhoGrupo(grupo) {
+
+    const isOrfao = grupo.key === 'ORFAO';
+
+    if (startY > pageHeight - 35) {
+      adicionarNovaPagina();
+    }
+
+    // ------------------------------------------------------
+    // TOTAL DO GRUPO
+    // ------------------------------------------------------
+    const totalPedido = Number(grupo.totalPedido) || 0;
+    const totalReembolso = Number(grupo.totalReembolso) || 0;
+    const totalFaturado = calcularTotalFaturadoGrupo(grupo);
+    const aReceber = totalPedido - Math.abs(totalReembolso);
     
-      columnStyles: {
-        0: {cellWidth: 25}, // Processo
-        1: {cellWidth: 125}, // Designação
-        2: {cellWidth: 40, halign: "left"} // Movimento
+    // ------------------------------------------------------
+    // BARRA DO TÍTULO
+    // ------------------------------------------------------
+    doc.setFillColor(33, 37, 41);
+    doc.rect(marginLeft, startY, tableWidth, 9, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text(isOrfao ? 'FATURAS ÓRFÃS' : String(grupo.key), marginLeft + 3, startY + 6);
+    doc.setTextColor(0, 0, 0
+    );
+
+    // ------------------------------------------------------
+    // RESUMO DO GRUPO
+    // ------------------------------------------------------
+    if (isOrfao) {
+
+      doc.autoTable({
+
+        startY:
+          startY + 11,
+
+        body: [
+          [
+            {content: 'Total das faturas órfãs', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturado), styles: {halign: 'right'}}
+          ]
+        ],
+        theme: 'grid', 
+        margin: {left: marginLeft, right: marginRight},
+        tableWidth: 90,
+        styles: {fontSize: 8, cellPadding: 1.7, valign: 'middle'},
+        columnStyles: {0: {cellWidth: 55}, 1: {cellWidth: 35}}
+      });
+    } else {
+      doc.autoTable({
+        startY: startY + 11,
+        body: [
+          [
+            {content: 'Pedido', styles: {fontStyle:'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalPedido), styles: {halign: 'right'}},
+            {content: 'Reembolso', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalReembolso), styles: {halign: 'right'}},
+            {content:'A Receber', styles: {fontStyle:'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(aReceber), styles: {halign: 'right'}},
+            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturado), styles: {halign: 'right'}}
+          ]
+        ],
+        theme: 'grid',
+        margin: {left: marginLeft, right: marginRight},
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle'},
+        columnStyles: {
+          0: { cellWidth: 20 },
+          1: { cellWidth: 28 },
+          2: { cellWidth: 22 },
+          3: { cellWidth: 28 },
+          4: { cellWidth: 22 },
+          5: { cellWidth: 28 },
+          6: { cellWidth: 20 },
+          7: { cellWidth: 22 }
+        }
+      });
+    }
+
+    startY =
+      doc.lastAutoTable.finalY +
+      6;
+  }
+
+  // ========================================================
+  // CABEÇALHO / RESUMO DO PROCESSO
+  // ========================================================
+  function adicionarCabecalhoProcesso(
+    grupo,
+    item
+  ) {
+
+    const processo = item.processo || {};
+    const faturas = Array.isArray(item.faturas) ? item.faturas : [];
+    const padm = processo.padm || processo.proces_check || '-';
+    const designacao = cleanPdfText(processo.designacao || 'Processo sem designação' );
+    const tituloProcesso = `${padm} — ${designacao}`;
+    const tituloLinhas = doc.splitTextToSize(tituloProcesso, tableWidth - 6);
+    const alturaLinhaTitulo = 4;
+    const alturaTitulo = Math.max(9, 5 + tituloLinhas.length * alturaLinhaTitulo);
+    const alturaNecessaria = alturaTitulo + 30;
+
+    if (startY > pageHeight - alturaNecessaria) {adicionarNovaPagina();}
+
+    // ------------------------------------------------------
+    // MOVIMENTOS DESTE PROCESSO / GRUPO
+    // ------------------------------------------------------
+    const pedidos = filtrarMovimentosGrupo(processo, grupo.key, 91);
+    const reembolsos = filtrarMovimentosGrupo(processo, grupo.key, 92);
+    const pedidoValor = somarMovimentos(pedidos);
+    const reembolsoValor = somarMovimentos(reembolsos);
+    const aReceber = pedidoValor - Math.abs(reembolsoValor);
+    const totalFaturadoProcesso = calcularTotalFaturadoItem(item);
+
+    const iva = pedidoValor - totalFaturadoProcesso || 0;
+
+    // ------------------------------------------------------
+    // TÍTULO
+    // ------------------------------------------------------
+    doc.setFillColor(52, 58, 64);
+    doc.rect(marginLeft, startY, tableWidth, alturaTitulo, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(255, 255, 255);
+    doc.text(tituloLinhas, marginLeft + 3, startY + 5, {lineHeightFactor: 1.15});
+    doc.setTextColor(0, 0, 0);
+
+    // ------------------------------------------------------
+    // PROCESSO ÓRFÃO
+    // ------------------------------------------------------
+    if (grupo.key === 'ORFAO') {
+      doc.autoTable({startY: startY + alturaTitulo + 2,
+        body: [
+          [
+            {content:'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
+            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: String(faturas.length), styles: {halign: 'center'}}
+          ]
+        ],
+        theme: 'grid', margin: {left: marginLeft, right: marginRight},
+        tableWidth: 100,
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle'},
+        columnStyles: {
+          0: { cellWidth: 25 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 25 },
+          3: { cellWidth: 20 }
         }
       });
 
+    } else {
 
-    startY = doc.lastAutoTable.finalY + 8;
+      // ----------------------------------------------------
+      // PROCESSO NORMAL
+      // ----------------------------------------------------
+      doc.autoTable({startY: startY + alturaTitulo + 2,
+        body: [
+          [
+            {content: 'Pedido', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(pedidoValor), styles: {halign: 'right'}},
+            {content: 'Reembolso', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(reembolsoValor), styles: {halign: 'right'}},
+            {content: 'A Receber', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(aReceber), styles: {halign: 'right'}}
+          ],
+          [
+            {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
+            {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: String(faturas.length), styles: {halign: 'center'}},
+            {content: 'Pedido-Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatCurrency(iva), styles: {halign: 'right'}}
+          ]
+        ],
+        theme: 'grid',
+        margin: {left: marginLeft, right: marginRight},
+        styles: {fontSize: 7.5, cellPadding: 1.5, valign: 'middle', overflow: 'linebreak'},
 
-  });
+        columnStyles: {
+          0: { cellWidth: 25 },
+          1: { cellWidth: 35 },
+          2: { cellWidth: 27 },
+          3: { cellWidth: 35 },
+          4: { cellWidth: 25 },
+          5: { cellWidth: 43 }
+        },
 
+        didDrawPage() {
+          adicionarCabecalho();
+        }
+      });
+    }
 
-
-  // RESUMO FINAL
-  if (startY > 240) {
-    doc.addPage();
-    startY = 30;
-    addHeader();
+    startY =
+      doc.lastAutoTable.finalY +
+      3;
   }
 
+  // ========================================================
+  // TABELA DE FATURAS DO PROCESSO
+  // ========================================================
+  function adicionarFaturasProcesso(item) {
 
-  const diferencialGeral = totalPedidoGeral - Math.abs(totalReembolsoGeral);
+    const faturas =
+      Array.isArray(item.faturas)
+        ? item.faturas
+        : [];
 
-  doc.setFontSize(11);
-  doc.setFont("helvetica","bold");
+    // ------------------------------------------------------
+    // SEM FATURAS
+    // ------------------------------------------------------
+    if (
+      faturas.length === 0
+    ) {
 
-  doc.text(
-    "RESUMO",
-    marginLeft,
-    startY
+      doc.autoTable({
+
+        startY,
+
+        body: [
+          [
+            'Este processo não possui faturas.'
+          ]
+        ],
+
+        theme: 'grid',
+
+        margin: {
+          left: marginLeft,
+          right: marginRight
+        },
+
+        styles: {
+          fontSize: 8,
+
+          textColor: [
+            100,
+            100,
+            100
+          ],
+
+          fillColor: [
+            250,
+            250,
+            250
+          ],
+
+          cellPadding: 2
+        }
+      });
+
+      startY =
+        doc.lastAutoTable.finalY +
+        7;
+
+      return;
+    }
+
+    // ------------------------------------------------------
+    // ORDENAR FATURAS
+    // ------------------------------------------------------
+    const faturasOrdenadas =
+      [...faturas]
+        .sort(
+          (a, b) => {
+
+            const dataA =
+              a.fact_data
+                ? new Date(
+                    a.fact_data
+                  ).getTime()
+                : 0;
+
+            const dataB =
+              b.fact_data
+                ? new Date(
+                    b.fact_data
+                  ).getTime()
+                : 0;
+
+            return dataA - dataB;
+          }
+        );
+
+    // ------------------------------------------------------
+    // LINHAS
+    // ------------------------------------------------------
+    const linhas =
+      faturasOrdenadas.map(
+        fatura => [
+
+          cleanPdfText(
+            fatura.ent_nome ||
+            '-'
+          ),
+
+          formatDatePDF(
+            fatura.fact_data
+          ),
+
+          [
+            fatura.fact_tipo,
+            fatura.fact_num
+          ]
+            .filter(Boolean)
+            .join(' ') ||
+            '-',
+
+          formatExpediente(
+            fatura.fact_expediente
+          ) ||
+            '-',
+
+          fatura.fact_auto_num ||
+            '-',
+
+          formatDatePDF(
+            fatura.fact_auto_data
+          ),
+
+          Number(
+            fatura.fact_iva
+          ) ||
+            0,
+
+          Number(
+            fatura.fact_valor
+          ) ||
+            0
+        ]
+      );
+
+    // ------------------------------------------------------
+    // TABELA
+    // ------------------------------------------------------
+    doc.autoTable({
+
+      startY,
+
+      head: [[
+        'Entidade',
+        'Data',
+        'Fatura',
+        'Expediente',
+        'Auto',
+        'Data do auto',
+        'Pedido-Faturado',
+        'Valor'
+      ]],
+
+      body:
+        linhas,
+
+      theme:
+        'grid',
+
+      margin: {
+        left:
+          marginLeft,
+
+        right:
+          marginRight,
+
+        top: 27,
+
+        bottom: 15
+      },
+
+      styles: {
+        fontSize: 6.7,
+        cellPadding: 1.3,
+        overflow: 'linebreak',
+        valign: 'middle'
+      },
+
+      headStyles: {
+        fillColor: [
+          23,
+          162,
+          184
+        ],
+
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+
+      columnStyles: {
+
+        0: {
+          cellWidth: 42
+        },
+
+        1: {
+          cellWidth: 18,
+          halign: 'center'
+        },
+
+        2: {
+          cellWidth: 28
+        },
+
+        3: {
+          cellWidth: 26
+        },
+
+        4: {
+          cellWidth: 16,
+          halign: 'center'
+        },
+
+        5: {
+          cellWidth: 20,
+          halign: 'center'
+        },
+
+        6: {
+          cellWidth: 20,
+          halign: 'right'
+        },
+
+        7: {
+          cellWidth: 20,
+          halign: 'right'
+        }
+      },
+
+      didParseCell(data) {
+
+        if (
+          data.section ===
+            'body' &&
+          [6, 7].includes(
+            data.column.index
+          )
+        ) {
+
+          data.cell.text = [
+            formatCurrency(
+              data.cell.raw
+            )
+          ];
+        }
+      },
+
+      didDrawPage() {
+        adicionarCabecalho();
+      }
+    });
+
+    startY =
+      doc.lastAutoTable.finalY +
+      8;
+  }
+
+  // ========================================================
+  // RESUMO FINAL
+  // ========================================================
+  function adicionarResumoFinal() {
+
+    const aReceberGeral =
+      totalPedidoGeral -
+      Math.abs(
+        totalReembolsoGeral
+      );
+
+    const tiposOrdenados =
+      Object.entries(
+        totaisPorTipoFatura
+      ).sort(
+        ([tipoA], [tipoB]) =>
+          tipoA.localeCompare(
+            tipoB,
+            'pt-PT'
+          )
+      );
+
+    // ------------------------------------------------------
+    // LINHAS PRINCIPAIS
+    // ------------------------------------------------------
+    const linhasResumo = [
+      ['Total faturado', '', formatCurrency(totalFaturadoGeral)],
+      ['Total de pedidos', '', formatCurrency(totalPedidoGeral)],
+      ['Total de reembolsos', '', formatCurrency(totalReembolsoGeral)],
+      ['Total de Pedido-Faturado [IVA]', '', formatCurrency(totalPedidoGeral - totalFaturadoGeral)],
+      ['A Receber', '', formatCurrency(aReceberGeral)],
+      ['Faturas órfãs', String(quantidadeFaturasOrfas), formatCurrency(totalFaturasOrfasGeral)]
+    ];
+
+    // ------------------------------------------------------
+    // FATURAÇÃO POR TIPO
+    // ------------------------------------------------------
+    if (
+      tiposOrdenados.length > 0
+    ) {
+
+      linhasResumo.push(
+        [
+          'Faturação por tipo',
+          'Registos',
+          'Valor'
+        ]
+      );
+
+      tiposOrdenados.forEach(
+        ([tipo, totais]) => {
+
+          linhasResumo.push(
+            [
+              tipo,
+
+              String(
+                totais.quantidade
+              ),
+
+              formatCurrency(
+                totais.valor
+              )
+            ]
+          );
+        }
+      );
+    }
+
+    const alturaEstimada =
+      25 +
+      linhasResumo.length *
+      7;
+
+    if (
+      startY >
+      pageHeight -
+      alturaEstimada
+    ) {
+
+      adicionarNovaPagina();
+    }
+
+    // ------------------------------------------------------
+    // TÍTULO RESUMO
+    // ------------------------------------------------------
+    doc.setFillColor(
+      33,
+      37,
+      41
+    );
+
+    doc.rect(
+      marginLeft,
+      startY,
+      tableWidth,
+      9,
+      'F'
+    );
+
+    doc.setFont(
+      'helvetica',
+      'bold'
+    );
+
+    doc.setFontSize(10);
+
+    doc.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    doc.text(
+      'RESUMO',
+      marginLeft + 3,
+      startY + 6
+    );
+
+    doc.setTextColor(
+      0,
+      0,
+      0
+    );
+
+    // ------------------------------------------------------
+    // TABELA RESUMO
+    // ------------------------------------------------------
+    doc.autoTable({
+
+      startY:
+        startY + 11,
+
+      body:
+        linhasResumo,
+
+      theme:
+        'grid',
+
+      margin: {
+        left:
+          marginLeft,
+
+        right:
+          marginRight
+      },
+
+      tableWidth:
+        120,
+
+      styles: {
+        fontSize: 9,
+        cellPadding: 2,
+        valign: 'middle'
+      },
+
+      columnStyles: {
+
+        0: {
+          cellWidth: 65
+        },
+
+        1: {
+          cellWidth: 20,
+          halign: 'center'
+        },
+
+        2: {
+          cellWidth: 35,
+          halign: 'right'
+        }
+      },
+
+      didParseCell(data) {
+
+        // ----------------------------------------------------
+        // LINHAS PRINCIPAIS
+        // ----------------------------------------------------
+        if (
+          data.row.index < 5
+        ) {
+
+          if (
+            data.column.index === 0
+          ) {
+
+            data.cell.styles
+              .fontStyle =
+                'bold';
+
+            data.cell.styles
+              .fillColor =
+                [
+                  245,
+                  245,
+                  245
+                ];
+          }
+
+          if (
+            data.column.index === 1
+          ) {
+
+            data.cell.styles
+              .fillColor =
+                [
+                  245,
+                  245,
+                  245
+                ];
+          }
+        }
+
+        // ----------------------------------------------------
+        // CABEÇALHO DOS TIPOS
+        // ----------------------------------------------------
+        if (
+          tiposOrdenados.length >
+            0 &&
+          data.row.index === 5
+        ) {
+
+          data.cell.styles
+            .fillColor =
+              [
+                23,
+                162,
+                184
+              ];
+
+          data.cell.styles
+            .textColor =
+              [
+                255,
+                255,
+                255
+              ];
+
+          data.cell.styles
+            .fontStyle =
+              'bold';
+        }
+      }
+    });
+
+    startY =
+      doc.lastAutoTable.finalY +
+      8;
+  }
+
+  // ========================================================
+  // GRÁFICO MENSAL
+  // ========================================================
+  function adicionarGraficoMensal() {
+
+    // Sem Chart.js, simplesmente não cria o gráfico.
+    if (
+      typeof Chart ===
+      'undefined'
+    ) {
+      return;
+    }
+
+    const alturaGrafico =
+      72;
+
+    if (
+      startY >
+      pageHeight -
+      alturaGrafico -
+      20
+    ) {
+
+      adicionarNovaPagina();
+    }
+
+    const {
+      imagem,
+      valoresMensais
+    } =
+      criarImagemGraficoMensal();
+
+    const totalGrafico =
+      valoresMensais.reduce(
+        (total, valor) =>
+          total + valor,
+        0
+      );
+
+    // ------------------------------------------------------
+    // CABEÇALHO
+    // ------------------------------------------------------
+    doc.setFillColor(
+      33,
+      37,
+      41
+    );
+
+    doc.rect(
+      marginLeft,
+      startY,
+      tableWidth,
+      9,
+      'F'
+    );
+
+    doc.setFont(
+      'helvetica',
+      'bold'
+    );
+
+    doc.setFontSize(10);
+
+    doc.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    doc.text(
+      'FATURAÇÃO POR MÊS',
+      marginLeft + 3,
+      startY + 6
+    );
+
+    doc.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    doc.setFont(
+      'helvetica',
+      'normal'
+    );
+
+    doc.setFontSize(8);
+
+    doc.text(
+      `Total: ${formatCurrency(totalGrafico)}`,
+      pageWidth -
+      marginRight -
+      3,
+      startY + 6,
+      {
+        align: 'right'
+      }
+    );
+
+    // ------------------------------------------------------
+    // IMAGEM
+    // ------------------------------------------------------
+    doc.addImage(
+      imagem,
+      'PNG',
+      marginLeft,
+      startY + 11,
+      tableWidth,
+      alturaGrafico
+    );
+
+    startY +=
+      alturaGrafico +
+      17;
+  }
+
+  // ========================================================
+  // PAGINAÇÃO DO PDF
+  // ========================================================
+  function adicionarPaginacaoPDF(doc) {
+
+    const totalPaginas =
+      doc.internal.getNumberOfPages();
+
+    const pageWidth =
+      doc.internal.pageSize.getWidth();
+
+    const pageHeight =
+      doc.internal.pageSize.getHeight();
+
+    const margemEsquerda = 10;
+    const margemDireita = 10;
+
+    for (
+      let pagina = 1;
+      pagina <= totalPaginas;
+      pagina++
+    ) {
+
+      doc.setPage(pagina);
+
+      // ----------------------------------------------------
+      // LINHA DO RODAPÉ
+      // ----------------------------------------------------
+      doc.setDrawColor(
+        200,
+        200,
+        200
+      );
+      
+
+      doc.setLineWidth(0.2);
+
+      doc.line(
+        margemEsquerda,
+        pageHeight - 12,
+        pageWidth - margemDireita,
+        pageHeight - 12
+      );
+
+      // ----------------------------------------------------
+      // TEXTO DA PAGINAÇÃO
+      // ----------------------------------------------------
+      doc.setFont(
+        'helvetica',
+        'normal'
+      );
+
+      doc.setFontSize(7.5);
+
+      doc.setTextColor(
+        100,
+        100,
+        100
+      );
+
+      doc.text(
+        `Página ${pagina} de ${totalPaginas}`,
+        pageWidth / 2,
+        pageHeight - 7,
+        {
+          align: 'center'
+        }
+      );
+    }
+
+    // Repor cor normal do texto
+    doc.setTextColor(
+      0,
+      0,
+      0
+    );
+  }
+  // ========================================================
+  // CONSTRUÇÃO DO DOCUMENTO
+  // ========================================================
+  adicionarCabecalho();
+
+  grupos.forEach(grupo => {
+
+    if (
+      !grupo ||
+      !grupo.processos ||
+      Object.keys(
+        grupo.processos
+      ).length === 0
+    ) {
+      return;
+    }
+
+    // ------------------------------------------------------
+    // TOTAIS GERAIS DO PP
+    // ------------------------------------------------------
+    const totalPedido = Number(grupo.totalPedido) || 0;
+    const totalReembolso = Number(grupo.totalReembolso) || 0;
+    const totalFaturadoGrupo = calcularTotalFaturadoGrupo(grupo);
+    
+    totalPedidoGeral += totalPedido;
+    totalReembolsoGeral += totalReembolso;
+    totalFaturadoGeral += totalFaturadoGrupo;
+
+    // ------------------------------------------------------
+    // FATURAS ÓRFÃS
+    // ------------------------------------------------------
+    if (
+      grupo.key === 'ORFAO'
+    ) {
+
+      totalFaturasOrfasGeral += totalFaturadoGrupo;
+    }
+
+    // ------------------------------------------------------
+    // CABEÇALHO PP
+    // ------------------------------------------------------
+    adicionarCabecalhoGrupo(
+      grupo
+    );
+
+    // ------------------------------------------------------
+    // PROCESSOS DO GRUPO
+    // ------------------------------------------------------
+    const itens =
+      Object.values(
+        grupo.processos
+      ).sort(
+        (a, b) => {
+
+          const designacaoA =
+            a.processo
+              ?.designacao ||
+            '';
+
+          const designacaoB =
+            b.processo
+              ?.designacao ||
+            '';
+
+          return String(
+            designacaoA
+          ).localeCompare(
+            String(
+              designacaoB
+            ),
+            'pt-PT'
+          );
+        }
+      );
+
+    itens.forEach(item => {
+
+      const faturas =
+        Array.isArray(
+          item.faturas
+        )
+          ? item.faturas
+          : [];
+
+      // ----------------------------------------------------
+      // CONTADORES
+      // ----------------------------------------------------
+      quantidadeFaturasGeral +=
+        faturas.length;
+
+      if (
+        grupo.key ===
+        'ORFAO'
+      ) {
+
+        quantidadeFaturasOrfas +=
+          faturas.length;
+      }
+
+      acumularTotaisPorTipo(
+        faturas
+      );
+
+      // ----------------------------------------------------
+      // PROCESSO
+      // ----------------------------------------------------
+      adicionarCabecalhoProcesso(
+        grupo,
+        item
+      );
+
+      adicionarFaturasProcesso(
+        item
+      );
+    });
+  });
+
+  // ========================================================
+  // RESUMO
+  // ========================================================
+  adicionarResumoFinal();
+
+  // ========================================================
+  // GRÁFICO
+  // ========================================================
+  adicionarGraficoMensal();
+
+  // ========================================================
+  // PAGINAÇÃO
+  // ========================================================
+  adicionarPaginacaoPDF(
+    doc
   );
 
+  return doc;
+}
 
+
+function filtrarMovimentosGrupo(processo, key, codigo) {
+  return (processo.historico || []).filter(movimento =>
+    Number(movimento.historico_descr_cod) === Number(codigo) &&
+    String(movimento.historico_num || 'ORFAO') === String(key)
+  );
+}
+
+
+function somarMovimentos(movimentos) {
+  return movimentos.reduce(
+    (total, movimento) =>
+      total + (Number(movimento.historico_valor) || 0),
+    0
+  );
+}
+
+
+function formatarFaturasPDF(faturas = []) {
+  if (!faturas.length) {
+    return 'Sem faturas';
+  }
+
+  return faturas.map(fatura => {
+    const expediente =
+      formatExpediente(fatura.fact_expediente) || '-';
+
+    const data = fatura.fact_data || '-';
+
+    const documento = [
+      fatura.fact_tipo,
+      fatura.fact_num
+    ]
+      .filter(Boolean)
+      .join('_') || '-';
+
+    const auto = fatura.fact_auto_num
+      ? `AM_${fatura.fact_auto_num}`
+      : '-';
+
+    return [
+      expediente,
+      data,
+      documento,
+      auto,
+      formatCurrency(fatura.fact_valor)
+    ].join(' / ');
+  }).join('\n');
+}
+
+
+function adicionarResumoFinalPDF(
+  doc,
+  {
+    startY,
+    marginLeft,
+    totalPedidoGeral,
+    totalReembolsoGeral,
+    diferencialGeral
+  }
+) {
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+
+  doc.text('RESUMO', marginLeft, startY);
+
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setFont("helvetica","normal");
-
 
   doc.text(
-    `Total Pedidos: ${formatCurrency(totalPedidoGeral)}`,
+    `Total de pedidos: ${formatCurrency(totalPedidoGeral)}`,
     marginLeft,
     startY + 8
   );
 
-
   doc.text(
-    `Total Reembolsos: ${formatCurrency(totalReembolsoGeral)}`,
+    `Total de reembolsos: ${formatCurrency(totalReembolsoGeral)}`,
     marginLeft,
     startY + 15
   );
-
 
   doc.text(
     `Diferencial: ${formatCurrency(diferencialGeral)}`,
     marginLeft,
     startY + 22
   );
+}
 
 
-  const pages = doc.getNumberOfPages();
+function adicionarPaginacaoPDF(doc) {
+  const totalPaginas = doc.getNumberOfPages();
 
+  for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+    doc.setPage(pagina);
 
-  for (let i = 1; i <= pages; i++) {
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-    doc.setPage(i);
-
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
 
     doc.text(
-      `Página ${i} / ${pages}`,
+      `Página ${pagina} / ${totalPaginas}`,
       pageWidth - 35,
-      290
+      pageHeight - 7
     );
-
   }
-
-  return doc;
-
-}
-
-async function previewResumo() {
-  try {
-      const doc = await criarResumoPDF();
-      window.open(doc.output("bloburl"), "_blank");
-  }
-  catch (erro) {
-      console.error(erro);
-      alert("Erro ao gerar o PDF.");
-  }
-
 }
 
 
+// ==========================================================
+// EXCEL
+// ==========================================================
 
-function exportAllExcel() {
+function criarDocumentoReembolsosExcel(
+  grupos,
+  {
+    key = null,
+    escopo = 'global'
+  } = {}
+) {
+  const rows = criarLinhasExcel(grupos);
 
-  const dados = getReembolsosAgrupadosDetalhado(processosGlobais);
+  if (rows.length === 0) {
+    alert('Não existem registos para exportar.');
+    return;
+  }
 
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+
+  configurarLargurasExcel(worksheet);
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    'Reembolsos'
+  );
+
+  const nomeFicheiro = criarNomeFicheiroExportacao({
+    formato: 'xlsx',
+    key,
+    escopo
+  });
+
+  XLSX.writeFile(workbook, nomeFicheiro);
+}
+
+
+function criarLinhasExcel(grupos) {
   const rows = [];
 
-  dados.forEach(g => {
+  grupos.forEach(grupo => {
+    Object.values(grupo.processos).forEach(item => {
+      const processo = item.processo || {};
 
-    Object.values(g.processos).forEach(p => {
-
-      const pedidos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 91 &&
-        String(h.historico_num) === String(g.key)
+      const pedidos = filtrarMovimentosGrupo(
+        processo,
+        grupo.key,
+        91
       );
 
-      const reembolsos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 92 &&
-        String(h.historico_num) === String(g.key)
+      const reembolsos = filtrarMovimentosGrupo(
+        processo,
+        grupo.key,
+        92
       );
 
-      const pedidoRef = pedidos.length
-        ? pedidos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
-        : "-";
+      const pedidoRef = formatarReferenciasMovimentos(pedidos);
+      const reembolsoRef =
+        formatarReferenciasMovimentos(reembolsos);
 
-      const reembolsoRef = reembolsos.length
-        ? reembolsos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
-        : "-";
+      const totalPedido = somarMovimentos(pedidos);
+      const totalReembolso = somarMovimentos(reembolsos);
 
-      if (!p.faturas || !p.faturas.length) {
+      const dadosComuns = {
+        Grupo:
+          grupo.key === 'ORFAO'
+            ? 'Faturas órfãs'
+            : grupo.key,
 
+        Processo:
+          processo.padm ||
+          processo.proces_check ||
+          '-',
+
+        Designação:
+          cleanPdfText(processo.designacao || '-'),
+
+        Pedido: pedidoRef,
+        'Valor pedido': totalPedido,
+
+        Reembolso: reembolsoRef,
+        'Valor reembolso': totalReembolso,
+
+        Diferencial:
+          totalPedido - Math.abs(totalReembolso)
+      };
+
+      if (!item.faturas?.length) {
         rows.push({
-          Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
-          Pedido: pedidoRef,
-          Reembolso: reembolsoRef,
-          Processo: p.processo.designacao,
-          Fatura: "-",
-          Valor: "-"
+          ...dadosComuns,
+          Data: '-',
+          Fatura: '-',
+          Expediente: '-',
+          Auto: '-',
+          'Valor fatura': 0
         });
 
-      } else {
-
-        p.faturas.forEach(f => {
-
-          rows.push({
-            Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
-            Pedido: pedidoRef,
-            Reembolso: reembolsoRef,
-            Processo: p.processo.designacao,
-            Data: f.fact_data,
-            Fatura: `${f.fact_tipo}_${f.fact_num}`,
-            Expediente: formatExpediente(f.fact_expediente),
-            Valor: f.fact_valor
-          });
-
-        });
+        return;
       }
-    });
-  });
 
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(wb, ws, "Reembolsos");
-
-  XLSX.writeFile(wb, "reembolsos_detalhado.xlsx");
-}
-
-// PARA O MODAL
-function criarResumoModalPDF(processos, keySelecionada) {
-
-  const dados = getReembolsosAgrupadosDetalhado(processos)
-  .filter(g => String(g.key) === String(keySelecionada));
-
-  const doc = new window.jspdf.jsPDF({
-    orientation: "landscape",
-    unit: "mm"
-  });
-
-  const pageWidth = doc.internal.pageSize.getWidth();
-
-  const marginLeft = 10;
-  const marginRight = 10;
-  const tableWidth = pageWidth - marginLeft - marginRight;
-
-  let startY = 28;
-
-  const addHeader = () => {
-
-    const c = processosGlobais?.[0] || {};
-    const data = new Date().toLocaleDateString("pt-PT");
-
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("RELATÓRIO DE REEMBOLSOS", marginLeft, 10);
-
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
-
-    doc.text(
-      `Candidatura: ${c.candidatura || c.codigo_candidatura || 'N/D'} ${c.estado ? '| ' + c.estado : ''}`,
-      marginLeft,
-      16
-    );
-
-    doc.text(`Gerado em: ${data}`, pageWidth - 60, 10);
-
-    doc.line(marginLeft, 19, pageWidth - marginRight, 19);
-  };
-
-  addHeader();
-
-  dados
-  .filter(g => g && g.processos && Object.keys(g.processos).length > 0)
-  .forEach(g => {
-
-    const isOrfao = g.key === 'ORFAO';
-
-    if (startY > 170) {
-      doc.addPage();
-      startY = 28;
-      addHeader();
-    }
-
-    const headerY = startY;
-
-    doc.setFillColor(isOrfao ? 255 : 235, isOrfao ? 245 : 235, isOrfao ? 200 : 235);
-    doc.rect(marginLeft, headerY - 3, tableWidth, 8, "F");
-
-    doc.setFontSize(8.5);
-    doc.setFont("helvetica", "bold");
-
-    doc.text(
-      isOrfao ? "Faturas Órfão" : g.key,
-      marginLeft + 4,
-      headerY + 2
-    );
-
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "normal");
-
-    doc.text(
-      `P: ${formatCurrency(g.totalPedido)} | R: ${formatCurrency(g.totalReembolso)}`,
-      marginLeft + 40,
-      headerY + 2
-    );
-
-    const tableStartY = headerY + 10;
-
-    const rows = [];
-
-    Object.values(g.processos).forEach(p => {
-
-      const pedidos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 91 &&
-        String(h.historico_num) === String(g.key)
-      );
-
-      const reembolsos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 92 &&
-        String(h.historico_num) === String(g.key)
-      );
-
-      const pedidoValor = pedidos.reduce((s, h) => s + (h.historico_valor || 0), 0);
-      const reembolsoValor = reembolsos.reduce((s, h) => s + (h.historico_valor || 0), 0);
-
-      const faturas = (p.faturas || []).length
-        ? p.faturas.map(f =>
-            `${formatExpediente(f.fact_expediente)} ${f.fact_data} - ${f.fact_tipo}_${f.fact_num}  - AM${f.fact_auto_num}: ${formatCurrency(f.fact_valor)}`
-          ).join("\n")
-        : "Sem faturas";
-
-      rows.push([
-        p.processo.padm,
-        p.processo.designacao,
-        `P: ${formatCurrency(pedidoValor)} | R: ${formatCurrency(reembolsoValor)}`,
-        faturas
-      ]);
-    });
-
-    doc.autoTable({
-      startY: tableStartY,
-      head: [["Processo", "Designação", "Movimentos", "Faturação"]],
-      body: rows,
-      theme: "grid",
-      margin: { left: marginLeft, right: marginRight },
-      styles: { fontSize: 7.2, cellPadding: 1.4 },
-      headStyles: { fillColor: [23, 162, 184], textColor: 255 },
-      columnStyles: {
-        0: { cellWidth: 22 },
-        1: { cellWidth: 80 },
-        2: { cellWidth: 80 },
-        3: { cellWidth: 95 }
-      }
-    });
-
-    startY = doc.lastAutoTable.finalY + 8;
-  });
-
-  const pages = doc.getNumberOfPages();
-
-  for (let i = 1; i <= pages; i++) {
-    doc.setPage(i);
-    doc.setFontSize(8);
-    doc.text(`Página ${i} / ${pages}`, pageWidth - 30, 200);
-  }
-
-  return doc;
-}
-
-async function previewResumoModal(processos, keySelecionada) {
-
-  try {
-
-      const doc = await criarResumoModalPDF(
-          processos,
-          keySelecionada
-      );
-
-      window.open(
-          doc.output("bloburl"),
-          "_blank"
-      );
-
-  }
-  catch (erro) {
-
-      console.error(erro);
-
-      alert("Erro ao gerar o PDF.");
-
-  }
-
-}
-
-function modalExportExcel(processos, keySelecionada) {
-
-  const dados = getReembolsosAgrupadosDetalhado(processos)
-      .filter(g => String(g.key) === String(keySelecionada));
-
-  const rows = [];
-
-  dados.forEach(g => {
-
-    Object.values(g.processos).forEach(p => {
-
-      const pedidos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 91 &&
-        String(h.historico_num) === String(g.key)
-      );
-
-      const reembolsos = (p.processo.historico || []).filter(h =>
-        h.historico_descr_cod === 92 &&
-        String(h.historico_num) === String(g.key)
-      );
-
-      const pedidoRef = pedidos.length
-        ? pedidos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
-        : "-";
-
-      const reembolsoRef = reembolsos.length
-        ? reembolsos.map(h => `${h.historico_num} ${h.historico_doc}`).join(" | ")
-        : "-";
-
-      if (!p.faturas || !p.faturas.length) {
-
+      item.faturas.forEach(fatura => {
         rows.push({
-          Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
-          Pedido: pedidoRef,
-          Reembolso: reembolsoRef,
-          Processo: p.processo.designacao,
-          Fatura: "-",
-          Valor: "-"
+          ...dadosComuns,
+
+          Data: fatura.fact_data || '-',
+
+          Fatura: [
+            fatura.fact_tipo,
+            fatura.fact_num
+          ]
+            .filter(Boolean)
+            .join('_') || '-',
+
+          Expediente:
+            formatExpediente(fatura.fact_expediente) || '-',
+
+          Auto:
+            fatura.fact_auto_num
+              ? `AM_${fatura.fact_auto_num}`
+              : '-',
+
+          'Valor fatura':
+            Number(fatura.fact_valor) || 0
         });
-
-      } else {
-
-        p.faturas.forEach(f => {
-
-          rows.push({
-            Grupo: g.key === 'ORFAO' ? 'Faturas Órfão' : g.key,
-            Pedido: pedidoRef,
-            Reembolso: reembolsoRef,
-            Processo: p.processo.designacao,
-            Data: f.fact_data,
-            Fatura: `${f.fact_tipo}_${f.fact_num}`,
-            Expediente: formatExpediente(f.fact_expediente),
-            Valor: f.fact_valor
-          });
-
-        });
-      }
+      });
     });
   });
 
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
+  return rows;
+}
 
-  XLSX.utils.book_append_sheet(wb, ws, "Reembolsos");
 
-  XLSX.writeFile(wb, "reembolsos_detalhado.xlsx");
+function formatarReferenciasMovimentos(movimentos) {
+  if (!movimentos.length) {
+    return '-';
+  }
+
+  return movimentos.map(movimento => {
+    return [
+      movimento.historico_num,
+      movimento.historico_doc,
+      movimento.historico_dataemissao
+    ]
+      .filter(Boolean)
+      .join(' / ');
+  }).join(' | ');
+}
+
+
+function configurarLargurasExcel(worksheet) {
+  worksheet['!cols'] = [
+    { wch: 18 }, // Grupo
+    { wch: 16 }, // Processo
+    { wch: 50 }, // Designação
+    { wch: 35 }, // Pedido
+    { wch: 16 }, // Valor pedido
+    { wch: 35 }, // Reembolso
+    { wch: 18 }, // Valor reembolso
+    { wch: 16 }, // Diferencial
+    { wch: 13 }, // Data
+    { wch: 18 }, // Fatura
+    { wch: 22 }, // Expediente
+    { wch: 14 }, // Auto
+    { wch: 16 }  // Valor fatura
+  ];
+}
+
+
+function criarNomeFicheiroExportacao({
+  formato,
+  key,
+  escopo
+}) {
+  const candidatura =
+    processosGlobais?.[0]?.candidatura ||
+    'candidatura';
+
+  const referencia =
+    escopo === 'modal' && key
+      ? key
+      : 'todos';
+
+  const nomeSeguro = String(
+    `reembolsos_${candidatura}_${referencia}`
+  )
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9_-]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase();
+
+  return `${nomeSeguro}.${formato}`;
+}
+
+function getGrupoPP(valor) {
+
+  const numero = String(valor || '').trim();
+
+  return numero.startsWith('PP')
+      ? numero
+      : 'ORFAO';
 }
 
 function getReembolsosAgrupadosDetalhado(processos) {
@@ -1499,7 +3411,7 @@ function getReembolsosAgrupadosDetalhado(processos) {
     // ============================
     movimentos.forEach(h => {
 
-      const key = h.historico_num || 'ORFAO';
+      const key = getGrupoPP(h.historico_num);
 
       if (!grupos[key]) {
         grupos[key] = {
@@ -1553,7 +3465,7 @@ function getReembolsosAgrupadosDetalhado(processos) {
     // ============================
     faturas.forEach(f => {
 
-      const key = f.fact_finan_pp || 'ORFAO';
+      const key = getGrupoPP(f.fact_finan_pp);
 
       if (!grupos[key]) {
         grupos[key] = {

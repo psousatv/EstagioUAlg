@@ -62,28 +62,37 @@ $(document).ready(function () {
                   </thead>
               <tbody>`;
 
-        const { pedidosMap, faturasOrfaos, reembolsosOrfaos } = (processo.historico || []).reduce(
-          (acc, h) => {
-            const num = h.historico_num;
-        
-            // Separar pedidos
-            if (h.historico_descr_cod === 91 && num != null) {
-              acc.pedidosMap[num] ??= { pedido: h, faturas: [], reembolsos: [] };
+        // Criar primeiro o mapa de pedidos. A ordem do histórico não importa.
+        const pedidosMap = {};
+        const faturasOrfaos = [];
+        const reembolsosOrfaos = [];
+
+        (processo.historico || []).forEach(h => {
+          const num = h.historico_num;
+
+          if (h.historico_descr_cod === 91 && num != null) {
+            pedidosMap[num] ??= {
+              pedido: h,
+              faturas: [],
+              reembolsos: []
+            };
+          }
+        });
+
+        // Numa segunda passagem, associar cada reembolso ao pedido
+        // com o mesmo historico_num. Assim, vários reembolsos podem
+        // pertencer ao mesmo pedido, mesmo que apareçam antes dele.
+        (processo.historico || []).forEach(h => {
+          const num = h.historico_num;
+
+          if (h.historico_descr_cod === 92 && num != null) {
+            if (pedidosMap[num]) {
+              pedidosMap[num].reembolsos.push(h);
+            } else {
+              reembolsosOrfaos.push(h);
             }
-        
-            // Separar reembolsos
-            if (h.historico_descr_cod === 92 && num != null) {
-              if (acc.pedidosMap[num]) {
-                acc.pedidosMap[num].reembolsos.push(h);
-              } else {
-                acc.reembolsosOrfaos.push(h);
-              }
-            }
-        
-            return acc;
-          },
-          { pedidosMap: {}, faturasOrfaos: [], reembolsosOrfaos: [] }
-        );
+          }
+        });
         
         // Associar faturas aos pedidos
         (processo.faturas || []).forEach(f => {
@@ -144,81 +153,52 @@ $(document).ready(function () {
           ...cancelamentos
       ].map(f => `<div class="mb-1">${f}</div>`).join('');
     
-        // -------------------------
-        // SEM REEMBOLSOS
-        // -------------------------
-        if (item.reembolsos.length === 0) {
-    
+        // Um pedido ocupa um único grupo de linhas. Os dados do pedido,
+        // o balanço acumulado e as faturas são apresentados apenas uma vez.
+        const reembolsos = item.reembolsos;
+        const linhas = Math.max(1, reembolsos.length);
+        const totalReembolsado = reembolsos.reduce(
+          (total, r) => total + (Number(r.historico_valor) || 0), 0
+        );
+        const valorPedido = Number(item.pedido?.historico_valor) || 0;
+        const saldo = totalReembolsado - valorPedido;
+        const saldoClass = saldo >= 0 ? 'table-success' : 'table-danger';
+
+        for (let i = 0; i < linhas; i++) {
+          const reemb = reembolsos[i];
+          const reembText = reemb ? [
+            reemb.historico_num,
+            reemb.historico_doc,
+            reemb.historico_dataemissao,
+            formatCurrency(reemb.historico_valor)
+          ] : ['', '', '', ''];
+
+          html += `<tr>`;
+
+          // rowspan evita repetir o pedido em cada reembolso.
+          if (i === 0) {
             html += `
-                <tr>
-                    <td class="table-dark text-white">${pedidoText[0]}</td>
-                    <td class="table-dark text-white">${pedidoText[1]}</td>
-                    <td class="table-dark text-white">${pedidoText[2]}</td>
-                    <td class="table-dark text-white text-right">${pedidoText[3]}</td>
-    
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-    
-                    <td></td>
-    
-                    <td class="table-warning">
-                        ${faturasText}
-                    </td>
-                </tr>
-            `;
-    
-        } else {
-    
-            // -------------------------
-            // COM REEMBOLSOS
-            // -------------------------
-            item.reembolsos.forEach(reemb => {
-    
-                const reembText = [
-                    reemb.historico_num,
-                    reemb.historico_doc,
-                    reemb.historico_dataemissao,
-                    formatCurrency(reemb.historico_valor)
-                ];
-    
-                const saldo = reemb.historico_valor >= 0
-                    ? reemb.historico_valor - item.pedido.historico_valor
-                    : 0;
-    
-                const saldoClass = saldo >= 0
-                    ? 'table-success'
-                    : 'table-danger';
-    
-                html += `
-                    <tr>
-    
-                        <!-- PEDIDOS -->
-                        <td class="table-dark text-white">${pedidoText[0]}</td>
-                        <td class="table-dark text-white">${pedidoText[1]}</td>
-                        <td class="table-dark text-white">${pedidoText[2]}</td>
-                        <td class="table-dark text-white text-right">${pedidoText[3]}</td>
-    
-                        <!-- REEMBOLSOS -->
-                        <td class="table-info">${reembText[0]}</td>
-                        <td class="table-info">${reembText[1]}</td>
-                        <td class="table-info">${reembText[2]}</td>
-                        <td class="table-info text-right">${reembText[3]}</td>
-    
-                        <!-- SALDO -->
-                        <td class="${saldoClass} text-right">
-                            ${formatCurrency(saldo)}
-                        </td>
-    
-                        <!-- FATURAS -->
-                        <td class="table-warning">
-                            ${faturasText}
-                        </td>
-    
-                    </tr>
-                `;
-            });
+              <td class="table-dark text-white" rowspan="${linhas}" style="vertical-align:top">${pedidoText[0]}</td>
+              <td class="table-dark text-white" rowspan="${linhas}" style="vertical-align:top">${pedidoText[1]}</td>
+              <td class="table-dark text-white" rowspan="${linhas}" style="vertical-align:top">${pedidoText[2]}</td>
+              <td class="table-dark text-white text-right" rowspan="${linhas}" style="vertical-align:top">${pedidoText[3]}</td>`;
+          }
+
+          html += `
+            <td class="table-info">${reembText[0]}</td>
+            <td class="table-info">${reembText[1]}</td>
+            <td class="table-info">${reembText[2]}</td>
+            <td class="table-info text-right">${reembText[3]}</td>`;
+
+          if (i === 0) {
+            html += `
+              <td class="${reembolsos.length ? saldoClass : ''} text-right" rowspan="${linhas}" style="vertical-align:top">
+                ${reembolsos.length ? formatCurrency(saldo) : ''}
+              </td>
+              <td class="table-warning" rowspan="${linhas}" style="vertical-align:top">${faturasText}</td>`;
+          }
+
+          html += `</tr>`;
         }
       });
 
