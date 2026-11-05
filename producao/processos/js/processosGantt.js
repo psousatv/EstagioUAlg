@@ -8,51 +8,76 @@ $(document).ready(function () {
     const processosJSON = [
         {
             id: "1",
-            name: "Instalação do estaleiro",
-            start: "2026-06-29",
-            end: "2026-07-12",
-            progress: 100,
+            name: "E211 - Bodega",
+            start: "2026-05-06",
+            end: "2026-10-18",
+            progress: 91,
             dependencies: ""
         },
         {
             id: "2",
-            name: "Abertura de valas",
-            start: "2026-07-13",
-            end: "2026-09-18",
-            progress: 100,
+            name: "Auto 1",
+            start: "2026-05-07",
+            end: "2026-05-30",
+            progress: 170,
             dependencies: "1"
         },
         {
             id: "3",
-            name: "Assentamento de tubagens",
-            start: "2026-08-10",
-            end: "2026-10-20",
-            progress: 85,
-            dependencies: ""
+            name: "Auto 2",
+            start: "2026-06-01",
+            end: "2026-06-30",
+            progress: 90,
+            dependencies: "2"
         },
         {
             id: "4",
-            name: "Ensaios e ligações",
-            start: "2026-10-21",
-            end: "2026-11-25",
-            progress: 35,
+            name: "Auto 3",
+            start: "2026-07-01",
+            end: "2026-07-30",
+            progress: 18,
             dependencies: "3"
         },
         {
             id: "5",
-            name: "Reposição de pavimentos",
-            start: "2026-11-02",
-            end: "2026-12-15",
-            progress: 15,
-            dependencies: ""
+            name: "Auto 4",
+            start: "2026-08-01",
+            end: "2026-09-03",
+            progress: 20,
+            dependencies: "4"
         },
         {
             id: "6",
-            name: "Receção provisória",
-            start: "2026-12-26",
-            end: "2026-12-26",
+            name: "Prorrogação",
+            start: "2026-09-04",
+            end: "2026-10-18",
+            progress: 90,
+            dependencies: ""
+        },
+        {
+            id: "7",
+            name: "Auto 5",
+            start: "2026-09-04",
+            end: "2026-09-30",
+            progress: 30,
+            dependencies: "6,5"
+        },
+        {
+            id: "8",
+            name: "Auto 6",
+            start: "2026-10-01",
+            end: "2026-10-18",
+            progress: 39,
+            dependencies: "7"
+        },
+        {
+            id: "9",
+            name: "Receção Provisória",
+            start: "2026-11-17",
+            end: "2026-11-17",
             progress: 0,
-            dependencies: "4,5"
+            dependencies: "8",
+            custom_class: "bar-milestone"
         }
     ];
 

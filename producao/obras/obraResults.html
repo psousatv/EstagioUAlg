@@ -31,6 +31,8 @@
 <link href="../../global/css/milestones.css" rel="stylesheet" type="text/css">
 <!-- Charts -->
 <script src="../../vendors/charts/chart.umd.min.js"></script>
+<!-- Gantt -->
+<link href="../../vendors/frappe-gantt/frappe-gantt.css" rel="stylesheet" type="text/css">
 
 <!--
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
@@ -173,28 +175,54 @@
   
             <!-- Aba Resumo -->
             <div class="tab-pane fade show active" id="resumo" role="tabpanel" aria-labelledby="resumo-tab">
+              
+
               <div class="row">
-                <!-- Dados Gerais - Genéricos -->
-                <div class="col-md-8">
-                  <strong id="lstObraResults">O resumo do processo é listado aqui...</strong>
-                </div>
-                <!-- Dados Gerais - Gráfico -->
-                <div class="col col-lg-4">
-                  
-                  <canvas class="text-center" id="lstObraGrafico"><b>Gráfico do Ponto de situação da Obra</b></canvas>
-                </div>
-              </div>
-              <!-- Dados Gerais - Cartões de Autos -->
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
-                  <h1 class="mt-2"></h1>
-                  <div class="row" id="lstObraCartoes">
-                    <b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b>
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row align-items-center">
+              
+                        <!-- Dados Gerais - Genéricos (8/12) -->
+                        <div class="col-12 col-md-8">
+                          <strong id="lstObraResults">O resumo do processo é listado aqui...</strong>
+                        </div>
+              
+                        <!-- Dados Gerais - Gráfico (4/12) -->
+                        <div class="col-12 col-md-4">
+                          <div class="position-relative" style="height: 220px;">
+                            <canvas id="lstObraGrafico"></canvas>
+                          </div>
+                        </div>
+              
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-
+              
+              <!-- GANTT (100% largura) -->
+              <div class="row mt-2">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body" id="obraGantt"></div>
+                  </div>
+                </div>
+              </div>
+                            
+              <div class="row mt-2">
+                <!-- Dados Gerais - Cartões de Autos -->
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-center" id="cartaoGrauExecucao"><b>Grau de Execução</b></div>
+                    <h1 class="mt-2"></h1>
+                    <div class="row" id="lstObraCartoes">
+                      <b>Cartões Ponto de Situação Auto a Auto vs Plano Pagamentos Previsto.</b>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+                
             </div>
   
             <!-- Aba Mapa de Trabalhos -->
@@ -289,19 +317,20 @@
             </div>
 
   
+            
             <!-- Aba Métricas -->
             <div class="tab-pane fade" id="metricas" role="tabpanel" aria-labelledby="metricas-tab">
+              
+              <!-- LINHA 2: MÉTRICAS + GRÁFICO -->
+              <div class="row mt-2">
 
-              <div class="row g-3">
-                
-                <!-- Progresso -->
-                <div class="col-lg-6">
+                <!-- COLUNA 1: MÉTRICAS (50%) -->
+                <div class="col-lg-6 mb-3">
                   <div class="card h-100">
                     <div class="card-body">
 
                       <h5 class="mb-3">Progresso das Intervenções</h5>
 
-                      <!-- 3 blocos independentes -->
                       <div id="lstMetricasProgress" class="mb-2"></div>
                       <div id="lstMetricasProgressAcessorios" class="mb-2"></div>
                       <div id="lstMetricasProgressOutros"></div>
@@ -310,8 +339,8 @@
                   </div>
                 </div>
 
-                <!-- Gráfico -->
-                <div class="col-lg-6">
+                <!-- COLUNA 2: GRÁFICO (50%) -->
+                <div class="col-lg-6 mb-3">
                   <div class="card h-100">
                     <div class="card-body">
                       <canvas id="lstMetricasGrafico"></canvas>
@@ -320,9 +349,11 @@
                 </div>
 
               </div>
-            </div>  <!-- /metricas -->
-  
-          </div> <!-- /tab-content -->
+
+            </div> <!-- /metricas -->
+
+            </div> <!-- /tab-content -->
+
   
         </div> <!-- /card -->
       </div>
@@ -342,10 +373,13 @@
 <script src="../../vendors/fonts/all.min.js"></script>
 <!-- Datatables -->
 <script src="../../vendors/datatables/datatables.min.js"></script>
+<!-- Frappe Gantt -->
+<script src="../../vendors/frappe-gantt/frappe-gantt.umd.js"></script>
   
 <script src="js/obraResults.js"></script>
 <script src="js/obraMetricas.js"></script>
 <script src="../comum/js/processoFinanceiro.js"></script>
+<script src="js/obraGantt.js" defer></script>
   
 </body>
 
