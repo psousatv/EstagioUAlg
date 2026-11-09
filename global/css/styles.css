@@ -1,5 +1,16 @@
 @charset "UTF-8";
 
+
+/* Imagem de fundo das páginas */
+body {
+  background-image: url('../imagens/bgPages.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+
 #footer {
   position: fixed;
   bottom: 0;
@@ -493,6 +504,7 @@ pre code {
   margin-right: auto;
   margin-left: auto;
 }
+
 @media (min-width: 576px) {
   .container {
     max-width: 540px;
@@ -541,6 +553,7 @@ pre code {
   .container-xl, .container-lg, .container-md, .container-sm, .container {
     max-width: 1140px;
   }
+
 }
 .row {
   display: flex;

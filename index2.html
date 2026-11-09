@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="Paulo Sousa" />
+
+<title>Investimentos e Aquisições</title>
+
+<link rel="icon" type="image/png" sizes="16x16" href="templates/favicon.png"/>
+
+<!-- CSS -->
+<link href="vendors/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="global/css/styles.css" rel="stylesheet" type="text/css">
+<link href="vendors/fonts/all.min.css" rel="stylesheet" type="text/css">
+<link href="vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
+
+<!--
+<style>
+    /* Adiciona uma imagem em 'background' a toda a página */
+    body  {
+      background-image: url('../../global/imagens/bgPages.jpg');
+      background-size: cover;
+    }
+</style>
+-->
+
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand navbar-dark bg-dark shadow-sm">
+        <a class="navbar-brand" href="index2.html">Investimentos e Aquisições</a>
+
+        <div class="ml-auto d-flex align-items-center">
+            <a class="btn btn-outline-light btn-sm mr-3" href="index2.html">
+                <i class="fa fa-home"></i>
+            </a>
+            <span class="text-white-50 small">Paulo Sousa © 2024</span>
+        </div>
+    </nav>
+    
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+        
+                        <!-- Principal -->
+                        <div class="sb-sidenav-menu-heading">Principal</div>
+                        <a class="nav-link" href="#">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-house"></i></div>
+                            Dashboard
+                        </a>
+ 
+                        <!-- Geral -->
+                        <div class="sb-sidenav-menu-heading">Módulos</div>
+                        <a class="nav-link active" href="producao/processos/processosSearch.html">                         
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-folder-open"></i></div>
+                            Processos
+                        </a>
+                        <a class="nav-link" href="producao/obras/obrasSearch.html">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-gears"></i></div>
+                            Obras
+                        </a>
+                        <a class="nav-link" href="producao/servicos/servicosSearch.html">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-cogs"></i></div>
+                            Serviços
+                        </a>
+
+                        <!-- Candidaturas -->
+                        <div class="sb-sidenav-menu-heading">Candidaturas</div>
+                        <a class="nav-link" href="producao/candidaturas/candidaturasDashboard.html">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-building-columns"></i></div>
+                            Candidaturas
+                        </a>
+
+                        <!-- Orçamento -->
+                        <div class="sb-sidenav-menu-heading">Orçamento</div>
+                        <a class="nav-link" href="producao/orcamento/orcamentoDashboard.html">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-chart-line"></i></div>
+                            Orçamento
+                        </a>
+
+                         <!-- Diversos -->
+                         <div class="sb-sidenav-menu-heading">Diversos</div>
+                         <a class="nav-link" href="producao/aquisicoes/aquisicoesDashboard.html">
+                             <div class="sb-nav-link-icon"><i class="fas fa-euro"></i></div>
+                             Compras
+                         </a>
+                         <a class="nav-link" href="producao/setores_especiais/setoresEspeciais.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-list-check"></i></div>
+                            Setores Espeiciais
+                         </a>
+
+                        <!-- Listagens (Accordion) -->
+                         <!--
+                        <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapseCompras" role="button" aria-expanded="false">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-print"></i></div>
+                            Listagens
+                        </a>
+                        <div class="collapse" id="collapseCompras" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                
+                            </nav>
+                        </div>
+                        -->
+                        
+                    </div>
+                </div>
+
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    Não Credenciado
+                </div>
+
+            </nav>
+        </div>
+
+        <div id="layoutSidenav_content">
+            <div class="container-fluid">          
+              <div class="row mt-2" id="kpiModulos">KPIs</div>             
+            </div>
+        </div>
+
+    </div><!-- Fim Sidenav Lateral -->
+</div><!-- Fim Sidenav -->
+
+    <!-- JQuery - Deve Ser incluido antes do Global -->
+    <script src="../../vendors/jquery/jquery.min.js"></script>    
+    <script src="../../vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="../../global/js/scripts.js"></script>
+    <script src="../../vendors/fonts/all.min.js"></script>
+    
+    <!-- jsPDF -->
+    <script src="vendors/pdf/jspdf.umd.min.js"></script>
+    <!-- jsPDF autoTable -->
+    <script src="vendors/pdf/jspdf.plugin.autotable.min.js"></script>
+    <!-- SheetJS (XLSX) -->
+    <script src="vendors/pdf/xlsx.full.min.js"></script>
+    <!-- Frappe Gantt -->
+    <script src="vendors/frappe-gantt/frappe-gantt.umd.js"></script>
+
+    <!-- DEFINIÇÕES LOCAIS -->
+    <script src="producao/comum/js/funcoes.js" defer></script>
+    <!--
+    <script src="producao/comum/js/documentosPendentes.js" defer></script>
+    -->
+
+
+</body>
+</html>

@@ -52,22 +52,22 @@ $(document).ready(function () {
             start: "2026-09-04",
             end: "2026-10-18",
             progress: 90,
-            dependencies: ""
+            dependencies: "1,5"
         },
         {
             id: "7",
             name: "Auto 5",
             start: "2026-09-04",
             end: "2026-09-30",
-            progress: 30,
-            dependencies: "6,5"
+            progress: 70,
+            dependencies: "6"
         },
         {
             id: "8",
             name: "Auto 6",
             start: "2026-10-01",
             end: "2026-10-18",
-            progress: 39,
+            progress: 61,
             dependencies: "7"
         },
         {
