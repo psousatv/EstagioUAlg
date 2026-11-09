@@ -2136,7 +2136,7 @@ function criarDocumentoReembolsosPDF(
     const aReceber = pedidoValor - Math.abs(reembolsoValor);
     const totalFaturadoProcesso = calcularTotalFaturadoItem(item);
 
-    const iva = pedidoValor - totalFaturadoProcesso || 0;
+    //const iva = pedidoValor - totalFaturadoProcesso || 0;
 
     // ------------------------------------------------------
     // TÍTULO
@@ -2192,9 +2192,9 @@ function criarDocumentoReembolsosPDF(
             {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
             {content: formatCurrency(totalFaturadoProcesso), styles: {halign: 'right'}},
             {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
-            {content: String(faturas.length), styles: {halign: 'center'}},
-            {content: 'Pedido-Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
-            {content: formatCurrency(iva), styles: {halign: 'right'}}
+            {content: String(faturas.length), styles: {halign: 'center'}}
+            //{content: 'Pedido-Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            //{content: formatCurrency(iva), styles: {halign: 'right'}}
           ]
         ],
         theme: 'grid',
@@ -2313,45 +2313,13 @@ function criarDocumentoReembolsosPDF(
     const linhas =
       faturasOrdenadas.map(
         fatura => [
-
-          cleanPdfText(
-            fatura.ent_nome ||
-            '-'
-          ),
-
-          formatDatePDF(
-            fatura.fact_data
-          ),
-
-          [
-            fatura.fact_tipo,
-            fatura.fact_num
-          ]
-            .filter(Boolean)
-            .join(' ') ||
-            '-',
-
-          formatExpediente(
-            fatura.fact_expediente
-          ) ||
-            '-',
-
-          fatura.fact_auto_num ||
-            '-',
-
-          formatDatePDF(
-            fatura.fact_auto_data
-          ),
-
-          Number(
-            fatura.fact_iva
-          ) ||
-            0,
-
-          Number(
-            fatura.fact_valor
-          ) ||
-            0
+          cleanPdfText(fatura.ent_nome || '-'),
+          formatDatePDF(fatura.fact_data),
+          [fatura.fact_tipo, fatura.fact_num] .filter(Boolean) .join(' ') || '-',
+          formatExpediente(fatura.fact_expediente) || '-', fatura.fact_auto_num || '-',
+          formatDatePDF(fatura.fact_auto_data),
+          Number(fatura.fact_iva) || 0,
+          Number(fatura.fact_valor) || 0
         ]
       );
 
@@ -2411,65 +2379,25 @@ function criarDocumentoReembolsosPDF(
       },
 
       columnStyles: {
-
-        0: {
-          cellWidth: 42
-        },
-
-        1: {
-          cellWidth: 18,
-          halign: 'center'
-        },
-
-        2: {
-          cellWidth: 28
-        },
-
-        3: {
-          cellWidth: 26
-        },
-
-        4: {
-          cellWidth: 16,
-          halign: 'center'
-        },
-
-        5: {
-          cellWidth: 20,
-          halign: 'center'
-        },
-
-        6: {
-          cellWidth: 20,
-          halign: 'right'
-        },
-
-        7: {
-          cellWidth: 20,
-          halign: 'right'
-        }
+        0: {cellWidth: 42},
+        1: {cellWidth: 18, halign: 'center'},
+        2: {cellWidth: 28},
+        3: {cellWidth: 26},
+        4: {cellWidth: 16, halign: 'center'},
+        5: {cellWidth: 20, halign: 'center'},
+        6: {cellWidth: 20, halign: 'right'},
+        7: {cellWidth: 20, halign: 'right'}
       },
 
       didParseCell(data) {
 
         if (
-          data.section ===
-            'body' &&
-          [6, 7].includes(
-            data.column.index
-          )
+          data.section === 'body' && [6, 7].includes(data.column.index)
         ) {
-
-          data.cell.text = [
-            formatCurrency(
-              data.cell.raw
-            )
-          ];
+          data.cell.text = [formatCurrency(data.cell.raw)];
         }
       },
-
-      didDrawPage() {
-        adicionarCabecalho();
+      didDrawPage() {adicionarCabecalho();
       }
     });
 
@@ -2483,22 +2411,10 @@ function criarDocumentoReembolsosPDF(
   // ========================================================
   function adicionarResumoFinal() {
 
-    const aReceberGeral =
-      totalPedidoGeral -
-      Math.abs(
-        totalReembolsoGeral
-      );
+    const aReceberGeral = totalPedidoGeral - Math.abs(totalReembolsoGeral);
 
     const tiposOrdenados =
-      Object.entries(
-        totaisPorTipoFatura
-      ).sort(
-        ([tipoA], [tipoB]) =>
-          tipoA.localeCompare(
-            tipoB,
-            'pt-PT'
-          )
-      );
+      Object.entries(totaisPorTipoFatura).sort(([tipoA], [tipoB]) => tipoA.localeCompare(tipoB, 'pt-PT'));
 
     // ------------------------------------------------------
     // LINHAS PRINCIPAIS
@@ -2507,7 +2423,7 @@ function criarDocumentoReembolsosPDF(
       ['Total faturado', '', formatCurrency(totalFaturadoGeral)],
       ['Total de pedidos', '', formatCurrency(totalPedidoGeral)],
       ['Total de reembolsos', '', formatCurrency(totalReembolsoGeral)],
-      ['Total de Pedido-Faturado [IVA]', '', formatCurrency(totalPedidoGeral - totalFaturadoGeral)],
+      ['Total de Pedido - Faturado', '', formatCurrency(totalPedidoGeral - totalFaturadoGeral)],
       ['A Receber', '', formatCurrency(aReceberGeral)],
       ['Faturas órfãs', String(quantidadeFaturasOrfas), formatCurrency(totalFaturasOrfasGeral)]
     ];
