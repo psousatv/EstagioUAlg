@@ -367,7 +367,7 @@ $(document).ready(function () {
     // Coluna 3 - Faturas
     function calcularFaturas(row) {
 
-      const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND'];
+      const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND', 'IVA'];
 
       return row.faturas
           ?.filter(f =>
@@ -412,6 +412,8 @@ $(document).ready(function () {
 
           dataSrc: function (json) {
 
+            console.log(json);
+            
               // ------------------------------------------------
               // Processos
               // ------------------------------------------------
@@ -582,158 +584,87 @@ $(document).ready(function () {
               // ==================================================
 
               $('#kpiValores').html(`
-
                   <div class="row align-items-center mb-2">
 
-
-                      <!-- ELEGÍVEL -->
-
+                    <!-- ELEGÍVEL -->
                       <div class="col-md-2">
-
                           <div class="card bg-primary text-white h-100">
-
                               <div class="card-body py-2 px-2">
-
                                   <div class="small">
-                                      Elegível
+                                      Elegível - inclui IVA (se aplicável)
                                   </div>
-
                                   <div class="text-right font-weight-bold">
-
                                       ${formatCurrency(json.elegivel * json.iva)}
-
                                   </div>
-
                               </div>
-
                           </div>
-
                       </div>
-
 
                       <!-- FUNDO -->
-
                       <div class="col-md-2">
-
                           <div class="card bg-secondary text-white h-100">
-
                               <div class="card-body py-2 px-2">
-
                                   <div class="small">
-                                      Fundo
+                                      Fundo - inclui IVA (se aplicável)
                                   </div>
-
                                   <div class="text-right font-weight-bold">
-
                                       ${formatCurrency(json.elegivel * json.iva * json.taxa)}
-
                                   </div>
-
                               </div>
-
                           </div>
-
                       </div>
-
 
                       <!-- PEDIDO -> FATURADO -->
-
                       <div class="col-md-2">
-
                           <div class="card bg-warning text-dark h-100">
-
                               <div class="card-body py-2 px-2">
-
                                   <div class="small">
-                                      Pedido - inclui IVA
+                                      Pedido - inclui IVA (se aplicável)
                                   </div>
-
                                   <div class="text-right font-weight-bold">
-
                                       ${formatCurrency(totalPedidos)}
-
                                   </div>
-
                               </div>
-
                           </div>
-
                       </div>
 
+                      <!-- NÃO PAGO -->
+                      <div class="col-md-2">
+                          <div class="card bg-primary text-white h-100">
+                              <div class="card-body py-2 px-2">
+                                  <div class="small">
+                                      Não Pago - inclui IVA (se aplicável)
+                                  </div>
+                                  <div class="text-right font-weight-bold">
+                                      ${formatCurrency(totalPedidos - totalReembolsos)}
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
 
                       <!-- REEMBOLSOS -->
-
                       <div class="col-md-2">
-
                           <div class="card bg-success text-white h-100">
-
                               <div class="card-body py-2 px-2">
-
                                   <div class="small">
-                                      Reembolsos - inclui IVA
+                                      Reembolsos - inclui IVA (se aplicável)
                                   </div>
-
                                   <div class="text-right font-weight-bold">
-
                                       ${formatCurrency(totalReembolsos)}
-
                                   </div>
-
                               </div>
-
                           </div>
-
                       </div>
-
-
-                      <!-- SALDO -->
-
-                      <div class="col-md-2">
-
-                          <div class="card bg-primary text-white h-100">
-
-                              <div class="card-body py-2 px-2">
-
-                                  <div class="small">
-                                      Não Reembolsado
-                                  </div>
-
-                                  <div class="text-right font-weight-bold">
-
-                                      ${formatCurrency(totalPedidos - totalReembolsos)}
-
-                                  </div>
-
-                              </div>
-
-                          </div>
-
-                      </div>
-
 
                       <!-- BOTÕES -->
-
                       <div class="col-md-2 text-right">
-
-                          <button
-                              id="exportResumo"
-                              class="btn btn-danger btn-lg shadow-sm mr-2"
-                              title="Exportar PDF"
-                          >
+                          <button id="exportResumo" class="btn btn-danger btn-lg shadow-sm mr-2" title="Exportar PDF">
                               <i class="fa-solid fa-file-pdf"></i>
                           </button>
-
-
-                          <button
-                              id="exportALLExcel"
-                              class="btn btn-success btn-lg shadow-sm"
-                              title="Exportar Excel"
-                          >
-                              <i class="fa-solid fa-file-excel"></i>
+                          <button id="exportALLExcel" class="btn btn-success btn-lg shadow-sm" title="Exportar Excel">
+                            <i class="fa-solid fa-file-excel"></i>
                           </button>
-
                       </div>
-
                   </div>
 
               `);
@@ -778,24 +709,10 @@ $(document).ready(function () {
       // ========================================================
 
       paging: false,
-
       searching: false,
-
       select: true,
-
-      order: [
-          [1, 'asc']
-      ],
-
-
-      columnDefs: [
-
-          {
-              className: "dt-head-center",
-              targets: "_all"
-          }
-
-      ],
+      order: [[1, 'asc']],
+      columnDefs: [{className: "dt-head-center", targets: "_all"}],
 
 
       // ========================================================
