@@ -2039,14 +2039,15 @@ function criarDocumentoReembolsosPDF(
     // ------------------------------------------------------
     // BARRA DO TÍTULO
     // ------------------------------------------------------
-    doc.setFillColor(33, 37, 41);
+    //doc.setFillColor(33, 37, 41);
+    //doc.setFillColor(0, 51, 102); //Azul Escuro
+    doc.setFillColor(13, 110, 253); //Azul Boostrap
     doc.rect(marginLeft, startY, tableWidth, 9, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
-    doc.text(isOrfao ? 'FATURAS ÓRFÃS' : String(grupo.key), marginLeft + 3, startY + 6);
-    doc.setTextColor(0, 0, 0
-    );
+    doc.text(isOrfao ? 'FATURAS EM ABERTO' : String(grupo.key), marginLeft + 3, startY + 6);
+    doc.setTextColor(0, 0, 0);
 
     // ------------------------------------------------------
     // RESUMO DO GRUPO
@@ -2060,7 +2061,7 @@ function criarDocumentoReembolsosPDF(
 
         body: [
           [
-            {content: 'Total das faturas órfãs', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: 'Total das faturas em Aberto', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
             {content: formatCurrency(totalFaturado), styles: {halign: 'right'}}
           ]
         ],
