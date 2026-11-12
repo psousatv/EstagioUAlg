@@ -51,7 +51,7 @@ try {
     // REALIZADO (Apenas a Faturação Normal e de Complementares)
     // Não são consideradas as Notas de Crédito
     // =========================
-    $colIncluiRealizado = "fact_tipo IN ('FTN', 'FTC', 'RPR')";
+    $colIncluiRealizado = "fact_tipo IN ('FTN', 'FTC', 'RPR')"; //, 'NC', 'IND')";
 
     $sqlRealizado = gerarPivotQuery(
         'factura',
