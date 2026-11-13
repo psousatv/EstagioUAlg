@@ -883,7 +883,7 @@ $(document).ready(function () {
 
           // ==========================================================
           // FATURADO, NÃO PEDIDO
-          // Faturas cujo fact_finan_pp não contém "PP"
+          // Faturas cujo fact_finan_pp não contém "PP" ou "Ac"
           // ==========================================================
 
           function calcularFaturasNaoPedidas(row) {
@@ -895,7 +895,7 @@ $(document).ready(function () {
                     tiposValidos.includes(f.fact_tipo) &&
                     !String(f.fact_finan_pp || '')
                         .toUpperCase()
-                        .includes('PP')
+                        .includes('PP', 'Ac')
                 )
                 .reduce(
                     (total, f) => total + Number(f.fact_valor || 0),
