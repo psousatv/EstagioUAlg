@@ -349,7 +349,10 @@ $(document).ready(function () {
     // FUNÇÕES DE CÁLCULO
     // ==========================================================
 
+    // ----------------------------------------------------------
     // Coluna 2 - Adjudicado
+    // ----------------------------------------------------------
+
     function calcularAdjudicado(row) {
 
       return row.historico
@@ -363,24 +366,51 @@ $(document).ready(function () {
           ) || 0;
     }
 
+    // ----------------------------------------------------------
+    // Tipos de faturas válidos
+    // ----------------------------------------------------------
 
-    // Coluna 3 - Faturas
+    const tiposFaturasValidos = ['FTN', 'FTC', 'NC', 'IND', 'IVA'];
+
+    // ----------------------------------------------------------
+    // Coluna 3 - Faturado
+    // ----------------------------------------------------------
+
     function calcularFaturas(row) {
 
-      const tiposValidos = ['FTN', 'FTC', 'NC', 'REF', 'IND', 'IVA'];
-
-      return row.faturas
-          ?.filter(f =>
-              tiposValidos.includes(f.fact_tipo)
+      return (row.faturas || [])
+          .filter(f =>
+              tiposFaturasValidos.includes(f.fact_tipo)
           )
           .reduce(
               (sum, f) => sum + Number(f.fact_valor || 0),
               0
-          ) || 0;
+          );
     }
 
+    // ----------------------------------------------------------
+    // Faturado, Não Pedido
+    // ----------------------------------------------------------
 
+    function calcularFaturasNaoPedidas(row) {
+
+      return (row.faturas || [])
+          .filter(f =>
+              tiposFaturasValidos.includes(f.fact_tipo) &&
+              !String(f.fact_finan_pp || '')
+                  .toUpperCase()
+                  .includes('PP')
+          )
+          .reduce(
+              (sum, f) => sum + Number(f.fact_valor || 0),
+              0
+          );
+    }
+
+    // ----------------------------------------------------------
     // Coluna 4 - Reembolsos
+    // ----------------------------------------------------------
+
     function calcularReembolsos(row) {
 
       return row.historico
@@ -394,7 +424,6 @@ $(document).ready(function () {
               0
           ) || 0;
     }
-
 
     // ==========================================================
     // INICIALIZA DATATABLE PRINCIPAL
@@ -524,151 +553,208 @@ $(document).ready(function () {
 
 
               // ==================================================
+              // TOTAL FATURADO
+              // ==================================================
+
+              const totalFaturado = processos.reduce(
+                (total, processo) => total + calcularFaturas(processo),
+                0
+              );
+
+              // ==================================================
+              // TOTAL FATURADO, NÃO PEDIDO
+              // ==================================================
+
+              const totalFaturadoNaoPedido = processos.reduce(
+                (total, processo) => total + calcularFaturasNaoPedidas(processo),
+                0
+              );
+
+              // ==================================================
               // TOTAL PEDIDOS
               // ==================================================
 
               const totalPedidos = processos.reduce(
-
-                  (sumProc, p) =>
-
-                      sumProc +
-
-                      (p.historico || [])
-
-                          .filter(h =>
-                              h.historico_descr_cod === 91 &&
-                              Number(h.historico_valor) > 0
-                          )
-
-                          .reduce(
-                              (s, h) =>
-                                  s + Number(h.historico_valor),
-                              0
-                          ),
-
-                  0
-
+                (sumProc, p) =>
+                    sumProc +
+                    (p.historico || [])
+                        .filter(h =>
+                            h.historico_descr_cod === 91 &&
+                            Number(h.historico_valor) > 0
+                        )
+                        .reduce(
+                            (s, h) => s + Number(h.historico_valor),
+                            0
+                        ),
+                0
               );
-
 
               // ==================================================
               // TOTAL REEMBOLSOS
               // ==================================================
 
               const totalReembolsos = processos.reduce(
-
-                  (sumProc, p) =>
-
-                      sumProc +
-
-                      (p.historico || [])
-
-                          .filter(h =>
-                              h.historico_descr_cod === 92 &&
-                              Number(h.historico_valor) > 0
-                          )
-
-                          .reduce(
-                              (s, h) =>
-                                  s + Number(h.historico_valor),
-                              0
-                          ),
-
-                  0
-
+                (sumProc, p) =>
+                    sumProc +
+                    (p.historico || [])
+                        .filter(h =>
+                            h.historico_descr_cod === 92 &&
+                            Number(h.historico_valor) > 0
+                        )
+                        .reduce(
+                            (s, h) => s + Number(h.historico_valor),
+                            0
+                        ),
+                0
               );
 
+              // ==================================================
+              // TOTAL DO PEDIDO, NÃO PAGO
+              // ==================================================
+
+              const totalPedidoNaoPago = totalPedidos - totalReembolsos;
 
               // ==================================================
               // KPI
               // ==================================================
 
               $('#kpiValores').html(`
-                  <div class="row align-items-center mb-2">
-
+                <div class="kpi-row">
+            
                     <!-- ELEGÍVEL -->
-                      <div class="col-md-2">
-                          <div class="card bg-primary text-white h-100">
-                              <div class="card-body py-2 px-2">
-                                  <div class="small">
-                                      Elegível - inclui IVA (se aplicável)
-                                  </div>
-                                  <div class="text-right font-weight-bold">
-                                      ${formatCurrency(json.elegivel * json.iva)}
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                    <div class="kpi-item">
+                        <div class="kpi-card" style="--kpi-color: #0d6efd;">
+            
+                            <div class="kpi-title">
+                                Elegível
+                            </div>
+            
+                            <div class="kpi-subtitle">
+                                Inclui IVA (se aplicável)
+                            </div>
+            
+                            <div class="kpi-value">
+                                ${formatCurrency(json.elegivel * json.iva)}
+                            </div>
+            
+                        </div>
+                    </div>
+            
+                    <!-- FUNDO -->
+                    <div class="kpi-item">
+                        <div class="kpi-card" style="--kpi-color: #64748b;">
+            
+                            <div class="kpi-title">
+                                Fundo
+                            </div>
+            
+                            <div class="kpi-subtitle">
+                                Inclui IVA (se aplicável)
+                            </div>
+            
+                            <div class="kpi-value">
+                                ${formatCurrency(json.elegivel * json.iva * json.taxa)}
+                            </div>
+            
+                        </div>
+                    </div>
 
-                      <!-- FUNDO -->
-                      <div class="col-md-2">
-                          <div class="card bg-secondary text-white h-100">
-                              <div class="card-body py-2 px-2">
-                                  <div class="small">
-                                      Fundo - inclui IVA (se aplicável)
-                                  </div>
-                                  <div class="text-right font-weight-bold">
-                                      ${formatCurrency(json.elegivel * json.iva * json.taxa)}
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                    <!-- PEDIDO -->
+                    <div class="kpi-item">
+                        <div class="kpi-card" style="--kpi-color: #d49b00;">
+            
+                            <div class="kpi-title">
+                                Pedido
+                            </div>
+            
+                            <div class="kpi-subtitle">
+                                Inclui IVA (se aplicável)
+                            </div>
+            
+                            <div class="kpi-value">
+                                ${formatCurrency(totalPedidos)}
+                            </div>
+            
+                        </div>
+                    </div
 
-                      <!-- PEDIDO -> FATURADO -->
-                      <div class="col-md-2">
-                          <div class="card bg-warning text-dark h-100">
-                              <div class="card-body py-2 px-2">
-                                  <div class="small">
-                                      Pedido - inclui IVA (se aplicável)
-                                  </div>
-                                  <div class="text-right font-weight-bold">
-                                      ${formatCurrency(totalPedidos)}
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                    <!-- FUNDO PAGO -->
+                    <div class="kpi-item">
+                        <div class="kpi-card" style="--kpi-color: #198754;">
+            
+                            <div class="kpi-title">
+                                Fundo Pago
+                            </div>
+            
+                            <div class="kpi-subtitle">
+                                Inclui IVA (se aplicável)
+                            </div>
+            
+                            <div class="kpi-value">
+                                ${formatCurrency(totalReembolsos)}
+                            </div>
+            
+                        </div>
+                    </div>
+                       
+                    <!-- DO PEDIDO, NÃO PAGO -->
+                    <div class="kpi-item">
+                        <div class="kpi-card" style="--kpi-color: #e67e22;">
+            
+                            <div class="kpi-title">
+                                Pedido, Não Pago
+                            </div>
+            
+                            <div class="kpi-subtitle">
+                                Inclui IVA (se aplicável)
+                            </div>
+            
+                            <div class="kpi-value">
+                                ${formatCurrency(totalPedidoNaoPago)}
+                            </div>
+            
+                        </div>
+                    </div>
+            
+                    <!-- FATURADO, NÃO PEDIDO -->
+                    <div class="kpi-item">
+                        <div class="kpi-card"
+                            style="--kpi-color: #e67e22;">
 
-                      <!-- NÃO PAGO -->
-                      <div class="col-md-2">
-                          <div class="card bg-primary text-white h-100">
-                              <div class="card-body py-2 px-2">
-                                  <div class="small">
-                                      Não Pago - inclui IVA (se aplicável)
-                                  </div>
-                                  <div class="text-right font-weight-bold">
-                                      ${formatCurrency(totalPedidos - totalReembolsos)}
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                            <div class="kpi-title">
+                                Faturado, Não Pedido
+                            </div>
 
-                      <!-- REEMBOLSOS -->
-                      <div class="col-md-2">
-                          <div class="card bg-success text-white h-100">
-                              <div class="card-body py-2 px-2">
-                                  <div class="small">
-                                      Reembolsos - inclui IVA (se aplicável)
-                                  </div>
-                                  <div class="text-right font-weight-bold">
-                                      ${formatCurrency(totalReembolsos)}
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                            <div class="kpi-subtitle">
+                                Inclui IVA (se aplicável)
+                            </div>
 
-                      <!-- BOTÕES -->
-                      <div class="col-md-2 text-right">
-                          <button id="exportResumo" class="btn btn-danger btn-lg shadow-sm mr-2" title="Exportar PDF">
-                              <i class="fa-solid fa-file-pdf"></i>
-                          </button>
-                          <button id="exportALLExcel" class="btn btn-success btn-lg shadow-sm" title="Exportar Excel">
+                            <div class="kpi-value">
+                                ${formatCurrency(totalFaturadoNaoPedido)}
+                            </div>
+
+                        </div>
+                    </div>
+            
+                    <!-- BOTÕES DE EXPORTAÇÃO -->
+                    <div class="kpi-actions">
+            
+                        <button id="exportResumo"
+                                class="btn btn-danger shadow-sm"
+                                title="Exportar PDF">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </button>
+            
+                        <button id="exportALLExcel"
+                                class="btn btn-success shadow-sm"
+                                title="Exportar Excel">
                             <i class="fa-solid fa-file-excel"></i>
-                          </button>
-                      </div>
-                  </div>
-
-              `);
-
+                        </button>
+            
+                    </div>
+            
+                </div>
+            `);
 
               // ==================================================
               // CARTÕES
@@ -794,6 +880,28 @@ $(document).ready(function () {
               0
 
           );
+
+          // ==========================================================
+          // FATURADO, NÃO PEDIDO
+          // Faturas cujo fact_finan_pp não contém "PP"
+          // ==========================================================
+
+          function calcularFaturasNaoPedidas(row) {
+
+            const tiposValidos = ['FTN', 'FTC', 'NC', 'IND', 'IVA'];
+
+            return (row.faturas || [])
+                .filter(f =>
+                    tiposValidos.includes(f.fact_tipo) &&
+                    !String(f.fact_finan_pp || '')
+                        .toUpperCase()
+                        .includes('PP')
+                )
+                .reduce(
+                    (total, f) => total + Number(f.fact_valor || 0),
+                    0
+                );
+          }
 
 
           // ====================================================
@@ -1627,6 +1735,7 @@ function criarDocumentoReembolsosPDF(
     );
   }
 
+  
   // ========================================================
   // ACUMULAR FATURAÇÃO POR TIPO
   // ========================================================
