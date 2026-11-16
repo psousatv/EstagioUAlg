@@ -1036,28 +1036,33 @@ $(document).ready(function () {
 
       columns: [
 
-          // ----------------------------------------------------
+            // ----------------------------------------------------
           // 0 - PAdm
           // ----------------------------------------------------
           {data: 'padm'},
           // ----------------------------------------------------
           // 1 - Designação
           // ----------------------------------------------------
-          {data: 'designacao',
-              render: function(data, type, row) {
-                  // Para ordenação
-                  if (type === 'sort' || type === 'type') {
-                      return data;
-                  }
-                  
-                  const totalPedidosLinha = row.historico?.length || 0;
-                  return `
-                      ${data}
-                      <span class="badge bg-info text-white">
-                          (${totalPedidosLinha})
-                      </span>
-                  `;
-              }
+          {
+            data: null,
+            render: function(data, type, row) {
+        
+                const designacao = `${row.cnt}_${row.designacao}`;
+        
+                // Para ordenação
+                if (type === 'sort' || type === 'type') {
+                    return designacao;
+                }
+        
+                const totalPedidosLinha = row.historico?.length || 0;
+        
+                return `
+                    ${designacao}
+                    <span class="badge bg-info text-white">
+                        (${totalPedidosLinha})
+                    </span>
+                `;
+            }
           },
           // ----------------------------------------------------
           // 2 - Adjudicado
@@ -2143,9 +2148,10 @@ function criarDocumentoReembolsosPDF(
 
     const processo = item.processo || {};
     const faturas = Array.isArray(item.faturas) ? item.faturas : [];
+    const cnt = processo.cnt || 'Processo sem CNT';
     const padm = processo.padm || processo.proces_check || '-';
     const designacao = cleanPdfText(processo.designacao || 'Processo sem designação' );
-    const tituloProcesso = `${padm} — ${designacao}`;
+    const tituloProcesso = `${cnt} - ${padm} — ${designacao}`;
     const tituloLinhas = doc.splitTextToSize(tituloProcesso, tableWidth - 6);
     const alturaLinhaTitulo = 4;
     const alturaTitulo = Math.max(9, 5 + tituloLinhas.length * alturaLinhaTitulo);
@@ -3182,22 +3188,11 @@ function criarLinhasExcel(grupos) {
             ? 'Faturas órfãs'
             : grupo.key,
 
-        Processo:
-          processo.padm ||
-          processo.proces_check ||
-          '-',
-
-        Designação:
-          cleanPdfText(processo.designacao || '-'),
-
-        Pedido: pedidoRef,
-        'Valor pedido': totalPedido,
-
-        Reembolso: reembolsoRef,
-        'Valor reembolso': totalReembolso,
-
-        Diferencial:
-          totalPedido - Math.abs(totalReembolso)
+        Processo: processo.padm || processo.proces_check || '-',
+        Designação: cleanPdfText(processo.designacao || '-'),
+        Pedido: pedidoRef, 'Valor pedido': totalPedido,
+        Reembolso: reembolsoRef, 'Valor reembolso': totalReembolso,
+        Diferencial: totalPedido - Math.abs(totalReembolso)
       };
 
       if (!item.faturas?.length) {

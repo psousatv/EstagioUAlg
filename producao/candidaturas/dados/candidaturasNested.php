@@ -59,6 +59,7 @@ try {
     $qryProcessos = "SELECT
             proces_check,
             proces_cand,
+            proces_cand_cnt AS cnt,
             proces_padm AS padm,
             proces_nome AS designacao
         FROM processo
