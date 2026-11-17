@@ -23,7 +23,7 @@ $sql = "
     SELECT *
     FROM factura
     WHERE fact_proces_check = :codigoProcesso
-      AND fact_tipo IN ('FTN', 'NC', 'FTC', 'IND', 'RPR')
+      AND fact_tipo IN ('FTN', 'NC', 'FTC', 'IND', 'RPR','IVA')
     ORDER BY
         CASE fact_tipo
             WHEN 'FTN' THEN 1
