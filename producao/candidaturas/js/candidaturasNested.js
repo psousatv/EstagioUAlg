@@ -4,6 +4,56 @@ let pedidoExportacaoKey = null;
 let table;
 
 
+// Normaliza taxas recebidas como 55 ou 0.55 e fatores IVA como 23 ou 1.23.
+function normalizarTaxa(valor) {
+  const numero = Number(valor) || 0;
+  return numero > 1 ? numero / 100 : numero;
+}
+
+function normalizarFatorIVA(valor) {
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return 1;
+  if (numero === 0) return 1;
+  if (numero >= 1 && numero < 2) return numero;
+  if (numero > 2) return 1 + numero / 100;
+  return 1 + numero;
+}
+
+
+
+function calcularElegivelFaturas(row) {
+  return (row?.faturas || []).reduce(
+      (total, f) =>
+          total + (Number(f.fact_elegivel) || 0),
+      0
+  );
+}
+
+function calcularFundoFaturas(row) {
+  return (row?.faturas || []).reduce(
+      (total, f) =>
+          total + (Number(f.fact_fundo) || 0),
+      0
+  );
+}
+
+function calcularElegivelGrupo(grupo) {
+  return Object.values(grupo?.processos || {}).reduce(
+      (total, item) =>
+          total + calcularElegivelFaturas(item),
+      0
+  );
+}
+
+function calcularFundoGrupo(grupo) {
+  return Object.values(grupo?.processos || {}).reduce(
+      (total, item) =>
+          total + calcularFundoFaturas(item),
+      0
+  );
+}
+
+
 function formatCurrency(value){
   return new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(value || 0) + '€';
 }
@@ -70,7 +120,7 @@ $(document).ready(function () {
         (processo.historico || []).forEach(h => {
           const num = h.historico_num;
 
-          if (h.historico_descr_cod === 91 && num != null) {
+          if (Number(h.historico_descr_cod) === 91 && num != null) {
             pedidosMap[num] ??= {
               pedido: h,
               faturas: [],
@@ -85,7 +135,7 @@ $(document).ready(function () {
         (processo.historico || []).forEach(h => {
           const num = h.historico_num;
 
-          if (h.historico_descr_cod === 92 && num != null) {
+          if (Number(h.historico_descr_cod) === 92 && num != null) {
             if (pedidosMap[num]) {
               pedidosMap[num].reembolsos.push(h);
             } else {
@@ -263,12 +313,12 @@ $(document).ready(function () {
             };
           }
       
-          if (h.historico_descr_cod === 91) {
-            grupos[key].totalPedido += (h.historico_valor || 0);
+          if (Number(h.historico_descr_cod) === 91) {
+            grupos[key].totalPedido += Number(h.historico_valor) || 0;
           }
       
-          if (h.historico_descr_cod === 92) {
-            grupos[key].totalReembolso += (h.historico_valor || 0);
+          if (Number(h.historico_descr_cod) === 92) {
+            grupos[key].totalReembolso += Number(h.historico_valor) || 0;
           }
 
         });
@@ -357,7 +407,7 @@ $(document).ready(function () {
 
       return row.historico
           ?.filter(h =>
-              h.historico_descr_cod === 14 &&
+              Number(h.historico_descr_cod) === 14 &&
               Number(h.historico_valor || 0) > 0
           )
           .reduce(
@@ -415,7 +465,7 @@ $(document).ready(function () {
 
       return row.historico
           ?.filter(h =>
-              h.historico_descr_cod === 92 &&
+              Number(h.historico_descr_cod) === 92 &&
               Number(h.historico_valor || 0) > 0 &&
               !(h.historico_num?.includes("Ad"))
           )
@@ -458,7 +508,9 @@ $(document).ready(function () {
                   nome: json.designacao,
                   taxa: json.taxa,
                   iva: json.iva,
-                  logo: json.logo
+                  logo: json.logo,
+                  elegivel: json.fact_elegivel,
+                  fundo: json.fact_fundo
 
               }));
 
@@ -579,7 +631,7 @@ $(document).ready(function () {
                     sumProc +
                     (p.historico || [])
                         .filter(h =>
-                            h.historico_descr_cod === 91 &&
+                            Number(h.historico_descr_cod) === 91 &&
                             Number(h.historico_valor) > 0
                         )
                         .reduce(
@@ -598,7 +650,7 @@ $(document).ready(function () {
                     sumProc +
                     (p.historico || [])
                         .filter(h =>
-                            h.historico_descr_cod === 92 &&
+                            Number(h.historico_descr_cod) === 92 &&
                             Number(h.historico_valor) > 0
                         )
                         .reduce(
@@ -613,6 +665,16 @@ $(document).ready(function () {
               // ==================================================
 
               const totalPedidoNaoPago = totalPedidos - totalReembolsos;
+
+              // ==================================================
+              // VALORES APROVADOS DA CANDIDATURA
+              // ==================================================
+
+              // Valores já apurados e fornecidos pelo JSON.
+              // Não aplicar novamente IVA nem taxa de cofinanciamento.
+              const totalElegivel = Number(json.fact_elegivel) || 0;
+              const totalFundo = Number(json.fact_fundo) || 0;
+              
 
               // ==================================================
               // KPI
@@ -634,7 +696,7 @@ $(document).ready(function () {
                             </div>
             
                             <div class="kpi-value">
-                                ${formatCurrency(json.elegivel * json.iva)}
+                              ${formatCurrency(totalElegivel)}
                             </div>
             
                         </div>
@@ -653,7 +715,7 @@ $(document).ready(function () {
                             </div>
             
                             <div class="kpi-value">
-                                ${formatCurrency(json.elegivel * json.iva * json.taxa)}
+                              ${formatCurrency(totalFundo)}
                             </div>
             
                         </div>
@@ -676,7 +738,7 @@ $(document).ready(function () {
                             </div>
             
                         </div>
-                    </div
+                    </div>
 
                     <!-- FUNDO PAGO -->
                     <div class="kpi-item">
@@ -768,6 +830,15 @@ $(document).ready(function () {
               // ==================================================
               // DEVOLVE PROCESSOS AO DATATABLE
               // ==================================================
+
+              console.log(
+                json.processos.flatMap(p => p.faturas || []).map(f => ({
+                    fatura: f.fact_num,
+                    valor: f.fact_valor,
+                    elegivel: f.fact_elegivel,
+                    fundo: f.fact_fundo
+                }))
+              );
 
               return processos;
 
@@ -886,22 +957,7 @@ $(document).ready(function () {
           // Faturas cujo fact_finan_pp não contém "PP" ou "Ac"
           // ==========================================================
 
-          function calcularFaturasNaoPedidas(row) {
-
-            const tiposValidos = ['FTN', 'FTC', 'NC', 'IND', 'IVA'];
-
-            return (row.faturas || [])
-                .filter(f =>
-                    tiposValidos.includes(f.fact_tipo) &&
-                    !String(f.fact_finan_pp || '')
-                        .toUpperCase()
-                        .includes('PP', 'Ac')
-                )
-                .reduce(
-                    (total, f) => total + Number(f.fact_valor || 0),
-                    0
-                );
-          }
+          // Utiliza a função calcularFaturasNaoPedidas definida acima.
 
 
           // ====================================================
@@ -1113,12 +1169,12 @@ $(document).ready(function () {
     pedidoExportacaoModal = processos.filter(processo => {
 
         const temPedido = (processo.historico || []).some(h =>
-            h.historico_descr_cod === 91 &&
+            Number(h.historico_descr_cod) === 91 &&
             String(h.historico_num) === String(key)
         );
 
         const temReembolso = (processo.historico || []).some(h =>
-            h.historico_descr_cod === 92 &&
+            Number(h.historico_descr_cod) === 92 &&
             String(h.historico_num) === String(key)
         );
 
@@ -1142,14 +1198,14 @@ $(document).ready(function () {
 
         const pedido = (processo.historico || [])
             .find(h =>
-                h.historico_descr_cod === 91 &&
+                Number(h.historico_descr_cod) === 91 &&
                 String(h.historico_num) === String(key)
             );
 
 
         const reembolsos = (processo.historico || [])
             .filter(h =>
-                h.historico_descr_cod === 92 &&
+                Number(h.historico_descr_cod) === 92 &&
                 String(h.historico_num) === String(key)
             );
 
@@ -1544,6 +1600,8 @@ function criarDocumentoReembolsosPDF(
   let totalPedidoGeral = 0;
   let totalReembolsoGeral = 0;
   let totalFaturadoGeral = 0;
+  let totalFundoGeral = 0;
+  let totalElegivelFaturadoGeral = 0;
 
   let quantidadeFaturasGeral = 0;
   let quantidadeFaturasOrfas = 0;
@@ -1558,6 +1616,9 @@ function criarDocumentoReembolsosPDF(
     processos?.[0] ||
     processosGlobais?.[0] ||
     {};
+
+  // Valores aprovados fornecidos diretamente pelo JSON da candidatura.
+  const elegivelAprovadoPDF = Number(candidatura.elegivel) || 0;
 
   // ========================================================
   // FORMATAÇÃO LOCAL DE DATA
@@ -1739,8 +1800,8 @@ function criarDocumentoReembolsosPDF(
       0
     );
   }
-
   
+ 
   // ========================================================
   // ACUMULAR FATURAÇÃO POR TIPO
   // ========================================================
@@ -2042,10 +2103,7 @@ function criarDocumentoReembolsosPDF(
         });
     });
 
-    return {
-      imagem,
-      valoresMensais
-    };
+    return {imagem, valoresMensais};
   }
 
   // ========================================================
@@ -2062,10 +2120,14 @@ function criarDocumentoReembolsosPDF(
     // ------------------------------------------------------
     // TOTAL DO GRUPO
     // ------------------------------------------------------
+    const totalFaturado = calcularTotalFaturadoGrupo(grupo);
     const totalPedido = Number(grupo.totalPedido) || 0;
     const totalReembolso = Number(grupo.totalReembolso) || 0;
-    const totalFaturado = calcularTotalFaturadoGrupo(grupo);
-    const aReceber = totalPedido - Math.abs(totalReembolso);
+    
+    const totalElegivel = calcularElegivelGrupo(grupo);
+    const totalFundo = calcularFundoGrupo(grupo);
+    
+    const aReceber = totalPedido - totalReembolso;
     
     // ------------------------------------------------------
     // BARRA DO TÍTULO
@@ -2442,356 +2504,342 @@ function criarDocumentoReembolsosPDF(
   // ========================================================
   // RESUMO FINAL
   // ========================================================
+  function calcularPercentagem(valorAtual, valorAnterior) {
+    const atual = Number(valorAtual) || 0;
+    const anterior = Number(valorAnterior) || 0;
+
+    if (anterior === 0) return '—';
+
+    return ((atual / anterior) * 100).toFixed(2).replace('.', ',') + '%';
+  }
+
+  // ========================================================
+  // RESUMO FINAL: indicadores, órfãs e faturação por tipo
+  // ========================================================
   function adicionarResumoFinal() {
+    const tiposOrdenados = Object.entries(totaisPorTipoFatura)
+      .sort(([tipoA], [tipoB]) => tipoA.localeCompare(tipoB, 'pt-PT'));
 
-    const aReceberGeral = totalPedidoGeral - Math.abs(totalReembolsoGeral);
-
-    const tiposOrdenados =
-      Object.entries(totaisPorTipoFatura).sort(([tipoA], [tipoB]) => tipoA.localeCompare(tipoB, 'pt-PT'));
-
-    // ------------------------------------------------------
-    // LINHAS PRINCIPAIS
-    // ------------------------------------------------------
+    // Os valores financeiros são apresentados na segunda coluna;
+    // a terceira coluna contém a percentagem face à linha anterior.
     const linhasResumo = [
-      ['Total faturado', '', formatCurrency(totalFaturadoGeral)],
-      ['Total de pedidos', '', formatCurrency(totalPedidoGeral)],
-      ['Total de reembolsos', '', formatCurrency(totalReembolsoGeral)],
-      ['Total de Pedido - Faturado', '', formatCurrency(totalPedidoGeral - totalFaturadoGeral)],
-      ['A Receber', '', formatCurrency(aReceberGeral)],
-      ['Faturas órfãs', String(quantidadeFaturasOrfas), formatCurrency(totalFaturasOrfasGeral)]
+      ['Total Faturado', totalFaturadoGeral],
+      ['Total de Pedidos', totalPedidoGeral],
+      ['Total de Reembolsos', totalReembolsoGeral],
+      ['Elegível', totalElegivelFaturadoGeral],
+      ['Fundo', totalFundoGeral]
     ];
 
-    // ------------------------------------------------------
-    // FATURAÇÃO POR TIPO
-    // ------------------------------------------------------
-    if (
-      tiposOrdenados.length > 0
-    ) {
+    const bodyResumo = linhasResumo.map(([descricao, valor], indice) => [
+      descricao,
+      formatCurrency(valor),
+      indice === 0 ? '—' : calcularPercentagem(valor, linhasResumo[indice - 1][1])
+    ]);
 
-      linhasResumo.push(
-        [
-          'Faturação por tipo',
-          'Registos',
-          'Valor'
-        ]
-      );
+    const indiceOrfas = bodyResumo.length;
 
-      tiposOrdenados.forEach(
-        ([tipo, totais]) => {
+    // Preservar o layout original: descrição | registos | valor.
+    bodyResumo.push([
+      'Faturas em Aberto',
+      String(quantidadeFaturasOrfas),
+      formatCurrency(totalFaturasOrfasGeral)
+    ]);
 
-          linhasResumo.push(
-            [
-              tipo,
+    let indiceCabecalhoTipos = -1;
+    if (tiposOrdenados.length > 0) {
+      indiceCabecalhoTipos = bodyResumo.length;
+      bodyResumo.push(['Faturação por tipo', 'Registos', 'Valor']);
 
-              String(
-                totais.quantidade
-              ),
-
-              formatCurrency(
-                totais.valor
-              )
-            ]
-          );
-        }
-      );
+      tiposOrdenados.forEach(([tipo, totais]) => {
+        bodyResumo.push([
+          tipo,
+          String(totais.quantidade),
+          formatCurrency(totais.valor)
+        ]);
+      });
     }
 
-    const alturaEstimada =
-      25 +
-      linhasResumo.length *
-      7;
-
-    if (
-      startY >
-      pageHeight -
-      alturaEstimada
-    ) {
-
+    // Deixar a tabela continuar automaticamente noutra página se necessário.
+    const alturaEstimada = 25 + bodyResumo.length * 7;
+    if (startY > pageHeight - Math.min(alturaEstimada, pageHeight - 45)) {
       adicionarNovaPagina();
     }
 
-    // ------------------------------------------------------
-    // TÍTULO RESUMO
-    // ------------------------------------------------------
-    doc.setFillColor(
-      33,
-      37,
-      41
-    );
-
-    doc.rect(
-      marginLeft,
-      startY,
-      tableWidth,
-      9,
-      'F'
-    );
-
-    doc.setFont(
-      'helvetica',
-      'bold'
-    );
-
+    doc.setFillColor(33, 37, 41);
+    doc.rect(marginLeft, startY, tableWidth, 9, 'F');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text('RESUMO', marginLeft + 3, startY + 6);
+    doc.setTextColor(0, 0, 0);
 
-    doc.setTextColor(
-      255,
-      255,
-      255
-    );
+   
+doc.autoTable({
+  startY: startY + 11,
+  body: bodyResumo,
+  theme: 'grid',
 
-    doc.text(
-      'RESUMO',
-      marginLeft + 3,
-      startY + 6
-    );
+  margin: {
+      left: marginLeft,
+      right: marginRight
+  },
 
-    doc.setTextColor(
-      0,
-      0,
-      0
-    );
+  tableWidth: 155,
 
-    // ------------------------------------------------------
-    // TABELA RESUMO
-    // ------------------------------------------------------
-    doc.autoTable({
+  styles: {
+      fontSize: 9,
+      cellPadding: 2,
+      valign: 'middle',
+      overflow: 'linebreak'
+  },
 
-      startY:
-        startY + 11,
-
-      body:
-        linhasResumo,
-
-      theme:
-        'grid',
-
-      margin: {
-        left:
-          marginLeft,
-
-        right:
-          marginRight
+  columnStyles: {
+      0: {
+          cellWidth: 75,
+          fontStyle: 'bold'
       },
-
-      tableWidth:
-        120,
-
-      styles: {
-        fontSize: 9,
-        cellPadding: 2,
-        valign: 'middle'
+      1: {
+          cellWidth: 45,
+          halign: 'right',
+          textColor: [0, 102, 204]
       },
-
-      columnStyles: {
-
-        0: {
-          cellWidth: 65
-        },
-
-        1: {
-          cellWidth: 20,
-          halign: 'center'
-        },
-
-        2: {
+      2: {
           cellWidth: 35,
           halign: 'right'
-        }
-      },
+      }
+  },
 
-      didParseCell(data) {
+  didParseCell(data) {
 
-        // ----------------------------------------------------
-        // LINHAS PRINCIPAIS
-        // ----------------------------------------------------
-        if (
-          data.row.index < 5
-        ) {
+    if (data.section !== 'body') return;
 
-          if (
-            data.column.index === 0
-          ) {
+    const indice = data.row.index;
+    const coluna = data.column.index;
 
-            data.cell.styles
-              .fontStyle =
-                'bold';
+    // ==========================================
+    // INDICADORES FINANCEIROS
+    // ==========================================
+    if (indice < indiceOrfas) {
 
-            data.cell.styles
-              .fillColor =
-                [
-                  245,
-                  245,
-                  245
-                ];
-          }
-
-          if (
-            data.column.index === 1
-          ) {
-
-            data.cell.styles
-              .fillColor =
-                [
-                  245,
-                  245,
-                  245
-                ];
-          }
+        if (coluna === 0 || coluna === 1) {
+            data.cell.styles.fillColor = [245, 245, 245];
         }
 
-        // ----------------------------------------------------
-        // CABEÇALHO DOS TIPOS
-        // ----------------------------------------------------
-        if (
-          tiposOrdenados.length >
-            0 &&
-          data.row.index === 5
-        ) {
+        if (coluna === 0) {
+            data.cell.styles.fontStyle = 'bold';
+        }
 
-          data.cell.styles
-            .fillColor =
-              [
-                23,
-                162,
-                184
-              ];
+        if (coluna === 1) {
+            data.cell.styles.halign = 'right';
+            data.cell.styles.textColor = [0, 102, 204];
+        }
 
-          data.cell.styles
-            .textColor =
-              [
-                255,
-                255,
-                255
-              ];
+        if (coluna === 2) {
+            data.cell.styles.halign = 'right';
+            data.cell.styles.textColor = [90, 90, 90];
+        }
+    }
 
-          data.cell.styles
-            .fontStyle =
-              'bold';
+    // ==========================================
+    // FATURAS EM ABERTO / ÓRFÃS
+    // ==========================================
+    if (indice === indiceOrfas) {
+
+        data.cell.styles.fillColor = [23, 162, 184];
+        data.cell.styles.textColor = [255, 255, 255];
+        data.cell.styles.fontStyle = 'bold';
+
+        if (coluna === 1) {
+            data.cell.styles.halign = 'center';
+        }
+
+        if (coluna === 2) {
+            data.cell.styles.halign = 'right';
+        }
+    }
+
+    // ==========================================
+    // FATURAÇÃO POR TIPO
+    // ==========================================
+    if (
+        indiceCabecalhoTipos >= 0 &&
+        indice >= indiceCabecalhoTipos
+      ) {
+
+        data.cell.styles.textColor = [73, 80, 87];
+        data.cell.styles.fontStyle = 'normal';
+
+        if (coluna === 1) {
+            data.cell.styles.halign = 'center';
+        }
+
+        if (coluna === 2) {
+            data.cell.styles.halign = 'right';
+        }
+
+        // Cabeçalho dos tipos
+        if (indice === indiceCabecalhoTipos) {
+            data.cell.styles.fillColor = [248, 249, 250];
+        }
         }
       }
     });
 
-    startY =
-      doc.lastAutoTable.finalY +
-      8;
+
+    startY = doc.lastAutoTable.finalY + 8;
+  }
+
+  function criarImagemGraficoResumo() {
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 600;
+  
+    const ctx = canvas.getContext('2d');
+  
+    const indicadores = [
+        ['Total Faturado', totalFaturadoGeral],
+        ['Total de Pedidos', totalPedidoGeral],
+        ['Total de Reembolsos', totalReembolsoGeral],
+        ['Elegível', totalElegivelFaturadoGeral],
+        ['Fundo', totalFundoGeral]
+    ];
+  
+    const grafico = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: indicadores.map(item => item[0]),
+            datasets: [{
+                label: 'Valor (€)',
+                data: indicadores.map(item => Number(item[1]) || 0),
+                backgroundColor: [
+                    '#6c757d',
+                    '#d49b00',
+                    '#17a2b8',
+                    '#0d6efd',
+                    '#198754'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: false,
+            animation: false,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: context =>
+                            formatCurrency(context.parsed.x)
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    top: 10,
+                    right: 120,
+                    bottom: 10,
+                    left: 10
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value =>
+                            new Intl.NumberFormat('pt-PT', {
+                                notation: 'compact',
+                                maximumFractionDigits: 1
+                            }).format(value)
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 14 }
+                    }
+                }
+            }
+        },
+        plugins: [{
+            id: 'valoresResumoPDF',
+            afterDatasetsDraw(chart) {
+                const { ctx } = chart;
+                ctx.save();
+                ctx.font = 'bold 14px Arial';
+                ctx.fillStyle = '#212529';
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'left';
+  
+                const meta = chart.getDatasetMeta(0);
+  
+                meta.data.forEach((barra, index) => {
+                    const valor = indicadores[index][1];
+                    ctx.fillText(
+                        formatCurrency(valor),
+                        barra.x + 8,
+                        barra.y
+                    );
+                });
+  
+                ctx.restore();
+            }
+        }]
+    });
+  
+    grafico.update();
+  
+    const imagem = canvas.toDataURL('image/png');
+    grafico.destroy();
+  
+    return imagem;
   }
 
   // ========================================================
   // GRÁFICO MENSAL
   // ========================================================
-  function adicionarGraficoMensal() {
 
-    // Sem Chart.js, simplesmente não cria o gráfico.
-    if (
-      typeof Chart ===
-      'undefined'
-    ) {
-      return;
-    }
+  
+  function adicionarGraficoResumo() {
 
-    const alturaGrafico =
-      72;
+      if (typeof Chart === 'undefined') return;
 
-    if (
-      startY >
-      pageHeight -
-      alturaGrafico -
-      20
-    ) {
+      const alturaGrafico = 90;
 
-      adicionarNovaPagina();
-    }
+      if (startY > pageHeight - alturaGrafico - 20) {
+          adicionarNovaPagina();
+      }
 
-    const {
-      imagem,
-      valoresMensais
-    } =
-      criarImagemGraficoMensal();
+      // Barra de título
+      doc.setFillColor(33, 37, 41);
+      doc.rect(marginLeft, startY, tableWidth, 9, 'F');
 
-    const totalGrafico =
-      valoresMensais.reduce(
-        (total, valor) =>
-          total + valor,
-        0
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(255, 255, 255);
+
+      doc.text(
+          'INDICADORES FINANCEIROS',
+          marginLeft + 3,
+          startY + 6
       );
 
-    // ------------------------------------------------------
-    // CABEÇALHO
-    // ------------------------------------------------------
-    doc.setFillColor(
-      33,
-      37,
-      41
-    );
+      const imagem = criarImagemGraficoResumo();
 
-    doc.rect(
-      marginLeft,
-      startY,
-      tableWidth,
-      9,
-      'F'
-    );
+      doc.addImage(
+          imagem,
+          'PNG',
+          marginLeft,
+          startY + 11,
+          tableWidth,
+          alturaGrafico
+      );
 
-    doc.setFont(
-      'helvetica',
-      'bold'
-    );
-
-    doc.setFontSize(10);
-
-    doc.setTextColor(
-      255,
-      255,
-      255
-    );
-
-    doc.text(
-      'FATURAÇÃO POR MÊS',
-      marginLeft + 3,
-      startY + 6
-    );
-
-    doc.setTextColor(
-      255,
-      255,
-      255
-    );
-
-    doc.setFont(
-      'helvetica',
-      'normal'
-    );
-
-    doc.setFontSize(8);
-
-    doc.text(
-      `Total: ${formatCurrency(totalGrafico)}`,
-      pageWidth -
-      marginRight -
-      3,
-      startY + 6,
-      {
-        align: 'right'
-      }
-    );
-
-    // ------------------------------------------------------
-    // IMAGEM
-    // ------------------------------------------------------
-    doc.addImage(
-      imagem,
-      'PNG',
-      marginLeft,
-      startY + 11,
-      tableWidth,
-      alturaGrafico
-    );
-
-    startY +=
-      alturaGrafico +
-      17;
+      startY += alturaGrafico + 17;
   }
+
 
   // ========================================================
   // PAGINAÇÃO DO PDF
@@ -2898,6 +2946,9 @@ function criarDocumentoReembolsosPDF(
     totalReembolsoGeral += totalReembolso;
     totalFaturadoGeral += totalFaturadoGrupo;
 
+    totalElegivelFaturadoGeral += calcularElegivelGrupo(grupo);
+    totalFundoGeral += calcularFundoGrupo(grupo);
+
     // ------------------------------------------------------
     // FATURAS ÓRFÃS
     // ------------------------------------------------------
@@ -2995,7 +3046,7 @@ function criarDocumentoReembolsosPDF(
   // ========================================================
   // GRÁFICO
   // ========================================================
-  adicionarGraficoMensal();
+  adicionarGraficoResumo();
 
   // ========================================================
   // PAGINAÇÃO
@@ -3192,7 +3243,7 @@ function criarLinhasExcel(grupos) {
         Designação: cleanPdfText(processo.designacao || '-'),
         Pedido: pedidoRef, 'Valor pedido': totalPedido,
         Reembolso: reembolsoRef, 'Valor reembolso': totalReembolso,
-        Diferencial: totalPedido - Math.abs(totalReembolso)
+        Diferencial: totalPedido - totalReembolso
       };
 
       if (!item.faturas?.length) {
@@ -3321,7 +3372,7 @@ function getReembolsosAgrupadosDetalhado(processos) {
     const faturas = processo.faturas || [];
 
     const movimentos = historico.filter(h =>
-      h.historico_descr_cod === 91 || h.historico_descr_cod === 92 
+      Number(h.historico_descr_cod) === 91 || Number(h.historico_descr_cod) === 92 
     );
 
     // ============================
@@ -3340,12 +3391,12 @@ function getReembolsosAgrupadosDetalhado(processos) {
         };
       }
 
-      if (h.historico_descr_cod === 91) {
-        grupos[key].totalPedido += (h.historico_valor || 0);
+      if (Number(h.historico_descr_cod) === 91) {
+        grupos[key].totalPedido += Number(h.historico_valor) || 0;
       }
 
-      if (h.historico_descr_cod === 92) {
-        grupos[key].totalReembolso += (h.historico_valor || 0);
+      if (Number(h.historico_descr_cod) === 92) {
+        grupos[key].totalReembolso += Number(h.historico_valor) || 0;
       }
 
       if (!grupos[key].processos[processo.proces_check]) {
