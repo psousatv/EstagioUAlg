@@ -663,18 +663,13 @@ $(document).ready(function () {
               // ==================================================
               // TOTAL DO PEDIDO, NÃO PAGO
               // ==================================================
-
               const totalPedidoNaoPago = totalPedidos - totalReembolsos;
-
               // ==================================================
-              // VALORES APROVADOS DA CANDIDATURA
+              // TOTAL ELEGÍVEL E FUNDO
               // ==================================================
 
-              // Valores já apurados e fornecidos pelo JSON.
-              // Não aplicar novamente IVA nem taxa de cofinanciamento.
-              const totalElegivel = Number(json.fact_elegivel) || 0;
-              const totalFundo = Number(json.fact_fundo) || 0;
-              
+              const totalElegivel = Number(json.elegivel * json.iva) || 0;
+              const totalFundo = Number(totalElegivel * json.taxa) || 0;
 
               // ==================================================
               // KPI
