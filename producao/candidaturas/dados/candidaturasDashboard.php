@@ -38,7 +38,11 @@ $query = "SELECT
     ROUND(cs.candsub_forfait, 2) AS forfait,
     ROUND(cs.candsub_fundo, 2) AS taxa,
     COUNT(DISTINCT p.proces_check) AS processos,
-    COALESCE(SUM(ha.adjudicado), 0) AS adjudicado,
+    COALESCE(ROUND(SUM(
+                COALESCE(ha.adjudicado, 0) *
+                COALESCE(p.iva, 1))
+                ,2)
+            , 0) AS adjudicado,
     COALESCE(SUM(fp.faturado), 0) AS faturado,
     COALESCE(SUM(ha.pedido), 0) AS pedido,
     COALESCE(SUM(ha.recebido), 0) AS recebido,
@@ -46,9 +50,16 @@ $query = "SELECT
     COALESCE(ROUND(SUM(ha.recebido) / NULLIF(cs.candsub_max_elegivel * cs.candsub_iva * cs.candsub_fundo, 0), 4), 0) AS elegivel_recebido_percent
 FROM candidaturas_submetidas cs
 LEFT JOIN candidaturas_avisos ca ON ca.cand_aviso = cs.candsub_aviso
-LEFT JOIN processo p ON p.proces_cand = cs.candsub_codigo
-   AND p.proces_cand NOT LIKE '%n.a.%'
-   AND p.proces_report_valores = 1
+LEFT JOIN (
+    SELECT
+        proces_check,
+        proces_tx_iva AS iva,
+        proces_cand,
+        proces_report_valores
+    FROM processo
+    WHERE proces_cand NOT LIKE '%n.a.%'
+    AND proces_report_valores = 1
+) p ON p.proces_cand = cs.candsub_codigo
 LEFT JOIN (
     SELECT
         historico_proces_check,

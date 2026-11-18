@@ -405,7 +405,7 @@ $(document).ready(function () {
 
     function calcularAdjudicado(row) {
 
-      return row.historico
+      const valorAdjudicado = row.historico
           ?.filter(h =>
               Number(h.historico_descr_cod) === 14 &&
               Number(h.historico_valor || 0) > 0
@@ -414,6 +414,12 @@ $(document).ready(function () {
               (sum, h) => sum + Number(h.historico_valor || 0),
               0
           ) || 0;
+  
+      // IVA definido no processo (ex.: 1.23)
+      const iva = Number(row.proces_iva || 1);
+  
+      // Valor adjudicado com IVA
+      return valorAdjudicado * iva;
     }
 
     // ----------------------------------------------------------
@@ -506,8 +512,8 @@ $(document).ready(function () {
                   aviso: json.aviso,
                   programa: json.programa,
                   nome: json.designacao,
-                  taxa: json.taxa,
-                  iva: json.iva,
+                  taxa: json.cand_taxa,
+                  iva: json.cand_iva,
                   logo: json.logo,
                   elegivel: json.fact_elegivel,
                   fundo: json.fact_fundo
@@ -668,8 +674,8 @@ $(document).ready(function () {
               // TOTAL ELEGÍVEL E FUNDO
               // ==================================================
 
-              const totalElegivel = Number(json.elegivel * json.iva) || 0;
-              const totalFundo = Number(totalElegivel * json.taxa) || 0;
+              const totalElegivel = Number(json.elegivel * json.cand_iva) || 0;
+              const totalFundo = Number(totalElegivel * json.cand_taxa) || 0;
 
               // ==================================================
               // KPI

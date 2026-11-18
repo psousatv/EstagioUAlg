@@ -36,8 +36,8 @@ try {
             candsub_dt_fim AS termo,
             candsub_max_elegivel AS elegivel,
             candsub_forfait AS defice_financeiro,
-            candsub_iva AS iva,
-            candsub_fundo AS taxa,
+            candsub_iva AS cand_iva,
+            candsub_fundo AS cand_taxa,
             ca.cand_logo AS logo,
             ca.cand_documento AS documento_aviso,
             candsub_documento_aceitacao AS documento_aceitacao
@@ -61,6 +61,7 @@ try {
             proces_cand,
             proces_cand_cnt AS cnt,
             proces_padm AS padm,
+            proces_tx_iva AS proces_iva,
             proces_nome AS designacao
         FROM processo
         WHERE proces_cand = :candidatura
