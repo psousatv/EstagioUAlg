@@ -61,7 +61,7 @@ try {
             proces_cand,
             proces_cand_cnt AS cnt,
             proces_padm AS padm,
-            proces_tx_iva AS proces_iva,
+            proces_tx_iva AS proc_iva,
             proces_nome AS designacao
         FROM processo
         WHERE proces_cand = :candidatura

@@ -144,9 +144,9 @@ RENDER HISTÓRICO
             </div>
             
             <div class="mb-2">
-              <div>Investimento Aprovado: ${formatCurrency(json.elegivel * json.iva) || ''} </div>
-              <div>IVA (Incluído): ${formatCurrency((json.elegivel  * json.iva) - json.elegivel) || ''}</div>
-              <div>Apoio Aprovado: ${formatCurrency(json.elegivel  * json.iva * json.taxa) || ''}</div>
+              <div>Investimento Aprovado: ${formatCurrency(json.elegivel * json.cand_iva) || ''} </div>
+              <div>IVA (Incluído): ${formatCurrency((json.elegivel  * json.cand_iva) - json.elegivel) || ''}</div>
+              <div>Apoio Aprovado: ${formatCurrency(json.elegivel  * json.cand_iva * json.cand_taxa) || ''}</div>
             </div>
 
           </div>

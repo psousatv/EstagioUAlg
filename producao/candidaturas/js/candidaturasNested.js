@@ -416,17 +416,17 @@ $(document).ready(function () {
           ) || 0;
   
       // IVA definido no processo (ex.: 1.23)
-      const iva = Number(row.proces_iva || 1);
+      const iva = Number(row.proc_iva || 1);
   
       // Valor adjudicado com IVA
       return valorAdjudicado * iva;
     }
 
     // ----------------------------------------------------------
-    // Tipos de faturas válidos
+    // Tipos de faturas válidos - VER APLICAÇÃO DE IVA
     // ----------------------------------------------------------
 
-    const tiposFaturasValidos = ['FTN', 'FTC', 'NC', 'IND', 'IVA'];
+    const tiposFaturasValidos = ['FTN', 'FTC', 'NC', 'IND'];
 
     // ----------------------------------------------------------
     // Coluna 3 - Faturado
@@ -513,7 +513,7 @@ $(document).ready(function () {
                   programa: json.programa,
                   nome: json.designacao,
                   taxa: json.cand_taxa,
-                  iva: json.cand_iva,
+                  iva: json.proc_iva,
                   logo: json.logo,
                   elegivel: json.fact_elegivel,
                   fundo: json.fact_fundo
@@ -1311,69 +1311,26 @@ $(document).ready(function () {
 
                 <!-- FATURAS -->
                 <div class="col-md-4">
-
-                    <div class="card border-warning h-100">
-
-                        <div class="card-header bg-warning text-dark p-1 small">
-                            Faturas
-                        </div>
-
-
+                  <div class="card border-warning h-100">
+                      <div class="card-header bg-warning text-dark p-1 small">Faturas</div>
                         <div class="card-body small">
-
-                            ${faturas.length ? faturas.map(f => `
-
-                                <div class="border-bottom p-2 mb-2">
-
-                                    <div>
-                                        <b>Expediente:</b>
-                                        ${formatExpediente(f.fact_expediente)}
-                                    </div>
-
-                                    <div>
-                                        <b>Data:</b>
-                                        ${f.fact_data || '-'}
-                                    </div>
-
-                                    <div>
-                                        <b>Doc:</b>
-                                        ${f.fact_tipo}_${f.fact_num}
-                                    </div>
-
-                                    <div>
-                                        <b>Auto:</b>
-                                        ${f.fact_auto_num || '-'}
-                                    </div>
-
-                                    <div>
-                                        <b>Valor:</b>
-                                        ${formatCurrency(f.fact_valor)}
-                                    </div>
-
-                                </div>
-
-                            `).join('')
-                            :
-                            `
-                            <span class="text-muted">
-                                Sem faturas
-                            </span>
-                            `
-                            }
-
+                          ${faturas.length ? faturas.map(f => `
+                              <div class="border-bottom p-2 mb-2">
+                                <div><b>Expediente:</b>${formatExpediente(f.fact_expediente)}</div>
+                                <div><b>Data:</b>${f.fact_data || '-'}</div>
+                                <div><b>Doc:</b>${f.fact_tipo}_${f.fact_num}</div>
+                                <div><b>Auto:</b>${f.fact_auto_num || '-'}</div>
+                                <div><b>Valor:</b>${formatCurrency(f.fact_valor)}</div>
+                              </div>`).join(''):`<span class="text-muted">Sem faturas</span>`
+                          }
                         </div>
-
+                      </div>
                     </div>
-
+                  </div>
                 </div>
+              `;
 
-
-            </div>
-
-        </div>
-        `;
-
-    });
+            });
 
 
     // =====================================================
@@ -2967,35 +2924,20 @@ doc.autoTable({
       grupo
     );
 
+    
     // ------------------------------------------------------
-    // PROCESSOS DO GRUPO
+    // PROCESSOS DO GRUPO - ORDENAR POR CNT
     // ------------------------------------------------------
-    const itens =
-      Object.values(
-        grupo.processos
-      ).sort(
-        (a, b) => {
+    const itens = Object.values(grupo.processos).sort((a, b) => {
+      const cntA = String(a.processo?.cnt ?? '').trim();
+      const cntB = String(b.processo?.cnt ?? '').trim();
 
-          const designacaoA =
-            a.processo
-              ?.designacao ||
-            '';
+      return cntA.localeCompare(cntB, 'pt-PT', {
+          numeric: true,
+          sensitivity: 'base'
+      });
+    });
 
-          const designacaoB =
-            b.processo
-              ?.designacao ||
-            '';
-
-          return String(
-            designacaoA
-          ).localeCompare(
-            String(
-              designacaoB
-            ),
-            'pt-PT'
-          );
-        }
-      );
 
     itens.forEach(item => {
 
