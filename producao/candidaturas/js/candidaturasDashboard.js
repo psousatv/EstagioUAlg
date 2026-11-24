@@ -286,16 +286,23 @@ $(document).ready(function () {
                         <div class="candidatura-separador"></div>
 
                         <!-- Valores elegíveis -->
-                        <div class="candidatura-metricas candidatura-metricas-secundarias">
+                        <div class="candidatura-metricas">
                             <div class="metrica">
-                                <div class="metrica-label">Elegível (× IVA)</div>
+                                <div class="metrica-label">Investimento (× IVA)</div>
                                 <div class="metrica-valor">
                                     ${Formatters.currency.format(dados.elegivel * dados.iva)}
                                 </div>
                             </div>
 
                             <div class="metrica">
-                                <div class="metrica-label">Elegível / Recebido</div>
+                                <div class="metrica-label">Apoio (× IVA)</div>
+                                <div class="metrica-valor">
+                                    ${Formatters.currency.format((dados.elegivel * dados.iva) * dados.taxa)}
+                                </div>
+                            </div>
+
+                            <div class="metrica">
+                                <div class="metrica-label">Apoio / Recebido</div>
                                 <div class="metrica-valor">
                                     ${Formatters.percent.format(dados.elegivel_recebido_percent)}
                                 </div>
