@@ -62,6 +62,23 @@ var anoCorrente = new Date().getFullYear();
 
     }
 
+    function calcularFaturadoAno(dados, ano, rubrica) {
+
+        return dados
+            .flatMap(item => item.processos || [])
+            .filter(processo =>
+                Number(processo.orc_rubrica) === Number(rubrica)
+            )
+            .flatMap(processo => processo.faturas || [])
+            .filter(fatura =>
+                Number(fatura.fact_data?.substring(0, 4)) === Number(ano)
+                && !['REF', 'IVA'].includes(fatura.fact_tipo)
+            )
+            .reduce((total, fatura) =>
+                total + (Number(fatura.fact_valor) || 0), 0
+            );
+    }
+
 // ==========================================================
 // CARTÕES
 // ==========================================================
@@ -87,38 +104,40 @@ function cartoes(endereco) {
         containerGastos.innerHTML = "";
         containerProtocolos.innerHTML = "";
 
+        console.log(data);
+
         data.forEach(dados => {
 
             let classeCartao;
             let iconeCartao;
 
-            let adjudicado_percent =
+            let realizado_contratual =
                 dados.adjudicado === 0 && dados.faturado === 0 ? 0 :
                 dados.adjudicado > 0 && dados.faturado === 0 ? 0 :
                 dados.faturado / dados.adjudicado;
 
-            let previsto_percent =
+            let realizado_orcamento =
                 dados.previsto === 0 && dados.adjudicado === 0 ? 0 :
                 dados.previsto > 0 && dados.adjudicado === 0 ? 0 :
                 dados.adjudicado / dados.previsto;
 
             
-            if (previsto_percent >= 1) {
+            if (realizado_orcamento >= 1) {
                 // Previsto atingido ou ultrapassado
                 classeCartao = 'bg-danger text-white';
                 iconeCartao = 'fa fa-thumbs-down';
 
-            } else if (previsto_percent >= 0.85) {
+            } else if (realizado_orcamento >= 0.85) {
                 // Risco elevado
                 classeCartao = 'bg-danger text-white';
                 iconeCartao = 'fa fa-exclamation-triangle';
 
-            } else if (previsto_percent >= 0.60) {
+            } else if (realizado_orcamento >= 0.60) {
                 // Atenção
                 classeCartao = 'bg-warning text-dark';
                 iconeCartao = 'fa fa-cog';
 
-            } else if (previsto_percent >= 0.40) {
+            } else if (realizado_orcamento >= 0.40) {
                 // Situação confortável
                 classeCartao = 'bg-orcamento-azul text-white';
                 iconeCartao = 'fa fa-cog fa-spin';
@@ -130,6 +149,8 @@ function cartoes(endereco) {
                 iconeCartao = 'fa fa-smile';
             }
 
+            let faturacao_contratual = dados.faturado;
+            let faturacao_anual = calcularFaturadoAno(data, anoCorrente, dados.rubrica);;
 
             
             let cartao = `
@@ -138,65 +159,64 @@ function cartoes(endereco) {
                         onclick="orcamentoNested('${dados.cod}')">
 
                         <div class="candidatura-header">
-
                             <div class="candidatura-titulo">
                                 <span>${dados.item}</span>
                             </div>
-
                             <div class="candidatura-estado">
                                 <i class="${iconeCartao}"></i>
                             </div>
-
                         </div>
 
+                        <div class="candidatura-titulo">Execução Contratual</div>
+                        
                         <div class="candidatura-metricas">
-
                             <div class="metrica">
                                 <div class="metrica-label">Adjudicado</div>
                                 <div class="metrica-valor">
                                     ${moeda(dados.adjudicado)}
                                 </div>
                             </div>
-
                             <div class="metrica">
                                 <div class="metrica-label">Faturado</div>
                                 <div class="metrica-valor">
-                                    ${moeda(dados.faturado)}
+                                    ${moeda(faturacao_contratual)}
                                 </div>
                             </div>
-
                             <div class="metrica">
-                                <div class="metrica-label">Adjudicado / Faturado</div>
+                                <div class="metrica-label">Realização</div>
                                 <div class="metrica-valor">
                                     ${new Intl.NumberFormat('pt-PT', {
                                         style: 'percent',
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2
-                                    }).format(adjudicado_percent)}
+                                    }).format(realizado_contratual)}
                                 </div>
                             </div>
-
                         </div>
 
                         <div class="candidatura-separador"></div>
-
-                        <div class="candidatura-metricas candidatura-metricas-secundarias">
-
+                        <div class="candidatura-titulo">Execução Orçamental -  - *rever faturação anual</div>
+                        <div class="candidatura-metricas">
                             <div class="metrica">
                                 <div class="metrica-label">Previsto</div>
                                 <div class="metrica-valor">
                                     ${moeda(dados.previsto)}
                                 </div>
                             </div>
-
                             <div class="metrica">
-                                <div class="metrica-label">Adjudicado / Previsto</div>
+                                <div class="metrica-label">Faturado</div>
+                                <div class="metrica-valor">
+                                    ${moeda(faturacao_anual)}
+                                </div>
+                            </div>
+                            <div class="metrica">
+                                <div class="metrica-label">Realização</div>
                                 <div class="metrica-valor">
                                     ${new Intl.NumberFormat('pt-PT', {
                                         style: 'percent',
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2
-                                    }).format(previsto_percent)}
+                                    }).format(realizado_orcamento)}
                                 </div>
                             </div>
 

@@ -1,0 +1,2588 @@
+// ==========================================================
+// ORÇAMENTO DASHBOARD
+// ==========================================================
+
+var anoCorrente = new Date().getFullYear();
+
+
+// ======================================================
+    // FUNÇÕES AUXILIARES
+    // ======================================================
+
+    function numero(valor) {
+        const resultado = Number(valor);
+        return Number.isFinite(resultado) ? resultado : 0;
+    }
+
+
+    function moeda(valor) {
+        return new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(numero(valor));
+    }
+
+
+    function textoPDF(valor) {
+
+        if (valor === null || valor === undefined) return '';
+
+        return String(valor)
+            .replace(/\u00A0/g, ' ')
+            .replace(/[^\x20-\xFFÀ-ÿ]/g, '');
+    }
+
+
+    function dataPT(valor) {
+        if (!valor) {return '';}
+
+        const data = String(valor).substring(0, 10);
+        const partes = data.split('-');
+      
+        if (partes.length !== 3) {return escapeHtml(valor);}
+      
+        const [ano, mes, dia] = partes;
+      
+        return `${dia}-${mes}-${ano}`;
+    }
+
+
+    function expediente(valor) {
+        if (!valor) {return '';}
+
+        const texto = String(valor).trim();
+      
+        if (/^[A-Za-z0-9]\.\d+\.\d+$/.test(texto)) {
+          return texto;
+        }
+      
+        const prefixo = texto.charAt(0);
+        const registo = texto.slice(1, -2);
+        const ano = texto.slice(-2);
+        
+      
+        return `${prefixo}.${registo.padStart(5, '0')}.${ano}`;
+
+    }
+
+// ==========================================================
+// CARTÕES
+// ==========================================================
+
+// ==========================================================
+// MODELO FINANCEIRO — JSON NORMALIZADO
+// ==========================================================
+function construirDashboard(dados, ano) {
+    ano = Number(ano);
+    const campos = ['rubricas', 'orcamentos', 'processos', 'historicos', 'faturas'];
+    if (!campos.every(c => Array.isArray(dados?.[c]))) {
+        throw new Error('Estrutura JSON inválida: esperado o novo PHP normalizado.');
+    }
+    const chave = v => String(v);
+    const cent = v => Math.round(numero(v) * 100);
+    const soma = (arr, campo) => arr.reduce((t, x) => t + cent(x[campo]), 0) / 100;
+    const agrupar = (arr, campo) => {
+        const mapa = new Map();
+        arr.forEach(x => {
+            const k = chave(x[campo]);
+            if (!mapa.has(k)) mapa.set(k, []);
+            mapa.get(k).push(x);
+        });
+        return mapa;
+    };
+    const anoFatura = f => Number(String(f.fact_data || '').slice(0, 4));
+    const orcPorRubrica = agrupar(dados.orcamentos, 'orc_rubrica');
+    const procPorOrc = agrupar(dados.processos, 'proces_orc_check');
+    const histPorProc = agrupar(dados.historicos, 'proces_check');
+    const fatPorProc = agrupar(dados.faturas.filter(f =>
+        ['FTN', 'FTC', 'NC', 'IND', 'RPR'].includes(String(f.fact_tipo).trim().toUpperCase())
+        && /^\d{4}-(0[1-9]|1[0-2])-\d{2}/.test(String(f.fact_data || ''))
+    ), 'fact_proces_check');
+
+    return dados.rubricas.map(r => {
+        const todos = (orcPorRubrica.get(chave(r.cod)) || []).map(o => {
+            const processos = (procPorOrc.get(chave(o.orc_check)) || []).map(p => {
+                const historicos = histPorProc.get(chave(p.proces_check)) || [];
+                const faturas = fatPorProc.get(chave(p.proces_check)) || [];
+                const faturasAno = faturas.filter(f => anoFatura(f) === ano);
+                const faturasAcumuladas = faturas.filter(f => anoFatura(f) <= ano);
+                const adjudicado = soma(historicos.filter(h => [9,14,100].includes(Number(h.tipo))), 'valor');
+                return {...p, ano_orcamento: Number(o.ano), adjudicado,
+                    saldo: (cent(p.val_max) - cent(adjudicado))/100,
+                    faturado: soma(faturasAcumuladas, 'fact_valor'),
+                    faturado_anual: soma(faturasAno, 'fact_valor'),
+                    faturas: faturasAno, faturas_acumuladas: faturasAcumuladas};
+            });
+            return {...o, processos, adjudicado: soma(processos, 'adjudicado'),
+                faturado: soma(processos, 'faturado'), faturado_anual: soma(processos, 'faturado_anual')};
+        });
+        const atuais = todos.filter(o => Number(o.ano) === ano);
+        const anteriores = todos.filter(o => Number(o.ano) <= ano);
+        const processos = anteriores.flatMap(o => o.processos);
+        // Inclui faturação anual mesmo se a origem orçamental for posterior (anomalia a verificar).
+        const processosAnuais = todos.flatMap(o => o.processos).filter(p => p.faturas.length > 0 || p.ano_orcamento === ano);
+        return {...r, ano, orcamentos: atuais, orcamentos_historicos: todos,
+            processos, processos_anuais: processosAnuais,
+            previsto: soma(atuais, 'orcamento'),
+            previsto_acumulado: soma(anteriores, 'orcamento'),
+            previsto_futuro: soma(todos.filter(o => Number(o.ano) > ano), 'orcamento'),
+            adjudicado: soma(processos, 'adjudicado'),
+            faturado: soma(processos, 'faturado'),
+            faturado_anual: soma(processosAnuais, 'faturado_anual')};
+    }).filter(r => r.orcamentos.length || r.processos.length || r.processos_anuais.length || r.previsto_futuro);
+}
+
+// Modelo anual para os relatórios: mesmos valores da DataTable.
+function modeloRelatorioAnual(rubricas) {
+    return rubricas.map(r => ({...r, faturado: r.faturado_anual,
+        processos: r.processos_anuais.map(p => ({...p, faturado: p.faturado_anual}))}));
+}
+
+function cartoes(endereco) {
+    const anoPedido = Number(anoCorrente);
+    const mostrarCobertura = false;
+
+    $.ajax({
+        url: endereco,
+        method: 'GET',
+        dataType: 'json'
+    }).done(function(resultado) {
+        if (anoPedido !== Number(anoCorrente)) return;
+        let data;
+        try { data = construirDashboard(resultado, anoPedido); }
+        catch (erro) { console.error(erro); alert(erro.message); return; }
+
+        var containerInvestimentos =
+            document.getElementById('cartoesInvestimentos');
+
+        var containerGastos =
+            document.getElementById('cartoesGastos');
+
+        var containerProtocolos =
+            document.getElementById('cartoesProtocolos');
+
+        containerInvestimentos.innerHTML = "";
+        containerGastos.innerHTML = "";
+        containerProtocolos.innerHTML = "";
+
+        data.forEach(dados => {
+
+            // ------------------------------------------------------
+            // APRESENTAÇÃO UNIFORME DOS CARTÕES
+            // ------------------------------------------------------
+
+            const classeCartao = 'kpi-neutro';
+            const iconeCartao = 'fas fa-chart-bar';
+
+            // TESTE //
+
+            // ------------------------------------------------------
+            // ANO DE ANÁLISE
+            // ------------------------------------------------------
+            const anoAnalise = Number(anoCorrente);
+
+            // ------------------------------------------------------
+            // VALORES CONTRATUAIS
+            // ------------------------------------------------------
+            const adjudicado = Number(dados.adjudicado ?? 0);
+            const faturado = Number(dados.faturado ?? 0);
+
+            const porFaturar = adjudicado - faturado;
+
+            // ------------------------------------------------------
+            // VALORES ORÇAMENTAIS
+            // ------------------------------------------------------
+            const orcamentoAnual = Number(dados.previsto ?? 0);
+
+            const faturadoAnual = Number(dados.faturado_anual ?? 0);
+
+            const orcamentoAcumulado = Number(dados.previsto_acumulado ?? 0);
+
+            const orcamentoFuturo = Number(dados.previsto_futuro ?? 0);
+
+            const saldoAnual = orcamentoAnual - faturadoAnual;
+
+            // ------------------------------------------------------
+            // FUNÇÃO DE CÁLCULO DE TAXAS
+            // ------------------------------------------------------
+            const calcularTaxa = (numerador, denominador) => {
+                return denominador > 0
+                    ? numerador / denominador
+                    : null;
+            };
+
+            // ------------------------------------------------------
+            // INDICADORES DE EXECUÇÃO
+            // ------------------------------------------------------
+            const execucaoContratual = calcularTaxa(
+                faturado,
+                adjudicado
+            );
+
+            const execucaoAnual = calcularTaxa(
+                faturadoAnual,
+                orcamentoAnual
+            );
+
+            const execucaoAcumulada = calcularTaxa(
+                faturado,
+                orcamentoAcumulado
+            );
+
+            // ------------------------------------------------------
+            // COBERTURA CONTRATUAL
+            // ------------------------------------------------------
+            const coberturaDisponivel = saldoAnual + orcamentoFuturo;
+
+            const coberturaContratual = calcularTaxa(
+                coberturaDisponivel,
+                porFaturar
+            );
+
+            // ------------------------------------------------------
+            // FORMATAÇÃO DE PERCENTAGENS
+            // ------------------------------------------------------
+            const percentagem = valor => {
+                if (valor === null) return '—';
+
+                return new Intl.NumberFormat('pt-PT', {
+                    style: 'percent',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(valor);
+            };
+
+            // ------------------------------------------------------
+            // COR DOS INDICADORES DE EXECUÇÃO
+            // ------------------------------------------------------
+
+            const corExecucao = (valor) => {
+
+                if (valor === null) return 'bg-secondary';
+
+                if (valor >= 0.85) return 'bg-danger';
+
+                if (valor >= 0.60) return 'bg-warning';
+
+                return 'bg-primary';
+
+            };
+
+
+            // ------------------------------------------------------
+            // BARRA DE PROGRESSO
+            // ------------------------------------------------------
+
+            const barraProgresso = (titulo, valor, cor = 'bg-primary') => {
+
+                const largura = Math.min(
+                    Math.max((valor ?? 0) * 100, 0),
+                    100
+                );
+
+                return `
+
+                    <div class="kpi-indicador">
+
+                        <div class="kpi-indicador-cabecalho">
+
+                            <span>${titulo}</span>
+
+                            <strong>
+                                ${percentagem(valor)}
+                            </strong>
+
+                        </div>
+
+                        <div class="progress kpi-indicador-progress">
+
+                            <div class="progress-bar ${cor}"
+                                role="progressbar"
+                                style="width: ${largura}%"
+                                aria-valuenow="${largura}"
+                                aria-valuemin="0"
+                                aria-valuemax="100">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            };
+
+            
+            // ======================================================
+            // CARTÃO — CABEÇALHO
+            // ======================================================
+
+            let cartao = `
+
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 kpi-coluna">
+
+                <div class="card kpi-card kpi-neutro kpi-clicavel h-100"
+                    onclick="orcamentoNested(${dados.cod})">
+
+                    <div class="kpi-header">
+
+                        <div class="kpi-titulo">
+                            ${dados.cod} - ${dados.item}
+                        </div>
+
+                    </div>
+
+            `;
+
+
+            // ======================================================
+            // CONTROLO ORÇAMENTAL ANUAL
+            // ======================================================
+
+            cartao += `
+
+            <div class="kpi-seccao">
+
+                <div class="kpi-subtitulo">
+                    CONTROLO ORÇAMENTAL — ${anoAnalise}
+                </div>
+
+                <div class="kpi-metricas">
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Previsto
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(orcamentoAnual)}
+                        </div>
+                    </div>
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Faturado
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(faturadoAnual)}
+                        </div>
+                    </div>
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Saldo
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(saldoAnual)}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+
+
+            // ======================================================
+            // CONTROLO CONTRATUAL ACUMULADO
+            // ======================================================
+
+            cartao += `
+
+            <div class="kpi-separador"></div>
+
+            <div class="kpi-seccao">
+
+                <div class="kpi-subtitulo">
+                    CONTROLO CONTRATUAL ACUMULADO
+                </div>
+
+                <div class="kpi-metricas">
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Adjudicado
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(adjudicado)}
+                        </div>
+                    </div>
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Faturado
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(faturado)}
+                        </div>
+                    </div>
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Por faturar
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(porFaturar)}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+
+
+            // ======================================================
+            // COBERTURA ORÇAMENTAL
+            // VISUALIZAÇÃO FACULTATIVA
+            // ======================================================
+
+            if (mostrarCobertura) {
+
+            cartao += `
+
+                <div class="kpi-separador"></div>
+
+                <div class="kpi-seccao">
+
+                    <div class="kpi-subtitulo">
+                        COBERTURA ORÇAMENTAL
+                    </div>
+
+                    <div class="kpi-metricas">
+
+                        <div class="kpi-metrica">
+                            <div class="kpi-metrica-label">
+                                Previsto acumulado
+                            </div>
+                            <div class="kpi-metrica-valor">
+                                ${moeda(orcamentoAcumulado)}
+                            </div>
+                        </div>
+
+                        <div class="kpi-metrica">
+                            <div class="kpi-metrica-label">
+                                Previsto futuro
+                            </div>
+                            <div class="kpi-metrica-valor">
+                                ${moeda(orcamentoFuturo)}
+                            </div>
+                        </div>
+
+                        <div class="kpi-metrica">
+                            <div class="kpi-metrica-label">
+                                Disponível
+                            </div>
+                            <div class="kpi-metrica-valor">
+                                ${moeda(coberturaDisponivel)}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            }
+
+
+            // ======================================================
+            // INDICADORES DE EXECUÇÃO
+            // ======================================================
+
+            cartao += `
+
+            <div class="kpi-separador"></div>
+
+            <div class="kpi-seccao">
+
+                <div class="kpi-subtitulo">
+                    INDICADORES DE EXECUÇÃO
+                </div>
+
+                <div class="kpi-indicadores">
+
+                    ${barraProgresso(
+                        'Execução contratual',
+                        execucaoContratual,
+                        'bg-primary'
+                    )}
+
+                    ${barraProgresso(
+                        'Execução orçamental anual',
+                        execucaoAnual,
+                        corExecucao(execucaoAnual)
+                    )}
+
+                    ${barraProgresso(
+                        'Execução orçamental acumulada',
+                        execucaoAcumulada,
+                        corExecucao(execucaoAcumulada)
+                    )}
+
+            `;
+
+
+            // ======================================================
+            // INDICADOR DE COBERTURA CONTRATUAL
+            // VISUALIZAÇÃO FACULTATIVA
+            // ======================================================
+
+            if (mostrarCobertura) {
+
+            cartao += `
+
+                ${barraProgresso(
+                    'Cobertura contratual',
+                    coberturaContratual,
+                    coberturaContratual === null
+                        ? 'bg-secondary'
+                        : coberturaContratual >= 1
+                            ? 'bg-success'
+                            : 'bg-danger'
+                )}
+
+            `;
+
+            }
+
+
+            // ======================================================
+            // FECHO DOS INDICADORES E DO CARTÃO
+            // ======================================================
+
+            cartao += `
+
+                        </div> <!-- kpi-indicadores -->
+
+                    </div> <!-- kpi-seccao -->
+
+                </div> <!-- kpi-card -->
+
+            </div> <!-- kpi-coluna -->
+
+            `;
+
+
+            // ======================================================
+            // DISTRIBUIÇÃO DOS CARTÕES POR GRUPO
+            // ======================================================
+
+            if (dados.tipo === 'Investimento') {
+
+            containerInvestimentos.innerHTML += cartao;
+
+            } else if (
+            dados.tipo === 'Gastos' &&
+            dados.item === 'SubContratos'
+            ) {
+
+            containerProtocolos.innerHTML += cartao;
+
+            } else {
+
+            containerGastos.innerHTML += cartao;
+
+            }
+
+        });
+
+
+        // ==================================================
+        // DATATABLE
+        // ==================================================
+
+        renderTabelaExecucaoOrcamento(data);
+
+
+    }).fail(function(xhr, status, error) {
+
+        console.error(
+            'Erro ao carregar o orçamento:',
+            error
+        );
+
+        const containerTabela =
+            document.getElementById(
+                'tabelaExecucaoOrcamento'
+            );
+
+        if (containerTabela) {
+
+            containerTabela.innerHTML = `
+
+                <div class="col-12">
+
+                    <div class="alert alert-danger mb-0">
+
+                        Não foi possível carregar
+                        a execução orçamental.
+
+                    </div>
+
+                </div>
+            `;
+        }
+    });
+}
+
+
+
+// ==========================================================
+// DATATABLE
+// EXECUÇÃO ORÇAMENTAL POR RUBRICA
+// ==========================================================
+
+// ==========================================================
+// PREPARAR DADOS PARA A DATATABLE
+// ==========================================================
+
+function prepararExecucaoOrcamento(rubricas, ano = anoCorrente) {
+    return rubricas.map(r => {
+        const processos = r.processos_anuais || [];
+        const meses = Array(12).fill(0);
+        let numeroFaturas = 0;
+        processos.forEach(p => p.faturas.forEach(f => {
+            if (Number(String(f.fact_data).slice(0,4)) !== Number(ano)) return;
+            const mes = Number(String(f.fact_data).slice(5,7));
+            if (mes < 1 || mes > 12) return;
+            meses[mes-1] += Math.round(numero(f.fact_valor)*100);
+            numeroFaturas++;
+        }));
+        const faturado = meses.reduce((a,b) => a+b,0)/100;
+        const previsto = numero(r.previsto);
+        return {rubCod: numero(r.cod), rubrica: [r.cod, r.item || r.rubrica].join(' — '),
+            previsto, adjudicado: numero(r.adjudicado), faturado,
+            saldo: (Math.round(previsto*100)-Math.round(faturado*100))/100,
+            numeroProcessos: processos.length, numeroFaturas,
+            ...Object.fromEntries(['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'].map((m,i) => [m,meses[i]/100]))};
+    });
+}
+
+// ==========================================================
+// CRIAR DATATABLE
+// ==========================================================
+
+function renderTabelaExecucaoOrcamento(rubricas) {
+    const container = document.getElementById('tabelaExecucaoOrcamento');
+
+    if (!container) {
+        return;
+    }
+
+
+    // ======================================================
+    // DESTRUIR DATATABLE EXISTENTE
+    // ======================================================
+
+    if (
+        $.fn.DataTable &&
+        $.fn.DataTable.isDataTable(
+            '#execucaoOrcamentoDataTable'
+        )
+    ) {
+
+        $('#execucaoOrcamentoDataTable')
+            .DataTable()
+            .destroy();
+    }
+
+
+    // ======================================================
+    // HTML DA TABELA
+    // ======================================================
+
+    container.innerHTML = `
+
+            <div class="col-12">
+
+                <!-- CABEÇALHO DA TABELA -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                    <h6 class="mb-0">
+                        Resumo da Execução Orçamental
+                    </h6>
+
+                    <button
+                        type="button"
+                        id="exportarTabelaExecucaoPDF"
+                        class="btn btn-danger btn-sm"
+                        onclick="exportarTabelaExecucaoPDF()"
+                        title="Exportar execução orçamental para PDF"
+                    >
+                        <i class="fas fa-file-pdf mr-1"></i>
+                        PDF
+                    </button>
+
+                </div>
+
+                <div class="table-responsive small">
+
+                    <table
+                        id="execucaoOrcamentoDataTable"
+                        class="
+                            table
+                            table-sm
+                            table-striped
+                            table-bordered
+                            table-hover
+                            nowrap
+                            w-100
+                        "
+                    >
+
+                    <thead class="thead-dark">
+
+                        <!-- ============================== -->
+                        <!-- PRIMEIRA LINHA DO CABEÇALHO    -->
+                        <!-- ============================== -->
+
+                        <tr>
+                            <th rowspan="2" class="align-middle">Rubrica</th>
+                            <th colspan="12" class="text-center">Faturação por mês</th>
+                            <th rowspan="2" class="align-middle text-right">Valor Faturado</th>
+                            <th rowspan="2" class="align-middle text-right">Saldo</th>
+                            
+                            <th rowspan="2" class="align-middle text-right">Valor Previsto</th>
+
+                            <th rowspan="2" class="align-middle text-right">Valor Adjudicado</th>
+                        </tr>
+
+                        <!-- ============================== -->
+                        <!-- MESES                          -->
+                        <!-- ============================== -->
+
+                        <tr>
+                            <th class="text-right">Jan.</th>
+                            <th class="text-right">Fev.</th>
+                            <th class="text-right">Mar.</th>
+                            <th class="text-right">Abr.</th>
+                            <th class="text-right">Mai.</th>
+                            <th class="text-right">Jun.</th>
+                            <th class="text-right">Jul.</th>
+                            <th class="text-right">Ago.</th>
+                            <th class="text-right">Set.</th>
+                            <th class="text-right">Out.</th>
+                            <th class="text-right">Nov.</th>
+                            <th class="text-right">Dez.</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody></tbody>
+                    <tfoot class="thead-dark">
+                        <tr>
+                            <th class="text-right">TOTAL</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+        </div>
+    `;
+
+
+    // ======================================================
+    // PREPARAR DADOS
+    // ======================================================
+
+    const dadosTabela =
+        prepararExecucaoOrcamento(
+            rubricas
+        );
+
+
+    // ======================================================
+    // VERIFICAR DATATABLES
+    // ======================================================
+
+    if (!$.fn.DataTable) {
+
+        console.error(
+            'A biblioteca DataTables não está disponível.'
+        );
+
+        return;
+    }
+
+
+    // ======================================================
+    // RENDER DE VALORES MONETÁRIOS
+    // ======================================================
+
+    const renderMoeda =
+        function(data, type) {
+
+
+            const valor =
+                numero(data);
+
+
+            // Para visualização:
+            //
+            // 1 250,00 €
+
+            if (
+                type === 'display' ||
+                type === 'filter'
+            ) {
+
+                return moeda(
+                    valor
+                );
+            }
+
+
+            // Para ordenação o DataTables
+            // recebe o número verdadeiro.
+
+            return valor;
+
+        };
+
+
+    // ======================================================
+    // DATATABLE
+    // ======================================================
+
+    $('#execucaoOrcamentoDataTable')
+        .DataTable({
+
+            data: dadosTabela,
+
+
+            // ==============================================
+            // COLUNAS
+            // ==============================================
+
+            columns: [
+
+                {
+                    data: 'rubrica',
+
+                    render: function(data, type, row) {
+
+                        // Para ordenação utiliza rub_cod
+                        if (type === 'sort' || type === 'type') {
+                            return row.rubCod;
+                        }
+
+                        // Para apresentação mantém:
+                        // código — designação
+                        return data;
+                    }
+                },
+
+                // ------------------------------------------
+                // MESES
+                // ------------------------------------------
+
+                {data: 'jan', render: renderMoeda},
+                {data: 'fev', render: renderMoeda},
+                {data: 'mar', render: renderMoeda},
+                {data: 'abr', render: renderMoeda},
+                {data: 'mai', render: renderMoeda},
+                {data: 'jun', render: renderMoeda},
+                {data: 'jul', render: renderMoeda},
+                {data: 'ago', render: renderMoeda},
+                {data: 'set', render: renderMoeda},
+                {data: 'out', render: renderMoeda},
+                {data: 'nov', render: renderMoeda},
+                {data: 'dez', render: renderMoeda},
+
+                {data: 'faturado', render: renderMoeda},
+                {data: 'saldo', render: renderMoeda},
+
+                {data: 'previsto', render: renderMoeda},
+                {data: 'adjudicado', render: renderMoeda}
+                     
+            ],
+
+
+            // ==============================================
+            // ALINHAMENTOS
+            // ==============================================
+
+            columnDefs: [
+
+                {
+                    targets: [
+                        1, 2, 3, 4,
+                        5, 6, 7, 8, 9, 10,
+                        11, 12, 13, 14, 15, 16
+                    ],
+                    className: 'text-right'
+                }
+
+            ],
+            footerCallback: function() {
+
+                const api = this.api();
+
+                // Colunas monetárias:
+                // 1 = Previsto
+                // 2 = Adjudicado
+                // 3 = Saldo
+                // 4 = Faturado
+                // 5 a 16 = Janeiro a Dezembro
+
+                for (let coluna = 1; coluna <= 16; coluna++) {
+
+                    const total = api
+                        .column(coluna)
+                        .data()
+                        .reduce(
+                            (soma, valor) =>
+                                soma + numero(valor),
+                            0
+                        );
+
+                    $(api.column(coluna).footer())
+                        .html(moeda(total));
+                }
+            },
+
+
+            // ==============================================
+            // ORDENAÇÃO
+            // ==============================================
+
+            order: [
+                [
+                    0,
+                    'asc'
+                ]
+            ],
+
+
+            // ==============================================
+            // PAGINAÇÃO
+            // ==============================================
+
+            pageLength: 25,
+
+            lengthMenu: [
+
+                [
+                    10,
+                    25,
+                    50,
+                    -1
+                ],
+
+                [
+                    10,
+                    25,
+                    50,
+                    'Todos'
+                ]
+            ],
+
+
+            // ==============================================
+            // SCROLL HORIZONTAL
+            // ==============================================
+
+            scrollX: true,
+
+            autoWidth: false,
+
+
+            // ==============================================
+            // PORTUGUÊS
+            // ==============================================
+
+            language: {
+
+                decimal: ',',
+
+                thousands: '.',
+
+                emptyTable:
+                    'Não existem dados para apresentar.',
+
+                info:
+                    'A mostrar _START_ a _END_ de _TOTAL_ rubricas',
+
+                infoEmpty:
+                    'A mostrar 0 a 0 de 0 rubricas',
+
+                infoFiltered:
+                    '(filtrado de _MAX_ rubricas)',
+
+                lengthMenu:
+                    'Mostrar _MENU_ rubricas',
+
+                loadingRecords:
+                    'A carregar...',
+
+                processing:
+                    'A processar...',
+
+                search:
+                    'Procurar:',
+
+                zeroRecords:
+                    'Não foram encontradas rubricas.',
+
+                paginate: {
+
+                    first:
+                        'Primeira',
+
+                    last:
+                        'Última',
+
+                    next:
+                        'Seguinte',
+
+                    previous:
+                        'Anterior'
+                }
+            }
+
+        });
+}
+
+
+
+// ==========================================================
+// ANO
+// ==========================================================
+
+function validaAno(ano) {
+
+    ano =
+        parseInt(
+            ano,
+            10
+        );
+
+
+    if (isNaN(ano)) {
+
+        alert(
+            "Ano inválido! Por favor insira um número."
+        );
+
+        return false;
+    }
+
+
+    if (
+        ano < 2000 ||
+        ano > 2100
+    ) {
+
+        alert(
+            "Ano fora do intervalo permitido (2000-2100)."
+        );
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+
+// ==========================================================
+// MUDAR ANO
+// ==========================================================
+
+function mudaAno() {
+
+    var anoFormulario =
+        document.getElementById(
+            'anoCorrente'
+        ).value;
+
+
+    if (!validaAno(anoFormulario)) {
+
+        document.getElementById(
+            'anoCorrente'
+        ).value = anoCorrente;
+
+        return;
+    }
+
+
+    anoCorrente = Number(anoFormulario);
+
+
+    // Esta única chamada atualiza:
+    //
+    // 1. Cartões
+    // 2. DataTable
+
+    cartoes(
+        'dados/orcamentoDashboardTeste.php'
+    );
+}
+
+
+
+// ==========================================================
+// ANO DEFAULT
+// ==========================================================
+
+function anoDefault() {
+
+    document.getElementById(
+        'anoCorrente'
+    ).value =
+        anoCorrente;
+
+
+    // Esta única chamada atualiza:
+    //
+    // 1. Cartões
+    // 2. DataTable
+
+    cartoes(
+        'dados/orcamentoDashboardTeste.php'
+    );
+}
+
+
+
+// ==========================================================
+// REDIRECIONAMENTOS
+// ==========================================================
+
+function orcamentoResults(
+    itemProcurado
+) {
+
+    var URL =
+        "orcamentoResults.html?itemProcurado=" +
+        itemProcurado +
+        "&anoCorrente=" +
+        anoCorrente;
+
+
+    window.location.href =
+        URL;
+}
+
+
+
+function orcamentoNested(
+    itemProcurado
+) {
+
+    var URL =
+        "orcamentoNested.html?itemProcurado=" +
+        itemProcurado +
+        "&anoCorrente=" +
+        anoCorrente;
+
+
+    window.location.href =
+        URL;
+}
+
+
+
+window.onload = anoDefault;
+
+
+// ==========================================================
+// EXECUÇÃO ORÇAMENTAL GERAL - PDF
+// ==========================================================
+
+async function exportarExecucaoGeralPDF() {
+
+    const botao = document.getElementById('exportarExecucaoPDF');
+
+    try {
+
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            throw new Error('A biblioteca jsPDF não está disponível.');
+        }
+
+        const ano = parseInt(document.getElementById('anoCorrente').value, 10);
+
+        if (!validaAno(ano)) return;
+
+        if (botao) {
+            botao.disabled = true;
+            botao.innerHTML =
+                '<i class="fas fa-spinner fa-spin mr-1"></i> A gerar PDF...';
+        }
+
+        const response = await fetch(
+            'dados/orcamentoDashboardTeste.php'
+        );
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP ${response.status}`);
+        }
+
+        const resultado = await response.json();
+
+        const rubricas = construirDashboard(resultado, ano);
+
+        if (rubricas.length === 0) {
+            alert(`Não existem dados de execução orçamental para o ano ${ano}.`);
+            return;
+        }
+
+        const doc = criarDocumentoExecucaoGeralPDF(modeloRelatorioAnual(rubricas), ano);
+
+        //doc.save(`Execucao_Orcamental_${ano}.pdf`);
+        window.open(doc.output('bloburl'), '_blank');
+
+    } catch (error) {
+
+        console.error('Erro ao gerar execução orçamental:', error);
+
+        alert(
+            'Não foi possível gerar o relatório de execução orçamental.\n\n' +
+            error.message
+        );
+
+    } finally {
+
+        if (botao) {
+            botao.disabled = false;
+            botao.innerHTML =
+                '<i class="fas fa-file-pdf mr-1"></i> Execução Orçamental';
+        }
+    }
+}
+
+
+// ==========================================================
+// CRIAR DOCUMENTO PDF
+// ==========================================================
+
+function criarDocumentoExecucaoGeralPDF(rubricas, ano) {
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+    });
+
+    if (typeof doc.autoTable !== 'function') {
+        throw new Error('A biblioteca jsPDF AutoTable não está disponível.');
+    }
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    const marginLeft = 10;
+    const marginRight = 10;
+    const tableWidth = pageWidth - marginLeft - marginRight;
+
+    let startY = 30;
+
+    let totalPrevistoGeral = 0;
+    let totalLimiteGeral = 0;
+    let totalAdjudicadoGeral = 0;
+    let totalFaturadoGeral = 0;
+
+    let numeroProcessosGeral = 0;
+    let numeroFaturasGeral = 0;
+
+    const totaisPorTipoFatura = {};
+
+
+    // ======================================================
+    // CABEÇALHO
+    // ======================================================
+
+    function adicionarCabecalho() {
+
+        const dataGeracao = new Date().toLocaleDateString('pt-PT');
+
+        doc.setTextColor(0, 0, 0);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.text('EXECUÇÃO ORÇAMENTAL GERAL', marginLeft, 10);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(`Ano: ${ano}`, marginLeft, 16);
+
+        doc.setFontSize(8.5);
+        doc.text(
+            `Gerado em: ${dataGeracao}`,
+            pageWidth - marginRight,
+            10,
+            { align: 'right' }
+        );
+
+        doc.setDrawColor(180, 180, 180);
+        doc.line(marginLeft, 23, pageWidth - marginRight, 23);
+    }
+
+
+    function novaPagina() {
+
+        doc.addPage();
+        adicionarCabecalho();
+        startY = 30;
+    }
+
+
+    // ======================================================
+    // RUBRICA
+    // ======================================================
+
+    function obterNomeRubrica(rubrica) {
+
+        return textoPDF(
+            rubrica.item ||
+            rubrica.designacao ||
+            rubrica.rub_designacao ||
+            rubrica.rubrica ||
+            `Rubrica ${rubrica.cod || rubrica.rub_cod || '-'}`
+        );
+    }
+
+
+    function adicionarRubrica(rubrica, processos) {
+
+        if (startY > pageHeight - 40) {
+            novaPagina();
+        }
+
+        const codigo =
+            rubrica.cod ||
+            rubrica.rub_cod ||
+            rubrica.codigo ||
+            '';
+
+        const nome = obterNomeRubrica(rubrica);
+
+        const titulo = [codigo, nome]
+            .filter(Boolean)
+            .join(' — ');
+
+        const linhasTitulo = doc.splitTextToSize(titulo, tableWidth - 6);
+
+        const altura = Math.max(
+            10,
+            5 + linhasTitulo.length * 4
+        );
+
+        doc.setFillColor(0, 123, 255);
+        doc.rect(marginLeft, startY, tableWidth, altura, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+
+        doc.text(
+            linhasTitulo,
+            marginLeft + 3,
+            startY + 5,
+            { lineHeightFactor: 1.15 }
+        );
+
+        doc.setTextColor(0, 0, 0);
+
+        startY += altura + 2;
+
+
+        // --------------------------------------------------
+        // TOTAIS DA RUBRICA
+        // --------------------------------------------------
+
+        let previstoRubrica = numero(
+            rubrica.previsto ||
+            rubrica.valor_previsto
+        );
+
+        let limiteRubrica = 0;
+        let adjudicadoRubrica = 0;
+        let faturadoRubrica = 0;
+        let numeroFaturasRubrica = 0;
+
+        processos.forEach(processo => {
+
+            limiteRubrica += numero(
+                processo.val_max ||
+                processo.limite
+            );
+
+            adjudicadoRubrica += numero(processo.adjudicado);
+
+            const faturas =
+                Array.isArray(processo.faturas)
+                    ? processo.faturas
+                    : [];
+
+            faturadoRubrica += faturas.reduce(
+                (total, fatura) =>
+                    total + numero(fatura.fact_valor),
+                0
+            );
+
+            numeroFaturasRubrica += faturas.length;
+        });
+
+
+
+
+        doc.autoTable({
+
+            startY,
+
+            body: [
+                [
+                    {
+                        content: 'Previsto',
+                        styles: {
+                            fontStyle: 'bold',
+                            fillColor: [240, 240, 240]
+                        }
+                    },
+                    {
+                        content: moeda(previstoRubrica),
+                        styles: { halign: 'right' }
+                    },
+                    {
+                        content: 'Adjudicado',
+                        styles: {
+                            fontStyle: 'bold',
+                            fillColor: [240, 240, 240]
+                        }
+                    },
+                    {
+                        content: moeda(rubrica.adjudicado),
+                        styles: { halign: 'right' }
+                    }
+                ],
+
+                [
+                    {
+                        content: 'Faturado',
+                        styles: {
+                            fontStyle: 'bold',
+                            fillColor: [240, 240, 240]
+                        }
+                    },
+                    {
+                        content: moeda(faturadoRubrica),
+                        styles: { halign: 'right' }
+                    },
+                    {
+                        content: 'Processos / Faturas',
+                        styles: {
+                            fontStyle: 'bold',
+                            fillColor: [240, 240, 240]
+                        }
+                    },
+                    {
+                        content: `${processos.length} / ${numeroFaturasRubrica}`,
+                        styles: { halign: 'center' }
+                    }
+                ]
+            ],
+
+            theme: 'grid',
+
+            margin: {
+                left: marginLeft,
+                right: marginRight
+            },
+
+            styles: {
+                fontSize: 8,
+                cellPadding: 1.8
+            },
+
+            columnStyles: {
+                0: { cellWidth: 30 },
+                1: { cellWidth: 55 },
+                2: { cellWidth: 38 },
+                3: { cellWidth: 67 }
+            }
+        });
+
+
+        startY = doc.lastAutoTable.finalY + 5;
+
+
+        return {
+            previsto: previstoRubrica,
+            limite: limiteRubrica,
+            adjudicado: numero(rubrica.adjudicado),
+            faturado: faturadoRubrica,
+            numeroFaturas: numeroFaturasRubrica
+        };
+    }
+
+
+    // ======================================================
+    // PROCESSO
+    // ======================================================
+
+    function adicionarProcesso(processo, totalFaturadoProcesso) {
+
+        const padm =
+            processo.padm ||
+            processo.proces_check ||
+            '-';
+
+        const designacao = textoPDF(
+            processo.designacao ||
+            processo.proces_designacao ||
+            'Processo sem designação'
+        );
+
+        const titulo = `${padm} — ${designacao}`;
+
+        const linhasTitulo = doc.splitTextToSize(
+            titulo,
+            tableWidth - 6
+        );
+
+        const alturaLinha = 4;
+
+        const alturaTitulo = Math.max(
+            9,
+            5 + linhasTitulo.length * alturaLinha
+        );
+
+        const alturaNecessaria = alturaTitulo + 38;
+
+        if (startY > pageHeight - alturaNecessaria) {
+            novaPagina();
+        }
+
+
+        doc.setFillColor(52, 58, 64);
+        doc.rect(
+            marginLeft,
+            startY,
+            tableWidth,
+            alturaTitulo,
+            'F'
+        );
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(255, 255, 255);
+
+        doc.text(
+            linhasTitulo,
+            marginLeft + 3,
+            startY + 5,
+            { lineHeightFactor: 1.15 }
+        );
+
+        doc.setTextColor(0, 0, 0);
+
+
+        const limite = numero(
+            processo.val_max ||
+            processo.limite
+        );
+
+        const adjudicado = numero(processo.adjudicado);
+        const faturado = numero(processo.faturado);
+
+        const saldo =
+            processo.saldo !== undefined
+                ? numero(processo.saldo)
+                : limite - faturado;
+
+        const faturas =
+            Array.isArray(processo.faturas)
+                ? processo.faturas
+                : [];
+
+
+        doc.autoTable({
+            startY: startY + alturaTitulo + 2,
+            body: [
+                [
+                    {content: 'Regime', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}}, 
+                    processo.regime || '-',
+                    {content: 'Linha ORC.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    processo.linha_orcamento || processo.linha_orc || '-',
+                    {content: 'Linha SE.', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    processo.linha_se || '-',
+                    {content: 'Limite', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    {content: moeda(limite), styles: { halign: 'right' }}
+                ],
+                [
+                    {content: 'Adjudicado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    {content: moeda(adjudicado), styles: { halign: 'right' }},
+                    {content: 'Faturado', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    {content: moeda(totalFaturadoProcesso), styles: { halign: 'right' }},
+                    {content: 'Saldo', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    {content: moeda(saldo), styles: { halign: 'right' }},
+                    {content: '', colSpan: 2}
+                ],
+                [
+                    {content: 'N.º de faturas', styles: {fontStyle: 'bold', fillColor: [240, 240, 240]}},
+                    {content: String(faturas.length), styles: { halign: 'center' }},
+                    {content: '', colSpan: 6}
+                ]
+            ],
+
+            theme: 'grid',
+
+            margin: {left: marginLeft, right: marginRight},
+            styles: {
+                fontSize: 7.5,
+                cellPadding: 1.5,
+                valign: 'middle',
+                overflow: 'linebreak'
+            },
+
+            columnStyles: {
+                0: { cellWidth: 22 },
+                1: { cellWidth: 34 },
+                2: { cellWidth: 21 },
+                3: { cellWidth: 24 },
+                4: { cellWidth: 19 },
+                5: { cellWidth: 24 },
+                6: { cellWidth: 18 },
+                7: { cellWidth: 28 }
+            },
+
+            didDrawPage() {
+                adicionarCabecalho();
+            }
+        });
+
+
+        startY = doc.lastAutoTable.finalY + 3;
+    }
+
+
+    // ======================================================
+    // FATURAS
+    // ======================================================
+
+    function adicionarFaturas(processo) {
+
+        const faturas =
+            Array.isArray(processo.faturas)
+                ? processo.faturas
+                : [];
+
+
+        if (faturas.length === 0) {
+
+            doc.autoTable({
+                startY,
+                body: [['Este processo não possui faturas.']],
+                theme: 'grid',
+                margin: {left: marginLeft, right: marginRight},
+                styles: {
+                    fontSize: 8,
+                    textColor: [100, 100, 100],
+                    fillColor: [250, 250, 250],
+                    cellPadding: 2
+                }
+            });
+
+            startY = doc.lastAutoTable.finalY + 7;
+
+            return;
+        }
+
+
+        const linhas = faturas.map(fatura => [
+
+            textoPDF(fatura.ent_nome || '-'),
+            dataPT(fatura.fact_data), [fatura.fact_tipo, fatura.fact_num].filter(Boolean).join(' ') || '-',
+            expediente(fatura.fact_expediente), fatura.fact_auto_num || '-',
+            dataPT(fatura.fact_auto_data),
+            numero(fatura.fact_iva),
+            numero(fatura.fact_valor)
+        ]);
+
+        doc.autoTable({
+            startY,
+            head: [[
+                'Entidade',
+                'Data',
+                'Fatura',
+                'Expediente',
+                'Auto',
+                'Data do auto',
+                'IVA',
+                'Valor'
+            ]],
+            body: linhas,
+            theme: 'grid',
+            margin: {
+                left: marginLeft,
+                right: marginRight,
+                top: 27,
+                bottom: 15
+            },
+            styles: {
+                fontSize: 6.7,
+                cellPadding: 1.3,
+                overflow: 'linebreak',
+                valign: 'middle'
+            },
+            headStyles: {
+                fillColor: [23, 162, 184],
+                textColor: 255,
+                fontStyle: 'bold',
+                halign: 'center'
+            },
+            columnStyles: {
+                0: { cellWidth: 42 },
+                1: { cellWidth: 18, halign: 'center' },
+                2: { cellWidth: 28 },
+                3: { cellWidth: 26 },
+                4: { cellWidth: 16, halign: 'center' },
+                5: { cellWidth: 20, halign: 'center' },
+                6: { cellWidth: 20, halign: 'right' },
+                7: { cellWidth: 20, halign: 'right' }
+            },
+
+            didParseCell(data) {
+
+                if (
+                    data.section === 'body' && [6, 7].includes(data.column.index)) {
+                    data.cell.text = [moeda(data.cell.raw)];
+                }
+            },
+
+            didDrawPage() {
+                adicionarCabecalho();
+            }
+        });
+
+        startY = doc.lastAutoTable.finalY + 8;
+    }
+
+
+    // ======================================================
+    // TOTAIS POR TIPO DE FATURA
+    // ======================================================
+
+    function acumularTipoFatura(faturas) {
+
+        if (!Array.isArray(faturas)) return;
+
+        faturas.forEach(fatura => {
+
+            const tipo = String(
+                fatura.fact_tipo ||
+                'SEM TIPO'
+            )
+            .trim()
+            .toUpperCase();
+
+            if (!totaisPorTipoFatura[tipo]) {
+                totaisPorTipoFatura[tipo] = {quantidade: 0, valor: 0};
+            }
+
+            totaisPorTipoFatura[tipo].quantidade += 1;
+            totaisPorTipoFatura[tipo].valor += numero(fatura.fact_valor);
+        });
+    }
+
+
+    // ======================================================
+    // FATURAÇÃO MENSAL / VÁRIOS ANOS
+    // ======================================================
+
+    function calcularFaturacaoMensal() {
+
+        const faturacaoPorMes = {};
+
+        rubricas.forEach(rubrica => {
+
+            const processos = Array.isArray(rubrica.processos) ? rubrica.processos: [];
+
+            processos.forEach(processo => {
+
+                const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+
+                faturas.forEach(fatura => {
+
+                    if (!fatura.fact_data) return;
+
+                    const partes = String(fatura.fact_data).substring(0, 10).split('-');
+
+                    if (partes.length !== 3) return;
+
+                    const anoFatura = Number(partes[0]);
+                    const mes = Number(partes[1]);
+
+                    if (!anoFatura || mes < 1 || mes > 12) return;
+
+                    const chave = `${anoFatura}-${String(mes).padStart(2, '0')}`;
+
+                    if (!Object.prototype.hasOwnProperty.call(faturacaoPorMes, chave)) {
+                        faturacaoPorMes[chave] = 0;
+                    }
+
+                    faturacaoPorMes[chave] += numero(fatura.fact_valor);
+                });
+            });
+        });
+
+
+        const chaves = Object.keys(faturacaoPorMes).sort();
+
+        if (chaves.length === 0) {
+            return {labels: [], valores: []};
+        }
+
+
+        const [anoInicial, mesInicial] = chaves[0].split('-').map(Number);
+        const [anoFinal, mesFinal] = chaves[chaves.length - 1].split('-').map(Number);
+        const nomesMeses = ['Jan.', 'Fev.', 'Mar.', 'Abr.', 'Mai.', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.'];
+        const labels = [];
+        const valores = [];
+
+        let a = anoInicial;
+        let m = mesInicial;
+
+        while (a < anoFinal || (a === anoFinal && m <= mesFinal)) {
+
+            const chave = `${a}-${String(m).padStart(2, '0')}`;
+            labels.push(`${nomesMeses[m - 1]} ${a}`);
+            valores.push(faturacaoPorMes[chave] || 0);
+
+            m++;
+
+            if (m > 12) {m = 1; a++;}
+        }
+
+        return {labels, valores};
+    }
+
+
+    // ======================================================
+    // GRÁFICO
+    // ======================================================
+
+    function criarGraficoMensal() {
+
+        const {labels, valores} = calcularFaturacaoMensal();
+
+        if (labels.length === 0) return null;
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = 1200;
+        canvas.height = 500;
+
+        const ctx = canvas.getContext('2d');
+        const pluginValores = {
+
+            id: 'valoresExecucaoOrcamental',
+
+            afterDatasetsDraw(chart) {
+
+                const { ctx } = chart;
+
+                ctx.save();
+                ctx.font = 'bold 16px Arial';
+                ctx.fillStyle = '#212529';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+
+                const dataset = chart.data.datasets[0];
+                const meta = chart.getDatasetMeta(0);
+
+                meta.data.forEach((barra, index) => {
+
+                    const valor = Number(dataset.data[index]) || 0;
+
+                    if (valor === 0) return;
+
+                    ctx.fillText(moeda(valor), barra.x, barra.y - 8);
+                });
+
+                ctx.restore();
+            }
+        };
+
+
+        const grafico = new Chart(ctx, {
+
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Faturação',
+                    data: valores,
+                    backgroundColor: '#17a2b8',
+                    borderColor: '#117a8b',
+                    borderWidth: 1
+                }]
+            },
+            plugins: [pluginValores],
+            options: {
+                responsive: false,
+                animation: false,
+                maintainAspectRatio: false,
+                layout: {padding: {top: 30, right: 10, left: 10, bottom: 10}},
+                plugins: {legend: {display: false}},
+                scales: {
+                    x: {
+                        grid: {display: false},
+                        ticks: {autoSkip: true, maxRotation: 45, minRotation: 0}
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback(valor) {
+                                return new Intl.NumberFormat('pt-PT', {notation: 'compact', maximumFractionDigits: 1}).format(valor);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+
+        grafico.update();
+
+        const imagem = canvas.toDataURL('image/png', 1);
+
+        grafico.destroy();
+
+        return {imagem, valores};
+        
+    }
+
+
+    // ======================================================
+    // RESUMO GERAL
+    // ======================================================
+
+    function adicionarResumoGeral() {
+
+        const tipos = Object.entries(totaisPorTipoFatura).sort(([a], [b]) => a.localeCompare(b, 'pt-PT'));
+        const linhas = [
+            ['Total previsto', '', moeda(totalPrevistoGeral)],
+            ['Total limite dos processos', '', moeda(totalLimiteGeral)],
+            ['Adjudicado acumulado', '', moeda(totalAdjudicadoGeral)],
+            ['Faturado anual', '', moeda(totalFaturadoGeral)],
+            ['Saldo orçamental anual', '', moeda(totalPrevistoGeral - totalFaturadoGeral)],
+            ['Processos', '', String(numeroProcessosGeral)],
+            ['Faturas', '', String(numeroFaturasGeral)]
+        ];
+
+        if (tipos.length > 0) {
+            linhas.push(['Faturação por tipo', 'Registos', 'Valor']);
+
+            tipos.forEach(([tipo, totais]) => {
+                linhas.push([tipo, String(totais.quantidade), moeda(totais.valor)]);
+            });
+        }
+
+        const alturaEstimada = 25 + linhas.length * 7;
+
+        if (startY > pageHeight - alturaEstimada) {novaPagina();}
+
+        doc.setFillColor(33, 37, 41);
+        doc.rect(marginLeft, startY, tableWidth, 9, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255);
+        doc.text('RESUMO GERAL', marginLeft + 3, startY + 6);
+        doc.setTextColor(0, 0, 0);
+
+        const indiceTipos = 7;
+
+        doc.autoTable({
+            startY: startY + 11,
+            body: linhas,
+            theme: 'grid',
+            margin: {left: marginLeft, right: marginRight},
+            tableWidth: 120,
+            styles: {fontSize: 9, cellPadding: 2, valign: 'middle'},
+            columnStyles: {
+                0: { cellWidth: 65 },
+                1: {cellWidth: 20, halign: 'center' },
+                2: {cellWidth: 35, halign: 'right'}
+            },
+
+            didParseCell(data) {
+
+                if (data.row.index < indiceTipos) {
+                    
+                    if (data.column.index === 0) {
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.fillColor = [245, 245, 245];
+                    }
+
+                    if (data.column.index === 1) {
+                        data.cell.styles.fillColor = [245, 245, 245];
+                    }
+                }
+
+                if (tipos.length > 0 && data.row.index === indiceTipos) {
+                    data.cell.styles.fillColor = [23, 162, 184];
+                    data.cell.styles.textColor = [255, 255, 255];
+                    data.cell.styles.fontStyle = 'bold';
+                }
+            }
+        });
+
+        startY = doc.lastAutoTable.finalY + 8;
+    }
+
+
+    // ======================================================
+    // GRÁFICO GERAL
+    // ======================================================
+
+    function adicionarGraficoGeral() {
+
+        const grafico = criarGraficoMensal();
+
+        if (!grafico) return;
+
+        const alturaGrafico = 72;
+
+        if (startY > pageHeight - alturaGrafico - 20) {
+            novaPagina();
+        }
+
+        const total = grafico.valores.reduce((acumulado, valor) => acumulado + valor, 0);
+
+        doc.setFillColor(33, 37, 41);
+        doc.rect(marginLeft, startY, tableWidth, 9, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255);
+        doc.text('FATURAÇÃO POR MÊS / ANO', marginLeft + 3, startY + 6);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.text(`Total: ${moeda(total)}`, pageWidth - marginRight - 3, startY + 6, { align: 'right' });
+
+        doc.addImage(grafico.imagem, 'PNG', marginLeft, startY + 11, tableWidth, alturaGrafico);
+
+        startY += alturaGrafico + 17;
+
+    }
+
+
+    // ======================================================
+    // CONSTRUIR DOCUMENTO
+    // ======================================================
+
+    adicionarCabecalho();
+
+    rubricas.forEach(rubrica => {
+
+        const processos = Array.isArray(rubrica.processos) ? rubrica.processos : [];
+        const totaisRubrica = adicionarRubrica(rubrica, processos);
+
+        totalPrevistoGeral += totaisRubrica.previsto;
+        totalLimiteGeral += totaisRubrica.limite;
+        totalAdjudicadoGeral += totaisRubrica.adjudicado;
+        totalFaturadoGeral += totaisRubrica.faturado;
+        numeroProcessosGeral += processos.length;
+        numeroFaturasGeral += totaisRubrica.numeroFaturas;
+
+        processos.forEach(processo => {
+
+            const faturas = Array.isArray(processo.faturas) ? processo.faturas : [];
+            const totalFaturadoProcesso = faturas.reduce((total, fatura) => total + numero(fatura.fact_valor), 0);
+
+            acumularTipoFatura(faturas);
+            adicionarProcesso(processo, totalFaturadoProcesso);
+            adicionarFaturas(processo);
+
+        });
+
+        startY += 3;
+
+    });
+
+
+    // Resumo primeiro
+    adicionarResumoGeral();
+    // Gráfico depois
+    adicionarGraficoGeral();
+    // Paginação
+    adicionarPaginacaoExecucaoPDF(doc);
+
+    return doc;
+
+}
+
+
+// ==========================================================
+// PAGINAÇÃO
+// ==========================================================
+
+function adicionarPaginacaoExecucaoPDF(doc) {
+
+    const totalPaginas = doc.getNumberOfPages();
+
+    for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+
+        doc.setPage(pagina);
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(90, 90, 90);
+        doc.text(`Página ${pagina} / ${totalPaginas}`, pageWidth - 10, pageHeight - 7, { align: 'right' });
+
+    }
+}
+
+// ==========================================================
+// EXPORTAR DATATABLE - EXECUÇÃO ORÇAMENTAL
+// ==========================================================
+
+async function exportarTabelaExecucaoPDF() {
+
+    const botao = document.getElementById('exportarTabelaExecucaoPDF');
+
+    try {
+
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            throw new Error('A biblioteca jsPDF não está disponível.');
+        }
+
+        const ano = parseInt(document.getElementById('anoCorrente').value, 10);
+
+        if (!validaAno(ano)) {
+            return;
+        }
+
+        if (botao) {
+            botao.disabled = true;
+            botao.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> A gerar PDF...';
+        }
+
+
+        // --------------------------------------------------
+        // OBTER OS MESMOS DADOS DO DASHBOARD
+        // --------------------------------------------------
+
+        const response = await fetch('dados/orcamentoDashboardTeste.php');
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP ${response.status}`);
+        }
+
+        const resultado = await response.json();
+        const rubricas = construirDashboard(resultado, ano);
+
+        if (rubricas.length === 0) {
+            alert(`Não existem dados de execução orçamental para o ano ${ano}.`);
+            return;           
+        }
+
+        // --------------------------------------------------
+        // PREPARAR DADOS
+        // --------------------------------------------------
+        const dadosTabela = prepararExecucaoOrcamento(rubricas, ano);
+        // --------------------------------------------------
+        // CRIAR PDF
+        // --------------------------------------------------
+        const doc = criarDocumentoTabelaExecucaoPDF( dadosTabela, ano);
+
+        // Abrir no browser, tal como o outro relatório
+        window.open(doc.output('bloburl'),'_blank');
+
+    } catch (error) {
+
+        console.error('Erro ao exportar a tabela:',error);
+
+        alert('Não foi possível gerar o relatório.\n\n' + error.message);
+
+    } finally {
+
+        if (botao) {
+            botao.disabled = false;
+            botao.innerHTML = '<i class="fas fa-file-pdf mr-1"></i> Exportar Tabela';}
+    }
+}
+
+
+// ==========================================================
+// CRIAR PDF DA DATATABLE
+// ==========================================================
+function criarDocumentoTabelaExecucaoPDF(dados, ano) {
+
+    const { jsPDF } = window.jspdf;
+
+    // ------------------------------------------------------
+    // LANDSCAPE
+    // ------------------------------------------------------
+    const doc = new jsPDF({orientation: 'landscape', unit: 'mm', format: 'a4'});
+
+    if (typeof doc.autoTable !== 'function') {
+        throw new Error('A biblioteca jsPDF AutoTable não está disponível.');
+    }
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const marginLeft = 6;
+    const marginRight = 6;
+
+    // ======================================================
+    // CABEÇALHO
+    // ======================================================
+    function adicionarCabecalho() {
+
+        const dataGeracao = new Date().toLocaleDateString('pt-PT');
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.text('EXECUÇÃO ORÇAMENTAL', marginLeft, 10);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(`Ano: ${ano}`, marginLeft, 16);
+        doc.setFontSize(8);
+        doc.text(`Gerado em: ${dataGeracao}`, pageWidth - marginRight, 10, {align: 'right'});
+
+        doc.setDrawColor(180, 180, 180 );
+        doc.line(marginLeft, 21, pageWidth - marginRight, 21);
+        
+    }
+
+
+    // ======================================================
+    // TOTAIS
+    // ======================================================
+
+    const totais =
+        Array(16).fill(0);
+
+
+    dados.forEach(item => {
+
+        const valores = [
+
+            item.previsto,
+            item.adjudicado,
+            item.saldo,
+            item.faturado,
+
+            item.jan,
+            item.fev,
+            item.mar,
+            item.abr,
+            item.mai,
+            item.jun,
+            item.jul,
+            item.ago,
+            item.set,
+            item.out,
+            item.nov,
+            item.dez
+
+        ];
+
+
+        valores.forEach(
+            (valor, indice) => {
+
+                totais[indice] +=
+                    numero(valor);
+            }
+        );
+
+    });
+
+
+    // ======================================================
+    // LINHAS
+    // ======================================================
+
+    const linhas =
+        dados.map(item => [
+
+            item.rubrica,
+
+            item.previsto,
+            item.adjudicado,
+            item.saldo,
+            item.faturado,
+
+            item.jan,
+            item.fev,
+            item.mar,
+            item.abr,
+            item.mai,
+            item.jun,
+            item.jul,
+            item.ago,
+            item.set,
+            item.out,
+            item.nov,
+            item.dez
+
+        ]);
+
+
+    // ======================================================
+    // RODAPÉ
+    // ======================================================
+
+    const rodape = [[
+
+        'TOTAL',
+
+        ...totais
+
+    ]];
+
+
+    // ======================================================
+    // CRIAR DOCUMENTO
+    // ======================================================
+
+    adicionarCabecalho();
+
+
+    doc.autoTable({
+
+        startY: 25,
+
+
+        // --------------------------------------------------
+        // CABEÇALHO
+        // --------------------------------------------------
+
+        head: [[
+
+            'Rubrica',
+
+            'Previsto',
+            'Adjudicado',
+            'Saldo',
+            'Faturado',
+
+            'Jan.',
+            'Fev.',
+            'Mar.',
+            'Abr.',
+            'Mai.',
+            'Jun.',
+            'Jul.',
+            'Ago.',
+            'Set.',
+            'Out.',
+            'Nov.',
+            'Dez.'
+
+        ]],
+
+
+        // --------------------------------------------------
+        // DADOS
+        // --------------------------------------------------
+
+        body: linhas,
+
+
+        // --------------------------------------------------
+        // TOTAIS
+        // --------------------------------------------------
+
+        foot: rodape,
+
+        showFoot: 'lastPage',
+
+
+        // --------------------------------------------------
+        // FORMATAÇÃO GERAL
+        // --------------------------------------------------
+
+        theme: 'grid',
+
+        margin: {
+            left: marginLeft,
+            right: marginRight,
+            top: 25,
+            bottom: 14
+        },
+
+
+        styles: {
+
+            fontSize: 6.5,
+
+            cellPadding: 1.2,
+
+            valign: 'middle',
+
+            overflow: 'linebreak'
+        },
+
+
+        // --------------------------------------------------
+        // CABEÇALHO
+        // --------------------------------------------------
+
+        headStyles: {
+
+            fillColor: [
+                52,
+                58,
+                64
+            ],
+
+            textColor: 255,
+
+            fontStyle: 'bold',
+
+            halign: 'center'
+        },
+
+
+        // --------------------------------------------------
+        // RODAPÉ
+        // --------------------------------------------------
+
+        footStyles: {
+
+            fillColor: [
+                52,
+                58,
+                64
+            ],
+
+            textColor: 255,
+
+            fontStyle: 'bold'
+        },
+
+
+        // --------------------------------------------------
+        // LARGURA DAS COLUNAS
+        // --------------------------------------------------
+
+        columnStyles: {
+
+            0: {
+                cellWidth: 48
+            },
+
+            1: {
+                cellWidth: 20,
+                halign: 'right'
+            },
+
+            2: {
+                cellWidth: 20,
+                halign: 'right'
+            },
+
+            3: {
+                cellWidth: 20,
+                halign: 'right'
+            },
+
+            4: {
+                cellWidth: 20,
+                halign: 'right'
+            },
+
+            5:  { halign: 'right' },
+            6:  { halign: 'right' },
+            7:  { halign: 'right' },
+            8:  { halign: 'right' },
+            9:  { halign: 'right' },
+            10: { halign: 'right' },
+            11: { halign: 'right' },
+            12: { halign: 'right' },
+            13: { halign: 'right' },
+            14: { halign: 'right' },
+            15: { halign: 'right' },
+            16: { halign: 'right' }
+
+        },
+
+
+        // --------------------------------------------------
+        // FORMATAR VALORES COMO MOEDA
+        // --------------------------------------------------
+
+        didParseCell(data) {
+
+            if (
+                (
+                    data.section === 'body' ||
+                    data.section === 'foot'
+                ) &&
+                data.column.index >= 1
+            ) {
+
+                data.cell.text = [
+                    moeda(data.cell.raw)
+                ];
+            }
+
+
+            // TOTAL alinhado à direita
+
+            if (
+                data.section === 'foot' &&
+                data.column.index === 0
+            ) {
+
+                data.cell.styles.halign =
+                    'right';
+            }
+        },
+
+
+        // --------------------------------------------------
+        // CABEÇALHO EM TODAS AS PÁGINAS
+        // --------------------------------------------------
+
+        didDrawPage() {
+
+            adicionarCabecalho();
+        }
+
+    });
+
+
+    // ======================================================
+    // PAGINAÇÃO
+    // ======================================================
+
+    adicionarPaginacaoExecucaoPDF(
+        doc
+    );
+
+
+    return doc;
+}
