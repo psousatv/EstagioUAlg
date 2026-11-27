@@ -245,73 +245,81 @@ $(document).ready(function () {
 
                 let cartao = `
                 <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="card candidatura-card h-100 ${classeCartao}"
+                    <div class="card kpi-card kpi-clicavel h-100 ${classeCartao}"
                         onclick="candidaturaRedirected('${dados.candidatura}')">
 
                         <!-- Cabeçalho -->
-                        <div class="candidatura-header">
+                        <div class="kpi-header">
                            
 
-                            <div class="candidatura-titulo">
-                                <span>${dados.departamento}: ${dados.candidatura}</span>
+                            <div class="kpi-titulo">
+                                <div>${dados.departamento}: ${dados.candidatura}</div>
                             </div>
 
+                            <!--
                             <div class="candidatura-estado">
                                 <i class="fas ${iconeCartao}"></i>
                             </div>
+                            -->
+
                         </div>
 
                         <!-- Valores financeiros -->
-                        <div class="candidatura-metricas">
-                            <div class="metrica">
-                                <div class="metrica-label">Faturado</div>
-                                <div class="metrica-valor">
-                                    ${Formatters.currency.format(dados.faturado)}
+                        <div class="kpi-separador"></div>
+                        <div class="kpi-seccao">
+                            <div class="kpi-metricas">
+                                <div class="kpi-metrica">
+                                    <div class="kpi-metrica-label">Faturado</div>
+                                    <div class="kpi-metrica-valor">
+                                        ${Formatters.currency.format(dados.faturado)}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="metrica">
-                                <div class="metrica-label">Recebido</div>
-                                <div class="metrica-valor">
-                                    ${Formatters.currency.format(dados.recebido)}
+                                <div class="kpi-metrica">
+                                    <div class="kpi-metrica-label">Recebido</div>
+                                    <div class="kpi-metrica-valor">
+                                        ${Formatters.currency.format(dados.recebido)}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="metrica">
-                                <div class="metrica-label">Faturado / Recebido</div>
-                                <div class="metrica-valor">
-                                    ${Formatters.percent.format(dados.faturado_recebido_percent)}
+                                <div class="kpi-metrica">
+                                    <div class="kpi-metrica-label">Faturado / Recebido</div>
+                                    <div class="kpi-metrica-valor">
+                                        ${Formatters.percent.format(dados.faturado_recebido_percent)}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="candidatura-separador"></div>
-
                         <!-- Valores elegíveis -->
-                        <div class="candidatura-metricas">
-                            <div class="metrica">
-                                <div class="metrica-label">Investimento (× IVA)</div>
-                                <div class="metrica-valor">
+                        <div class="kpi-separador"></div>
+                        <div class="kpi-seccao">
+
+                        <div class="kpi-metricas">
+                            <div class="kpi-metrica">
+                                <div class="kpi-metrica-label">Investimento (× IVA)</div>
+                                <div class="kpi-metrica-valor">
                                     ${Formatters.currency.format(dados.elegivel * dados.iva)}
                                 </div>
                             </div>
 
-                            <div class="metrica">
-                                <div class="metrica-label">Apoio (× IVA)</div>
-                                <div class="metrica-valor">
+                            <div class="kpi-metrica">
+                                <div class="kpi-metrica-label">Apoio (× IVA)</div>
+                                <div class="kpi-metrica-valor">
                                     ${Formatters.currency.format((dados.elegivel * dados.iva) * dados.taxa)}
                                 </div>
                             </div>
 
-                            <div class="metrica">
-                                <div class="metrica-label">Apoio / Recebido</div>
-                                <div class="metrica-valor">
+                            <div class="kpi-metrica">
+                                <div class="kpi-metrica-label">Apoio / Recebido</div>
+                                <div class="kpi-metrica-valor">
                                     ${Formatters.percent.format(dados.elegivel_recebido_percent)}
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
+                </div>
                 </div>
                 `;
 
