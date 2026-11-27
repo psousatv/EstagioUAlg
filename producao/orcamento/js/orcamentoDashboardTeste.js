@@ -6,61 +6,61 @@ var anoCorrente = new Date().getFullYear();
 
 
 // ======================================================
-    // FUNÇÕES AUXILIARES
-    // ======================================================
+// FUNÇÕES AUXILIARES
+// ======================================================
 
-    function numero(valor) {
-        const resultado = Number(valor);
-        return Number.isFinite(resultado) ? resultado : 0;
+function numero(valor) {
+    const resultado = Number(valor);
+    return Number.isFinite(resultado) ? resultado : 0;
+}
+
+
+function moeda(valor) {
+    return new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(numero(valor));
+}
+
+
+function textoPDF(valor) {
+
+    if (valor === null || valor === undefined) return '';
+
+    return String(valor)
+        .replace(/\u00A0/g, ' ')
+        .replace(/[^\x20-\xFFÀ-ÿ]/g, '');
+}
+
+
+function dataPT(valor) {
+    if (!valor) {return '';}
+
+    const data = String(valor).substring(0, 10);
+    const partes = data.split('-');
+    
+    if (partes.length !== 3) {return escapeHtml(valor);}
+    
+    const [ano, mes, dia] = partes;
+    
+    return `${dia}-${mes}-${ano}`;
+}
+
+
+function expediente(valor) {
+    if (!valor) {return '';}
+
+    const texto = String(valor).trim();
+    
+    if (/^[A-Za-z0-9]\.\d+\.\d+$/.test(texto)) {
+        return texto;
     }
+    
+    const prefixo = texto.charAt(0);
+    const registo = texto.slice(1, -2);
+    const ano = texto.slice(-2);
+    
+    
+    return `${prefixo}.${registo.padStart(5, '0')}.${ano}`;
 
-
-    function moeda(valor) {
-        return new Intl.NumberFormat('de-DE', {style: 'currency', currency: 'EUR'}).format(numero(valor));
-    }
-
-
-    function textoPDF(valor) {
-
-        if (valor === null || valor === undefined) return '';
-
-        return String(valor)
-            .replace(/\u00A0/g, ' ')
-            .replace(/[^\x20-\xFFÀ-ÿ]/g, '');
-    }
-
-
-    function dataPT(valor) {
-        if (!valor) {return '';}
-
-        const data = String(valor).substring(0, 10);
-        const partes = data.split('-');
-      
-        if (partes.length !== 3) {return escapeHtml(valor);}
-      
-        const [ano, mes, dia] = partes;
-      
-        return `${dia}-${mes}-${ano}`;
-    }
-
-
-    function expediente(valor) {
-        if (!valor) {return '';}
-
-        const texto = String(valor).trim();
-      
-        if (/^[A-Za-z0-9]\.\d+\.\d+$/.test(texto)) {
-          return texto;
-        }
-      
-        const prefixo = texto.charAt(0);
-        const registo = texto.slice(1, -2);
-        const ano = texto.slice(-2);
-        
-      
-        return `${prefixo}.${registo.padStart(5, '0')}.${ano}`;
-
-    }
+}
 
 // ==========================================================
 // CARTÕES
@@ -161,6 +161,8 @@ function cartoes(endereco) {
         containerInvestimentos.innerHTML = "";
         containerGastos.innerHTML = "";
         containerProtocolos.innerHTML = "";
+
+        //console.log(data);
 
         data.forEach(dados => {
 
@@ -331,7 +333,55 @@ function cartoes(endereco) {
 
             `;
 
+            // ======================================================
+            // CONTROLO CONTRATUAL ACUMULADO
+            // ======================================================
 
+            cartao += `
+
+            <div class="kpi-separador"></div>
+
+            <div class="kpi-seccao">
+
+                <div class="kpi-subtitulo">
+                    CONTROLO CONTRATUAL
+                </div>
+
+                <div class="kpi-metricas">
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Adjudicado
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(adjudicado)}
+                        </div>
+                    </div>
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Faturado
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(faturado)}
+                        </div>
+                    </div>
+
+                    <div class="kpi-metrica">
+                        <div class="kpi-metrica-label">
+                            Por faturar
+                        </div>
+                        <div class="kpi-metrica-valor">
+                            ${moeda(porFaturar)}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+            
             // ======================================================
             // CONTROLO ORÇAMENTAL ANUAL
             // ======================================================
@@ -378,57 +428,6 @@ function cartoes(endereco) {
             </div>
 
             `;
-
-
-            // ======================================================
-            // CONTROLO CONTRATUAL ACUMULADO
-            // ======================================================
-
-            cartao += `
-
-            <div class="kpi-separador"></div>
-
-            <div class="kpi-seccao">
-
-                <div class="kpi-subtitulo">
-                    CONTROLO CONTRATUAL ACUMULADO
-                </div>
-
-                <div class="kpi-metricas">
-
-                    <div class="kpi-metrica">
-                        <div class="kpi-metrica-label">
-                            Adjudicado
-                        </div>
-                        <div class="kpi-metrica-valor">
-                            ${moeda(adjudicado)}
-                        </div>
-                    </div>
-
-                    <div class="kpi-metrica">
-                        <div class="kpi-metrica-label">
-                            Faturado
-                        </div>
-                        <div class="kpi-metrica-valor">
-                            ${moeda(faturado)}
-                        </div>
-                    </div>
-
-                    <div class="kpi-metrica">
-                        <div class="kpi-metrica-label">
-                            Por faturar
-                        </div>
-                        <div class="kpi-metrica-valor">
-                            ${moeda(porFaturar)}
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            `;
-
 
             // ======================================================
             // COBERTURA ORÇAMENTAL

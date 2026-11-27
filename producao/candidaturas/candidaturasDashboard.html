@@ -24,6 +24,7 @@
 <link href="../../vendors/datatables/datatables.min.css" rel="stylesheet" type="text/css">
 <!-- GLOBAL -->
 <link href="../../global/css/styles.css" rel="stylesheet" type="text/css">
+<link href="../../global/css/kpi.css" rel="stylesheet" type="text/css">
 
 
 </head>
@@ -46,64 +47,84 @@
         <div class="container-fluid">
 
             <!-- Informações Gerais -->
-            <div class="row">
-                <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                        <!-- ======================================================
+                        DASHBOARD — CANDIDATURAS
+                        ======================================================= -->
+                        <div class="container-fluid">
+                            <!-- ==================================================
+                                Indicadores
+                            =================================================== -->
+                            <section class="kpi-grupo">
 
-                    <div class="card">
-                        <!--
-                        <div class="card-header">
-                            <i class="fas fa-euro"></i> Candidaturas 
-                        </div>
-                        -->
-
-                        <div class="card-body">
-
-                            <!-- Indicadores -->
-                            <div class="row mt-1">
-                                <div class="col-12">
-                                    <div class="col-3 px-3 py-1 bg-primary text-white fw-bold rounded">
+                                <div class="kpi-grupo-titulo">
                                     Principais Indicadores
-                                    </div>
-                                    <div class="mt-1">
+                                </div>
+
+                                <div class="mt-1">
                                     <div class="row" id="botoesIndicadores"></div>
                                     </div>
                                     <div class="mt-1">
                                         <div class="row" id="tabelaIndicadores"></div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- Candidaturas Em Curso -->
-                            <div class="row mt-1">
-                                <div class="col-3 px-3 py-1 bg-primary text-white fw-bold rounded">
+                            </section>
+
+                            <!-- ==================================================
                                 Candidaturas Em Curso
+                            =================================================== -->
+
+                            <section class="kpi-grupo">
+
+                                <div class="kpi-grupo-titulo">
+                                    Candidaturas Em Curso
                                 </div>
-                                <div class="col-12 mt-1">
-                                <div class="row" id="cartoesCandidaturaEmCurso"></div>
+
+                                <div class="row" id="cartoesCandidaturaEmCurso">
+                                    <!-- Cartões gerados pelo JavaScript -->
                                 </div>
-                            </div>
-                            
-                            <!-- Candidaturas Encerradas -->
-                            <div class="row mt-1">
-                                <div class="col-3 px-3 py-1 bg-secondary text-white fw-bold rounded">
+
+                            </section>
+
+
+                            <!-- ==================================================
                                 Candidaturas Encerradas
+                            =================================================== -->
+
+                            <section class="kpi-grupo">
+
+                                <div class="kpi-grupo-titulo">
+                                    Candidaturas Encerradas
                                 </div>
-                                <div class="col-12 mt-1">
-                                <div class="row" id="cartoesCandidaturaEncerrada"></div>
+
+                                <div class="row" id="cartoesCandidaturaEncerrada">
+                                    <!-- Cartões gerados pelo JavaScript -->
                                 </div>
-                            </div>
-                            
-                            <!-- Candidaturas Noutros Estados -->
-                            <div class="row mt-1">
-                                <div class="col-3 px-3 py-1 bg-dark text-white fw-bold rounded">
+
+                            </section>
+
+
+                            <!-- ==================================================
+                                Candidaturas Noutros Estados
+                            =================================================== -->
+
+                            <section class="kpi-grupo">
+
+                                <div class="kpi-grupo-titulo">
                                     Candidaturas Noutros Estados
                                 </div>
-                                <div class="col-12 mt-1">
-                                    <div class="row" id="cartoesCandidaturaOutroEstado"></div>
+
+                                <div class="row" id="cartoesCandidaturaOutroEstado">
+                                    <!-- Cartões gerados pelo JavaScript -->
                                 </div>
-                            </div>
+
+                            </section>
 
                         </div>
+                    </div>
+
                     </div>
 
                 </div>

@@ -30,6 +30,8 @@ $query = "SELECT
     cs.candsub_aviso AS aviso,
     cs.candsub_codigo AS candidatura,
     cs.candsub_estado AS estado,
+    cs.candsub_sigla_departamento AS departamento,
+    cs.candsub_dt_aceitacao AS aceitacao,
     cs.candsub_nome AS descricao,
     YEAR(cs.candsub_dt_inicio) AS inicio,
     YEAR(cs.candsub_dt_fim) AS termo,

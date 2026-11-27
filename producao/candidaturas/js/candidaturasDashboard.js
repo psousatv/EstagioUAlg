@@ -130,7 +130,7 @@ $(document).ready(function () {
                         }
                     },
                     // coluna 9 - Coluna de Ordenação, não visivel na tabela.
-                    { data: 'inicio', visible: false }
+                    { data: 'aceitacao', visible: false }
                 ],
                 order: [[9, 'desc']],
 
@@ -218,7 +218,9 @@ $(document).ready(function () {
             containerEncerrada.empty();
             containerOutroEstado.empty();
 
-            data.forEach(dados => {
+            [...data]
+                .sort((a, b) => new Date(b.aceitacao) - new Date(a.aceitacao))
+                .forEach(dados => {
 
                 let classeCartao, iconeCartao;
 
@@ -251,7 +253,7 @@ $(document).ready(function () {
                            
 
                             <div class="candidatura-titulo">
-                                <span>${dados.aviso}: ${dados.candidatura}</span>
+                                <span>${dados.departamento}: ${dados.candidatura}</span>
                             </div>
 
                             <div class="candidatura-estado">
